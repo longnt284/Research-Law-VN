@@ -31,6 +31,12 @@ npm run build      # dựng bản production
 npm run typecheck  # kiểm tra kiểu
 ```
 
+## Skill Claude Code
+
+Repo có sẵn hai skill dùng chung cho phiên Claude Code: `/caveman` (chế độ trả
+lời nén tối đa) và `/karpathy-guidelines` (nguyên tắc hạn chế lỗi code do LLM
+gây ra). Xem `.claude/skills/README.md` để biết nguồn, giấy phép, cách cập nhật.
+
 ## Ghi chú kỹ thuật
 
 Bản đồ vẽ trên canvas 2D với bố cục tính sẵn một lần, tất định, không dùng mô
