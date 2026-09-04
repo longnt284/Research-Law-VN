@@ -7,6 +7,7 @@ import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { VERIFIED_ON, documents, documentsById, relations } from "@/data/documents";
 import type { Lang, RelationKind } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { pairsFor } from "@/lib/compare";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => documents.map((d) => ({ lang, slug: d.id })));
@@ -67,6 +68,7 @@ export default async function DocumentPage({
 
   const t = getDict(lang);
   const grouped = collectRelations(doc.id, lang);
+  const comparePairs = pairsFor(doc.id);
 
   return (
     <article>
@@ -168,6 +170,43 @@ export default async function DocumentPage({
               </dl>
             )}
           </section>
+
+          {/* Bản đối chiếu chỉ hiện khi văn bản này có mặt trong một cặp thay
+            thế hoặc sửa đổi. Đặt ngay sau phần quan hệ vì đó là chỗ người đọc
+            vừa nhìn thấy tên văn bản kia. */}
+          {comparePairs.length > 0 && (
+            <section className="mt-9">
+              <h2 className="eyebrow eyebrow-tick">{t.compare.docPairsTitle}</h2>
+              <ul className="mt-3 space-y-2">
+                {comparePairs.map((p) => {
+                  const other = p.newDoc.id === doc.id ? p.oldDoc : p.newDoc;
+                  return (
+                    <li key={p.id}>
+                      <Link
+                        href={`/${lang}/doi-chieu/${p.id}`}
+                        className="group flex flex-wrap items-baseline gap-x-2.5"
+                      >
+                        <span className="text-sm text-[var(--ink-3)]">
+                          {t.compare.versus}
+                        </span>
+                        <span className="tnum text-sm font-semibold text-[var(--accent)]">
+                          {other.number}
+                        </span>
+                        <span className="text-sm text-[var(--ink-2)] underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors group-hover:decoration-[var(--accent)]">
+                          {other.title[lang]}
+                        </span>
+                        {p.entry && (
+                          <span className="whitespace-nowrap border border-[var(--brass)] px-1.5 text-[0.6875rem] text-[var(--brass)]">
+                            {p.entry.points.length} · {t.compare.curatedBadge}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
         </div>
 
         {/* Bảng dữ liệu bám theo khi cuộn: phần quan hệ bên trái có thể dài, và

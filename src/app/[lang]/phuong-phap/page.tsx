@@ -42,6 +42,16 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       ],
     },
     {
+      h: "Đối chiếu điểm cũ và điểm mới",
+      p: [
+        "Phần lớn câu hỏi thực tế không dừng ở chỗ một văn bản quy định gì, mà ở chỗ nó đã đổi những gì so với văn bản trước. Trang đối chiếu dựng đúng cho việc đó, và dựng theo bốn lớp tách bạch để người đọc biết mỗi dòng chữ mình đang đọc đến từ đâu.",
+        "Lớp thứ nhất là cặp văn bản, lấy thẳng từ quan hệ thay thế và sửa đổi đã có trong tập dữ liệu. Không cặp nào được thêm vào bằng tay, nên danh sách cặp luôn khớp với bản đồ quan hệ và không có chỗ cho một cặp được chọn vì nó minh họa đẹp cho một luận điểm. Lớp thứ hai là bảng dữ kiện và mấy câu suy ra từ hai bản ghi: loại văn bản, tình trạng hiệu lực, ngày ban hành, ngày có hiệu lực, khoảng cách giữa hai mốc. Toàn bộ lớp này là phép so sánh và phép trừ ngày, cùng dữ liệu thì ai chạy cũng ra đúng như vậy.",
+        "Lớp thứ ba là điểm đối chiếu nội dung do người biên soạn viết, và đây là lớp duy nhất có bàn tay con người. Mỗi điểm gồm nội dung đọc được ở văn bản cũ, nội dung đọc được ở văn bản mới, một nhãn phân loại thay đổi lấy từ danh sách đóng chín loại, và một câu nhận định. Mỗi vế phải dẫn được bản ghi mà nó đọc ra; chỗ nào bản ghi không nói thì viết thẳng là bản ghi không nói, thay vì suy ra từ sự im lặng.",
+        "Lớp thứ tư là phép kiểm. Toàn bộ chữ trong phần đối chiếu được soi qua một danh sách từ ngữ mang nghĩa khuyên nhủ, xếp hạng hơn kém hoặc suy đoán hệ quả, cùng với yêu cầu mỗi điểm phải dẫn đủ căn cứ ở cả hai vế. Dính một lỗi là quá trình dựng trang dừng lại. Nói cách khác, tính khách quan của phần này không dựa vào lời hứa sẽ viết cẩn thận mà dựa vào một điều kiện phải thỏa mãn thì trang mới lên được.",
+        "Nhận định ở đây vì vậy chỉ có một nghĩa: mô tả chênh lệch đọc được giữa hai bản văn. Nó không nói quy định nào hợp lý hơn, không đoán trước hệ quả, không thay thế ý kiến pháp lý cho một vụ việc. Cuối mỗi trang đối chiếu có thêm một ô để người đọc tự dán hai đoạn văn bản vào và xem câu chữ khác nhau ở đâu; phép so sánh đó chạy trong trình duyệt, thuần cơ học, chỉ ra chữ nào thêm chữ nào bớt chứ không kết luận nghĩa đã đổi hay chưa.",
+      ],
+    },
+    {
       h: "Giới hạn phải nói rõ",
       p: [
         "Kết quả tra cứu văn bản pháp luật chỉ có giá trị tại thời điểm tra. Pháp luật Việt Nam trong các lĩnh vực đầu tư, thuế và xây dựng thay đổi nhanh; một văn bản đúng hôm nay có thể đã bị sửa sau vài tháng. Trước khi dùng bất kỳ nội dung nào ở đây vào hồ sơ chính thức, hãy đối chiếu lại với Công báo Chính phủ hoặc cơ quan ban hành.",
@@ -72,6 +82,16 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
         "The batch added on 4 September 2026 — fifty instruments — was compiled under different conditions, and that must be said plainly. In that session the primary sources could not be opened: the network blocked thuvienphapluat.vn, vanban.chinhphu.vn, vbpl.vn and luatvietnam.vn. Each record's number, date of issue and entry into force was therefore corroborated across at least two independent search results, and any detail that did not agree, or did not appear at all, was left blank rather than inferred. All fifty carry the needs-checking flag, and the links under sources are addresses found, not pages opened.",
         "The exercise turned up several things worth noting. The 2014 Construction Law ceased to have effect on 1 July 2026 and was replaced by Law No. 135/2025/QH15. The 2020 Investment Law was likewise replaced by Law No. 143/2025/QH15, yet Article 7 and Appendix IV of the older law remain in force until 1 July 2026, creating an overlap that is easy to misread. The 2019 Tax Administration Law ceased to have effect on 30 June 2026. Each of these would have been missed by anyone working from recollection.",
         "Entries with at least one detail that could not be confirmed against an official source — usually the precise date of issue — carry a warning displayed openly on the record. Nothing has been rounded off for the sake of a tidy page.",
+      ],
+    },
+    {
+      h: "Comparing the old position with the new",
+      p: [
+        "Most practical questions do not stop at what an instrument says; they turn on what it changed relative to the instrument before it. The comparison pages are built for that, in four separate layers, so that a reader can tell where each line on the page came from.",
+        "The first layer is the pair itself, taken directly from the replacement and amendment relations already in the dataset. No pair is added by hand, so the list of pairs always matches the relation map and there is no room for a pair chosen because it illustrates a point nicely. The second layer is the table of facts and the notes computed from the two records: instrument type, status, date of issue, date of effect, and the interval between them. That whole layer is comparison and date arithmetic — on the same data, anyone gets the same output.",
+        "The third layer is the content comparison written by an editor, and it is the only layer touched by a human hand. Each point sets out what the earlier instrument records, what the later one records, a label drawn from a closed list of nine kinds of change, and one sentence of observation. Each side must cite the record it was read from, and where a record is silent the page says so rather than inferring anything from that silence.",
+        "The fourth layer is the check. Every string in the comparison layer is scanned against a list of advisory, evaluative and speculative terms, and each point must cite a basis on both sides. A single failure stops the build. The objectivity of this material therefore does not rest on a promise to write carefully; it rests on a condition that must be satisfied before the page can exist at all.",
+        "An observation here means one thing only: a description of the difference that can be read off the two texts. It does not rank one provision above another, does not predict consequences, and does not stand in for legal advice on a matter. Each comparison page ends with a box where a reader can paste two passages and see where the wording differs; that comparison runs in the browser and is purely mechanical — it shows which words were added and which removed, and says nothing about whether the meaning has changed.",
       ],
     },
     {

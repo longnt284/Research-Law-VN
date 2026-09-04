@@ -155,6 +155,11 @@ export default async function LangLayout({
                     </Link>
                   </li>
                   <li>
+                    <Link href={`/${lang}/doi-chieu`} className="link-sweep">
+                      {t.nav.compare}
+                    </Link>
+                  </li>
+                  <li>
                     <Link href={`/${lang}/phuong-phap`} className="link-sweep">
                       {t.nav.about}
                     </Link>
