@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { Reveal } from "@/components/Reveal";
 import { VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang } from "@/i18n/dictionary";
@@ -107,75 +109,81 @@ export default async function AboutPage({
   };
 
   return (
-    <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-      <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
-      <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
-      <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
-        {t.about.lede}
-      </p>
-
-      <dl className="tnum mt-9 grid max-w-2xl grid-cols-3 gap-6 border-y border-[var(--rule)] py-5">
-        <div>
-          <dt className="eyebrow">{lang === "vi" ? "Tổng số" : "Total"}</dt>
-          <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
-            {counts.total}
-          </dd>
+    <>
+      <section className="rule-b hero-lux">
+        <LuxBackdrop />
+        <div className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
+          <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
+          <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
+          <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
+            {t.about.lede}
+          </p>
         </div>
-        <div>
-          <dt className="eyebrow">{lang === "vi" ? "Đã đối chiếu" : "Confirmed"}</dt>
-          <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
-            {counts.verified}
-          </dd>
-        </div>
-        <div>
-          <dt className="eyebrow">
-            {lang === "vi" ? "Cần kiểm thêm" : "Needs checking"}
-          </dt>
-          <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
-            {counts.crossCheck}
-          </dd>
-        </div>
-      </dl>
+      </section>
 
-      {/* Mục được đánh số bằng chữ số La Mã nhỏ đặt bên lề trái trên màn hình
-          rộng — cách một bài viết dài tự chỉ đường mà không cần mục lục. */}
-      <div className="mt-12 space-y-14">
-        {body[lang].map((section, si) => (
-          <section
-            key={section.h}
-            className="lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6"
-          >
-            <p
-              aria-hidden="true"
-              className="tnum text-[var(--brass)] lg:pt-1.5 lg:text-right"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              {ROMAN[si] ?? si + 1}
-            </p>
-            <div className="min-w-0">
-              <h2 className="mt-1 text-[1.45rem] leading-snug lg:mt-0">
-                {section.h}
-              </h2>
-              <div className="measure mt-3 space-y-4">
-                {section.p.map((para, i) => (
-                  <p
-                    key={i}
-                    className={`leading-[1.75] text-[var(--ink-2)] ${
-                      si === 0 && i === 0 ? "dropcap" : ""
-                    }`}
-                  >
-                    {para}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </section>
-        ))}
-      </div>
+      <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
+        <dl className="tnum grid max-w-2xl grid-cols-3 gap-6 border-y border-[var(--rule)] py-5">
+          <div>
+            <dt className="eyebrow">{lang === "vi" ? "Tổng số" : "Total"}</dt>
+            <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+              {counts.total}
+            </dd>
+          </div>
+          <div>
+            <dt className="eyebrow">{lang === "vi" ? "Đã đối chiếu" : "Confirmed"}</dt>
+            <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+              {counts.verified}
+            </dd>
+          </div>
+          <div>
+            <dt className="eyebrow">
+              {lang === "vi" ? "Cần kiểm thêm" : "Needs checking"}
+            </dt>
+            <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+              {counts.crossCheck}
+            </dd>
+          </div>
+        </dl>
 
-      <p className="tnum mt-14 border-t border-[var(--rule)] pt-5 text-sm text-[var(--ink-3)]">
-        {t.footer.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}.
-      </p>
-    </article>
+        {/* Mục được đánh số bằng chữ số La Mã nhỏ đặt bên lề trái trên màn hình
+            rộng — cách một bài viết dài tự chỉ đường mà không cần mục lục. */}
+        <div className="mt-12 space-y-14">
+          {body[lang].map((section, si) => (
+            <Reveal key={section.h}>
+              <section className="lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6">
+                <p
+                  aria-hidden="true"
+                  className="tnum text-[var(--brass)] lg:pt-1.5 lg:text-right"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  {ROMAN[si] ?? si + 1}
+                </p>
+                <div className="min-w-0">
+                  <h2 className="mt-1 text-[1.45rem] leading-snug lg:mt-0">
+                    {section.h}
+                  </h2>
+                  <div className="measure mt-3 space-y-4">
+                    {section.p.map((para, i) => (
+                      <p
+                        key={i}
+                        className={`leading-[1.75] text-[var(--ink-2)] ${
+                          si === 0 && i === 0 ? "dropcap" : ""
+                        }`}
+                      >
+                        {para}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            </Reveal>
+          ))}
+        </div>
+
+        <p className="tnum mt-14 border-t border-[var(--rule)] pt-5 text-sm text-[var(--ink-3)]">
+          {t.footer.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}.
+        </p>
+      </article>
+    </>
   );
 }
