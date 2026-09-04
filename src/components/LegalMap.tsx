@@ -243,10 +243,10 @@ export function LegalMap({
       const related = focus !== null && (e.from === focus || e.to === focus);
       if (dim) ctx.globalAlpha = 0.05;
       else if (focus !== null && !related) ctx.globalAlpha = 0.12;
-      else ctx.globalAlpha = related ? 0.95 : 0.34;
+      else ctx.globalAlpha = related ? 0.95 : 0.44;
 
       ctx.strokeStyle = related ? P.accent : P.ink3;
-      ctx.lineWidth = related ? 1.9 : 1;
+      ctx.lineWidth = related ? 1.9 : 1.15;
       if (e.kind === "amends") ctx.setLineDash([6, 4]);
       else if (e.kind === "replaces") ctx.setLineDash([1.5, 4]);
       else ctx.setLineDash([]);
@@ -278,6 +278,13 @@ export function LegalMap({
       const isNear = near?.has(n.id) ?? false;
 
       ctx.globalAlpha = dim ? 0.16 : focus !== null && !isFocus && !isNear ? 0.4 : 1;
+
+      // Viền màu giấy lót dưới điểm: khi một đường nối chạy ngang qua, điểm vẫn
+      // tách khỏi đường thay vì dính thành một vệt.
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r + 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = P.paper;
+      ctx.fill();
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
@@ -485,7 +492,8 @@ export function LegalMap({
     if (resetSignal > 0) fitView();
   }, [resetSignal, fitView]);
 
-  // Theo dõi thay đổi chủ đề sáng/tối để đọc lại bảng màu.
+  // Theo dõi thay đổi chủ đề sáng/tối để đọc lại bảng màu. Hai nguồn: cài đặt hệ
+  // điều hành, và thuộc tính `data-theme` do nút đổi nền trên thanh điều hướng ghi.
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -493,7 +501,15 @@ export function LegalMap({
       kick();
     };
     mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const observer = new MutationObserver(onChange);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => {
+      mq.removeEventListener("change", onChange);
+      observer.disconnect();
+    };
   }, [kick]);
 
   // ── Con lăn ──────────────────────────────────────────────────────────────

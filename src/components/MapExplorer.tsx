@@ -66,9 +66,10 @@ export function MapExplorer({ lang }: { lang: Lang }) {
       {/* Giới thiệu, giữ mỏng. Đoạn văn dài đã chuyển sang bảng bên phải để màn
           hình đầu tiên vẫn là bản đồ chứ không phải một khối chữ. */}
       <section className="rule-b shrink-0">
-        <div className="mx-auto w-full max-w-[76rem] px-5 py-5 sm:px-8 sm:py-6">
-          <h1 className="text-[1.6rem] leading-tight sm:text-[2rem]">{t.siteName}</h1>
-          <p className="measure mt-1.5 text-[0.9375rem] leading-relaxed text-[var(--ink-3)]">
+        <div className="mx-auto w-full max-w-[76rem] px-5 py-6 sm:px-8 sm:py-8">
+          <p className="eyebrow eyebrow-tick rise">{t.home.eyebrow}</p>
+          <h1 className="display-sm rise rise-1 mt-2.5">{t.siteName}</h1>
+          <p className="measure rise rise-2 mt-2 text-[0.9375rem] leading-relaxed text-[var(--ink-3)]">
             {t.siteTagline}
           </p>
         </div>
@@ -90,11 +91,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
                 type="button"
                 onClick={() => setActiveDomain("all")}
                 aria-pressed={activeDomain === "all"}
-                className={`shrink-0 border px-2.5 py-1 text-xs transition-colors ${
-                  activeDomain === "all"
-                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--paper)]"
-                    : "border-[var(--rule-strong)] text-[var(--ink-2)] hover:border-[var(--accent)]"
-                }`}
+                className="chip chip-all"
               >
                 {t.home.filterAll}
               </button>
@@ -106,11 +103,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
                     type="button"
                     onClick={() => setActiveDomain(on ? "all" : d.id)}
                     aria-pressed={on}
-                    className={`inline-flex shrink-0 items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors ${
-                      on
-                        ? "border-[var(--accent)] text-[var(--ink)]"
-                        : "border-[var(--rule)] text-[var(--ink-2)] hover:border-[var(--rule-strong)]"
-                    }`}
+                    className="chip"
                   >
                     <span
                       aria-hidden="true"
@@ -128,7 +121,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
           <button
             type="button"
             onClick={() => setResetSignal((n) => n + 1)}
-            className="shrink-0 border border-[var(--rule-strong)] px-2.5 py-1 text-xs text-[var(--ink-2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="chip"
           >
             {t.home.reset}
           </button>
@@ -166,7 +159,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
               <p className="measure text-[0.9375rem] leading-relaxed text-[var(--ink-2)]">
                 {t.home.lede}
               </p>
-              <dl className="mt-6 space-y-2.5 border-t border-[var(--rule)] pt-5">
+              <dl className="mt-6 border-t border-[var(--rule)] pt-5">
                 <Stat n={visibleCount} label={t.home.statsDocs} />
                 <Stat n={relations.length} label={t.home.statsRelations} />
                 <Stat n={domains.length} label={t.home.statsDomains} />
@@ -246,9 +239,9 @@ export function MapExplorer({ lang }: { lang: Lang }) {
 
               <Link
                 href={`/${lang}/van-ban/${selected.id}`}
-                className="mt-6 inline-block border border-[var(--accent)] px-3.5 py-1.5 text-sm text-[var(--accent)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--paper)]"
+                className="btn btn-outline mt-6"
               >
-                {t.home.openDetail} →
+                {t.home.openDetail} <span aria-hidden="true">→</span>
               </Link>
             </article>
           )}
@@ -277,13 +270,21 @@ function Legend({ t }: { t: ReturnType<typeof getDict> }) {
   );
 }
 
+/**
+ * Một dòng số liệu. Con số cỡ lớn bằng chữ có chân là điểm nhấn thị giác duy
+ * nhất của bảng bên phải khi chưa chọn văn bản nào; nhãn nằm sát chân số để hai
+ * thứ đọc như một cụm.
+ */
 function Stat({ n, label }: { n: number; label: string }) {
   return (
-    <div className="flex items-baseline gap-2">
-      <dt className="tnum text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+    <div className="flex items-baseline gap-2.5 border-b border-[var(--rule)] py-2 last:border-b-0">
+      <dt
+        className="tnum text-[1.9rem] leading-none text-[var(--accent)]"
+        style={{ fontFamily: "var(--font-serif)" }}
+      >
         {n}
       </dt>
-      <dd className="text-sm text-[var(--ink-3)]">{label}</dd>
+      <dd className="eyebrow">{label}</dd>
     </div>
   );
 }
