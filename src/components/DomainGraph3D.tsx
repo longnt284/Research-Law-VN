@@ -86,13 +86,36 @@ export function DomainGraph3D({
       const pos = new Map<string, InstanceType<typeof THREE.Vector3>>();
       let maxRadius = 1;
       for (const [tier, list] of byTier) {
-        const radius = list.length === 1 ? 0 : Math.min(1.9, 0.45 + list.length * 0.18);
-        maxRadius = Math.max(maxRadius, radius);
+        /*
+          Tầng đông rải làm hai vòng đồng tâm, lệch nhau một chút theo chiều
+          đứng; tầng thưa giữ một vòng. Ép chín nghị định trở lên vào cùng một
+          vòng thì chỉ còn hai lối, và cả hai đều hỏng: nới bán kính cho đủ chỗ
+          thì vòng rộng hơn khoảng cách giữa hai tầng và các tầng chồng lên nhau
+          trên màn hình, còn giữ bán kính cũ thì các quả cầu dính thành một vệt.
+        */
+        const rings = list.length > 8 ? 2 : 1;
+        const perRing = Math.ceil(list.length / rings);
+        const outer = Math.min(1.95, 0.45 + perRing * 0.2);
+        maxRadius = Math.max(maxRadius, outer);
         list.forEach((d, i) => {
-          const a = (i / list.length) * Math.PI * 2 + tier * 0.6;
+          const ring = i % rings;
+          const countInRing = ring === 0 ? perRing : list.length - perRing;
+          const indexInRing = Math.floor(i / rings);
+          const radius =
+            list.length === 1 ? 0 : ring === 0 ? outer : outer * 0.55;
+          // Lệch pha giữa hai vòng để quả cầu vòng trong không nấp đúng sau quả
+          // cầu vòng ngoài ở góc nhìn mặc định.
+          const a =
+            (indexInRing / Math.max(countInRing, 1)) * Math.PI * 2 +
+            tier * 0.6 +
+            ring * 0.55;
           pos.set(
             d.id,
-            new THREE.Vector3(Math.cos(a) * radius, tierY(tier), Math.sin(a) * radius),
+            new THREE.Vector3(
+              Math.cos(a) * radius,
+              tierY(tier) + (rings === 1 ? 0 : ring === 0 ? 0.14 : -0.14),
+              Math.sin(a) * radius,
+            ),
           );
         });
       }

@@ -22,6 +22,14 @@ Ngày tra cứu của toàn bộ tập dữ liệu nằm ở hằng `VERIFIED_ON
 văn bản pháp luật chỉ có giá trị tại thời điểm tra; trước khi dùng vào hồ sơ
 chính thức phải đối chiếu lại với Công báo hoặc cơ quan ban hành.
 
+Đợt bổ sung ngày 04/9/2026 gồm năm mươi văn bản được tra trong điều kiện không
+mở được trang nguồn Tier 1: phiên làm việc bị chặn thuvienphapluat.vn,
+vanban.chinhphu.vn, vbpl.vn và luatvietnam.vn. Số hiệu và các mốc thời gian của
+từng bản ghi được đối chiếu giữa ít nhất hai kết quả tìm kiếm độc lập; chi tiết
+không khớp hoặc không xuất hiện thì để trống. Cả năm mươi bản ghi mang
+`confidence: "cross-check"` nên giao diện hiện cảnh báo, và `sources` ở nhóm này
+là địa chỉ trang tìm được chứ không phải trang đã mở.
+
 ## Chạy dự án
 
 ```bash
@@ -75,3 +83,11 @@ record carries its sources and a confidence flag, and records with an unconfirme
 detail display that fact openly. A search of legislation is only good as at the
 date it was run; check against the Official Gazette before relying on it in a
 formal filing.
+
+The fifty instruments added on 4 September 2026 were compiled without access to
+Tier 1 sources — the session's network blocked thuvienphapluat.vn,
+vanban.chinhphu.vn, vbpl.vn and luatvietnam.vn. Each number and date was
+corroborated across at least two independent search results, and anything that
+did not agree was left blank. All fifty carry `confidence: "cross-check"`, so the
+interface flags them, and their `sources` are addresses found rather than pages
+opened.
