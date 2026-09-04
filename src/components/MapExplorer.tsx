@@ -121,6 +121,14 @@ export function MapExplorer({ lang }: { lang: Lang }) {
               })}
             </div>
           </div>
+          {/* Khi đã lọc về một lĩnh vực, mở lối sang không gian ba chiều của
+              lĩnh vực đó. Giữ chip làm bộ lọc như cũ: đổi chúng thành liên kết
+              thì mất chức năng lọc, thứ người dùng dùng thường xuyên hơn. */}
+          {activeDomain !== "all" && (
+            <Link href={`/${lang}/linh-vuc/${activeDomain}`} className="chip shrink-0">
+              {t.domainPage.open} <span aria-hidden="true">→</span>
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => setResetSignal((n) => n + 1)}

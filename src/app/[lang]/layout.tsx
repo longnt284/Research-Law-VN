@@ -125,7 +125,7 @@ export default async function LangLayout({
                 </p>
               </div>
               <nav className="md:justify-self-end" aria-label={t.siteName}>
-                <p className="eyebrow eyebrow-tick">{t.nav.map}</p>
+                <p className="eyebrow eyebrow-tick">{t.footer.navTitle}</p>
                 <ul className="mt-2.5 space-y-1.5 text-[0.9375rem]">
                   <li>
                     <Link href={`/${lang}`} className="link-sweep">
@@ -135,6 +135,11 @@ export default async function LangLayout({
                   <li>
                     <Link href={`/${lang}/van-ban`} className="link-sweep">
                       {t.nav.documents}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${lang}/linh-vuc`} className="link-sweep">
+                      {t.nav.domains}
                     </Link>
                   </li>
                   <li>

@@ -70,7 +70,12 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
         Khoảng 3.3rem là chiều cao thanh điều hướng, cùng con số mà trang bản đồ
         dùng để tính chiều cao vùng vẽ.
       */}
-      <div className="rule-b sticky top-[3.3rem] z-20 bg-[color-mix(in_oklab,var(--paper-2)_92%,transparent)] backdrop-blur-md">
+      {/*
+        Chỉ dính từ màn hình vừa trở lên. Trên điện thoại thanh điều hướng xuống
+        hai hàng nên mốc 3.3rem không còn đúng, và một thanh lọc dính sai chỗ ăn
+        mất một phần tư màn hình vốn đã hẹp.
+      */}
+      <div className="rule-b z-20 bg-[color-mix(in_oklab,var(--paper-2)_92%,transparent)] backdrop-blur-md sm:sticky sm:top-[3.3rem]">
         <div className="mx-auto w-full max-w-[76rem] px-5 py-4 sm:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">

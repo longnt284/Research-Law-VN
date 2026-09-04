@@ -41,6 +41,18 @@ export const dict = {
       statsRelations: "quan hệ",
       statsDomains: "lĩnh vực",
     },
+    domainPage: {
+      title: "Lĩnh vực",
+      lede: "Tám lĩnh vực của tập dữ liệu. Mỗi lĩnh vực có một khối quan hệ ba chiều: trục đứng là thứ bậc hiệu lực, luật ở trên, nghị định ở giữa, thông tư dưới cùng.",
+      open: "Mở không gian lĩnh vực",
+      graphTitle: "Khối quan hệ ba chiều",
+      graphHint: "Kéo để xoay, cuộn để phóng to, bấm vào một điểm để mở văn bản.",
+      graphEmpty: "Lĩnh vực này chưa có quan hệ nào được ghi nhận trong tập dữ liệu.",
+      docsTitle: "Văn bản trong lĩnh vực",
+      backToDomains: "Về danh sách lĩnh vực",
+      viewOnMap: "Xem lĩnh vực này trên bản đồ",
+      countDocs: "văn bản",
+    },
     list: {
       title: "Danh mục văn bản",
       lede: "Toàn bộ văn bản trong tập dữ liệu, xếp theo lĩnh vực và thứ bậc hiệu lực. Ô tìm kiếm nhận cả số hiệu lẫn từ khóa trong tên văn bản.",
@@ -106,6 +118,7 @@ export const dict = {
       disclaimerTitle: "Miễn trừ trách nhiệm",
       disclaimer:
         "Nội dung trên trang phục vụ mục đích tra cứu và tham khảo, không thay thế ý kiến pháp lý cho một vụ việc cụ thể. Trước khi sử dụng trong hồ sơ chính thức, hãy đối chiếu lại với Công báo hoặc cơ quan ban hành.",
+      navTitle: "Điều hướng",
       verifiedPrefix: "Dữ liệu tra cứu ngày",
       switchLang: "English",
       switchLangFull: "Chuyển sang tiếng Anh",
@@ -146,6 +159,18 @@ export const dict = {
       statsDocs: "instruments",
       statsRelations: "relations",
       statsDomains: "domains",
+    },
+    domainPage: {
+      title: "Domains",
+      lede: "The eight domains of the dataset. Each opens onto a three-dimensional block of relations whose vertical axis is legal rank: laws above, decrees in the middle, circulars below.",
+      open: "Open the domain space",
+      graphTitle: "Three-dimensional relation block",
+      graphHint: "Drag to rotate, scroll to zoom, click a node to open its record.",
+      graphEmpty: "No relation within this domain has been recorded in the dataset.",
+      docsTitle: "Instruments in this domain",
+      backToDomains: "Back to domains",
+      viewOnMap: "See this domain on the map",
+      countDocs: "instruments",
     },
     list: {
       title: "Index of instruments",
@@ -212,6 +237,7 @@ export const dict = {
       disclaimerTitle: "Disclaimer",
       disclaimer:
         "This material is for reference only and does not substitute for legal advice on a specific matter. Before relying on it in a formal filing, check the text against the Official Gazette or the issuing authority.",
+      navTitle: "Navigate",
       verifiedPrefix: "Data consulted on",
       switchLang: "Tiếng Việt",
       switchLangFull: "Switch to Vietnamese",

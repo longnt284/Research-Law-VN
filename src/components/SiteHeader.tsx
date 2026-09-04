@@ -25,6 +25,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
   const links = [
     { href: `/${lang}`, label: t.nav.map, exact: true },
     { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
+    { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },
     { href: `/${lang}/phuong-phap`, label: t.nav.about, exact: false },
   ];
 
@@ -56,7 +57,13 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
           </span>
         </Link>
 
-        <nav className="-ml-2 flex shrink-0 items-center gap-1 sm:ml-0 sm:gap-2">
+        {/*
+          Không đặt `shrink-0` ở đây. Với bốn mục cộng nút đổi ngôn ngữ và nút
+          đổi nền, thanh điều hướng rộng hơn màn hình điện thoại; nếu cấm co thì
+          nó đẩy cả thân trang tràn ngang. Cho phép xuống hàng: thanh cao thêm
+          một dòng, đổi lại trang không bao giờ cuộn ngang.
+        */}
+        <nav className="-ml-2 flex flex-wrap items-center gap-1 sm:ml-0 sm:gap-2">
           {links.map((l) => {
             const active = l.exact ? pathname === l.href : pathname.startsWith(l.href);
             return (
