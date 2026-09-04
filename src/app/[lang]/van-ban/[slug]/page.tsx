@@ -71,20 +71,25 @@ export default async function DocumentPage({
     <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8">
       <Link
         href={`/${lang}/van-ban`}
-        className="text-sm text-[var(--ink-3)] transition-colors hover:text-[var(--accent)]"
+        className="link-sweep text-sm text-[var(--ink-3)] hover:text-[var(--accent)]"
       >
         ← {t.doc.backToList}
       </Link>
 
-      <header className="mt-5 border-b border-[var(--rule)] pb-7">
-        <div className="flex flex-wrap items-center gap-3">
+      <header className="rule-double-b mt-5 pb-7">
+        <div className="rise flex flex-wrap items-center gap-3">
           <StatusBadge status={doc.status} lang={lang} />
           <span className="text-sm text-[var(--ink-3)]">{t.type[doc.type]}</span>
         </div>
-        <p className="tnum mt-4 text-lg font-semibold text-[var(--accent)]">
+        {/* Số hiệu là thứ người tra cứu nhìn trước tiên, nên nó được đặt bằng
+            chữ có chân cỡ lớn chứ không phải một dòng phụ đề nhỏ. */}
+        <p
+          className="tnum rise rise-1 mt-4 text-[1.375rem] font-semibold text-[var(--accent)]"
+          style={{ fontFamily: "var(--font-serif)" }}
+        >
           {doc.number}
         </p>
-        <h1 className="mt-1.5 max-w-[34ch] text-[1.75rem] leading-[1.2] sm:text-[2.15rem]">
+        <h1 className="display-sm rise rise-2 mt-1.5 max-w-[34ch]">
           {doc.title[lang]}
         </h1>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
@@ -103,8 +108,8 @@ export default async function DocumentPage({
           )}
 
           <section>
-            <h2 className="eyebrow">{t.doc.summary}</h2>
-            <p className="measure mt-2 text-[1.0625rem] leading-relaxed">
+            <h2 className="eyebrow eyebrow-tick">{t.doc.summary}</h2>
+            <p className="dropcap measure mt-3 text-[1.0625rem] leading-relaxed">
               {doc.summary[lang]}
             </p>
           </section>
@@ -119,7 +124,7 @@ export default async function DocumentPage({
           )}
 
           <section className="mt-9">
-            <h2 className="eyebrow">{t.doc.relations}</h2>
+            <h2 className="eyebrow eyebrow-tick">{t.doc.relations}</h2>
             {grouped.length === 0 ? (
               <p className="mt-2 text-sm text-[var(--ink-3)]">{t.doc.noRelations}</p>
             ) : (
@@ -157,7 +162,9 @@ export default async function DocumentPage({
           </section>
         </div>
 
-        <aside className="min-w-0">
+        {/* Bảng dữ liệu bám theo khi cuộn: phần quan hệ bên trái có thể dài, và
+            ngày hiệu lực là thứ người đọc hay ngoái lại kiểm tra giữa chừng. */}
+        <aside className="min-w-0 self-start md:sticky md:top-[4.5rem]">
           <dl className="tnum space-y-4 border-t border-[var(--rule)] pt-5 md:border-t-0 md:pt-0">
             <div>
               <dt className="eyebrow">{t.doc.effectiveOn}</dt>
@@ -196,10 +203,7 @@ export default async function DocumentPage({
             </ul>
           </div>
 
-          <Link
-            href={`/${lang}`}
-            className="mt-6 inline-block border border-[var(--rule-strong)] px-3.5 py-1.5 text-sm transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
-          >
+          <Link href={`/${lang}`} className="btn btn-quiet mt-6">
             {t.doc.viewOnMap}
           </Link>
         </aside>

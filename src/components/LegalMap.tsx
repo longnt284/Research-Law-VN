@@ -106,6 +106,8 @@ export function LegalMap({
   const dirty = useRef(true);
   const rafId = useRef<number | null>(null);
   const palette = useRef<Palette | null>(null);
+  /** Vùng bị chú giải và dòng hướng dẫn che, tính theo toạ độ khung vẽ. */
+  const reserved = useRef<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
   const textWidths = useRef(new Map<string, number>());
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const pinchStart = useRef<{ dist: number; scale: number } | null>(null);
@@ -243,10 +245,10 @@ export function LegalMap({
       const related = focus !== null && (e.from === focus || e.to === focus);
       if (dim) ctx.globalAlpha = 0.05;
       else if (focus !== null && !related) ctx.globalAlpha = 0.12;
-      else ctx.globalAlpha = related ? 0.95 : 0.34;
+      else ctx.globalAlpha = related ? 0.95 : 0.44;
 
       ctx.strokeStyle = related ? P.accent : P.ink3;
-      ctx.lineWidth = related ? 1.9 : 1;
+      ctx.lineWidth = related ? 1.9 : 1.15;
       if (e.kind === "amends") ctx.setLineDash([6, 4]);
       else if (e.kind === "replaces") ctx.setLineDash([1.5, 4]);
       else ctx.setLineDash([]);
@@ -279,6 +281,13 @@ export function LegalMap({
 
       ctx.globalAlpha = dim ? 0.16 : focus !== null && !isFocus && !isNear ? 0.4 : 1;
 
+      // Viền màu giấy lót dưới điểm: khi một đường nối chạy ngang qua, điểm vẫn
+      // tách khỏi đường thay vì dính thành một vệt.
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r + 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = P.paper;
+      ctx.fill();
+
       ctx.beginPath();
       ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
       ctx.fillStyle = `hsl(${n.hue} ${P.nodeC}% ${P.nodeL}%)`;
@@ -306,7 +315,21 @@ export function LegalMap({
     // ── Nhãn, có chống chồng ──
     // Vẽ nhãn theo thứ tự ưu tiên rồi loại bỏ nhãn nào giao với nhãn đã đặt.
     // Đây là lý do chữ trên bản đồ không bao giờ đè lên nhau, kể cả khi thu nhỏ.
-    const placed: { x1: number; y1: number; x2: number; y2: number }[] = [];
+    const placed: { x1: number; y1: number; x2: number; y2: number }[] = [
+      ...reserved.current,
+    ];
+
+    // Điểm được đưa vào danh sách chiếm chỗ TRƯỚC khi đặt nhãn. Nếu không, nhãn
+    // của điểm này có thể phủ lên một điểm khác: chữ vẫn không chồng chữ, nhưng
+    // người đọc mất một điểm trên bản đồ, và đó mới là thứ dễ gây nhầm.
+    for (const n of nodes) {
+      if (isDimmed(n)) continue;
+      const p = worldToScreen(n.x, n.y);
+      const r = Math.max(2.5, n.r * c.scale) + 2;
+      if (p.x < -r || p.x > w + r || p.y < -r || p.y > h + r) continue;
+      placed.push({ x1: p.x - r, y1: p.y - r, x2: p.x + r, y2: p.y + r });
+    }
+
     const fontSize = 12.5;
     ctx.font = `500 ${fontSize}px ${getComputedStyle(document.body).fontFamily}`;
     ctx.textBaseline = "middle";
@@ -343,33 +366,60 @@ export function LegalMap({
       }
 
       const r = Math.max(2.5, n.r * c.scale);
-      const lx = p.x + r + 7;
-      const ly = p.y;
-      const box = {
-        x1: lx - 2,
-        y1: ly - fontSize * 0.72,
-        x2: lx + tw + 2,
-        y2: ly + fontSize * 0.72,
-      };
+      const halfH = fontSize * 0.72;
 
-      let clash = false;
-      for (const bb of placed) {
-        if (box.x1 < bb.x2 && box.x2 > bb.x1 && box.y1 < bb.y2 && box.y2 > bb.y1) {
-          clash = true;
+      // Bốn chỗ đặt, thử lần lượt: phải, trái, trên, dưới. Bản trước chỉ đặt
+      // được bên phải nên hễ chỗ đó vướng là nhãn bị bỏ hẳn; giờ nhãn chỉ mất
+      // khi cả bốn phía đều kín.
+      const spots = [
+        { x: p.x + r + 7, y: p.y },
+        { x: p.x - r - 7 - tw, y: p.y },
+        { x: p.x - tw / 2, y: p.y - r - halfH - 4 },
+        { x: p.x - tw / 2, y: p.y + r + halfH + 4 },
+      ];
+
+      let box: { x1: number; y1: number; x2: number; y2: number } | null = null;
+      for (const s of spots) {
+        const cand = {
+          x1: s.x - 2,
+          y1: s.y - halfH,
+          x2: s.x + tw + 2,
+          y2: s.y + halfH,
+        };
+        // Nhãn tràn mép khung vẽ cũng coi như không đặt được: một số hiệu bị cắt
+        // mất đuôi còn khó đọc hơn là không có nhãn.
+        if (cand.x1 < 2 || cand.x2 > w - 2) continue;
+        const clash = placed.some(
+          (bb) =>
+            cand.x1 < bb.x2 && cand.x2 > bb.x1 && cand.y1 < bb.y2 && cand.y2 > bb.y1,
+        );
+        if (!clash) {
+          box = cand;
           break;
         }
       }
-      if (clash && !isFocus) continue;
+
+      // Điểm đang chọn hoặc đang trỏ tới luôn có nhãn, kể cả khi phải đè lên chỗ
+      // khác: đó chính là thứ người dùng vừa yêu cầu xem.
+      if (!box) {
+        if (!isFocus) continue;
+        box = {
+          x1: p.x + r + 5,
+          y1: p.y - halfH,
+          x2: p.x + r + 9 + tw,
+          y2: p.y + halfH,
+        };
+      }
       placed.push(box);
 
-      // Nền mờ sau chữ để nhãn không bị các đường cạnh cắt ngang.
-      ctx.globalAlpha = 0.82;
+      // Nền sau chữ để nhãn không bị các đường cạnh cắt ngang.
+      ctx.globalAlpha = 0.92;
       ctx.fillStyle = P.paper;
       ctx.fillRect(box.x1, box.y1, box.x2 - box.x1, box.y2 - box.y1);
       ctx.globalAlpha = 1;
 
       ctx.fillStyle = isFocus ? P.accent : isNear ? P.ink : P.ink2;
-      ctx.fillText(label, lx, ly + 0.5);
+      ctx.fillText(label, box.x1 + 2, (box.y1 + box.y2) / 2 + 0.5);
     }
 
     dirty.current = false;
@@ -419,8 +469,14 @@ export function LegalMap({
     };
 
     const narrow = fit(Math.min(24, w * 0.04));
-    const { s: scale, availW, availH } =
+    const { s: fitted, availW, availH } =
       narrow.s >= LABEL_HARD_GATE ? fit(Math.min(132, w * 0.16)) : narrow;
+
+    // Trên màn hình điện thoại, ép cả tập dữ liệu vào bề ngang 390px cho ra mức
+    // phóng khoảng 0.16: mỗi văn bản còn ba pixel, không nhãn nào được vẽ, và
+    // bản đồ không nói lên điều gì. Thà mở ở mức đọc được rồi để người dùng kéo
+    // sang phần còn lại — thao tác kéo là thứ họ sẽ làm ngay sau đó dù thế nào.
+    const scale = w < 640 ? Math.max(fitted, LABEL_HARD_GATE + 0.04) : fitted;
     cam.current.scale = scale;
 
     // Đưa tâm của phần nội dung về đúng tâm của vùng khả dụng, chứ không phải
@@ -452,6 +508,25 @@ export function LegalMap({
 
     const apply = () => {
       const rect = wrap.getBoundingClientRect();
+
+      // Chú giải và dòng hướng dẫn nằm đè lên vùng vẽ dưới dạng phần tử HTML.
+      // Canvas không biết gì về chúng, nên nếu không đo lại thì nhãn số hiệu vẫn
+      // được đặt ngay dưới hai khối đó và người đọc thấy chữ chồng lên chữ.
+      // Đo ở đây thay vì trong vòng vẽ: hai khối này chỉ đổi chỗ khi khung đổi cỡ.
+      const boxes: { x1: number; y1: number; x2: number; y2: number }[] = [];
+      for (const el of wrap.parentElement?.querySelectorAll("[data-map-overlay]") ??
+        []) {
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        boxes.push({
+          x1: r.left - rect.left - 4,
+          y1: r.top - rect.top - 4,
+          x2: r.right - rect.left + 4,
+          y2: r.bottom - rect.top + 4,
+        });
+      }
+      reserved.current = boxes;
+
       // Giới hạn dpr ở 2: trên màn hình 3x, số điểm ảnh phải tô tăng gấp rưỡi
       // mà mắt gần như không phân biệt được.
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -485,7 +560,8 @@ export function LegalMap({
     if (resetSignal > 0) fitView();
   }, [resetSignal, fitView]);
 
-  // Theo dõi thay đổi chủ đề sáng/tối để đọc lại bảng màu.
+  // Theo dõi thay đổi chủ đề sáng/tối để đọc lại bảng màu. Hai nguồn: cài đặt hệ
+  // điều hành, và thuộc tính `data-theme` do nút đổi nền trên thanh điều hướng ghi.
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -493,7 +569,15 @@ export function LegalMap({
       kick();
     };
     mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const observer = new MutationObserver(onChange);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    return () => {
+      mq.removeEventListener("change", onChange);
+      observer.disconnect();
+    };
   }, [kick]);
 
   // ── Con lăn ──────────────────────────────────────────────────────────────

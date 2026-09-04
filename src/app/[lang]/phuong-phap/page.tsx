@@ -88,6 +88,8 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
   ],
 };
 
+const ROMAN = ["I", "II", "III", "IV", "V", "VI"];
+
 export default async function AboutPage({
   params,
 }: {
@@ -106,10 +108,9 @@ export default async function AboutPage({
 
   return (
     <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-      <h1 className="max-w-[20ch] text-3xl leading-tight sm:text-[2.4rem]">
-        {t.about.title}
-      </h1>
-      <p className="measure mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
+      <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
+      <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
+      <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
         {t.about.lede}
       </p>
 
@@ -136,16 +137,37 @@ export default async function AboutPage({
         </div>
       </dl>
 
-      <div className="mt-10 space-y-12">
-        {body[lang].map((section) => (
-          <section key={section.h}>
-            <h2 className="text-[1.4rem] leading-snug">{section.h}</h2>
-            <div className="measure mt-3 space-y-4">
-              {section.p.map((para, i) => (
-                <p key={i} className="leading-[1.75] text-[var(--ink-2)]">
-                  {para}
-                </p>
-              ))}
+      {/* Mục được đánh số bằng chữ số La Mã nhỏ đặt bên lề trái trên màn hình
+          rộng — cách một bài viết dài tự chỉ đường mà không cần mục lục. */}
+      <div className="mt-12 space-y-14">
+        {body[lang].map((section, si) => (
+          <section
+            key={section.h}
+            className="lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6"
+          >
+            <p
+              aria-hidden="true"
+              className="tnum text-[var(--brass)] lg:pt-1.5 lg:text-right"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              {ROMAN[si] ?? si + 1}
+            </p>
+            <div className="min-w-0">
+              <h2 className="mt-1 text-[1.45rem] leading-snug lg:mt-0">
+                {section.h}
+              </h2>
+              <div className="measure mt-3 space-y-4">
+                {section.p.map((para, i) => (
+                  <p
+                    key={i}
+                    className={`leading-[1.75] text-[var(--ink-2)] ${
+                      si === 0 && i === 0 ? "dropcap" : ""
+                    }`}
+                  >
+                    {para}
+                  </p>
+                ))}
+              </div>
             </div>
           </section>
         ))}

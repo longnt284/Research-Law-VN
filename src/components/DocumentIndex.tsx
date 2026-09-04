@@ -63,7 +63,19 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
 
   return (
     <>
-      <div className="rule-b bg-[var(--paper-2)]">
+      {/*
+        Thanh lọc dính ngay dưới thanh điều hướng. Danh mục dài hơn một màn hình,
+        và người đang cuộn giữa danh sách thường muốn đổi từ khóa ngay tại chỗ
+        chứ không phải cuộn ngược lên đầu trang.
+        Khoảng 3.3rem là chiều cao thanh điều hướng, cùng con số mà trang bản đồ
+        dùng để tính chiều cao vùng vẽ.
+      */}
+      {/*
+        Chỉ dính từ màn hình vừa trở lên. Trên điện thoại thanh điều hướng xuống
+        hai hàng nên mốc 3.3rem không còn đúng, và một thanh lọc dính sai chỗ ăn
+        mất một phần tư màn hình vốn đã hẹp.
+      */}
+      <div className="rule-b z-20 bg-[color-mix(in_oklab,var(--paper-2)_92%,transparent)] backdrop-blur-md sm:sticky sm:top-[3.3rem]">
         <div className="mx-auto w-full max-w-[76rem] px-5 py-4 sm:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">
@@ -102,11 +114,7 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
                 type="button"
                 onClick={() => setDomain("all")}
                 aria-pressed={domain === "all"}
-                className={`shrink-0 border px-2.5 py-1 text-xs transition-colors ${
-                  domain === "all"
-                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--paper)]"
-                    : "border-[var(--rule-strong)] text-[var(--ink-2)] hover:border-[var(--accent)]"
-                }`}
+                className="chip chip-all"
               >
                 {t.home.filterAll}
               </button>
@@ -118,11 +126,7 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
                     type="button"
                     onClick={() => setDomain(on ? "all" : d.id)}
                     aria-pressed={on}
-                    className={`inline-flex shrink-0 items-center gap-1.5 border px-2.5 py-1 text-xs transition-colors ${
-                      on
-                        ? "border-[var(--accent)] text-[var(--ink)]"
-                        : "border-[var(--rule)] text-[var(--ink-2)] hover:border-[var(--rule-strong)]"
-                    }`}
+                    className="chip"
                   >
                     <span
                       aria-hidden="true"
@@ -159,10 +163,13 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
               <li key={d.id} className="border-b border-[var(--rule)]">
                 <Link
                   href={`/${lang}/van-ban/${d.id}`}
-                  className="group grid gap-x-6 gap-y-2 py-4 transition-colors hover:bg-[var(--paper-2)] sm:grid-cols-[11rem_1fr]"
+                  className="row-mark group grid gap-x-6 gap-y-2 py-4 pl-4 transition-colors hover:bg-[var(--paper-2)] sm:grid-cols-[11rem_1fr]"
                 >
                   <div className="min-w-0">
-                    <p className="tnum text-sm font-semibold text-[var(--accent)]">
+                    <p
+                      className="tnum text-[0.9375rem] font-semibold text-[var(--accent)]"
+                      style={{ fontFamily: "var(--font-serif)" }}
+                    >
                       {d.number}
                     </p>
                     <p className="mt-0.5 text-xs text-[var(--ink-3)]">
@@ -171,7 +178,7 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
                   </div>
                   <div className="min-w-0">
                     <h2
-                      className="text-[1.0625rem] leading-snug transition-colors group-hover:text-[var(--accent)]"
+                      className="text-[1.125rem] leading-snug transition-colors group-hover:text-[var(--accent)]"
                       style={{ fontFamily: "var(--font-serif)" }}
                     >
                       {d.title[lang]}

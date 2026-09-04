@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
 
@@ -24,6 +25,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
   const links = [
     { href: `/${lang}`, label: t.nav.map, exact: true },
     { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
+    { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },
     { href: `/${lang}/phuong-phap`, label: t.nav.about, exact: false },
   ];
 
@@ -35,11 +37,18 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
         và chỉ còn lại một ô vuông vô nghĩa ở góc trái.
       */}
       <div className="mx-auto flex w-full max-w-[76rem] flex-wrap items-center justify-between gap-x-4 gap-y-1.5 px-5 py-2.5 sm:px-8 sm:py-3">
-        <Link href={`/${lang}`} className="group flex items-baseline gap-2.5">
+        <Link href={`/${lang}`} className="group flex items-center gap-2.5">
+          {/*
+            Dấu ấn là chữ § đặt trong khung vuông mực đỏ — một chi tiết đặc trưng
+            của ngành thay vì một ô màu trung tính. Khung tô đầy khi rê chuột.
+          */}
           <span
             aria-hidden="true"
-            className="inline-block h-3.5 w-3.5 shrink-0 border border-[var(--accent)] transition-colors group-hover:bg-[var(--accent)]"
-          />
+            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-[var(--accent)] text-[0.8125rem] leading-none text-[var(--accent)] transition-colors group-hover:bg-[var(--accent)] group-hover:text-[var(--paper)]"
+            style={{ fontFamily: "var(--font-serif)" }}
+          >
+            §
+          </span>
           <span
             className="text-[1.0625rem] font-semibold tracking-tight"
             style={{ fontFamily: "var(--font-serif)" }}
@@ -48,7 +57,13 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
           </span>
         </Link>
 
-        <nav className="-ml-2 flex shrink-0 items-center gap-1 sm:ml-0 sm:gap-2">
+        {/*
+          Không đặt `shrink-0` ở đây. Với bốn mục cộng nút đổi ngôn ngữ và nút
+          đổi nền, thanh điều hướng rộng hơn màn hình điện thoại; nếu cấm co thì
+          nó đẩy cả thân trang tràn ngang. Cho phép xuống hàng: thanh cao thêm
+          một dòng, đổi lại trang không bao giờ cuộn ngang.
+        */}
+        <nav className="-ml-2 flex flex-wrap items-center gap-1 sm:ml-0 sm:gap-2">
           {links.map((l) => {
             const active = l.exact ? pathname === l.href : pathname.startsWith(l.href);
             return (
@@ -56,13 +71,23 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
                 key={l.href}
                 href={l.href}
                 aria-current={active ? "page" : undefined}
-                className={`border-b-2 px-2 py-1.5 text-sm transition-colors sm:px-2.5 ${
+                className={`group relative px-2 py-1.5 text-sm transition-colors sm:px-2.5 ${
                   active
-                    ? "border-[var(--accent)] text-[var(--ink)]"
-                    : "border-transparent text-[var(--ink-3)] hover:text-[var(--ink)]"
+                    ? "text-[var(--ink)]"
+                    : "text-[var(--ink-3)] hover:text-[var(--ink)]"
                 }`}
               >
                 {l.label}
+                {/*
+                  Gạch chân là một phần tử riêng chứ không phải border, nhờ vậy
+                  nó chạy ngang ra khi rê chuột mà chiều cao dòng không đổi.
+                */}
+                <span
+                  aria-hidden="true"
+                  className={`absolute inset-x-2 bottom-0 h-[2px] origin-left bg-[var(--accent)] transition-transform duration-300 ease-[var(--ease-out-soft)] sm:inset-x-2.5 ${
+                    active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  }`}
+                />
               </Link>
             );
           })}
@@ -74,6 +99,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
           >
             {t.footer.switchLang}
           </Link>
+          <ThemeToggle lang={lang} />
         </nav>
       </div>
     </header>

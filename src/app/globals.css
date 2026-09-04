@@ -4,8 +4,12 @@
   Hướng thẩm mỹ: editorial nghiêm ngặt.
   Một quyết định thị giác được giữ nhất quán trên toàn trang — nền giấy ngà,
   mực xanh đen, chữ có chân cho tiêu đề, và đường kẻ mảnh thay cho bóng đổ.
-  Không bo góc lớn, không gradient, không card nổi: sản phẩm pháp lý đọc tốt hơn
-  khi trông giống một trang in được sắp chữ cẩn thận.
+  Không bo góc lớn, không gradient loè, không card nổi: sản phẩm pháp lý đọc tốt
+  hơn khi trông giống một trang in được sắp chữ cẩn thận.
+
+  Bản nâng cấp giữ nguyên hướng đó nhưng làm nó dứt khoát hơn: cỡ chữ tiêu đề
+  lớn hẳn để có điểm nhấn đầu trang, một sắc đồng dùng cho chi tiết trang trí,
+  lớp hạt giấy rất nhạt để nền không phẳng lì, và chuyển động chỉ đủ để dẫn mắt.
 */
 
 @theme {
@@ -19,6 +23,8 @@
   --color-rule-strong: #b9b0a0;
   --color-accent: #7a2c1f;
   --color-accent-soft: #a8503f;
+  /* Sắc đồng, chỉ dùng cho chi tiết trang trí: gạch đầu nhãn, số thứ tự mục. */
+  --color-brass: #9a7b34;
 
   /*
     `--font-lora` và `--font-bvp` do next/font sinh ra ở thẻ <html>. Chuỗi dự
@@ -45,11 +51,18 @@
   --rule-strong: var(--color-rule-strong);
   --accent: var(--color-accent);
   --accent-soft: var(--color-accent-soft);
+  --brass: var(--color-brass);
+  --grain-opacity: 0.05;
   --node-lightness: 42%;
   --node-chroma: 46%;
   color-scheme: light;
 }
 
+/*
+  Bảng màu tối được khai báo hai lần: một lần cho người chưa bấm gì (đi theo hệ
+  điều hành) và một lần cho người đã tự chọn. Không gộp được vì mỗi trường hợp
+  cần thắng ở một chiều khác nhau.
+*/
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #14161a;
@@ -62,6 +75,8 @@
     --rule-strong: #4a5058;
     --accent: #e0917f;
     --accent-soft: #c9705c;
+    --brass: #c9a961;
+    --grain-opacity: 0.07;
     --node-lightness: 66%;
     --node-chroma: 52%;
     color-scheme: dark;
@@ -79,6 +94,8 @@
   --rule-strong: #4a5058;
   --accent: #e0917f;
   --accent-soft: #c9705c;
+  --brass: #c9a961;
+  --grain-opacity: 0.07;
   --node-lightness: 66%;
   --node-chroma: 52%;
   color-scheme: dark;
@@ -122,6 +139,22 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/*
+  Hạt giấy. Một ô 160px được lát lại thay vì vẽ nhiễu tràn màn hình: feTurbulence
+  tính lại theo diện tích, lát ô nhỏ giữ chi phí vẽ ở mức không đáng kể.
+  Lớp này nằm dưới nội dung và không bắt chuột.
+*/
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
 h1,
 h2,
 h3,
@@ -162,6 +195,10 @@ a {
 .rule-b {
   border-bottom: 1px solid var(--rule);
 }
+/* Đường kẻ đôi, dùng để đóng khung phần mở đầu của một trang. */
+.rule-double-b {
+  border-bottom: 3px double var(--rule-strong);
+}
 
 .measure {
   max-width: 68ch;
@@ -180,6 +217,237 @@ a {
   font-weight: 600;
   color: var(--ink-3);
   line-height: 1.5;
+}
+
+/* Nhãn có gạch đồng dẫn đầu, dùng ở đầu trang chứ không rải khắp nơi. */
+.eyebrow-tick {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.eyebrow-tick::before {
+  content: "";
+  width: 1.75rem;
+  height: 1px;
+  background: var(--brass);
+  flex-shrink: 0;
+}
+
+/*
+  Cỡ chữ tiêu đề trang. Dùng clamp thay vì bốn breakpoint: một công thức duy
+  nhất cho mọi bề ngang, và không có bước nhảy cỡ chữ ở đúng chỗ máy tính bảng.
+*/
+.display {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.022em;
+  font-size: clamp(2.1rem, 1.25rem + 3.4vw, 3.75rem);
+  text-wrap: balance;
+}
+.display-sm {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.018em;
+  font-size: clamp(1.75rem, 1.2rem + 2.1vw, 2.6rem);
+  text-wrap: balance;
+}
+
+/* Chữ hoa đầu đoạn, chỉ dùng cho đoạn mở đầu của bài dài. */
+.dropcap::first-letter {
+  float: left;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 3.3em;
+  line-height: 0.82;
+  padding: 0.06em 0.11em 0 0;
+  color: var(--accent);
+}
+
+/*
+  Gạch chân chạy từ trái sang khi rê chuột. Dùng background thay vì border để
+  không làm dịch chuyển dòng chữ khi hiệu ứng bật.
+*/
+.link-sweep {
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.35s var(--ease-out-soft), color 0.2s;
+  padding-bottom: 1px;
+}
+.link-sweep:hover,
+.link-sweep:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* ── Nút ──────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--accent);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  transition: background-color 0.25s var(--ease-out-soft),
+    color 0.25s var(--ease-out-soft), border-color 0.25s var(--ease-out-soft);
+}
+.btn-solid {
+  background: var(--accent);
+  color: var(--paper);
+}
+.btn-solid:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+.btn-outline {
+  color: var(--accent);
+}
+.btn-outline:hover {
+  background: var(--accent);
+  color: var(--paper);
+}
+.btn-quiet {
+  border-color: var(--rule-strong);
+  color: var(--ink-2);
+}
+.btn-quiet:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/*
+  Chip lọc lĩnh vực. Trạng thái bật đọc từ `aria-pressed` để không phải giữ song
+  song một class và một thuộc tính ARIA nói cùng một điều.
+*/
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+  border: 1px solid var(--rule);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+.chip:hover {
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+.chip[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--ink);
+  background: color-mix(in oklab, var(--accent) 9%, transparent);
+}
+.chip-all[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+/*
+  Thanh dọc màu mực đỏ chạy ra khi rê vào một dòng trong danh mục. Thay cho đổ
+  bóng: cùng tác dụng chỉ chỗ đang trỏ, nhưng không phá vẻ phẳng của trang in.
+*/
+.row-mark {
+  position: relative;
+}
+.row-mark::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.3s var(--ease-out-soft);
+}
+.row-mark:hover::before,
+.row-mark:focus-visible::before {
+  transform: scaleY(1);
+}
+
+/* ── Dải mốc hiệu lực chạy ngang ──────────────────────────────────────── */
+
+.marquee {
+  overflow: hidden;
+  /* Hai mép mờ dần để chữ đi vào và đi ra chứ không bị cắt cụt ở biên. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 3rem,
+    #000 calc(100% - 3rem),
+    transparent
+  );
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 70s linear infinite;
+}
+
+/* Dừng khi rê chuột vào, để người đọc kịp bấm vào một mốc đang chạy qua. */
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*
+  Với người đã tắt hiệu ứng chuyển động: dải đứng yên và cuộn ngang được bằng
+  tay. Quy tắc chung phía trên rút mọi animation xuống 0.01ms, nên nếu không đổi
+  sang cuộn thì nội dung sẽ nhảy tới cuối rồi nằm im ở đó.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+  .marquee__track {
+    animation: none;
+  }
+}
+
+/* ── Chuyển động vào trang ────────────────────────────────────────────── */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.55s var(--ease-out-soft) both;
+}
+.rise-1 {
+  animation-delay: 70ms;
+}
+.rise-2 {
+  animation-delay: 140ms;
+}
+.rise-3 {
+  animation-delay: 210ms;
 }
 
 /*

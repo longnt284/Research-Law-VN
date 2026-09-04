@@ -21,6 +21,9 @@ export const dict = {
       about: "Phương pháp",
     },
     home: {
+      eyebrow: "Bản đồ quan hệ · Dữ liệu đã tra cứu từng số hiệu",
+      tickerFuture: "sẽ có hiệu lực",
+      tickerPast: "đã có hiệu lực",
       lede: "Một văn bản pháp luật hiếm khi đứng một mình. Luật đặt nguyên tắc, nghị định quy định chi tiết, thông tư hướng dẫn thi hành, rồi một luật sửa đổi khác đến và thay đổi cả ba. Trang này vẽ lại các mối nối đó để người đọc thấy được vị trí của một văn bản trong hệ thống, thay vì đọc nó tách rời.",
       mapHint: "Kéo để di chuyển, cuộn để phóng to, bấm vào một điểm để xem chi tiết.",
       filterDomain: "Lọc theo lĩnh vực",
@@ -37,6 +40,18 @@ export const dict = {
       statsDocs: "văn bản",
       statsRelations: "quan hệ",
       statsDomains: "lĩnh vực",
+    },
+    domainPage: {
+      title: "Lĩnh vực",
+      lede: "Tám lĩnh vực của tập dữ liệu. Mỗi lĩnh vực có một khối quan hệ ba chiều: trục đứng là thứ bậc hiệu lực, luật ở trên, nghị định ở giữa, thông tư dưới cùng.",
+      open: "Mở không gian lĩnh vực",
+      graphTitle: "Khối quan hệ ba chiều",
+      graphHint: "Kéo để xoay, cuộn để phóng to, bấm vào một điểm để mở văn bản.",
+      graphEmpty: "Lĩnh vực này chưa có quan hệ nào được ghi nhận trong tập dữ liệu.",
+      docsTitle: "Văn bản trong lĩnh vực",
+      backToDomains: "Về danh sách lĩnh vực",
+      viewOnMap: "Xem lĩnh vực này trên bản đồ",
+      countDocs: "văn bản",
     },
     list: {
       title: "Danh mục văn bản",
@@ -103,6 +118,7 @@ export const dict = {
       disclaimerTitle: "Miễn trừ trách nhiệm",
       disclaimer:
         "Nội dung trên trang phục vụ mục đích tra cứu và tham khảo, không thay thế ý kiến pháp lý cho một vụ việc cụ thể. Trước khi sử dụng trong hồ sơ chính thức, hãy đối chiếu lại với Công báo hoặc cơ quan ban hành.",
+      navTitle: "Điều hướng",
       verifiedPrefix: "Dữ liệu tra cứu ngày",
       switchLang: "English",
       switchLangFull: "Chuyển sang tiếng Anh",
@@ -111,6 +127,7 @@ export const dict = {
       skipToContent: "Bỏ qua, tới nội dung chính",
       mapLabel: "Bản đồ quan hệ văn bản pháp luật, có thể dùng phím mũi tên để di chuyển",
       closePanel: "Đóng bảng chi tiết",
+      toggleTheme: "Đổi nền sáng / tối",
     },
   },
   en: {
@@ -123,6 +140,9 @@ export const dict = {
       about: "Method",
     },
     home: {
+      eyebrow: "Relational map · Every number traced to source",
+      tickerFuture: "comes into force",
+      tickerPast: "in force since",
       lede: "A legal instrument rarely stands alone. A law sets the principle, a decree fills in the detail, a circular explains the practice — and then an amending law arrives and changes all three. This site draws those joints, so that an instrument can be read in its place within the system rather than in isolation.",
       mapHint: "Drag to pan, scroll to zoom, click a node to open its summary.",
       filterDomain: "Filter by domain",
@@ -139,6 +159,18 @@ export const dict = {
       statsDocs: "instruments",
       statsRelations: "relations",
       statsDomains: "domains",
+    },
+    domainPage: {
+      title: "Domains",
+      lede: "The eight domains of the dataset. Each opens onto a three-dimensional block of relations whose vertical axis is legal rank: laws above, decrees in the middle, circulars below.",
+      open: "Open the domain space",
+      graphTitle: "Three-dimensional relation block",
+      graphHint: "Drag to rotate, scroll to zoom, click a node to open its record.",
+      graphEmpty: "No relation within this domain has been recorded in the dataset.",
+      docsTitle: "Instruments in this domain",
+      backToDomains: "Back to domains",
+      viewOnMap: "See this domain on the map",
+      countDocs: "instruments",
     },
     list: {
       title: "Index of instruments",
@@ -205,6 +237,7 @@ export const dict = {
       disclaimerTitle: "Disclaimer",
       disclaimer:
         "This material is for reference only and does not substitute for legal advice on a specific matter. Before relying on it in a formal filing, check the text against the Official Gazette or the issuing authority.",
+      navTitle: "Navigate",
       verifiedPrefix: "Data consulted on",
       switchLang: "Tiếng Việt",
       switchLangFull: "Switch to Vietnamese",
@@ -213,6 +246,7 @@ export const dict = {
       skipToContent: "Skip to main content",
       mapLabel: "Map of relations between legal instruments; arrow keys pan the view",
       closePanel: "Close detail panel",
+      toggleTheme: "Switch light / dark",
     },
   },
 } as const;
