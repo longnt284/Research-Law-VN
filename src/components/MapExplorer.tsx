@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
 import { DomainChip, StatusBadge } from "@/components/DocMeta";
+import { EffectTicker } from "@/components/EffectTicker";
 import { LegalMap } from "@/components/LegalMap";
 import { documents, documentsById, domains, relations } from "@/data/documents";
 import type { DomainId, Lang } from "@/data/types";
@@ -75,6 +76,8 @@ export function MapExplorer({ lang }: { lang: Lang }) {
         </div>
       </section>
 
+      <EffectTicker lang={lang} />
+
       {/* Thanh công cụ. Danh sách lĩnh vực cuộn ngang được, nhưng nút đưa khung
           nhìn về mặc định nằm ngoài vùng cuộn nên không bao giờ bị đẩy khuất. */}
       <div className="rule-b shrink-0 bg-[var(--paper-2)]">
@@ -141,12 +144,18 @@ export function MapExplorer({ lang }: { lang: Lang }) {
           />
 
           <div className="pointer-events-none absolute bottom-3 left-3 right-3 flex flex-wrap items-end justify-between gap-2">
-            <p className="max-w-[22rem] bg-[color-mix(in_oklab,var(--paper)_86%,transparent)] px-2 py-1 text-[0.6875rem] leading-snug text-[var(--ink-3)] backdrop-blur-sm">
+            <p
+              data-map-overlay
+              className="max-w-[22rem] bg-[color-mix(in_oklab,var(--paper)_86%,transparent)] px-2 py-1 text-[0.6875rem] leading-snug text-[var(--ink-3)] backdrop-blur-sm"
+            >
               {t.home.mapHint}
             </p>
             {/* Trên điện thoại, chú giải phủ lên gần một phần tư vùng vẽ. Ở đó nó
                 được chuyển xuống bảng bên dưới thay vì đè lên bản đồ. */}
-            <div className="hidden bg-[color-mix(in_oklab,var(--paper)_86%,transparent)] px-2.5 py-1.5 backdrop-blur-sm sm:block">
+            <div
+              data-map-overlay
+              className="hidden bg-[color-mix(in_oklab,var(--paper)_86%,transparent)] px-2.5 py-1.5 backdrop-blur-sm sm:block"
+            >
               <Legend t={t} />
             </div>
           </div>

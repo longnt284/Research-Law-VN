@@ -22,6 +22,8 @@ export const dict = {
     },
     home: {
       eyebrow: "Bản đồ quan hệ · Dữ liệu đã tra cứu từng số hiệu",
+      tickerFuture: "sẽ có hiệu lực",
+      tickerPast: "đã có hiệu lực",
       lede: "Một văn bản pháp luật hiếm khi đứng một mình. Luật đặt nguyên tắc, nghị định quy định chi tiết, thông tư hướng dẫn thi hành, rồi một luật sửa đổi khác đến và thay đổi cả ba. Trang này vẽ lại các mối nối đó để người đọc thấy được vị trí của một văn bản trong hệ thống, thay vì đọc nó tách rời.",
       mapHint: "Kéo để di chuyển, cuộn để phóng to, bấm vào một điểm để xem chi tiết.",
       filterDomain: "Lọc theo lĩnh vực",
@@ -126,6 +128,8 @@ export const dict = {
     },
     home: {
       eyebrow: "Relational map · Every number traced to source",
+      tickerFuture: "comes into force",
+      tickerPast: "in force since",
       lede: "A legal instrument rarely stands alone. A law sets the principle, a decree fills in the detail, a circular explains the practice — and then an amending law arrives and changes all three. This site draws those joints, so that an instrument can be read in its place within the system rather than in isolation.",
       mapHint: "Drag to pan, scroll to zoom, click a node to open its summary.",
       filterDomain: "Filter by domain",

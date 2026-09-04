@@ -374,6 +374,56 @@ a {
   transform: scaleY(1);
 }
 
+/* ── Dải mốc hiệu lực chạy ngang ──────────────────────────────────────── */
+
+.marquee {
+  overflow: hidden;
+  /* Hai mép mờ dần để chữ đi vào và đi ra chứ không bị cắt cụt ở biên. */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 3rem,
+    #000 calc(100% - 3rem),
+    transparent
+  );
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 70s linear infinite;
+}
+
+/* Dừng khi rê chuột vào, để người đọc kịp bấm vào một mốc đang chạy qua. */
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*
+  Với người đã tắt hiệu ứng chuyển động: dải đứng yên và cuộn ngang được bằng
+  tay. Quy tắc chung phía trên rút mọi animation xuống 0.01ms, nên nếu không đổi
+  sang cuộn thì nội dung sẽ nhảy tới cuối rồi nằm im ở đó.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+    mask-image: none;
+  }
+  .marquee__track {
+    animation: none;
+  }
+}
+
 /* ── Chuyển động vào trang ────────────────────────────────────────────── */
 
 @keyframes rise {
