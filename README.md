@@ -30,6 +30,35 @@ không khớp hoặc không xuất hiện thì để trống. Cả năm mươi b
 `confidence: "cross-check"` nên giao diện hiện cảnh báo, và `sources` ở nhóm này
 là địa chỉ trang tìm được chứ không phải trang đã mở.
 
+## Cơ chế đối chiếu văn bản
+
+Trang `/vi/doi-chieu` đặt điểm cũ và điểm mới của từng cặp văn bản cạnh nhau.
+Cơ chế gồm bốn lớp, tách bạch để biết mỗi dòng chữ đến từ đâu:
+
+1. **Cặp văn bản** suy ra từ quan hệ `replaces` và `amends` trong
+   `src/data/documents.ts`. Không cặp nào được thêm bằng tay, nên danh sách cặp
+   luôn khớp với bản đồ quan hệ.
+2. **Bảng dữ kiện và nhận định suy ra** (`src/lib/compare.ts`): loại văn bản,
+   tình trạng hiệu lực, ngày ban hành, ngày hiệu lực, khoảng cách giữa hai mốc,
+   lĩnh vực thêm hoặc bớt. Toàn bộ là phép so sánh và phép trừ ngày.
+3. **Điểm đối chiếu nội dung** (`src/data/comparisons.ts`): mỗi điểm gồm nội
+   dung ở văn bản cũ, nội dung ở văn bản mới, một nhãn phân loại lấy từ danh
+   sách đóng chín loại thay đổi, một câu nhận định, và căn cứ trỏ về bản ghi mà
+   mỗi vế được đọc ra.
+4. **Phép kiểm tính khách quan** (`src/lib/objectivity.ts`): mọi chuỗi trong
+   phần đối chiếu được soi qua danh sách từ ngữ mang nghĩa khuyên nhủ, xếp hạng
+   hoặc suy đoán, kèm yêu cầu dẫn đủ căn cứ ở cả hai vế. Dính một lỗi là
+   `next build` dừng lại — tính khách quan là điều kiện để trang lên được, không
+   phải một lời hứa.
+
+Nhận định trong phần này chỉ mô tả chênh lệch đọc được giữa hai văn bản. Nó
+không đánh giá quy định nào hợp lý hơn, không dự đoán hệ quả, và không thay thế
+ý kiến pháp lý cho một vụ việc cụ thể.
+
+Cuối mỗi trang đối chiếu có ô so sánh hai đoạn văn bản do người đọc tự dán vào
+(`src/lib/diff.ts`). Phép so sánh chạy trong trình duyệt, thuần cơ học: nó chỉ
+ra chữ nào thêm, chữ nào bớt, không kết luận nghĩa của điều luật đã đổi hay chưa.
+
 ## Chạy dự án
 
 ```bash
@@ -62,6 +91,9 @@ src/
   data/                # tập dữ liệu văn bản và kiểu dữ liệu
   i18n/                # từ điển giao diện hai thứ tiếng
   lib/layout.ts        # thuật toán bố cục bản đồ
+  lib/compare.ts       # ghép cặp và tính dữ kiện đối chiếu
+  lib/objectivity.ts   # phép kiểm tính khách quan, chạy khi dựng trang
+  lib/diff.ts          # so sánh cơ học hai đoạn văn bản
 ```
 
 ## Miễn trừ trách nhiệm
@@ -83,6 +115,17 @@ record carries its sources and a confidence flag, and records with an unconfirme
 detail display that fact openly. A search of legislation is only good as at the
 date it was run; check against the Official Gazette before relying on it in a
 formal filing.
+
+The comparison pages at `/en/doi-chieu` set the earlier and later position of
+each pair side by side, in four separate layers: pairs derived from the
+`replaces` and `amends` relations; a table of facts and notes computed from the
+two records; content comparison points written by an editor, each citing the
+record it was read from; and a lexical check that scans every string in the
+comparison layer for advisory, evaluative or speculative language and fails the
+build on a single hit. An observation there describes only the difference that
+can be read off the two texts — it ranks nothing, predicts nothing, and is not
+legal advice. Each page also carries a browser-side word diff for pasting two
+passages of your own.
 
 The fifty instruments added on 4 September 2026 were compiled without access to
 Tier 1 sources — the session's network blocked thuvienphapluat.vn,

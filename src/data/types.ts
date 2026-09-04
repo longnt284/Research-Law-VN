@@ -101,3 +101,68 @@ export interface Domain {
   /** Màu nhận diện, dùng chung cho node trên bản đồ và nhãn lĩnh vực. */
   hue: number;
 }
+
+/**
+ * Loại thay đổi giữa hai văn bản.
+ *
+ * Danh sách đóng, và mỗi giá trị phải khẳng định được bằng cách đặt hai bản văn
+ * cạnh nhau rồi đọc. Không có giá trị nào mang nghĩa đánh giá tốt hay xấu: đó là
+ * việc của người đọc hồ sơ, không phải của tập dữ liệu.
+ */
+export type ChangeKind =
+  /** Nội dung có ở văn bản sau, không có ở văn bản trước. */
+  | "moi"
+  /** Nội dung có ở văn bản trước, không còn ở văn bản sau. */
+  | "bo"
+  /** Cùng một vấn đề, phạm vi hoặc đối tượng áp dụng rộng hơn. */
+  | "mo-rong"
+  /** Cùng một vấn đề, phạm vi hoặc đối tượng áp dụng hẹp hơn. */
+  | "thu-hep"
+  /** Giữ nguyên nguyên tắc, quy định thêm chi tiết hoặc điều kiện. */
+  | "chi-tiet-hoa"
+  /** Đổi cơ quan, cấp hoặc chủ thể có thẩm quyền. */
+  | "thay-tham-quyen"
+  /** Đổi mốc thời gian, thời hạn hoặc trình tự thời gian. */
+  | "thay-thoi-han"
+  /** Quy định chuyển tiếp giữa hai văn bản. */
+  | "chuyen-tiep"
+  /** Nội dung tương đương, khác ở cách trình bày hoặc số điều. */
+  | "giu-nguyen";
+
+/**
+ * Một điểm đối chiếu giữa hai văn bản.
+ *
+ * `before` và `after` là nội dung đọc được ở mỗi bên. `observation` là nhận định
+ * khách quan: chỉ được mô tả chênh lệch nhìn thấy giữa hai bên, không suy đoán
+ * hệ quả, không khuyến nghị, không đánh giá hơn kém. Ràng buộc này được kiểm tra
+ * tự động khi dựng trang, xem `src/lib/objectivity.ts`.
+ */
+export interface ComparisonPoint {
+  id: string;
+  /** Vấn đề được đặt cạnh nhau, ví dụ "Mốc hiệu lực". */
+  topic: Bilingual;
+  kind: ChangeKind;
+  before: Bilingual;
+  after: Bilingual;
+  observation: Bilingual;
+  /** ID bản ghi mà mỗi vế được đọc ra, để người đọc lần ngược về nguồn. */
+  basis: { before: string[]; after: string[] };
+  confidence: Confidence;
+}
+
+/**
+ * Tập điểm đối chiếu do người biên soạn viết cho một cặp văn bản.
+ *
+ * Cặp văn bản thì suy ra từ quan hệ `replaces` và `amends` có sẵn trong tập dữ
+ * liệu, không khai báo lại ở đây. Bản ghi này chỉ bổ sung phần nội dung mà máy
+ * không tự đọc ra được.
+ */
+export interface ComparisonEntry {
+  /** ID văn bản sau. */
+  newId: string;
+  /** ID văn bản trước. */
+  oldId: string;
+  /** Mức đối chiếu đã thực hiện được, nói rõ cho người đọc biết giới hạn. */
+  scope: Bilingual;
+  points: ComparisonPoint[];
+}
