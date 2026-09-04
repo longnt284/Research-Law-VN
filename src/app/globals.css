@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+/*
+  Hướng thẩm mỹ: editorial nghiêm ngặt.
+  Một quyết định thị giác được giữ nhất quán trên toàn trang — nền giấy ngà,
+  mực xanh đen, chữ có chân cho tiêu đề, và đường kẻ mảnh thay cho bóng đổ.
+  Không bo góc lớn, không gradient, không card nổi: sản phẩm pháp lý đọc tốt hơn
+  khi trông giống một trang in được sắp chữ cẩn thận.
+*/
+
+@theme {
+  --color-paper: #faf8f4;
+  --color-paper-2: #f3efe8;
+  --color-paper-3: #e9e3d8;
+  --color-ink: #16181d;
+  --color-ink-2: #3d434e;
+  --color-ink-3: #6b7280;
+  --color-rule: #d9d2c4;
+  --color-rule-strong: #b9b0a0;
+  --color-accent: #7a2c1f;
+  --color-accent-soft: #a8503f;
+
+  /*
+    `--font-lora` và `--font-bvp` do next/font sinh ra ở thẻ <html>. Chuỗi dự
+    phòng phía sau vẫn phải đầy đủ: nếu mạng chặn Google Fonts thì trang rơi về
+    một họ chữ có chân tử tế chứ không rơi về Times mặc định của trình duyệt.
+  */
+  --font-serif: var(--font-lora), "Iowan Old Style", "Palatino Linotype",
+    Palatino, "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-bvp), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+:root {
+  --paper: var(--color-paper);
+  --paper-2: var(--color-paper-2);
+  --paper-3: var(--color-paper-3);
+  --ink: var(--color-ink);
+  --ink-2: var(--color-ink-2);
+  --ink-3: var(--color-ink-3);
+  --rule: var(--color-rule);
+  --rule-strong: var(--color-rule-strong);
+  --accent: var(--color-accent);
+  --accent-soft: var(--color-accent-soft);
+  --node-lightness: 42%;
+  --node-chroma: 46%;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14161a;
+    --paper-2: #1b1e24;
+    --paper-3: #242830;
+    --ink: #ece7dd;
+    --ink-2: #bdb7ab;
+    --ink-3: #8d8779;
+    --rule: #333841;
+    --rule-strong: #4a5058;
+    --accent: #e0917f;
+    --accent-soft: #c9705c;
+    --node-lightness: 66%;
+    --node-chroma: 52%;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #14161a;
+  --paper-2: #1b1e24;
+  --paper-3: #242830;
+  --ink: #ece7dd;
+  --ink-2: #bdb7ab;
+  --ink-3: #8d8779;
+  --rule: #333841;
+  --rule-strong: #4a5058;
+  --accent: #e0917f;
+  --accent-soft: #c9705c;
+  --node-lightness: 66%;
+  --node-chroma: 52%;
+  color-scheme: dark;
+}
+
+* {
+  border-color: var(--rule);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  /*
+    Dòng thoáng là cách rẻ nhất để chữ tiếng Việt có dấu không chạm nhau.
+    Dấu mũ và dấu thanh chồng tầng cần nhiều khoảng đứng hơn chữ Latin trần.
+  */
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.011em;
+  text-wrap: balance;
+  /* Số hiệu văn bản dài không được phép đẩy ngang cả trang. */
+  overflow-wrap: break-word;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+/* Vòng focus phải thấy rõ trên cả nền sáng lẫn nền tối. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 1px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 22%, transparent);
+}
+
+/* ── Lớp tiện ích dùng lại ─────────────────────────────────────────────── */
+
+.rule-t {
+  border-top: 1px solid var(--rule);
+}
+.rule-b {
+  border-bottom: 1px solid var(--rule);
+}
+
+.measure {
+  max-width: 68ch;
+}
+
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Nhãn nhỏ in hoa, dùng cho tiêu đề trường dữ liệu. */
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--ink-3);
+  line-height: 1.5;
+}
+
+/*
+  Canvas bản đồ: tắt hoàn toàn hành vi cuộn mặc định của trình duyệt trên vùng
+  vẽ, nếu không thì thao tác kéo trên thiết bị cảm ứng sẽ vừa kéo bản đồ vừa
+  cuộn trang, và cảm giác giật đến từ đúng chỗ này.
+*/
+.map-surface {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: grab;
+  display: block;
+}
+.map-surface[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+/* Thanh cuộn mảnh, hợp với nền giấy. */
+@supports (scrollbar-width: thin) {
+  .thin-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule-strong) transparent;
+  }
+}
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--rule-strong);
+  border-radius: 99px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Bảng và khối rộng luôn tự cuộn ngang, không kéo giãn thân trang. */
+.scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
