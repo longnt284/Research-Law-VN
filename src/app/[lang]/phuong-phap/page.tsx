@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { Reveal } from "@/components/Reveal";
 import { VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang } from "@/i18n/dictionary";
@@ -33,7 +35,8 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
     {
       h: "Dữ liệu được kiểm chứng thế nào",
       p: [
-        "Nguyên tắc duy nhất khi dựng tập dữ liệu này là không đưa vào bất kỳ số hiệu nào chưa được tra cứu. Trí nhớ về số hiệu văn bản là thứ không đáng tin: các số rất giống nhau, và một văn bản từng đúng vẫn có thể đã bị thay thế mà không ai để ý. Toàn bộ văn bản trong tập này đều được tra qua Cổng thông tin điện tử Chính phủ, Thư viện Pháp luật hoặc LuatVietnam trước khi được ghi vào.",
+        "Nguyên tắc duy nhất khi dựng tập dữ liệu này là không đưa vào bất kỳ số hiệu nào chưa được tra cứu. Trí nhớ về số hiệu văn bản là thứ không đáng tin: các số rất giống nhau, và một văn bản từng đúng vẫn có thể đã bị thay thế mà không ai để ý. Nhóm văn bản dựng trong đợt đầu đều được tra qua Cổng thông tin điện tử Chính phủ, Thư viện Pháp luật hoặc LuatVietnam trước khi được ghi vào.",
+        "Đợt bổ sung ngày 04 tháng 9 năm 2026 gồm năm mươi văn bản được tra trong điều kiện khác và phải nói rõ. Phiên làm việc đó không mở được trang nguồn gốc: đường mạng chặn thuvienphapluat.vn, vanban.chinhphu.vn, vbpl.vn và luatvietnam.vn. Số hiệu, ngày ban hành và ngày hiệu lực của từng bản ghi vì vậy được đối chiếu giữa ít nhất hai kết quả tìm kiếm độc lập, chi tiết nào không khớp hoặc không xuất hiện thì để trống thay vì suy ra. Toàn bộ năm mươi bản ghi này mang cảnh báo cần kiểm thêm, và đường dẫn trong mục nguồn là địa chỉ trang tìm được chứ không phải trang đã mở.",
         "Việc tra cứu cho thấy vài điều đáng chú ý. Luật Xây dựng 2014 đã hết hiệu lực từ ngày 01 tháng 7 năm 2026 và được thay bằng Luật Xây dựng số 135/2025/QH15. Luật Đầu tư 2020 cũng đã được thay bằng Luật Đầu tư số 143/2025/QH15, nhưng Điều 7 và Phụ lục IV của luật cũ vẫn còn hiệu lực tới ngày 01 tháng 7 năm 2026, tạo ra một giai đoạn giao thoa dễ nhầm. Luật Quản lý thuế 2019 hết hiệu lực từ ngày 30 tháng 6 năm 2026. Đây đều là những thay đổi mà một người dựa vào trí nhớ sẽ bỏ sót.",
         "Những bản ghi còn ít nhất một chi tiết chưa đối chiếu được với nguồn chính thống, thường là ngày ban hành chính xác, đều mang cảnh báo hiển thị công khai trên trang chi tiết. Không có bản ghi nào được làm tròn cho đẹp.",
       ],
@@ -65,7 +68,8 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
     {
       h: "How the data was checked",
       p: [
-        "One rule governed the building of this dataset: no document number appears unless it was actually looked up. Memory for document numbers is not to be trusted — the numbers resemble one another closely, and an instrument that was once correct may have been replaced without anyone noticing. Every entry here was traced through the Government Portal, Thư viện Pháp luật or LuatVietnam before it was recorded.",
+        "One rule governed the building of this dataset: no document number appears unless it was actually looked up. Memory for document numbers is not to be trusted — the numbers resemble one another closely, and an instrument that was once correct may have been replaced without anyone noticing. The entries in the first batch were each traced through the Government Portal, Thư viện Pháp luật or LuatVietnam before being recorded.",
+        "The batch added on 4 September 2026 — fifty instruments — was compiled under different conditions, and that must be said plainly. In that session the primary sources could not be opened: the network blocked thuvienphapluat.vn, vanban.chinhphu.vn, vbpl.vn and luatvietnam.vn. Each record's number, date of issue and entry into force was therefore corroborated across at least two independent search results, and any detail that did not agree, or did not appear at all, was left blank rather than inferred. All fifty carry the needs-checking flag, and the links under sources are addresses found, not pages opened.",
         "The exercise turned up several things worth noting. The 2014 Construction Law ceased to have effect on 1 July 2026 and was replaced by Law No. 135/2025/QH15. The 2020 Investment Law was likewise replaced by Law No. 143/2025/QH15, yet Article 7 and Appendix IV of the older law remain in force until 1 July 2026, creating an overlap that is easy to misread. The 2019 Tax Administration Law ceased to have effect on 30 June 2026. Each of these would have been missed by anyone working from recollection.",
         "Entries with at least one detail that could not be confirmed against an official source — usually the precise date of issue — carry a warning displayed openly on the record. Nothing has been rounded off for the sake of a tidy page.",
       ],
@@ -107,75 +111,81 @@ export default async function AboutPage({
   };
 
   return (
-    <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-      <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
-      <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
-      <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
-        {t.about.lede}
-      </p>
-
-      <dl className="tnum mt-9 grid max-w-2xl grid-cols-3 gap-6 border-y border-[var(--rule)] py-5">
-        <div>
-          <dt className="eyebrow">{lang === "vi" ? "Tổng số" : "Total"}</dt>
-          <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
-            {counts.total}
-          </dd>
+    <>
+      <section className="rule-b hero-lux">
+        <LuxBackdrop />
+        <div className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
+          <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
+          <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
+          <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
+            {t.about.lede}
+          </p>
         </div>
-        <div>
-          <dt className="eyebrow">{lang === "vi" ? "Đã đối chiếu" : "Confirmed"}</dt>
-          <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
-            {counts.verified}
-          </dd>
-        </div>
-        <div>
-          <dt className="eyebrow">
-            {lang === "vi" ? "Cần kiểm thêm" : "Needs checking"}
-          </dt>
-          <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
-            {counts.crossCheck}
-          </dd>
-        </div>
-      </dl>
+      </section>
 
-      {/* Mục được đánh số bằng chữ số La Mã nhỏ đặt bên lề trái trên màn hình
-          rộng — cách một bài viết dài tự chỉ đường mà không cần mục lục. */}
-      <div className="mt-12 space-y-14">
-        {body[lang].map((section, si) => (
-          <section
-            key={section.h}
-            className="lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6"
-          >
-            <p
-              aria-hidden="true"
-              className="tnum text-[var(--brass)] lg:pt-1.5 lg:text-right"
-              style={{ fontFamily: "var(--font-serif)" }}
-            >
-              {ROMAN[si] ?? si + 1}
-            </p>
-            <div className="min-w-0">
-              <h2 className="mt-1 text-[1.45rem] leading-snug lg:mt-0">
-                {section.h}
-              </h2>
-              <div className="measure mt-3 space-y-4">
-                {section.p.map((para, i) => (
-                  <p
-                    key={i}
-                    className={`leading-[1.75] text-[var(--ink-2)] ${
-                      si === 0 && i === 0 ? "dropcap" : ""
-                    }`}
-                  >
-                    {para}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </section>
-        ))}
-      </div>
+      <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
+        <dl className="tnum grid max-w-2xl grid-cols-3 gap-6 border-y border-[var(--rule)] py-5">
+          <div>
+            <dt className="eyebrow">{lang === "vi" ? "Tổng số" : "Total"}</dt>
+            <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+              {counts.total}
+            </dd>
+          </div>
+          <div>
+            <dt className="eyebrow">{lang === "vi" ? "Đã đối chiếu" : "Confirmed"}</dt>
+            <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+              {counts.verified}
+            </dd>
+          </div>
+          <div>
+            <dt className="eyebrow">
+              {lang === "vi" ? "Cần kiểm thêm" : "Needs checking"}
+            </dt>
+            <dd className="text-2xl" style={{ fontFamily: "var(--font-serif)" }}>
+              {counts.crossCheck}
+            </dd>
+          </div>
+        </dl>
 
-      <p className="tnum mt-14 border-t border-[var(--rule)] pt-5 text-sm text-[var(--ink-3)]">
-        {t.footer.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}.
-      </p>
-    </article>
+        {/* Mục được đánh số bằng chữ số La Mã nhỏ đặt bên lề trái trên màn hình
+            rộng — cách một bài viết dài tự chỉ đường mà không cần mục lục. */}
+        <div className="mt-12 space-y-14">
+          {body[lang].map((section, si) => (
+            <Reveal key={section.h}>
+              <section className="lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6">
+                <p
+                  aria-hidden="true"
+                  className="tnum text-[var(--brass)] lg:pt-1.5 lg:text-right"
+                  style={{ fontFamily: "var(--font-serif)" }}
+                >
+                  {ROMAN[si] ?? si + 1}
+                </p>
+                <div className="min-w-0">
+                  <h2 className="mt-1 text-[1.45rem] leading-snug lg:mt-0">
+                    {section.h}
+                  </h2>
+                  <div className="measure mt-3 space-y-4">
+                    {section.p.map((para, i) => (
+                      <p
+                        key={i}
+                        className={`leading-[1.75] text-[var(--ink-2)] ${
+                          si === 0 && i === 0 ? "dropcap" : ""
+                        }`}
+                      >
+                        {para}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            </Reveal>
+          ))}
+        </div>
+
+        <p className="tnum mt-14 border-t border-[var(--rule)] pt-5 text-sm text-[var(--ink-3)]">
+          {t.footer.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}.
+        </p>
+      </article>
+    </>
   );
 }

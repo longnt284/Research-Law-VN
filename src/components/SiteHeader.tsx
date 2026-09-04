@@ -30,7 +30,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
   ];
 
   return (
-    <header className="rule-b sticky top-0 z-30 bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] backdrop-blur-md">
+    <header className="rule-b header-lux sticky top-0 z-30 bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] backdrop-blur-md">
       {/*
         `flex-wrap` chứ không phải `truncate`. Khi thanh điều hướng không còn đủ
         chỗ trên điện thoại, nó xuống hàng; nếu cắt chữ thì tên trang bị nuốt sạch

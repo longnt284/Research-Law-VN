@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
+import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { VERIFIED_ON, documents, documentsById, relations } from "@/data/documents";
 import type { Lang, RelationKind } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
@@ -68,38 +69,45 @@ export default async function DocumentPage({
   const grouped = collectRelations(doc.id, lang);
 
   return (
-    <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8">
-      <Link
-        href={`/${lang}/van-ban`}
-        className="link-sweep text-sm text-[var(--ink-3)] hover:text-[var(--accent)]"
-      >
-        ← {t.doc.backToList}
-      </Link>
+    <article>
+      <section className="rule-double-b hero-lux">
+        <LuxBackdrop />
+        <div className="mx-auto w-full max-w-[76rem] px-5 py-8 sm:px-8">
+          <Link
+            href={`/${lang}/van-ban`}
+            className="link-sweep text-sm text-[var(--ink-3)] hover:text-[var(--accent)]"
+          >
+            ← {t.doc.backToList}
+          </Link>
 
-      <header className="rule-double-b mt-5 pb-7">
-        <div className="rise flex flex-wrap items-center gap-3">
-          <StatusBadge status={doc.status} lang={lang} />
-          <span className="text-sm text-[var(--ink-3)]">{t.type[doc.type]}</span>
+          <header className="mt-5">
+            <div className="rise flex flex-wrap items-center gap-3">
+              <StatusBadge status={doc.status} lang={lang} />
+              <span className="text-sm text-[var(--ink-3)]">
+                {t.type[doc.type]}
+              </span>
+            </div>
+            {/* Số hiệu là thứ người tra cứu nhìn trước tiên, nên nó được đặt
+                bằng chữ có chân cỡ lớn chứ không phải một dòng phụ đề nhỏ. */}
+            <p
+              className="tnum rise rise-1 mt-4 text-[1.375rem] font-semibold text-[var(--accent)]"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              {doc.number}
+            </p>
+            <h1 className="display-sm rise rise-2 mt-1.5 max-w-[34ch]">
+              {doc.title[lang]}
+            </h1>
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+              {doc.domains.map((d) => (
+                <DomainChip key={d} id={d} lang={lang} />
+              ))}
+            </div>
+          </header>
         </div>
-        {/* Số hiệu là thứ người tra cứu nhìn trước tiên, nên nó được đặt bằng
-            chữ có chân cỡ lớn chứ không phải một dòng phụ đề nhỏ. */}
-        <p
-          className="tnum rise rise-1 mt-4 text-[1.375rem] font-semibold text-[var(--accent)]"
-          style={{ fontFamily: "var(--font-serif)" }}
-        >
-          {doc.number}
-        </p>
-        <h1 className="display-sm rise rise-2 mt-1.5 max-w-[34ch]">
-          {doc.title[lang]}
-        </h1>
-        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-          {doc.domains.map((d) => (
-            <DomainChip key={d} id={d} lang={lang} />
-          ))}
-        </div>
-      </header>
+      </section>
 
-      <div className="grid gap-10 py-8 md:grid-cols-[1fr_17rem]">
+      <div className="mx-auto grid w-full max-w-[76rem] gap-10 px-5 py-8 sm:px-8 md:grid-cols-[1fr_17rem]">
         <div className="min-w-0">
           {doc.confidence === "cross-check" && (
             <div className="mb-6">

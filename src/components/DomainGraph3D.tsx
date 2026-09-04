@@ -86,13 +86,36 @@ export function DomainGraph3D({
       const pos = new Map<string, InstanceType<typeof THREE.Vector3>>();
       let maxRadius = 1;
       for (const [tier, list] of byTier) {
-        const radius = list.length === 1 ? 0 : Math.min(1.9, 0.45 + list.length * 0.18);
-        maxRadius = Math.max(maxRadius, radius);
+        /*
+          Tầng đông rải làm hai vòng đồng tâm, lệch nhau một chút theo chiều
+          đứng; tầng thưa giữ một vòng. Ép chín nghị định trở lên vào cùng một
+          vòng thì chỉ còn hai lối, và cả hai đều hỏng: nới bán kính cho đủ chỗ
+          thì vòng rộng hơn khoảng cách giữa hai tầng và các tầng chồng lên nhau
+          trên màn hình, còn giữ bán kính cũ thì các quả cầu dính thành một vệt.
+        */
+        const rings = list.length > 8 ? 2 : 1;
+        const perRing = Math.ceil(list.length / rings);
+        const outer = Math.min(1.95, 0.45 + perRing * 0.2);
+        maxRadius = Math.max(maxRadius, outer);
         list.forEach((d, i) => {
-          const a = (i / list.length) * Math.PI * 2 + tier * 0.6;
+          const ring = i % rings;
+          const countInRing = ring === 0 ? perRing : list.length - perRing;
+          const indexInRing = Math.floor(i / rings);
+          const radius =
+            list.length === 1 ? 0 : ring === 0 ? outer : outer * 0.55;
+          // Lệch pha giữa hai vòng để quả cầu vòng trong không nấp đúng sau quả
+          // cầu vòng ngoài ở góc nhìn mặc định.
+          const a =
+            (indexInRing / Math.max(countInRing, 1)) * Math.PI * 2 +
+            tier * 0.6 +
+            ring * 0.55;
           pos.set(
             d.id,
-            new THREE.Vector3(Math.cos(a) * radius, tierY(tier), Math.sin(a) * radius),
+            new THREE.Vector3(
+              Math.cos(a) * radius,
+              tierY(tier) + (rings === 1 ? 0 : ring === 0 ? 0.14 : -0.14),
+              Math.sin(a) * radius,
+            ),
           );
         });
       }
@@ -100,6 +123,11 @@ export function DomainGraph3D({
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setClearAlpha(0);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      // Ánh xạ tông màu ACES: vùng sáng trên mặt cầu cuộn dần thay vì cháy
+      // trắng thành một mảng phẳng. Đây là thứ khiến quả cầu trông có chất
+      // liệu chứ không phải một đĩa màu.
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 0.95;
       host.appendChild(renderer.domElement);
       const canvas = renderer.domElement;
       canvas.style.width = "100%";
@@ -110,10 +138,38 @@ export function DomainGraph3D({
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-      scene.add(new THREE.AmbientLight(0xffffff, 2));
-      const key = new THREE.DirectionalLight(0xffffff, 1.6);
+
+      /*
+        Bốn nguồn sáng, mỗi nguồn một việc. Ánh sáng nền giữ cho mặt tối không
+        đen kịt. Ánh sáng bán cầu đổ màu trời xuống đỉnh và màu nền hắt lên
+        đáy, nên quả cầu có trên có dưới. Đèn chính ngả ấm tạo vùng sáng chính.
+        Đèn viền đặt sau lưng vật thể vẽ một đường sáng dọc mép — không có nó
+        thì quả cầu tối lẫn vào nền tối.
+      */
+      /*
+        Tổng cường độ giữ ở mức thấp một cách có chủ ý. Đèn mạnh làm mặt cầu
+        cháy về phía trắng, và thứ mất đi khi đó chính là màu lĩnh vực — dấu
+        hiệu duy nhất trên khối nói văn bản này thuộc về đâu. Ở đây độ bóng
+        đến từ lớp phủ và đèn viền, không đến từ việc rọi thêm ánh sáng.
+      */
+      const darkNow = isDark();
+      scene.add(new THREE.AmbientLight(0xffffff, darkNow ? 0.32 : 0.5));
+      scene.add(
+        new THREE.HemisphereLight(
+          darkNow ? 0x93a9c8 : 0xffffff,
+          darkNow ? 0x15181e : 0xcfc7b6,
+          darkNow ? 0.65 : 0.85,
+        ),
+      );
+      const key = new THREE.DirectionalLight(0xfff2e0, darkNow ? 1.5 : 1.7);
       key.position.set(3, 6, 4);
       scene.add(key);
+      const rim = new THREE.DirectionalLight(
+        darkNow ? 0xffd9a4 : 0xffffff,
+        darkNow ? 0.9 : 0.5,
+      );
+      rim.position.set(-4.5, 1.5, -5);
+      scene.add(rim);
 
       const nodeGroup = new THREE.Group();
       scene.add(nodeGroup);
@@ -122,18 +178,43 @@ export function DomainGraph3D({
       const makeNode = (d: LegalDoc) => {
         const dark = isDark();
         const expired = d.status === "expired";
+        // Độ bão hoà nhỉnh hơn màu chấm tròn trên bản đồ hai chiều một chút:
+        // ánh sáng và ánh xạ tông màu bao giờ cũng kéo màu nhạt đi, nên đưa vào
+        // đúng bằng màu đích thì ra màn hình sẽ nhạt hơn màu đích.
         const color = new THREE.Color().setHSL(
           hue / 360,
-          expired ? 0 : dark ? 0.5 : 0.45,
-          expired ? (dark ? 0.4 : 0.72) : dark ? 0.62 : 0.44,
+          expired ? 0 : dark ? 0.58 : 0.55,
+          expired ? (dark ? 0.4 : 0.72) : dark ? 0.55 : 0.42,
         );
         const r = TIER[d.type] === 0 ? 0.24 : TIER[d.type] === 1 ? 0.19 : 0.15;
+        /*
+          Quả cầu đặc dựng 40×28 thay vì 24×18: ở cỡ này viền hết gợn cạnh khi
+          khối quay chậm, và vài chục đỉnh thêm cho mỗi quả là chi phí không
+          đáng kể.
+
+          Quả cầu rỗng thì ngược lại, phải để lưới thưa. Vẽ lưới 40×28 ra màn
+          hình thì các sợi sít vào nhau thành một mảng đặc, và quy ước "rỗng là
+          hết hiệu lực" mất luôn tác dụng phân biệt.
+        */
         const mesh = new THREE.Mesh(
-          new THREE.SphereGeometry(r, 24, 18),
-          new THREE.MeshStandardMaterial({
+          expired
+            ? new THREE.SphereGeometry(r, 14, 10)
+            : new THREE.SphereGeometry(r, 40, 28),
+          new THREE.MeshPhysicalMaterial({
             color,
-            roughness: 0.5,
-            metalness: 0.05,
+            roughness: expired ? 0.6 : 0.34,
+            metalness: expired ? 0.02 : 0.16,
+            /*
+              Lớp phủ bóng: một tầng trong suốt nằm trên bề mặt, cho đúng một
+              vệt sáng gọn thay vì cả mặt cầu hơi bóng đều. Văn bản hết hiệu
+              lực không có lớp này — chúng vốn phải trông xỉn hơn.
+            */
+            clearcoat: expired ? 0 : 0.65,
+            clearcoatRoughness: 0.28,
+            // Một chút tự phát sáng để quả cầu không chìm hẳn khi quay vào
+            // vùng khuất sáng; giữ rất thấp, nếu không màu sẽ bợt đi.
+            emissive: color,
+            emissiveIntensity: expired ? 0 : dark ? 0.07 : 0,
             // Văn bản hết hiệu lực vẽ rỗng, giống quy ước đã dùng trên bản đồ
             // hai chiều: người đọc không phải học hai bộ ký hiệu.
             wireframe: expired,
@@ -146,20 +227,38 @@ export function DomainGraph3D({
       docs.forEach(makeNode);
 
       // ── Cạnh ──
+      /*
+        Màu đổ dọc theo sợi: đầu ở văn bản hướng dẫn nhận màu lĩnh vực, đầu ở
+        văn bản cấp trên nhạt về màu đường kẻ. Một sợi cùng một màu chỉ nói
+        "có quan hệ"; sợi đổ màu nói thêm quan hệ đó chạy về phía nào, và trong
+        một khối đang quay thì đó là khác biệt giữa đọc được và không.
+      */
       const edgeMat = new THREE.LineBasicMaterial({
-        color: new THREE.Color(isDark() ? 0x6b7280 : 0x9a9184),
+        vertexColors: true,
         transparent: true,
-        opacity: 0.75,
+        opacity: darkNow ? 0.8 : 0.7,
       });
+      const edgeNeutral = new THREE.Color(darkNow ? 0x6b7280 : 0x9a9184);
+      const edgeTint = new THREE.Color().setHSL(
+        hue / 360,
+        darkNow ? 0.45 : 0.4,
+        darkNow ? 0.58 : 0.5,
+      );
       const points: InstanceType<typeof THREE.Vector3>[] = [];
+      const edgeColors: number[] = [];
       for (const rel of relations) {
         const a = pos.get(rel.from);
         const b = pos.get(rel.to);
         if (!a || !b) continue;
         points.push(a.clone(), b.clone());
+        edgeColors.push(
+          edgeTint.r, edgeTint.g, edgeTint.b,
+          edgeNeutral.r, edgeNeutral.g, edgeNeutral.b,
+        );
       }
       if (points.length) {
         const geo = new THREE.BufferGeometry().setFromPoints(points);
+        geo.setAttribute("color", new THREE.Float32BufferAttribute(edgeColors, 3));
         scene.add(new THREE.LineSegments(geo, edgeMat));
       }
 
@@ -172,7 +271,10 @@ export function DomainGraph3D({
         const el = document.createElement("span");
         el.textContent = doc.number;
         el.className =
-          "tnum absolute whitespace-nowrap bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] px-1 text-[0.6875rem] leading-tight text-[var(--ink-2)]";
+          "tnum absolute whitespace-nowrap bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] px-1 text-[0.6875rem] leading-tight text-[var(--ink-2)] transition-opacity duration-300 ease-[var(--ease-out-soft)]";
+        // Bắt đầu từ mờ hẳn: nhãn đầu tiên cũng hiện lên bằng một lần chuyển
+        // màu, chứ không bật ra rồi mới có hiệu ứng từ lần thứ hai.
+        el.style.opacity = "0";
         labelLayer.appendChild(el);
         return el;
       });
@@ -192,7 +294,9 @@ export function DomainGraph3D({
         transparent: true,
         opacity: 0.9,
       });
-      const tierMarks: { y: number; el: HTMLSpanElement }[] = [];
+      // `on` giữ trạng thái hiện tại để mỗi khung hình không ghi lại một giá trị
+      // không đổi — ghi lại sẽ huỷ và khởi động lại hiệu ứng chuyển màu.
+      const tierMarks: { y: number; el: HTMLSpanElement; on: boolean }[] = [];
       const tierLabelLayer = document.createElement("div");
       tierLabelLayer.className = "pointer-events-none absolute inset-0 overflow-hidden";
       host.appendChild(tierLabelLayer);
@@ -212,17 +316,42 @@ export function DomainGraph3D({
         const el = document.createElement("span");
         el.textContent = TIER_NAME[tier] ?? "";
         el.className =
-          "eyebrow absolute whitespace-nowrap bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] px-1";
+          "eyebrow absolute whitespace-nowrap bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] px-1 transition-opacity duration-300 ease-[var(--ease-out-soft)]";
+        el.style.opacity = "0";
         tierLabelLayer.appendChild(el);
-        tierMarks.push({ y, el });
+        tierMarks.push({ y, el, on: false });
       }
 
       // ── Máy ảnh quay quanh khối ──
+      /*
+        Mỗi trục có hai giá trị: giá trị đang vẽ và giá trị muốn tới. Khung hình
+        nào cũng kéo giá trị đang vẽ về phía giá trị muốn tới theo hàm mũ, nên
+        thao tác nào cũng vào chỗ bằng một đường cong chứ không bằng một bước
+        nhảy. Đây là chỗ khác biệt giữa "quay được" và "quay mượt".
+
+        Trục ngang thì không dùng đích mà dùng vận tốc: kéo tay là đặt vận tốc,
+        thả tay là để vận tốc tan dần rồi hoà về nhịp tự quay. Nếu ép trục ngang
+        theo đích thì khối dừng đánh rụp ngay khi nhấc tay, mất hẳn cảm giác
+        quán tính của một vật thật.
+      */
+      const AUTO_SPIN = 0.11;
       let yaw = 0.7;
+      let yawVel = AUTO_SPIN;
       // Góc nhìn thấp: gần ngang tầm mắt thì chênh lệch độ cao giữa các tầng đọc
       // được ngay, nhìn từ trên xuống thì không.
       let pitch = 0.16;
+      let pitchTarget = pitch;
       let dist = 8.6;
+      let distTarget = dist;
+
+      /*
+        Tiến dần về đích, không phụ thuộc tốc độ khung hình. `tau` là thời gian
+        để đi hết khoảng 63% quãng còn lại. Viết theo kiểu `cur += (target-cur)
+        * 0.1` thì máy chạy 120 khung hình mỗi giây sẽ tới đích nhanh gấp đôi
+        máy chạy 60 — cùng một đoạn mã cho ra hai tốc độ khác nhau.
+      */
+      const approach = (cur: number, target: number, tau: number, dt: number) =>
+        cur + (target - cur) * (1 - Math.exp(-dt / tau));
       // Nhìn vào giữa những tầng thực sự có văn bản. Lĩnh vực chỉ có luật và
       // nghị định mà vẫn ngắm vào tâm bốn tầng thì khối dồn lên nửa trên khung
       // và nửa dưới bỏ trống.
@@ -242,14 +371,22 @@ export function DomainGraph3D({
       let dragMoved = false;
       let lastX = 0;
       let lastY = 0;
+      let lastMoveAt = 0;
+      // Vận tốc ném, đo bằng radian mỗi giây, làm mượt qua vài lần di chuột.
+      let flingVel = 0;
+
       const onDown = (e: PointerEvent) => {
         dragging = true;
         dragMoved = false;
         lastX = e.clientX;
         lastY = e.clientY;
+        lastMoveAt = e.timeStamp;
+        flingVel = 0;
+        yawVel = 0;
         canvas.setPointerCapture(e.pointerId);
         canvas.style.cursor = "grabbing";
       };
+
       const onMove = (e: PointerEvent) => {
         if (!dragging) return;
         const dx = e.clientX - lastX;
@@ -257,23 +394,43 @@ export function DomainGraph3D({
         lastX = e.clientX;
         lastY = e.clientY;
         if (Math.abs(dx) + Math.abs(dy) > 3) dragMoved = true;
-        yaw -= dx * 0.006;
+
+        const dYaw = -dx * 0.006;
+        // Trục ngang bám tay ngay lập tức. Cho nó đi qua bộ giảm chấn nữa thì
+        // khối lê sau con trỏ, và độ trễ đó đọc ra là chậm chứ không phải mượt.
+        yaw += dYaw;
         // Chặn ở gần hai cực: qua khỏi đó thì hình lộn ngược và trục thứ bậc,
         // thứ duy nhất khối này muốn nói, không còn đọc được.
-        pitch = Math.max(-0.25, Math.min(1.15, pitch + dy * 0.005));
-        applyCamera();
+        pitchTarget = Math.max(-0.25, Math.min(1.15, pitchTarget + dy * 0.005));
+
+        /*
+          Vận tốc ném lấy trung bình trượt chứ không lấy đúng lần di chuột cuối.
+          Ngón tay hay khựng lại ngay trước khi nhấc lên; đọc mỗi lần cuối thì
+          một cú ném dài thường ra vận tốc gần bằng không.
+        */
+        const gap = Math.max((e.timeStamp - lastMoveAt) / 1000, 1 / 240);
+        lastMoveAt = e.timeStamp;
+        flingVel = flingVel * 0.72 + (dYaw / gap) * 0.28;
       };
+
       const onUp = (e: PointerEvent) => {
+        if (dragging) {
+          // Chặn trên: một cú vẩy rất nhanh vẫn không được phép biến khối thành
+          // cái chong chóng, vì lúc đó nhãn không kịp đọc.
+          yawVel = Math.max(-4, Math.min(4, flingVel));
+        }
         dragging = false;
         canvas.style.cursor = "grab";
         if (canvas.hasPointerCapture(e.pointerId)) {
           canvas.releasePointerCapture(e.pointerId);
         }
       };
+
       const onWheel = (e: WheelEvent) => {
         e.preventDefault();
-        dist = Math.max(4, Math.min(13, dist * Math.exp(e.deltaY * 0.0012)));
-        applyCamera();
+        // Chỉ dời đích. Khoảng cách thật do vòng vẽ kéo tới, nên một nấc lăn
+        // chuột thành một chuyển động vào chỗ chứ không phải một cú giật.
+        distTarget = Math.max(4, Math.min(13, distTarget * Math.exp(e.deltaY * 0.0012)));
       };
 
       // ── Bấm vào một điểm để mở văn bản ──
@@ -326,16 +483,32 @@ export function DomainGraph3D({
       let raf: number | null = null;
       let last = performance.now();
       const project = new THREE.Vector3();
+      // Tập nhãn đang hiện ở khung hình trước, dùng cho thứ tự ưu tiên bên dưới.
+      let shownPrev = new Set<number>();
 
       const frame = (now: number) => {
         const dt = Math.min((now - last) / 1000, 0.1);
         last = now;
-        // Tự quay chậm cho tới khi người dùng chạm vào, để khối tự cho biết nó
-        // xoay được mà không cần một dòng hướng dẫn nữa.
-        if (!dragging && !reduce.matches) {
-          yaw += dt * 0.12;
-          applyCamera();
+
+        if (!dragging) {
+          /*
+            Tự quay chậm cho tới khi người dùng chạm vào, để khối tự cho biết
+            nó xoay được mà không cần một dòng hướng dẫn nữa. Sau khi thả tay,
+            vận tốc ném tan dần về đúng nhịp này — không có một mốc nào để mắt
+            nhận ra khối đã hết trớn và bắt đầu tự quay.
+
+            Người đã tắt hiệu ứng chuyển động thì nhịp nền bằng không: cú ném
+            của chính họ vẫn chạy hết đà rồi dừng hẳn, và khối không tự động
+            làm gì thêm.
+          */
+          const idle = reduce.matches ? 0 : AUTO_SPIN;
+          yawVel = idle + (yawVel - idle) * Math.exp(-dt / 0.6);
+          yaw += yawVel * dt;
         }
+        pitch = approach(pitch, pitchTarget, 0.1, dt);
+        dist = approach(dist, distTarget, 0.13, dt);
+        applyCamera();
+
         renderer.render(scene, camera);
 
         // Nhãn: chiếu toạ độ, xếp theo độ sâu rồi bỏ nhãn nào giao với nhãn đã
@@ -350,7 +523,18 @@ export function DomainGraph3D({
             z: project.z,
           };
         });
-        cand.sort((a, b) => a.z - b.z);
+        /*
+          Nhãn đang hiện được xét trước, rồi mới tới nhãn ở gần. Nếu chỉ xếp
+          theo độ sâu thì mỗi lần khối quay, một nhãn vừa nhích lên trước sẽ
+          hất nhãn đang hiện ra khỏi chỗ, và cả vùng chữ nhấp nháy liên tục.
+          Cho nhãn đang hiện quyền giữ chỗ là đủ để hết nhấp nháy, mà vẫn không
+          giữ lại nhãn nào đã quay ra sau lưng — chỗ đó do phép thử độ sâu ở
+          dưới loại đi.
+        */
+        cand.sort(
+          (a, b) =>
+            Number(shownPrev.has(b.i)) - Number(shownPrev.has(a.i)) || a.z - b.z,
+        );
         const placed: { x1: number; y1: number; x2: number; y2: number }[] = [];
 
         // Nhãn tầng đặt trước và chiếm chỗ trước: tên tầng là khung đọc của cả
@@ -369,7 +553,10 @@ export function DomainGraph3D({
           const mw = mark.el.offsetWidth || 48;
           const mh = mark.el.offsetHeight || 13;
           const visibleMark = side.z <= 1 && x > 2 && x + mw < r.width - 2;
-          mark.el.style.opacity = visibleMark ? "1" : "0";
+          if (visibleMark !== mark.on) {
+            mark.el.style.opacity = visibleMark ? "1" : "0";
+            mark.on = visibleMark;
+          }
           if (!visibleMark) continue;
           mark.el.style.transform = `translate(${Math.round(x)}px, ${Math.round(
             y - mh / 2,
@@ -394,11 +581,14 @@ export function DomainGraph3D({
           placed.push(box);
           shown.add(c.i);
           el.style.transform = `translate(${Math.round(box.x1)}px, ${Math.round(box.y1)}px)`;
-          el.style.opacity = "1";
+          // Chỉ ghi khi trạng thái đổi. Ghi lại cùng một giá trị mỗi khung hình
+          // khiến trình duyệt huỷ và khởi động lại hiệu ứng chuyển màu.
+          if (!shownPrev.has(c.i)) el.style.opacity = "1";
         }
         labels.forEach((el, i) => {
-          if (!shown.has(i)) el.style.opacity = "0";
+          if (!shown.has(i) && shownPrev.has(i)) el.style.opacity = "0";
         });
+        shownPrev = shown;
 
 
         raf = visible ? requestAnimationFrame(frame) : null;

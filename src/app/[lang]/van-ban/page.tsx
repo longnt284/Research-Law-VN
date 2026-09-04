@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { DocumentIndex } from "@/components/DocumentIndex";
+import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { documents, domains } from "@/data/documents";
 import { getDict, isLang } from "@/i18n/dictionary";
 
@@ -27,7 +28,8 @@ export default async function DocumentsPage({
 
   return (
     <>
-      <section className="rule-b">
+      <section className="rule-b hero-lux">
+        <LuxBackdrop />
         <div className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
           {/* Nhãn đầu trang nói luôn quy mô tập dữ liệu, thay vì lặp lại tên
               trang một lần nữa dưới dạng chữ nhỏ. */}

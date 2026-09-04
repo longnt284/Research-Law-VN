@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
 import { DomainChip, StatusBadge } from "@/components/DocMeta";
+import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { EffectTicker } from "@/components/EffectTicker";
 import { LegalMap } from "@/components/LegalMap";
 import { documents, documentsById, domains, relations } from "@/data/documents";
@@ -66,7 +67,8 @@ export function MapExplorer({ lang }: { lang: Lang }) {
     <div className="flex flex-col lg:h-[calc(100dvh-3.3rem)]">
       {/* Giới thiệu, giữ mỏng. Đoạn văn dài đã chuyển sang bảng bên phải để màn
           hình đầu tiên vẫn là bản đồ chứ không phải một khối chữ. */}
-      <section className="rule-b shrink-0">
+      <section className="rule-b hero-lux shrink-0">
+        <LuxBackdrop />
         <div className="mx-auto w-full max-w-[76rem] px-5 py-6 sm:px-8 sm:py-8">
           <p className="eyebrow eyebrow-tick rise">{t.home.eyebrow}</p>
           <h1 className="display-sm rise rise-1 mt-2.5">{t.siteName}</h1>

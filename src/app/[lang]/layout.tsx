@@ -82,11 +82,23 @@ export default async function LangLayout({
           Đọc lựa chọn sáng/tối trước khi trang vẽ khung hình đầu tiên. Nếu để
           React làm việc này sau khi tải xong, người chọn nền tối sẽ thấy một
           nháy trắng mỗi lần mở trang.
+
+          Cùng chỗ này đặt lớp `js` lên thẻ <html>. Hiệu ứng hiện dần khi cuộn
+          giấu khối nội dung đi rồi mới bật lại; nếu trạng thái giấu áp dụng cả
+          khi JavaScript bị chặn thì trang sẽ trắng trơn. Treo nó vào `html.js`
+          là cách để không có JavaScript đồng nghĩa với không có hiệu ứng, chứ
+          không đồng nghĩa với mất nội dung.
+
+          Còn một đường hỏng nữa mà lớp `js` không đỡ được: trình duyệt chạy
+          được JavaScript nhưng gói mã của trang tải hỏng. Khi đó lớp `js` đã
+          nằm trên thẻ <html> mà không ai bật nội dung lên. Hẹn giờ bốn giây gỡ
+          lớp đó ra nếu tới lúc ấy chưa có khối `Reveal` nào báo là đã chạy. Cả
+          trang là HTML tĩnh, nên gỡ xong người đọc vẫn có đủ nội dung.
         */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.dataset.theme=t}catch(e){}",
+              "var e=document.documentElement;e.classList.add('js');setTimeout(function(){if(e.dataset.reveal!=='on')e.classList.remove('js')},4000);try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')e.dataset.theme=t}catch(err){}",
           }}
         />
 

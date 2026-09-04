@@ -21,22 +21,33 @@ export function buildEmblem(
 ): THREE_NS.Group {
   const group = new THREE.Group();
 
-  const color = new THREE.Color().setHSL(hue / 360, dark ? 0.5 : 0.42, dark ? 0.6 : 0.45);
+  // Bão hoà nhỉnh hơn màu nhận diện lĩnh vực: ánh sáng và ánh xạ tông màu kéo
+  // màu nhạt đi, nên đưa vào đúng màu đích thì ra màn hình sẽ nhạt hơn đích.
+  const color = new THREE.Color().setHSL(hue / 360, dark ? 0.58 : 0.52, dark ? 0.54 : 0.44);
   const colorSoft = new THREE.Color().setHSL(
     hue / 360,
-    dark ? 0.32 : 0.26,
-    dark ? 0.42 : 0.68,
+    dark ? 0.38 : 0.34,
+    dark ? 0.38 : 0.62,
   );
 
-  const solid = new THREE.MeshStandardMaterial({
+  /*
+    Hai chất liệu, cùng một lớp phủ bóng. Lớp phủ cho một vệt sáng gọn chạy dọc
+    mép khối khi vật thể quay; không có nó thì mặt khối sáng đều và cạnh khối
+    biến mất, nên vật thể trông phẳng đúng vào lúc nó đang quay.
+  */
+  const solid = new THREE.MeshPhysicalMaterial({
     color,
-    roughness: 0.55,
-    metalness: 0.08,
+    roughness: 0.4,
+    metalness: 0.14,
+    clearcoat: 0.55,
+    clearcoatRoughness: 0.3,
   });
-  const soft = new THREE.MeshStandardMaterial({
+  const soft = new THREE.MeshPhysicalMaterial({
     color: colorSoft,
-    roughness: 0.7,
-    metalness: 0.04,
+    roughness: 0.58,
+    metalness: 0.06,
+    clearcoat: 0.35,
+    clearcoatRoughness: 0.4,
   });
 
   const box = (
@@ -63,7 +74,7 @@ export function buildEmblem(
     z: number,
     mat = solid,
   ) => {
-    const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 24), mat);
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 40), mat);
     m.position.set(x, y, z);
     group.add(m);
     return m;
@@ -95,7 +106,7 @@ export function buildEmblem(
         arm.add(blade);
         rotor.add(arm);
       }
-      const hub = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 12), solid);
+      const hub = new THREE.Mesh(new THREE.SphereGeometry(0.1, 28, 20), solid);
       rotor.add(hub);
       rotor.name = "spin";
       group.add(rotor);
@@ -144,7 +155,7 @@ export function buildEmblem(
       });
       const shaft = cyl(0.035, 0.035, 1.0, 0.15, 0.3, 0.42, solid);
       shaft.rotation.z = -0.72;
-      const head = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.3, 20), solid);
+      const head = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.3, 32), solid);
       head.position.set(0.5, 0.72, 0.42);
       head.rotation.z = -0.72;
       group.add(head);
@@ -159,7 +170,7 @@ export function buildEmblem(
         const z = Math.cos(a) * 0.4 - 0.1;
         const h = 0.62 + (i % 2) * 0.16;
         cyl(0.13, 0.15, h, x, -0.5 + h / 2, z, i % 2 ? soft : solid);
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 18, 14), solid);
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.15, 28, 20), solid);
         head.position.set(x, -0.5 + h + 0.14, z);
         group.add(head);
       }
