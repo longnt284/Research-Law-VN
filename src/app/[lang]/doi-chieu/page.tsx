@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { curatedPairCount, pairs } from "@/lib/compare";
+import { alternatesFor } from "@/lib/site";
 import { lexiconStats } from "@/lib/objectivity";
 
 export function generateStaticParams() {
@@ -22,7 +23,11 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLang(lang)) return {};
   const t = getDict(lang);
-  return { title: t.compare.title, description: t.compare.lede };
+  return {
+    title: t.compare.title,
+    description: t.compare.lede,
+    alternates: alternatesFor(lang, "/doi-chieu"),
+  };
 }
 
 export default async function ComparePage({

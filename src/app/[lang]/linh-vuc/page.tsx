@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { documents, domains } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { getDict, isLang } from "@/i18n/dictionary";
+import { alternatesFor } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -16,7 +17,11 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLang(lang)) return {};
   const t = getDict(lang);
-  return { title: t.domainPage.title, description: t.domainPage.lede };
+  return {
+    title: t.domainPage.title,
+    description: t.domainPage.lede,
+    alternates: alternatesFor(lang, "/linh-vuc"),
+  };
 }
 
 export default async function DomainsPage({

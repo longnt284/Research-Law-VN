@@ -10,6 +10,7 @@ import { Reveal } from "@/components/Reveal";
 import { documents, domains, relations } from "@/data/documents";
 import type { DomainId, Lang } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { alternatesFor } from "@/lib/site";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => domains.map((d) => ({ lang, id: d.id })));
@@ -24,7 +25,11 @@ export async function generateMetadata({
   if (!isLang(lang)) return {};
   const domain = domains.find((d) => d.id === id);
   if (!domain) return {};
-  return { title: domain.label[lang], description: domain.blurb[lang] };
+  return {
+    title: domain.label[lang],
+    description: domain.blurb[lang],
+    alternates: alternatesFor(lang, `/linh-vuc/${domain.id}`),
+  };
 }
 
 export default async function DomainPage({

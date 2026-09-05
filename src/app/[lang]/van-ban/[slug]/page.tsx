@@ -8,6 +8,7 @@ import { VERIFIED_ON, documents, documentsById, relations } from "@/data/documen
 import type { Lang, RelationKind } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { pairsFor } from "@/lib/compare";
+import { alternatesFor } from "@/lib/site";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => documents.map((d) => ({ lang, slug: d.id })));
@@ -25,6 +26,7 @@ export async function generateMetadata({
   return {
     title: `${doc.number} — ${doc.title[lang]}`,
     description: doc.summary[lang].slice(0, 175),
+    alternates: alternatesFor(lang, `/van-ban/${doc.id}`),
   };
 }
 
