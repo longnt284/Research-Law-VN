@@ -152,40 +152,45 @@ export function DomainGraph3D({
         hiệu duy nhất trên khối nói văn bản này thuộc về đâu. Ở đây độ bóng
         đến từ lớp phủ và đèn viền, không đến từ việc rọi thêm ánh sáng.
       */
-      const darkNow = isDark();
-      scene.add(new THREE.AmbientLight(0xffffff, darkNow ? 0.32 : 0.5));
-      scene.add(
-        new THREE.HemisphereLight(
-          darkNow ? 0x93a9c8 : 0xffffff,
-          darkNow ? 0x15181e : 0xcfc7b6,
-          darkNow ? 0.65 : 0.85,
-        ),
-      );
-      const key = new THREE.DirectionalLight(0xfff2e0, darkNow ? 1.5 : 1.7);
+      const ambient = new THREE.AmbientLight(0xffffff);
+      scene.add(ambient);
+      const hemi = new THREE.HemisphereLight();
+      scene.add(hemi);
+      const key = new THREE.DirectionalLight(0xfff2e0);
       key.position.set(3, 6, 4);
       scene.add(key);
-      const rim = new THREE.DirectionalLight(
-        darkNow ? 0xffd9a4 : 0xffffff,
-        darkNow ? 0.9 : 0.5,
-      );
+      const rim = new THREE.DirectionalLight();
       rim.position.set(-4.5, 1.5, -5);
       scene.add(rim);
+
+      const applyLighting = (dark: boolean) => {
+        ambient.intensity = dark ? 0.32 : 0.5;
+        hemi.color.set(dark ? 0x93a9c8 : 0xffffff);
+        hemi.groundColor.set(dark ? 0x15181e : 0xcfc7b6);
+        hemi.intensity = dark ? 0.65 : 0.85;
+        key.intensity = dark ? 1.5 : 1.7;
+        rim.color.set(dark ? 0xffd9a4 : 0xffffff);
+        rim.intensity = dark ? 0.9 : 0.5;
+      };
 
       const nodeGroup = new THREE.Group();
       scene.add(nodeGroup);
       const meshes: { mesh: InstanceType<typeof THREE.Mesh>; doc: LegalDoc }[] = [];
 
-      const makeNode = (d: LegalDoc) => {
-        const dark = isDark();
-        const expired = d.status === "expired";
-        // Độ bão hoà nhỉnh hơn màu chấm tròn trên bản đồ hai chiều một chút:
-        // ánh sáng và ánh xạ tông màu bao giờ cũng kéo màu nhạt đi, nên đưa vào
-        // đúng bằng màu đích thì ra màn hình sẽ nhạt hơn màu đích.
-        const color = new THREE.Color().setHSL(
+      // Độ bão hoà nhỉnh hơn màu chấm tròn trên bản đồ hai chiều một chút: ánh
+      // sáng và ánh xạ tông màu bao giờ cũng kéo màu nhạt đi, nên đưa vào đúng
+      // bằng màu đích thì ra màn hình sẽ nhạt hơn màu đích.
+      const nodeColor = (expired: boolean, dark: boolean) =>
+        new THREE.Color().setHSL(
           hue / 360,
           expired ? 0 : dark ? 0.58 : 0.55,
           expired ? (dark ? 0.4 : 0.72) : dark ? 0.55 : 0.42,
         );
+
+      const makeNode = (d: LegalDoc) => {
+        const dark = isDark();
+        const expired = d.status === "expired";
+        const color = nodeColor(expired, dark);
         const r = TIER[d.type] === 0 ? 0.24 : TIER[d.type] === 1 ? 0.19 : 0.15;
         /*
           Quả cầu đặc dựng 40×28 thay vì 24×18: ở cỡ này viền hết gợn cạnh khi
@@ -226,6 +231,24 @@ export function DomainGraph3D({
       };
       docs.forEach(makeNode);
 
+      /*
+        Màu được nướng vào chất liệu lúc tạo chứ không đọc từ biến CSS mỗi khung
+        hình, nên đổi nền sáng/tối phải sơn lại. Hình khối thì giữ nguyên: quả
+        cầu rỗng hay đặc do tình trạng hiệu lực quyết định, không do nền.
+      */
+      const paintNodes = (dark: boolean) => {
+        for (const { mesh, doc } of meshes) {
+          const expired = doc.status === "expired";
+          const mat = mesh.material as InstanceType<
+            typeof THREE.MeshPhysicalMaterial
+          >;
+          const c = nodeColor(expired, dark);
+          mat.color.copy(c);
+          mat.emissive.copy(c);
+          mat.emissiveIntensity = expired ? 0 : dark ? 0.07 : 0;
+        }
+      };
+
       // ── Cạnh ──
       /*
         Màu đổ dọc theo sợi: đầu ở văn bản hướng dẫn nhận màu lĩnh vực, đầu ở
@@ -236,31 +259,46 @@ export function DomainGraph3D({
       const edgeMat = new THREE.LineBasicMaterial({
         vertexColors: true,
         transparent: true,
-        opacity: darkNow ? 0.8 : 0.7,
       });
-      const edgeNeutral = new THREE.Color(darkNow ? 0x6b7280 : 0x9a9184);
-      const edgeTint = new THREE.Color().setHSL(
-        hue / 360,
-        darkNow ? 0.45 : 0.4,
-        darkNow ? 0.58 : 0.5,
-      );
+      const edgeNeutral = new THREE.Color();
+      const edgeTint = new THREE.Color();
       const points: InstanceType<typeof THREE.Vector3>[] = [];
-      const edgeColors: number[] = [];
       for (const rel of relations) {
         const a = pos.get(rel.from);
         const b = pos.get(rel.to);
         if (!a || !b) continue;
         points.push(a.clone(), b.clone());
-        edgeColors.push(
-          edgeTint.r, edgeTint.g, edgeTint.b,
-          edgeNeutral.r, edgeNeutral.g, edgeNeutral.b,
-        );
       }
+      let edgeColorAttr: InstanceType<typeof THREE.Float32BufferAttribute> | null =
+        null;
       if (points.length) {
         const geo = new THREE.BufferGeometry().setFromPoints(points);
-        geo.setAttribute("color", new THREE.Float32BufferAttribute(edgeColors, 3));
+        edgeColorAttr = new THREE.Float32BufferAttribute(
+          new Float32Array(points.length * 3),
+          3,
+        );
+        geo.setAttribute("color", edgeColorAttr);
         scene.add(new THREE.LineSegments(geo, edgeMat));
       }
+
+      // Mỗi cạnh là hai đỉnh liền nhau, nên bảng màu đi theo bước sáu số: ba số
+      // cho đầu mang màu lĩnh vực, ba số cho đầu nhạt về màu đường kẻ.
+      const paintEdges = (dark: boolean) => {
+        edgeMat.opacity = dark ? 0.8 : 0.7;
+        edgeNeutral.set(dark ? 0x6b7280 : 0x9a9184);
+        edgeTint.setHSL(hue / 360, dark ? 0.45 : 0.4, dark ? 0.58 : 0.5);
+        if (!edgeColorAttr) return;
+        const arr = edgeColorAttr.array as Float32Array;
+        for (let i = 0; i + 5 < arr.length; i += 6) {
+          arr[i] = edgeTint.r;
+          arr[i + 1] = edgeTint.g;
+          arr[i + 2] = edgeTint.b;
+          arr[i + 3] = edgeNeutral.r;
+          arr[i + 4] = edgeNeutral.g;
+          arr[i + 5] = edgeNeutral.b;
+        }
+        edgeColorAttr.needsUpdate = true;
+      };
 
       // ── Nhãn: phần tử HTML chiếu theo toạ độ, không phải chữ vẽ trong ảnh ──
       // Chữ HTML nét sắc ở mọi mức thu phóng và tự dùng đúng phông của trang.
@@ -290,13 +328,18 @@ export function DomainGraph3D({
         3: t.type["thong-tu"],
       };
       const ringMat = new THREE.LineBasicMaterial({
-        color: new THREE.Color(isDark() ? 0x4a5058 : 0xc4bbaa),
         transparent: true,
         opacity: 0.9,
       });
       // `on` giữ trạng thái hiện tại để mỗi khung hình không ghi lại một giá trị
       // không đổi — ghi lại sẽ huỷ và khởi động lại hiệu ứng chuyển màu.
-      const tierMarks: { y: number; el: HTMLSpanElement; on: boolean }[] = [];
+      const tierMarks: {
+        y: number;
+        el: HTMLSpanElement;
+        on: boolean;
+        w: number;
+        h: number;
+      }[] = [];
       const tierLabelLayer = document.createElement("div");
       tierLabelLayer.className = "pointer-events-none absolute inset-0 overflow-hidden";
       host.appendChild(tierLabelLayer);
@@ -319,8 +362,45 @@ export function DomainGraph3D({
           "eyebrow absolute whitespace-nowrap bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] px-1 transition-opacity duration-300 ease-[var(--ease-out-soft)]";
         el.style.opacity = "0";
         tierLabelLayer.appendChild(el);
-        tierMarks.push({ y, el, on: false });
+        tierMarks.push({ y, el, on: false, w: 48, h: 13 });
       }
+
+      /*
+        Kích thước nhãn đo một lần, không đo mỗi khung hình. `offsetWidth` đọc
+        ngay sau khi vòng vẽ vừa ghi `transform` buộc trình duyệt dựng lại bố
+        cục tại chỗ, một lần cho mỗi nhãn, sáu mươi lượt mỗi giây. Cỡ chữ ở đây
+        cố định nên một lần đo là đủ; chỉ đo lại khi phông chữ thật đã thay phông
+        dự phòng, vì lúc đó bề rộng mới đổi.
+      */
+      const labelSize = labels.map(() => ({ w: 54, h: 14 }));
+      const measureLabels = () => {
+        labels.forEach((el, i) => {
+          labelSize[i] = { w: el.offsetWidth || 54, h: el.offsetHeight || 14 };
+        });
+        for (const mark of tierMarks) {
+          mark.w = mark.el.offsetWidth || 48;
+          mark.h = mark.el.offsetHeight || 13;
+        }
+      };
+      measureLabels();
+      document.fonts?.ready.then(() => {
+        if (!disposed) measureLabels();
+      });
+
+      /*
+        Một chỗ duy nhất đặt toàn bộ màu theo nền sáng hay tối. Trước đây màu
+        được đọc một lần lúc dựng scene, nên sau khi bấm nút đổi nền thì khối
+        vẫn đứng dưới bảng màu cũ: quả cầu, cạnh và vành tầng giữ nguyên độ sáng
+        của nền kia, còn chữ quanh nó thì đã đổi. Vật thể biểu trưng ở đầu trang
+        vốn đã xử lý đúng việc này, nên hai khối trên cùng một trang lệch nhau.
+      */
+      const applyTheme = (dark: boolean) => {
+        applyLighting(dark);
+        paintNodes(dark);
+        paintEdges(dark);
+        ringMat.color.set(dark ? 0x4a5058 : 0xc4bbaa);
+      };
+      applyTheme(isDark());
 
       // ── Máy ảnh quay quanh khối ──
       /*
@@ -550,8 +630,8 @@ export function DomainGraph3D({
           side.project(camera);
           const x = ((side.x + 1) / 2) * r.width;
           const y = ((1 - side.y) / 2) * r.height;
-          const mw = mark.el.offsetWidth || 48;
-          const mh = mark.el.offsetHeight || 13;
+          const mw = mark.w;
+          const mh = mark.h;
           const visibleMark = side.z <= 1 && x > 2 && x + mw < r.width - 2;
           if (visibleMark !== mark.on) {
             mark.el.style.opacity = visibleMark ? "1" : "0";
@@ -568,8 +648,7 @@ export function DomainGraph3D({
         for (const c of cand) {
           if (c.z > 1) continue;
           const el = labels[c.i];
-          const w = el.offsetWidth || 54;
-          const h = el.offsetHeight || 14;
+          const { w, h } = labelSize[c.i];
           // Đẩy nhãn ra khỏi bán kính quả cầu lớn nhất, nếu không thì chữ đầu
           // của số hiệu bị chính quả cầu che mất.
           const box = { x1: c.x + 15, y1: c.y - h / 2, x2: c.x + 15 + w, y2: c.y + h / 2 };
@@ -611,10 +690,23 @@ export function DomainGraph3D({
       const onVis = () => setVisible(!document.hidden);
       document.addEventListener("visibilitychange", onVis);
 
+      // Hai nguồn đổi nền: thuộc tính `data-theme` do nút trên thanh điều hướng
+      // ghi, và cài đặt của hệ điều hành khi người dùng chưa bấm gì.
+      const onTheme = () => applyTheme(isDark());
+      const themeObserver = new MutationObserver(onTheme);
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+      const themeMq = window.matchMedia("(prefers-color-scheme: dark)");
+      themeMq.addEventListener("change", onTheme);
+
       cleanup = () => {
         if (raf !== null) cancelAnimationFrame(raf);
         io.disconnect();
         ro.disconnect();
+        themeObserver.disconnect();
+        themeMq.removeEventListener("change", onTheme);
         document.removeEventListener("visibilitychange", onVis);
         canvas.removeEventListener("pointerdown", onDown);
         canvas.removeEventListener("pointermove", onMove);
@@ -644,5 +736,13 @@ export function DomainGraph3D({
     };
   }, [docs, relations, lang, domain, hue, router]);
 
-  return <div ref={hostRef} className={`relative ${className ?? ""}`} />;
+  /*
+    Ẩn khỏi cây trợ năng: khối này chỉ thao tác được bằng chuột và ngón tay, và
+    mọi văn bản trong đó đều có mặt ở danh sách chữ ngay dưới trang, nơi dùng
+    được bằng bàn phím và trình đọc màn hình. Để nó lộ ra thì trình đọc màn hình
+    thông báo một vùng trống không đi vào được.
+  */
+  return (
+    <div ref={hostRef} aria-hidden="true" className={`relative ${className ?? ""}`} />
+  );
 }

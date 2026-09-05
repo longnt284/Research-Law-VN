@@ -6,6 +6,7 @@ import { Reveal } from "@/components/Reveal";
 import { VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang } from "@/i18n/dictionary";
+import { alternatesFor } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -15,7 +16,11 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLang(lang)) return {};
   const t = getDict(lang);
-  return { title: t.about.title, description: t.about.lede };
+  return {
+    title: t.about.title,
+    description: t.about.lede,
+    alternates: alternatesFor(lang, "/phuong-phap"),
+  };
 }
 
 /**

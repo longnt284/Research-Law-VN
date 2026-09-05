@@ -10,6 +10,7 @@ import { documentsById } from "@/data/documents";
 import type { Lang, LegalDoc } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { derivedNotes, factDeltas, pairById, pairs } from "@/lib/compare";
+import { alternatesFor } from "@/lib/site";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => pairs.map((p) => ({ lang, pair: p.id })));
@@ -28,6 +29,7 @@ export async function generateMetadata({
   return {
     title: `${p.newDoc.number} ${t.compare.versus} ${p.oldDoc.number}`,
     description: `${t.compare.title}: ${p.newDoc.title[lang]} — ${p.oldDoc.title[lang]}.`,
+    alternates: alternatesFor(lang, `/doi-chieu/${p.id}`),
   };
 }
 

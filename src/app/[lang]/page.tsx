@@ -1,7 +1,23 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { MapExplorer } from "@/components/MapExplorer";
 import { isLang } from "@/i18n/dictionary";
+import { alternatesFor } from "@/lib/site";
+
+/**
+ * Trang bản đồ nhận tiêu đề và mô tả từ layout; ở đây chỉ khai báo bản dịch,
+ * thứ mà layout không tự biết được.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLang(lang)) return {};
+  return { alternates: alternatesFor(lang) };
+}
 
 export default async function MapPage({
   params,

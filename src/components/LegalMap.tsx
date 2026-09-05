@@ -109,8 +109,21 @@ export function LegalMap({
   /** Vùng bị chú giải và dòng hướng dẫn che, tính theo toạ độ khung vẽ. */
   const reserved = useRef<{ x1: number; y1: number; x2: number; y2: number }[]>([]);
   const textWidths = useRef(new Map<string, number>());
+  /**
+   * Họ chữ dùng cho nhãn, đọc một lần.
+   *
+   * `getComputedStyle` ép trình duyệt tính lại kiểu dáng ngay tại chỗ gọi. Gọi
+   * nó trong vòng vẽ nghĩa là mỗi khung hình kéo hoặc phóng to đều trả thêm một
+   * lần tính đó, cho một giá trị không đổi.
+   */
+  const labelFont = useRef<string | null>(null);
   const pointers = useRef(new Map<number, { x: number; y: number }>());
-  const pinchStart = useRef<{ dist: number; scale: number } | null>(null);
+  /** `mid` là điểm giữa hai ngón ở lần đo trước, dùng để neo khi chụm và tách. */
+  const pinchStart = useRef<{
+    dist: number;
+    scale: number;
+    mid: { x: number; y: number };
+  } | null>(null);
   const dragged = useRef(false);
   const selectedRef = useRef<string | null>(selectedId);
   const domainRef = useRef<DomainId | "all">(activeDomain);
@@ -331,7 +344,10 @@ export function LegalMap({
     }
 
     const fontSize = 12.5;
-    ctx.font = `500 ${fontSize}px ${getComputedStyle(document.body).fontFamily}`;
+    if (labelFont.current === null) {
+      labelFont.current = getComputedStyle(document.body).fontFamily;
+    }
+    ctx.font = `500 ${fontSize}px ${labelFont.current}`;
     ctx.textBaseline = "middle";
 
     const order = [...nodes].sort((a, b) => {
@@ -425,7 +441,12 @@ export function LegalMap({
     dirty.current = false;
   }, [nodes, edges, nodeById, adjacency, isDimmed, worldToScreen]);
 
-  drawRef.current = draw;
+  // Gán trong effect chứ không gán thẳng giữa thân render: ghi vào ref lúc dựng
+  // cây component là một tác dụng phụ, và ở chế độ kiểm tra nghiêm của React thì
+  // thân render chạy hai lần.
+  useEffect(() => {
+    drawRef.current = draw;
+  }, [draw]);
 
   /** Đưa khung nhìn về vị trí bao trọn các văn bản đang hiển thị. */
   const fitView = useCallback(() => {
@@ -560,6 +581,26 @@ export function LegalMap({
     if (resetSignal > 0) fitView();
   }, [resetSignal, fitView]);
 
+  /*
+    Bề rộng chữ đo trước khi webfont tải xong là bề rộng của họ chữ dự phòng.
+    Phép chống chồng nhãn dựa hẳn vào con số đó, nên nếu không đo lại thì ở lần
+    vẽ đầu các hộp nhãn rộng hẹp sai và chữ đè lên nhau — đúng thứ mà phép chống
+    chồng sinh ra để tránh. Xoá bộ nhớ đệm khi phông đã sẵn sàng rồi vẽ lại.
+  */
+  useEffect(() => {
+    if (!document.fonts) return;
+    let alive = true;
+    document.fonts.ready.then(() => {
+      if (!alive) return;
+      labelFont.current = null;
+      textWidths.current.clear();
+      kick();
+    });
+    return () => {
+      alive = false;
+    };
+  }, [kick]);
+
   // Theo dõi thay đổi chủ đề sáng/tối để đọc lại bảng màu. Hai nguồn: cài đặt hệ
   // điều hành, và thuộc tính `data-theme` do nút đổi nền trên thanh điều hướng ghi.
   useEffect(() => {
@@ -633,6 +674,7 @@ export function LegalMap({
       pinchStart.current = {
         dist: Math.hypot(a.x - b.x, a.y - b.y),
         scale: cam.current.scale,
+        mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
       };
     }
   };
@@ -645,11 +687,26 @@ export function LegalMap({
     if (pointers.current.size === 2 && pinchStart.current) {
       const [a, b] = [...pointers.current.values()];
       const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      // Điểm dưới ngón, đo bằng mức phóng cũ và ở chỗ ngón vừa rời khỏi.
+      const before = screenToWorld(
+        pinchStart.current.mid.x,
+        pinchStart.current.mid.y,
+      );
       const ratio = dist / (pinchStart.current.dist || 1);
       cam.current.scale = Math.min(
         MAX_SCALE,
         Math.max(MIN_SCALE, pinchStart.current.scale * ratio),
       );
+      // Kéo điểm đó về đúng chỗ ngón đang ở, với mức phóng mới. Không có bước
+      // này thì thao tác chụm phóng về tâm khung vẽ, còn phần bản đồ giữa hai
+      // ngón thì trượt đi — đúng chỗ người dùng đang nhìn lại là chỗ chạy mất.
+      // Bước này gánh luôn việc kéo bằng hai ngón: điểm giữa dời bao nhiêu thì
+      // khung nhìn dời theo bấy nhiêu.
+      const after = screenToWorld(mid.x, mid.y);
+      cam.current.x += before.x - after.x;
+      cam.current.y += before.y - after.y;
+      pinchStart.current.mid = mid;
       dragged.current = true;
       kick();
       return;

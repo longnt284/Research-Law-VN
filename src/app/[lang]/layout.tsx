@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { VERIFIED_ON } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { SITE_URL } from "@/lib/site";
 
 /*
   Hai họ chữ, mỗi họ một nhiệm vụ. Lora có chân, dùng cho tiêu đề và trích dẫn
@@ -43,6 +44,9 @@ export async function generateMetadata({
   if (!isLang(lang)) return {};
   const t = getDict(lang);
   return {
+    // Không có mốc này thì mọi đường dẫn trong metadata ở dạng tương đối và
+    // công cụ tìm kiếm không giải ra được địa chỉ thật.
+    metadataBase: new URL(SITE_URL),
     title: { default: t.siteName, template: `%s — ${t.siteName}` },
     description: t.siteTagline,
     openGraph: {
@@ -51,9 +55,8 @@ export async function generateMetadata({
       locale: lang === "vi" ? "vi_VN" : "en_GB",
       type: "website",
     },
-    alternates: {
-      languages: { vi: "/vi", en: "/en" },
-    },
+    // Khai báo bản dịch nằm ở từng trang, xem `alternatesFor` trong
+    // `src/lib/site.ts`: layout không biết mình đang bọc trang nào.
     robots: { index: true, follow: true },
   };
 }

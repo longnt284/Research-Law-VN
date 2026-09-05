@@ -5,6 +5,7 @@ import { DocumentIndex } from "@/components/DocumentIndex";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { documents, domains } from "@/data/documents";
 import { getDict, isLang } from "@/i18n/dictionary";
+import { alternatesFor } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -14,7 +15,11 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLang(lang)) return {};
   const t = getDict(lang);
-  return { title: t.list.title, description: t.list.lede };
+  return {
+    title: t.list.title,
+    description: t.list.lede,
+    alternates: alternatesFor(lang, "/van-ban"),
+  };
 }
 
 export default async function DocumentsPage({

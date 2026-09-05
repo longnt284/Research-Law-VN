@@ -66,7 +66,17 @@ npm install
 npm run dev        # môi trường phát triển
 npm run build      # dựng bản production
 npm run typecheck  # kiểm tra kiểu
+npm run lint       # kiểm tra quy tắc mã nguồn
 ```
+
+### Biến môi trường
+
+`NEXT_PUBLIC_SITE_URL` là địa chỉ gốc của trang khi triển khai, ví dụ
+`https://vidu.vn`. Thẻ canonical, thẻ khai báo bản dịch và `sitemap.xml` đều cần
+địa chỉ tuyệt đối, mà địa chỉ đó thì không suy ra được từ mã nguồn. Trên Vercel,
+biến `VERCEL_PROJECT_PRODUCTION_URL` của nền tảng được dùng thay khi không đặt.
+Không có cả hai thì rơi về `http://localhost:3000`: đúng cho lúc chạy phát
+triển, và sai một cách dễ thấy nếu quên đặt trước khi triển khai.
 
 ## Skill Claude Code
 
@@ -82,11 +92,30 @@ render lại của React mà chỉ đánh dấu khung hình cần vẽ; khi khô
 đổi, vòng lặp vẽ dừng hẳn. Nhãn trên bản đồ có kiểm tra chồng lấn nên chữ không
 đè lên nhau ở bất kỳ mức phóng nào.
 
+Khối quan hệ ba chiều ở trang lĩnh vực và vật thể biểu trưng đều đọc lại bảng
+màu khi người đọc đổi nền sáng/tối, thay vì nướng cứng màu lúc dựng cảnh. Nhãn
+trên cả bản đồ hai chiều lẫn khối ba chiều được đo một lần rồi mới dùng cho phép
+chống chồng; phép đo chạy lại đúng một lần nữa khi phông chữ thật đã thay phông
+dự phòng, vì lúc đó bề rộng chữ mới đổi.
+
+`sitemap.xml` và `robots.txt` sinh từ chính tập dữ liệu, dùng cùng nguồn với
+`generateStaticParams` của từng trang, nên không có trang nào lên được mà thiếu
+trong sitemap. Thẻ canonical và thẻ khai báo bản dịch đặt ở từng trang, xem
+`src/lib/site.ts`.
+
+Bản dựng production gửi kèm `Content-Security-Policy` khoá `default-src 'self'`:
+trang không nạp mã, kiểu dáng, ảnh hay phông chữ từ bên thứ ba nên khoá này
+không làm hỏng gì. Riêng `script-src` phải nhận `'unsafe-inline'` vì toàn bộ
+trang là HTML dựng sẵn, không có yêu cầu nào để sinh `nonce` cho từng lần tải.
+Chi tiết và lý do nằm trong `next.config.ts`.
+
 Cấu trúc chính:
 
 ```
 src/
   app/[lang]/          # định tuyến song ngữ, sinh tĩnh toàn bộ
+  app/sitemap.ts       # sitemap sinh từ tập dữ liệu
+  app/robots.ts        # robots.txt
   components/          # bản đồ, danh mục, các mảnh giao diện dùng lại
   data/                # tập dữ liệu văn bản và kiểu dữ liệu
   i18n/                # từ điển giao diện hai thứ tiếng
@@ -94,6 +123,7 @@ src/
   lib/compare.ts       # ghép cặp và tính dữ kiện đối chiếu
   lib/objectivity.ts   # phép kiểm tính khách quan, chạy khi dựng trang
   lib/diff.ts          # so sánh cơ học hai đoạn văn bản
+  lib/site.ts          # địa chỉ gốc, canonical và khai báo bản dịch
 ```
 
 ## Miễn trừ trách nhiệm
@@ -134,3 +164,9 @@ corroborated across at least two independent search results, and anything that
 did not agree was left blank. All fifty carry `confidence: "cross-check"`, so the
 interface flags them, and their `sources` are addresses found rather than pages
 opened.
+
+To deploy, set `NEXT_PUBLIC_SITE_URL` to the site's origin. Canonical tags,
+hreflang tags and `sitemap.xml` all need absolute addresses, and that address
+cannot be derived from the source. On Vercel the platform's
+`VERCEL_PROJECT_PRODUCTION_URL` is used when the variable is unset; with neither,
+the build falls back to `http://localhost:3000`.
