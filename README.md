@@ -6,6 +6,54 @@ tiết, sửa đổi bổ sung, hoặc thay thế.
 
 Trang có hai phiên bản đầy đủ, tiếng Việt tại `/vi` và tiếng Anh tại `/en`.
 
+Trang chủ `/vi` là phần mở đầu ba chiều; bản đồ tương tác nằm ở `/vi/ban-do`.
+
+## Trang mở đầu ba chiều
+
+Trang chủ trước đây mở thẳng vào bản đồ. Hai việc khác nhau bị nhồi vào một địa
+chỉ: người mở lần đầu cần biết trang này làm gì, người đã biết cần vào thẳng
+công cụ. Nay trang chủ là sáu màn cuộn trên một cảnh ba chiều duy nhất, và có
+lối vào bản đồ ở cả sáu màn lẫn thanh dưới cùng.
+
+Cảnh không phải hình trang trí. `src/lib/space.ts` sinh toàn bộ hình học từ
+`documents` và `relations`: mỗi điểm sáng là một văn bản, mỗi thanh nối là một
+quan hệ có thật, và sáu màn là sáu cách sắp xếp cùng tập điểm đó.
+
+1. **Khối** — toàn bộ tập văn bản như một thiên thể, luật ở lõi, thông tư ở lớp vỏ.
+2. **Thứ bậc** — bốn tầng theo hiệu lực pháp lý, trục đứng mang nghĩa.
+3. **Lĩnh vực** — tám chùm, mỗi chùm một sắc màu dùng chung với bản đồ hai chiều.
+4. **Quan hệ** — văn bản bị nhiều văn bản khác dẫn chiếu bị kéo vào tâm, nên các
+   đường nối cắt qua lòng khối thay vì bò trên mặt.
+5. **Thời gian** — trục ngang là năm có hiệu lực, trục đứng vẫn là thứ bậc.
+6. **Ngưỡng** — hai vành lồng vào nhau, trước lối vào bản đồ.
+
+Một điểm giữ nguyên danh tính qua cả sáu màn, nên chuyển màn là các văn bản di
+chuyển sang chỗ mới chứ không phải một cảnh tắt đi và một cảnh khác hiện ra.
+Camera, đèn, sương, độ đậm đường nối và sắc độ cùng đọc một bảng trạng thái duy
+nhất, nên chúng luôn đổi đồng bộ với hình khối. Thêm một nghị định vào tập dữ
+liệu là cảnh có thêm một điểm, không phải sửa mã.
+
+Ba cam kết kỹ thuật, và cả ba đều đến từ ràng buộc có sẵn của trang. Không render
+target và không postprocessing, để cảnh dựng được trên GPU tích hợp đời cũ. Không
+tài nguyên bên thứ ba, nên `Content-Security-Policy` khoá `default-src 'self'`
+không phải nới ra dòng nào. Vì vậy kim loại dùng một hộp sáng giả đọc từ pháp
+tuyến (`src/lib/surface.ts`, dùng chung với khối quan hệ của trang lĩnh vực) thay
+cho envMap; quầng sáng của văn bản cấp luật là tấm phẳng cộng dồn thay cho bloom;
+và lớp bụi đổi hành vi ngay trong vertex shader.
+
+Ba đường để phần này không bao giờ chặn nội dung. Toàn bộ chữ nằm trong HTML dựng
+sẵn nên đọc được khi JavaScript bị chặn. Chuyển động chỉ do GSAP đặt, nên gói mã
+hỏng thì chữ vẫn hiện chứ không mất. Và cảnh nằm sau một ranh giới lỗi: WebGL
+không dựng được thì trang tiếp tục như một trang chữ. Bảng tùy chỉnh ở thanh dưới
+cùng có nút dừng chuyển động, giảm chuyển động và tắt tác động của con trỏ; lựa
+chọn của hệ điều hành được tôn trọng cho tới khi người đọc tự chọn.
+
+Cảnh ba chiều chỉ sống ở phần mở đầu. Từ khối kết trở xuống, nền phẳng trở lại:
+nền động sau một đoạn văn dài làm mắt trượt khỏi dòng đang đọc, mà đây là trang
+để đọc điều luật.
+
+Thư viện tham khảo và lý do chọn hoặc loại từng thư viện nằm ở `references/`.
+
 ## Phạm vi
 
 Tám lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
@@ -113,17 +161,24 @@ Cấu trúc chính:
 
 ```
 src/
-  app/[lang]/          # định tuyến song ngữ, sinh tĩnh toàn bộ
-  app/sitemap.ts       # sitemap sinh từ tập dữ liệu
-  app/robots.ts        # robots.txt
-  components/          # bản đồ, danh mục, các mảnh giao diện dùng lại
-  data/                # tập dữ liệu văn bản và kiểu dữ liệu
-  i18n/                # từ điển giao diện hai thứ tiếng
-  lib/layout.ts        # thuật toán bố cục bản đồ
-  lib/compare.ts       # ghép cặp và tính dữ kiện đối chiếu
-  lib/objectivity.ts   # phép kiểm tính khách quan, chạy khi dựng trang
-  lib/diff.ts          # so sánh cơ học hai đoạn văn bản
-  lib/site.ts          # địa chỉ gốc, canonical và khai báo bản dịch
+  app/[lang]/               # định tuyến song ngữ, sinh tĩnh toàn bộ
+  app/[lang]/page.tsx       # trang mở đầu ba chiều
+  app/[lang]/ban-do/        # bản đồ tương tác
+  app/sitemap.ts            # sitemap sinh từ tập dữ liệu
+  app/robots.ts             # robots.txt
+  components/               # bản đồ, danh mục, các mảnh giao diện dùng lại
+  components/Prologue.tsx   # sáu màn cuộn, GSAP ScrollTrigger
+  components/LegalSpace.tsx # cảnh ba chiều, React Three Fiber
+  data/                     # tập dữ liệu văn bản và kiểu dữ liệu
+  i18n/                     # từ điển giao diện hai thứ tiếng
+  lib/layout.ts             # thuật toán bố cục bản đồ
+  lib/space.ts              # sáu bố cục ba chiều, sinh từ tập dữ liệu
+  lib/surface.ts            # hộp sáng giả, dùng chung cho hai cảnh ba chiều
+  lib/compare.ts            # ghép cặp và tính dữ kiện đối chiếu
+  lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
+  lib/diff.ts               # so sánh cơ học hai đoạn văn bản
+  lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
+references/                 # thư viện 3D đã khảo sát, và lý do dùng hay loại
 ```
 
 ## Miễn trừ trách nhiệm
@@ -139,6 +194,28 @@ A reference tool for tracing how Vietnam's legal instruments connect to one
 another. Each point on the map is an instrument; each line is a relation that
 actually exists — detailing, amending, or replacing. Fully available in
 Vietnamese at `/vi` and English at `/en`.
+
+The home page is a three-dimensional prologue; the interactive map lives at
+`/en/ban-do`. The prologue is not decoration: `src/lib/space.ts` derives all of
+its geometry from `documents` and `relations`, and its six acts are six
+arrangements of that same set of points — the corpus as one body, four strata of
+legal force, eight domain clusters, the relation web, the time axis, and a
+closing pair of rings. A point keeps its identity across all six, so moving
+between acts moves the instruments rather than swapping one scene for another.
+Adding a decree to the dataset adds a point to the scene.
+
+Three technical commitments, all inherited from constraints the site already
+had: no render targets and no postprocessing, so the scene builds on old
+integrated GPUs, and no third-party assets, so the `default-src 'self'` policy
+needed no loosening. Metal therefore uses a fake light box read off the surface
+normal (`src/lib/surface.ts`, shared with the relation block on the domain
+pages) in place of an environment map, the glow on primary legislation is an
+additive billboard in place of bloom, and the dust layer changes behaviour in
+the vertex shader. All of the prose sits in the prerendered HTML, motion is
+applied only by GSAP, and the scene is wrapped in an error boundary — so with
+JavaScript blocked, a broken bundle, or no WebGL, the page continues as a text
+page. The scene is confined to the prologue; below it the background goes flat
+again, because this is a site for reading legislation.
 
 Data rule: no document number appears unless it was actually looked up. Every
 record carries its sources and a confidence flag, and records with an unconfirmed

@@ -15,6 +15,7 @@ export const dict = {
     siteName: "Bản đồ Không gian Pháp luật",
     siteTagline: "Tra cứu quan hệ giữa các văn bản quy phạm pháp luật Việt Nam",
     nav: {
+      home: "Trang mở đầu",
       map: "Bản đồ",
       documents: "Văn bản",
       domains: "Lĩnh vực",
@@ -199,6 +200,7 @@ export const dict = {
     siteName: "Vietnamese Legal Space Map",
     siteTagline: "Tracing how Vietnam's legal instruments connect to one another",
     nav: {
+      home: "Prologue",
       map: "Map",
       documents: "Documents",
       domains: "Domains",

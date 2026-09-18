@@ -23,7 +23,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     : `/${otherLang}`;
 
   const links = [
-    { href: `/${lang}`, label: t.nav.map, exact: true },
+    { href: `/${lang}/ban-do`, label: t.nav.map, exact: false },
     { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
     { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },
     { href: `/${lang}/doi-chieu`, label: t.nav.compare, exact: false },

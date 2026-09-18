@@ -252,7 +252,7 @@ export default async function DocumentPage({
             </ul>
           </div>
 
-          <Link href={`/${lang}`} className="btn btn-quiet mt-6">
+          <Link href={`/${lang}/ban-do`} className="btn btn-quiet mt-6">
             {t.doc.viewOnMap}
           </Link>
         </aside>

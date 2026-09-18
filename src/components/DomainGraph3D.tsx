@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 
 import type { DomainId, Lang, LegalDoc, Relation } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
+import { attachEnvBox, type EnvBoxUniforms } from "@/lib/surface";
 
 /** Thứ bậc quyết định tầng: luật ở trên, thông tư ở dưới. */
 const TIER: Record<LegalDoc["type"], number> = {
@@ -177,6 +178,35 @@ export function DomainGraph3D({
       scene.add(nodeGroup);
       const meshes: { mesh: InstanceType<typeof THREE.Mesh>; doc: LegalDoc }[] = [];
 
+      /*
+        Hộp sáng giả, dùng chung với không gian ba chiều của trang mở đầu. Bốn
+        đèn ở trên cho quả cầu có sáng có tối, nhưng lớp phủ bóng thì không có
+        gì để phản chiếu, nên vệt sáng nó vẽ ra là vệt của một nguồn điểm chứ
+        không phải của một môi trường. Hộp này cấp cho nó một vùng trời, một mặt
+        sàn và một dải chân trời — đúng thứ làm nên cảm giác chất liệu.
+
+        Mọi quả cầu chia nhau đúng một bộ giá trị: chúng ở cùng một môi trường
+        nên không có lý do gì để khác nhau, và đổi nền sáng tối vì thế chỉ phải
+        ghi một lần thay vì đi qua từng vật liệu.
+      */
+      const envBox: EnvBoxUniforms = {
+        uRim: { value: new THREE.Color() },
+        uRimPower: { value: 2.6 },
+        uRimStrength: { value: 0 },
+        uEnvSky: { value: new THREE.Color() },
+        uEnvGround: { value: new THREE.Color() },
+        uEnvStrength: { value: 0 },
+      };
+      const applyEnvBox = (dark: boolean) => {
+        envBox.uRim.value.set(dark ? 0xf0dcae : 0xffffff);
+        // Trên nền giấy, thêm ánh sáng chỉ đẩy màu lĩnh vực về phía trắng, mà màu
+        // lĩnh vực là dấu hiệu duy nhất trên khối nói văn bản này thuộc về đâu.
+        envBox.uRimStrength.value = dark ? 0.34 : 0.16;
+        envBox.uEnvSky.value.set(dark ? 0x9aa8bd : 0xfffdf7);
+        envBox.uEnvGround.value.set(dark ? 0x0b0f14 : 0x9d9483);
+        envBox.uEnvStrength.value = dark ? 0.58 : 0.28;
+      };
+
       // Độ bão hoà nhỉnh hơn màu chấm tròn trên bản đồ hai chiều một chút: ánh
       // sáng và ánh xạ tông màu bao giờ cũng kéo màu nhạt đi, nên đưa vào đúng
       // bằng màu đích thì ra màn hình sẽ nhạt hơn màu đích.
@@ -225,10 +255,16 @@ export function DomainGraph3D({
             wireframe: expired,
           }),
         );
+        // Văn bản hết hiệu lực vẽ rỗng và phải trông xỉn: cho nó phản chiếu thì
+        // nó sáng ngang văn bản còn hiệu lực và quy ước rỗng mất tác dụng.
+        if (!expired) {
+          attachEnvBox(mesh.material as InstanceType<typeof THREE.Material>, envBox);
+        }
         mesh.position.copy(pos.get(d.id)!);
         nodeGroup.add(mesh);
         meshes.push({ mesh, doc: d });
       };
+      applyEnvBox(isDark());
       docs.forEach(makeNode);
 
       /*
@@ -395,6 +431,7 @@ export function DomainGraph3D({
         vốn đã xử lý đúng việc này, nên hai khối trên cùng một trang lệch nhau.
       */
       const applyTheme = (dark: boolean) => {
+        applyEnvBox(dark);
         applyLighting(dark);
         paintNodes(dark);
         paintEdges(dark);

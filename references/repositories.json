@@ -1,0 +1,74 @@
+[
+  {
+    "name": "tengbao__vanta",
+    "url": "https://github.com/tengbao/vanta.git",
+    "commit": "f8b351906688b56f0fc744e53bde81fc3c56f150",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "adrianhajdin__project_3D_developer_portfolio",
+    "url": "https://github.com/adrianhajdin/project_3D_developer_portfolio.git",
+    "commit": "9985e4bf4ce35dfbc0b3c0e90d4d37dc3c67b2d7",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "pmndrs__drei",
+    "url": "https://github.com/pmndrs/drei.git",
+    "commit": "ffa15b956e320391b0e86084cb58c8da0445abe3",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "img2threejs__img2threejs",
+    "url": "https://github.com/img2threejs/img2threejs.git",
+    "commit": "6e60b5e22419464b4853e01ddb6c0e6f6659a733",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "cathrynlavery__diagram-design",
+    "url": "https://github.com/cathrynlavery/diagram-design.git",
+    "commit": "9874ad73813715fc36875e45afd9cd94c68f3c3f",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "animate-css__animate.css",
+    "url": "https://github.com/animate-css/animate.css.git",
+    "commit": "3f8ab233dbbd9d2fe577528d2296382954be3d1a",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "troisjs__trois",
+    "url": "https://github.com/troisjs/trois.git",
+    "commit": "a1b12398091061b34d872eb0191b22d252b43c89",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "greensock__GSAP",
+    "url": "https://github.com/greensock/GSAP.git",
+    "commit": "13e2b790546426a1a2e0e9b409f3f8dc6d6611f2",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "greensock__gsap-skills",
+    "url": "https://github.com/greensock/gsap-skills.git",
+    "commit": "aed9cfd3277740755f6bfc1155c7aa645403b760",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "heygen-com__hyperframes",
+    "url": "https://github.com/heygen-com/hyperframes.git",
+    "commit": "bf39a727876eb4529584c836e66a0c7cd571c399",
+    "note": "Mã nguồn đã lấy về; tệp phương tiện lớn theo Git LFS giữ ở dạng con trỏ"
+  },
+  {
+    "name": "aframevr__aframe",
+    "url": "https://github.com/aframevr/aframe.git",
+    "commit": "022bcc5f6eef09ff60d3f2110604c78cae0cd5b1",
+    "note": "Shallow clone"
+  },
+  {
+    "name": "mrdoob__three.js",
+    "url": "https://github.com/mrdoob/three.js.git",
+    "commit": "b6493e1cfa71a349db0934db483d59c1398c78e6",
+    "note": "Shallow clone"
+  }
+]
