@@ -178,6 +178,13 @@ export function Prologue({ lang }: { lang: Lang }) {
     return () => clearTimeout(id);
   }, []);
 
+  // Cùng giao ước với `Reveal`: báo cho đoạn script ở đầu <body> biết gói mã của
+  // trang đã chạy được, để nó không gỡ lớp `js` sau bốn giây và kéo tấm màn xuống
+  // ngay giữa lúc cảnh đang dựng.
+  useEffect(() => {
+    document.documentElement.dataset.reveal = "on";
+  }, []);
+
   useEffect(() => {
     if (ready) document.documentElement.dataset.spaceReady = "on";
     return () => {

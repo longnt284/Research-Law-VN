@@ -1254,7 +1254,22 @@ a {
 
 /* ── Màn mở đầu và các đường dự phòng ─────────────────────────────────────── */
 
+/*
+  Tấm màn chỉ được phép tồn tại khi JavaScript thật sự chạy. Nó là một lớp phủ
+  kín khung hình và chỉ có mã mới gỡ được, nên nếu nó hiện mặc định thì trình
+  duyệt chặn JavaScript sẽ thấy đúng một ô vuông giữa màn hình vĩnh viễn — trong
+  khi toàn bộ nội dung vẫn nằm sẵn trong HTML ngay phía dưới.
+
+  Lớp `js` do đoạn script ở đầu <body> đặt, và cũng chính đoạn đó gỡ lớp này ra
+  sau bốn giây nếu gói mã của trang tải hỏng. Treo tấm màn vào đó là nhận luôn cả
+  hai đường thoát: không có JavaScript thì không có tấm màn, và có JavaScript mà
+  gói mã hỏng thì tấm màn vẫn tự mở.
+*/
 #space-curtain {
+  display: none;
+}
+
+html.js #space-curtain {
   position: fixed;
   inset: 0;
   z-index: 40;

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 import { ACT_COUNT, buildSpace } from "@/lib/space";
+import { attachEnvBox, type EnvBoxUniforms } from "@/lib/surface";
 
 /**
  * Không gian ba chiều của trang mở đầu.
@@ -227,14 +228,18 @@ function bump(p: number, c: number, w: number) {
   return smoothstep(1 - Math.abs(p - c) / w, 0, 1);
 }
 
+/** Hai hệ số nhân riêng của từng vai trò, giữ ngoài uniform vì bảng trạng thái nhân lại chúng mỗi khung hình. */
+interface Surface extends THREE.MeshStandardMaterial {
+  userData: { envBox: EnvBoxUniforms; envBase: number; rimBase: number };
+}
+
 /**
- * Bốn đèn trực tiếp không đủ để kim loại ra kim loại: thiếu một môi trường để
- * phản chiếu, nên khối đọc ra là nhựa xám. Ở đây pháp tuyến trong hệ toạ độ
- * khung nhìn được dùng làm toạ độ tra cứu một hộp sáng giả — trời ở trên, sàn ở
- * dưới, một dải sáng hẹp ở ngang tầm mắt. Chính dải chân trời đó là thứ mắt đọc
- * ra là bề mặt bóng. Hai màu của hộp đi theo sắc độ từng chương, nên phản chiếu
- * đổi màu cùng lúc với nền, đúng việc mà một envMap thật sẽ làm — mà không cần
- * PMREMGenerator, tức không cần một render target nào.
+ * Bề mặt của điểm và của đường nối.
+ *
+ * Phần hộp sáng giả nằm ở `src/lib/surface.ts` và dùng chung với khối quan hệ
+ * của trang lĩnh vực. Ở đây chỉ còn việc riêng của cảnh này: mỗi vai trò nhận
+ * một cường độ khác nhau, và hai màu của hộp đi theo sắc độ từng màn nên phản
+ * chiếu trên khối đổi màu cùng nhịp với nền.
  */
 function makeSurface(theme: Theme, kind: "node" | "link") {
   const m = new THREE.MeshStandardMaterial(
@@ -248,40 +253,19 @@ function makeSurface(theme: Theme, kind: "node" | "link") {
           depthWrite: false,
         },
   );
-  const envK = kind === "node" ? 1 : 0.45;
-  const rimK = kind === "node" ? 1 : 0.55;
-  const rim = {
+  const envBase = kind === "node" ? 1 : 0.45;
+  const rimBase = kind === "node" ? 1 : 0.55;
+  attachEnvBox(m, {
     uRim: { value: new THREE.Color(theme.rim) },
     uRimPower: { value: 2.6 },
-    uRimStrength: { value: theme.rimStrength * rimK },
-    uRimBase: rimK,
+    uRimStrength: { value: theme.rimStrength * rimBase },
     uEnvSky: { value: new THREE.Color(theme.envSky) },
     uEnvGround: { value: new THREE.Color(theme.envGround) },
-    uEnvStrength: { value: theme.envStrength * envK },
-    uEnvBase: envK,
-  };
-  m.userData.rim = rim;
-  m.onBeforeCompile = (shader) => {
-    Object.assign(shader.uniforms, rim);
-    shader.fragmentShader = shader.fragmentShader
-      .replace(
-        "#include <common>",
-        "#include <common>\nuniform vec3 uRim,uEnvSky,uEnvGround;uniform float uRimPower,uRimStrength,uEnvStrength;",
-      )
-      .replace(
-        "#include <opaque_fragment>",
-        `
- vec3 nrm=normalize(normal);
- float ny=nrm.y;
- vec3 box=mix(uEnvGround,uEnvSky,smoothstep(-0.85,0.85,ny));
- float horizon=smoothstep(0.14,0.0,abs(ny));
- float fres=pow(1.0-saturate(dot(nrm,normalize(vViewPosition))),uRimPower);
- outgoingLight+=box*uEnvStrength*0.22+uEnvSky*horizon*uEnvStrength*0.5;
- outgoingLight+=uRim*fres*uRimStrength;
- #include <opaque_fragment>`,
-      );
-  };
-  return m;
+    uEnvStrength: { value: theme.envStrength * envBase },
+  });
+  m.userData.envBase = envBase;
+  m.userData.rimBase = rimBase;
+  return m as Surface;
 }
 
 const BACKDROP_VERT =
@@ -671,7 +655,7 @@ function Corpus({
     materials.node.emissiveIntensity = theme.emissive * 0.35;
     materials.link.metalness = theme.linkMetal;
     for (const m of [materials.node, materials.link]) {
-      m.userData.rim.uRim.value.set(theme.rim);
+      m.userData.envBox.uRim.value.set(theme.rim);
     }
     invalidate();
   }, [theme, nodes, links, nodeMesh, linkMesh, materials, n, invalidate]);
@@ -909,8 +893,8 @@ function Corpus({
     fill.current.intensity = theme.fill * cur[11];
     amb.current.intensity = theme.ambient * cur[12];
     for (const m of [materials.node, materials.link]) {
-      const u = m.userData.rim;
-      u.uRimStrength.value = theme.rimStrength * u.uRimBase * cur[13];
+      m.userData.envBox.uRimStrength.value =
+        theme.rimStrength * m.userData.rimBase * cur[13];
     }
 
     const sat = (cur[20] - 1) * 0.45;
@@ -924,10 +908,10 @@ function Corpus({
     // Hộp sáng giả đọc đúng bảng màu vừa tính, nên phản chiếu trên các khối đổi màu
     // cùng nhịp với nền thay vì đứng nguyên một tông suốt sáu chương.
     for (const m of [materials.node, materials.link]) {
-      const u = m.userData.rim;
+      const u = m.userData.envBox;
       u.uEnvSky.value.copy(base.envSky).offsetHSL(cur[19], sat * 0.8, cur[21] * 0.4);
       u.uEnvGround.value.copy(base.envGround).offsetHSL(cur[19], sat * 0.6, cur[21] * 0.3);
-      u.uEnvStrength.value = theme.envStrength * u.uEnvBase * (0.75 + cur[18] * 0.35);
+      u.uEnvStrength.value = theme.envStrength * m.userData.envBase * (0.75 + cur[18] * 0.35);
     }
 
     haloUniforms.uColor.value.copy(env.glow).lerp(base.rim, 0.6);
