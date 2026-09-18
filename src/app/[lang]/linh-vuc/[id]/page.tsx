@@ -126,7 +126,7 @@ export default async function DomainPage({
           </section>
         </Reveal>
 
-        <Link href={`/${lang}`} className="btn btn-quiet mt-10">
+        <Link href={`/${lang}/ban-do`} className="btn btn-quiet mt-10">
           {t.domainPage.viewOnMap}
         </Link>
       </article>

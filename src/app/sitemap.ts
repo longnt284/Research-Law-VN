@@ -17,6 +17,7 @@ export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const subs = [
     "",
+    "/ban-do",
     "/van-ban",
     "/linh-vuc",
     "/doi-chieu",

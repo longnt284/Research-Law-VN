@@ -764,3 +764,767 @@ a {
 .card-lux:focus-visible::after {
   transform: scaleX(1);
 }
+
+/* ── Trang mở đầu ba chiều ────────────────────────────────────────────────────
+   Một quy tắc chi phối cả khối này: cảnh ba chiều chỉ sống ở phần mở đầu. Từ
+   khối `.prologue-outro` trở xuống, nền phẳng trở lại và trang quay về đúng thứ
+   nó vốn là — một ấn phẩm để đọc điều luật. Nền động sau một đoạn văn dài làm
+   mắt trượt khỏi dòng đang đọc, và giới hạn đó đã đặt ra từ đợt trước cho lớp
+   nền sang trọng; ở đây nó áp dụng nguyên vẹn cho lớp WebGL.
+
+   Canvas dùng `position: sticky` chứ không `fixed`. Cả hai đều giữ cảnh đứng
+   yên trong lúc chữ cuộn qua, nhưng `fixed` tạo một phần tử nằm ngoài dòng chảy
+   và vẽ đè lên chân trang, buộc phải đi sửa chỉ số lớp ở những chỗ không liên
+   quan. `sticky` nằm trong dòng chảy: cảnh tự lùi đúng lúc phần mở đầu kết thúc,
+   và mọi thứ phía sau nó xếp lớp như bình thường. */
+
+.prologue {
+  position: relative;
+}
+
+.space-world {
+  position: sticky;
+  top: 0;
+  z-index: 0;
+  height: 100dvh;
+  pointer-events: none;
+  overflow: clip;
+  background: var(--paper);
+}
+
+/*
+  Khối các màn chữ được kéo lên chồng đúng lên canvas. Lề âm phải đặt ở đây chứ
+  không đặt thành `margin-bottom` của canvas: lề âm ở canvas làm hộp lề của nó
+  cao bằng 0, mà phạm vi dính lại đo trên hộp lề, nên canvas dính tới tận đáy
+  khối cha rồi thò hẳn một màn hình xuống dưới — đúng chỗ phần kết và chân trang
+  đứng. Đặt ở khối sau thì hộp lề của canvas vẫn cao 100dvh và nó lùi đúng lúc.
+*/
+.prologue-acts {
+  margin-top: -100dvh;
+}
+
+.space-world canvas {
+  display: block;
+}
+
+.act {
+  position: relative;
+  z-index: 1;
+  height: 118dvh;
+  min-height: 46rem;
+  overflow: clip;
+}
+
+.act-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100dvh;
+  min-height: 40rem;
+  /* Chừa chỗ cho thanh điều hướng dính ở trên và thanh tiến độ ở dưới. */
+  padding: 6rem 8% 7rem;
+}
+
+.act-copy {
+  position: relative;
+  width: 42%;
+  max-width: 34rem;
+  pointer-events: auto;
+}
+
+.act-right .act-copy {
+  margin-left: 56%;
+}
+
+/*
+  Chữ đè lên khối ba chiều là lỗi nặng nhất mà một trang kiểu này mắc phải. Lời
+  giải là một lớp mờ đặt sau khối chữ, không phải đổ bóng lên từng ký tự: lớp mờ
+  đi theo chính khối chữ nên nó đúng chỗ ở mọi vị trí cuộn và mọi bố cục. Bán
+  kính gradient phải chạm 0 trước mép hộp, nếu không mép hộp còn màu và lớp mờ
+  đọc ra thành một hình chữ nhật dán lên cảnh.
+*/
+.act-copy::before,
+.act-note::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    color-mix(in oklab, var(--paper) 94%, transparent) 0,
+    color-mix(in oklab, var(--paper) 94%, transparent) 64%,
+    transparent 100%
+  );
+}
+
+.act-copy::before {
+  inset: -6rem -48% -6rem -42%;
+}
+
+.act-right .act-copy::before {
+  inset: -6rem -42% -6rem -48%;
+}
+
+.act-note::before {
+  inset: -1.9rem -2.8rem;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    color-mix(in oklab, var(--paper) 88%, transparent) 0,
+    color-mix(in oklab, var(--paper) 88%, transparent) 30%,
+    transparent 100%
+  );
+}
+
+.act-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.1rem, 4.4vw, 3.9rem);
+  font-weight: 500;
+  line-height: 1.14;
+  letter-spacing: -0.028em;
+  margin: 0.9rem 0 1.1rem;
+  text-wrap: balance;
+}
+
+.act-title .line {
+  display: block;
+  overflow: clip;
+}
+
+.act-title .line-in {
+  display: block;
+  will-change: transform;
+}
+
+.act-text {
+  max-width: 30rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+
+.act-note {
+  position: absolute;
+  right: 8%;
+  bottom: 9rem;
+  z-index: 1;
+  width: 15rem;
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--ink-3);
+}
+
+.act-right .act-note {
+  right: auto;
+  left: 8%;
+}
+
+/* Chữ số khổng lồ của màn. Nó là một dấu chìm nằm trên cảnh nhưng dưới lớp mờ
+   của khối chữ, nên nó không bao giờ tranh chỗ với câu đang đọc: chỗ nào có chữ
+   thì lớp mờ phủ lên nó, chỗ nào trống thì nó neo màn vào đúng số thứ tự. */
+.act-ordinal {
+  position: absolute;
+  top: 26dvh;
+  right: 5%;
+  z-index: -1;
+  font-family: var(--font-serif);
+  font-size: clamp(9rem, 22vw, 22rem);
+  font-weight: 600;
+  line-height: 0.82;
+  letter-spacing: -0.06em;
+  color: color-mix(in oklab, var(--brass) 16%, transparent);
+  will-change: transform;
+  user-select: none;
+}
+
+.act-right .act-ordinal {
+  right: auto;
+  left: 5%;
+}
+
+/* Hai bố cục căn đáy dùng lớp mờ dạng dải ngang, không phải hình bầu dục, nên
+   chữ số nằm phía trên nó vẫn sạch và giữ được chỗ cũ bên trái. */
+.act-wide .act-ordinal,
+.act-close .act-ordinal {
+  right: auto;
+  left: 4%;
+  top: 30dvh;
+}
+
+.act-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2.6rem;
+  margin: 1.8rem 0 0;
+}
+
+.act-stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.15rem;
+}
+
+.act-stats dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.act-stats dd {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.act-span {
+  margin: 1.4rem 0 0;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+
+.act-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.9rem;
+}
+
+/* Hai bố cục căn đáy chiếm trọn bề ngang: trục thời gian cần cả chiều ngang, và
+   màn cuối phải nhường khoảng giữa cho lối vào bản đồ. */
+.act-wide .act-inner,
+.act-close .act-inner {
+  align-items: flex-end;
+  padding-bottom: 9rem;
+}
+
+.act-wide .act-copy,
+.act-close .act-copy {
+  width: 100%;
+  max-width: 62rem;
+}
+
+.act-wide .act-copy::before,
+.act-close .act-copy::before {
+  inset: -5rem -50vw -7rem -50vw;
+  background: linear-gradient(
+    transparent 0,
+    color-mix(in oklab, var(--paper) 90%, transparent) 30%,
+    color-mix(in oklab, var(--paper) 90%, transparent) 74%,
+    transparent 100%
+  );
+}
+
+.act-wide .act-note,
+.act-close .act-note {
+  top: 7.5rem;
+  bottom: auto;
+}
+
+/* ── Thanh chương bên phải ─────────────────────────────────────────────────── */
+
+.act-nav {
+  position: fixed;
+  right: 1.6%;
+  top: 50%;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-50%);
+  transition: opacity 0.35s var(--ease-out-soft), visibility 0.35s;
+}
+
+.act-nav[data-live="off"],
+.space-bar[data-live="off"] {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.act-nav button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 2.25rem;
+  height: 2.1rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: inherit;
+}
+
+.act-nav-tick {
+  width: 0.6rem;
+  height: 2px;
+  background: var(--ink-3);
+  opacity: 0.5;
+  transition: width 0.3s var(--ease-out-soft), opacity 0.3s, background 0.3s;
+}
+
+.act-nav [aria-current] .act-nav-tick {
+  width: 1.5rem;
+  background: var(--accent);
+  opacity: 1;
+}
+
+.act-nav-label {
+  position: absolute;
+  right: 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateX(0.5rem);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.act-nav button:hover .act-nav-label,
+.act-nav button:focus-visible .act-nav-label {
+  opacity: 1;
+  transform: none;
+}
+
+.act-nav-index {
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.act-rail {
+  position: absolute;
+  right: -0.7rem;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 1px;
+  background: var(--rule);
+}
+
+.act-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top center;
+  will-change: transform;
+}
+
+/* ── Thanh tiến độ dưới cùng ──────────────────────────────────────────────── */
+
+.space-bar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 4.25rem;
+  padding: 0 4.5%;
+  background: color-mix(in oklab, var(--paper) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--rule);
+  transition: opacity 0.35s var(--ease-out-soft), visibility 0.35s;
+}
+
+.space-bar-progress {
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 2px;
+  background: var(--rule);
+}
+
+.space-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.space-bar-now {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+.space-bar-count {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.space-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.space-bar-cta {
+  padding: 0.55rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--paper);
+  background: var(--accent);
+  transition: background 0.2s;
+}
+
+.space-bar-cta:hover {
+  background: var(--accent-soft);
+}
+
+.space-bar-panel-button {
+  padding: 0.5rem 0.9rem;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  background: none;
+  border: 1px solid var(--rule-strong);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.space-bar-panel-button[aria-expanded="true"],
+.space-bar-panel-button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.space-settings {
+  position: absolute;
+  right: 4.5%;
+  bottom: calc(100% + 0.9rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  width: min(21rem, 88vw);
+  padding: 1.3rem 1.4rem 1.5rem;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+}
+
+.space-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
+.space-settings-row.check {
+  justify-content: flex-start;
+  gap: 0.7rem;
+  cursor: pointer;
+}
+
+.space-settings-row input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+
+.space-settings-toggle {
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--rule-strong);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.space-settings-toggle:hover {
+  border-color: var(--accent);
+}
+
+/* ── Màn mở đầu và các đường dự phòng ─────────────────────────────────────── */
+
+#space-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.5rem;
+  background: var(--paper);
+  transition: opacity 0.8s var(--ease-out-soft), visibility 0.8s;
+}
+
+.space-curtain-mark {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.space-curtain-bar {
+  display: block;
+  width: min(13rem, 44vw);
+  height: 1px;
+  overflow: clip;
+  background: var(--rule);
+}
+
+.space-curtain-bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transform-origin: left center;
+  animation: space-curtain-bar 2.4s var(--ease-out-soft) infinite;
+}
+
+.space-curtain-note {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+@keyframes space-curtain-bar {
+  0% {
+    transform: scaleX(0);
+  }
+  70% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+
+html[data-space-ready] #space-curtain {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.space-skip {
+  position: fixed;
+  left: 1rem;
+  top: -5rem;
+  z-index: 50;
+  padding: 0.75rem 1rem;
+  color: var(--paper);
+  background: var(--accent);
+}
+
+.space-skip:focus {
+  top: 0.75rem;
+}
+
+.space-note {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(26rem, 80vw);
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.8;
+  color: var(--ink-3);
+}
+
+/* Không dựng được WebGL thì vẫn còn một hình: một vành mảnh quay rất chậm, vẽ
+   bằng CSS. Nó giữ đúng nhịp của trang thay vì để lại một khoảng trống. */
+.space-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+.space-fallback-form {
+  width: min(24vw, 18rem);
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in oklab, var(--brass) 55%, transparent);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in oklab, var(--rule) 70%, transparent),
+    0 0 6rem color-mix(in oklab, var(--brass) 14%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .space-fallback-form {
+    animation: space-fallback-turn 26s linear infinite;
+  }
+}
+
+@keyframes space-fallback-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* ── Lối ra ───────────────────────────────────────────────────────────────── */
+
+.prologue-outro {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  min-height: 100dvh;
+  background: var(--paper);
+  border-top: 1px solid var(--rule);
+}
+
+.prologue-outro-inner {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 4rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .prologue-outro-inner {
+    padding: 4.5rem 2rem;
+  }
+}
+
+/* ── Màn hẹp ──────────────────────────────────────────────────────────────── */
+
+@media (max-width: 900px) {
+  .act-inner {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+  .act-copy {
+    width: 46%;
+  }
+  .act-right .act-copy {
+    margin-left: 52%;
+  }
+  .act-note {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  /* Trên màn dọc, khối ba chiều và khối chữ dùng chung khoảng giữa màn hình.
+     Cảnh đã được nâng lên phía trên trong `LegalSpace`; ở đây khối chữ xuống đáy
+     và lớp mờ chạy từ đáy lên quá đầu khối chữ, che đúng phần cảnh chồng vào chữ
+     mà vẫn để hở phần trên của tác phẩm. */
+  .act {
+    height: 112dvh;
+    min-height: 44rem;
+  }
+  .act-inner,
+  .act-wide .act-inner,
+  .act-close .act-inner {
+    align-items: flex-end;
+    min-height: 38rem;
+    padding: 0 7% 7.5rem;
+  }
+  .act-copy,
+  .act-right .act-copy,
+  .act-wide .act-copy,
+  .act-close .act-copy {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+  }
+  .act-copy::before,
+  .act-right .act-copy::before,
+  .act-wide .act-copy::before,
+  .act-close .act-copy::before {
+    inset: -3.5rem -10% -14rem -10%;
+    background: linear-gradient(
+      transparent,
+      color-mix(in oklab, var(--paper) 93%, transparent) 26%,
+      color-mix(in oklab, var(--paper) 93%, transparent)
+    );
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .act-title {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+  }
+  .act-ordinal,
+  .act-right .act-ordinal,
+  .act-wide .act-ordinal,
+  .act-close .act-ordinal {
+    top: 20dvh;
+    right: auto;
+    left: 0;
+    font-size: 30vw;
+  }
+  .act-stats {
+    gap: 0 1.6rem;
+  }
+  .act-stats dd {
+    font-size: 1.35rem;
+  }
+  /* Cảm ứng không có hover, nên tên chương trong thanh bên không bao giờ hiện.
+     Thanh dưới cùng đã nói tên chương; ở đây chỉ cần số của chương đang mở. */
+  .act-nav {
+    right: 0.8%;
+    top: 44%;
+  }
+  .act-nav button {
+    height: 2.75rem;
+    min-width: 2.75rem;
+  }
+  .act-nav-label {
+    font-size: 0;
+    border: 0;
+    background: none;
+    padding: 0;
+    right: 1.7rem;
+  }
+  .act-nav [aria-current] .act-nav-label {
+    opacity: 1;
+    transform: none;
+  }
+  .act-nav-index {
+    font-size: 0.625rem;
+  }
+  .space-bar {
+    height: 4.25rem;
+    padding: 0 6%;
+  }
+  .space-bar-now {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+  }
+  .space-bar-cta {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+  .space-settings {
+    right: 6%;
+    left: 6%;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .space-curtain-bar i {
+    animation: none;
+    transform: scaleX(1);
+  }
+  .act-ordinal {
+    opacity: 0.55;
+  }
+}

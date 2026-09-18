@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { MapExplorer } from "@/components/MapExplorer";
+import { Prologue } from "@/components/Prologue";
 import { isLang } from "@/i18n/dictionary";
 import { alternatesFor } from "@/lib/site";
 
 /**
- * Trang bản đồ nhận tiêu đề và mô tả từ layout; ở đây chỉ khai báo bản dịch,
- * thứ mà layout không tự biết được.
+ * Trang chủ: phần mở đầu ba chiều.
+ *
+ * Bản đồ tương tác chuyển sang `/[lang]/ban-do` ở đợt này. Lý do là hai việc
+ * khác nhau bị nhồi vào một địa chỉ: người mở trang lần đầu cần biết trang này
+ * làm gì, còn người đã biết cần vào thẳng công cụ. Trang chủ nay trả lời câu hỏi
+ * thứ nhất và dẫn tới công cụ bằng một lối vào rõ ràng ở cả sáu màn lẫn thanh
+ * dưới cùng; thanh điều hướng trỏ thẳng tới địa chỉ mới.
+ *
+ * Tiêu đề và mô tả kế thừa từ layout; ở đây chỉ khai báo bản dịch, thứ mà layout
+ * không tự biết được.
  */
 export async function generateMetadata({
   params,
@@ -19,16 +27,12 @@ export async function generateMetadata({
   return { alternates: alternatesFor(lang) };
 }
 
-export default async function MapPage({
+export default async function HomePage({
   params,
 }: {
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-
-  // Toàn bộ trang bản đồ nằm trong một khối flex duy nhất do MapExplorer dựng.
-  // Chiều cao vùng vẽ được suy ra từ chỗ còn thừa chứ không tính tay bằng calc,
-  // nên phần giới thiệu có cao thấp thế nào thì bản đồ vẫn vừa đúng màn hình.
-  return <MapExplorer lang={lang} />;
+  return <Prologue lang={lang} />;
 }

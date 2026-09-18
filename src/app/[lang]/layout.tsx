@@ -144,6 +144,11 @@ export default async function LangLayout({
                 <ul className="mt-2.5 space-y-1.5 text-[0.9375rem]">
                   <li>
                     <Link href={`/${lang}`} className="link-sweep">
+                      {t.nav.home}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={`/${lang}/ban-do`} className="link-sweep">
                       {t.nav.map}
                     </Link>
                   </li>
