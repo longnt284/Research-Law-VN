@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { ObjectiveNotice } from "@/components/CompareMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { SpaceThumb } from "@/components/SpaceThumb";
 import { Reveal } from "@/components/Reveal";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
@@ -44,15 +45,22 @@ export default async function ComparePage({
     <>
       <section className="rule-b hero-lux">
         <LuxBackdrop />
-        <div className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-          <p className="eyebrow eyebrow-tick rise">
-            {pairs.length} {t.compare.pairsCount} · {curatedPairCount}{" "}
-            {t.compare.curatedBadge}
-          </p>
-          <h1 className="display rise rise-1 mt-3">{t.compare.title}</h1>
-          <p className="measure rise rise-2 mt-4 text-[1.0625rem] leading-relaxed text-[var(--ink-2)]">
-            {t.compare.lede}
-          </p>
+        <div className="hero-split mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
+          <div className="min-w-0">
+            <p className="eyebrow eyebrow-tick rise">
+              {pairs.length} {t.compare.pairsCount} · {curatedPairCount}{" "}
+              {t.compare.curatedBadge}
+            </p>
+            <h1 className="display rise rise-1 mt-3">{t.compare.title}</h1>
+            <p className="measure rise rise-2 mt-4 text-[1.0625rem] leading-relaxed text-[var(--ink-2)]">
+              {t.compare.lede}
+            </p>
+          </div>
+          {/* Trục thời gian: đối chiếu luôn là chuyện một văn bản đến sau một
+              văn bản khác, nên hình đầu trang lấy đúng bố cục theo năm. */}
+          <div className="hero-art rise rise-2">
+            <SpaceThumb act={4} turn={0.35} tilt={0.3} maxDots={84} maxEdges={26} />
+          </div>
         </div>
       </section>
 

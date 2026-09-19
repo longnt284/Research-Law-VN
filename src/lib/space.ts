@@ -15,8 +15,12 @@ import type { DocType, LegalDoc, Relation } from "@/data/types";
  * WebGL. Thứ hai, thành phần dựng hình vì vậy chỉ còn lo việc vẽ.
  */
 
-/** Thứ bậc hiệu lực. Trùng thang với `DomainGraph3D` để hai nơi không nói khác nhau. */
-const TIER: Record<DocType, number> = {
+/**
+ * Thứ bậc hiệu lực. Trùng thang với `DomainGraph3D` để hai nơi không nói khác nhau.
+ * Xuất ra ngoài vì hình thu nhỏ ở `lib/preview.ts` phải xếp theo đúng thang này;
+ * hai thang thứ bậc trong một trang là hai câu trả lời khác nhau cho cùng câu hỏi.
+ */
+export const TIER: Record<DocType, number> = {
   "bo-luat": 0,
   luat: 0,
   "dieu-uoc": 0,

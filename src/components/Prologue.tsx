@@ -8,9 +8,9 @@ import Link from "next/link";
 import { Component, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { PointerState, SpaceSignal } from "@/components/LegalSpace";
-import { domains, VERIFIED_ON } from "@/data/documents";
+import { domains } from "@/data/documents";
 import type { Lang } from "@/data/types";
-import { formatDate, getDict } from "@/i18n/dictionary";
+import { getDict } from "@/i18n/dictionary";
 import { getPrologue } from "@/i18n/prologue";
 import { ACT_COUNT, buildSpace } from "@/lib/space";
 
@@ -80,7 +80,13 @@ class SceneBoundary extends Component<
   }
 }
 
-export function Prologue({ lang }: { lang: Lang }) {
+/**
+ * `hub` là khối lối vào của trang chủ, dựng sẵn ở máy chủ rồi truyền vào đây
+ * dưới dạng nút React. Phần mở đầu là thành phần trình duyệt, nhưng nội dung
+ * truyền vào thì không: nó vẫn được dựng ở máy chủ và không kéo thêm một dòng
+ * JavaScript nào vào gói mã của phần mở đầu.
+ */
+export function Prologue({ lang, hub }: { lang: Lang; hub?: React.ReactNode }) {
   const t = getDict(lang);
   const p = getPrologue(lang);
   const space = useMemo(buildSpace, []);
@@ -542,7 +548,7 @@ export function Prologue({ lang }: { lang: Lang }) {
           <div className="prologue-outro-inner">
             <p className="eyebrow eyebrow-tick">{t.home.eyebrow}</p>
             <h2 className="display-sm mt-3">{t.siteName}</h2>
-            <p className="measure mt-4 text-[0.9375rem] leading-relaxed text-[var(--ink-2)]">
+            <p className="measure mt-4 text-[1.0625rem] leading-relaxed text-[var(--ink-2)]">
               {t.home.lede}
             </p>
             <div className="act-actions mt-7">
@@ -556,10 +562,11 @@ export function Prologue({ lang }: { lang: Lang }) {
                 {t.nav.compare}
               </Link>
             </div>
-            <p className="mt-8 text-sm text-[var(--ink-3)] tnum">
-              {p.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}
-            </p>
           </div>
+          {/* Khối lối vào nằm trong cùng phần kết, sau đoạn giới thiệu: người đọc
+              vừa hết sáu màn thì thấy ngay mình đi tiếp được vào đâu, không phải
+              cuộn qua một màn hình trống rồi mới gặp liên kết. */}
+          {hub}
         </section>
       </div>
 

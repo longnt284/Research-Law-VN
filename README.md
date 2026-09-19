@@ -54,6 +54,26 @@ nền động sau một đoạn văn dài làm mắt trượt khỏi dòng đang
 
 Thư viện tham khảo và lý do chọn hoặc loại từng thư viện nằm ở `references/`.
 
+## Khối lối vào ở trang chủ
+
+Hết sáu màn, trang chủ trả lời câu hỏi kế tiếp: vào đâu bây giờ. Khối lối vào
+(`src/components/HomeHub.tsx`) đặt năm thẻ — bản đồ tương tác, khối lĩnh vực ba
+chiều, danh mục văn bản, đối chiếu, phương pháp — kèm một dải số liệu và lối
+quay lại màn đầu. Mọi con số trên các thẻ đếm thẳng từ tập dữ liệu; không có con
+số nào viết tay trong file lời.
+
+Mỗi thẻ mang một hình thu nhỏ, và hình đó là một bố cục thật của cảnh mở đầu
+chiếu xuống mặt phẳng (`src/lib/preview.ts`, `src/components/SpaceThumb.tsx`).
+Hình xuất ra SVG tĩnh ở máy chủ: không ngữ cảnh WebGL nào được mở thêm, không
+một byte `three` nào phải tải, và hình có mặt cả khi JavaScript bị chặn. Đầu các
+trang danh mục, lĩnh vực, đối chiếu và phương pháp lặp lại đúng hình của thẻ dẫn
+tới nó, nên người đọc bấm một hình rồi gặp lại chính hình ấy ở trang đích.
+
+Thẻ lĩnh vực ở `/vi/linh-vuc` mang một vệt bốn tầng hiệu lực của riêng lĩnh vực
+đó (`src/components/DomainSpark.tsx`), cũng là SVG tĩnh. Giới hạn cũ vẫn giữ
+nguyên: tám thẻ trên một trang không được phép là tám ngữ cảnh WebGL, nên vật
+thể ba chiều để dành cho trang riêng của từng lĩnh vực.
+
 ## Phạm vi
 
 Tám lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
@@ -169,10 +189,14 @@ src/
   components/               # bản đồ, danh mục, các mảnh giao diện dùng lại
   components/Prologue.tsx   # sáu màn cuộn, GSAP ScrollTrigger
   components/LegalSpace.tsx # cảnh ba chiều, React Three Fiber
+  components/HomeHub.tsx    # khối lối vào ở trang chủ
+  components/SpaceThumb.tsx # hình thu nhỏ của một bố cục, SVG tĩnh
+  components/DomainSpark.tsx # vệt bốn tầng của một lĩnh vực
   data/                     # tập dữ liệu văn bản và kiểu dữ liệu
   i18n/                     # từ điển giao diện hai thứ tiếng
   lib/layout.ts             # thuật toán bố cục bản đồ
   lib/space.ts              # sáu bố cục ba chiều, sinh từ tập dữ liệu
+  lib/preview.ts            # chiếu bố cục xuống mặt phẳng cho hình thu nhỏ
   lib/surface.ts            # hộp sáng giả, dùng chung cho hai cảnh ba chiều
   lib/compare.ts            # ghép cặp và tính dữ kiện đối chiếu
   lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
@@ -216,6 +240,20 @@ applied only by GSAP, and the scene is wrapped in an error boundary — so with
 JavaScript blocked, a broken bundle, or no WebGL, the page continues as a text
 page. The scene is confined to the prologue; below it the background goes flat
 again, because this is a site for reading legislation.
+
+Below the prologue, the home page answers the question that follows it — where
+to go now. The hub (`src/components/HomeHub.tsx`) sets out five ways in: the
+interactive map, the three-dimensional domain bodies, the index of instruments,
+the comparison pages and the method. Every figure on those cards is counted
+from the dataset itself. Each card carries a thumbnail that is one of the
+prologue's own layouts projected onto the plane (`src/lib/preview.ts`,
+`src/components/SpaceThumb.tsx`), emitted as static SVG on the server: no extra
+WebGL context, no `three` to download, and the figure is there with JavaScript
+blocked. The index, domain, comparison and method pages open with the same
+figure as the card that leads to them. On `/en/linh-vuc`, each domain card
+carries a four-strata spark of its own instruments
+(`src/components/DomainSpark.tsx`) — also static SVG, because eight cards on one
+page must not become eight WebGL contexts.
 
 Data rule: no document number appears unless it was actually looked up. Every
 record carries its sources and a confidence flag, and records with an unconfirmed

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { HomeHub } from "@/components/HomeHub";
 import { Prologue } from "@/components/Prologue";
 import { isLang } from "@/i18n/dictionary";
 import { alternatesFor } from "@/lib/site";
@@ -34,5 +35,7 @@ export default async function HomePage({
 }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-  return <Prologue lang={lang} />;
+  // Khối lối vào dựng ở máy chủ rồi truyền vào phần mở đầu. Nhờ vậy nó nằm
+  // trong gói HTML đầu tiên và đọc được cả khi cảnh ba chiều không dựng nổi.
+  return <Prologue lang={lang} hub={<HomeHub lang={lang} />} />;
 }

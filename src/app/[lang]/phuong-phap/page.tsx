@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { SpaceThumb } from "@/components/SpaceThumb";
 import { Reveal } from "@/components/Reveal";
 import { VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang } from "@/data/types";
@@ -139,12 +140,17 @@ export default async function AboutPage({
     <>
       <section className="rule-b hero-lux">
         <LuxBackdrop />
-        <div className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-          <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
-          <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
-          <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
-            {t.about.lede}
-          </p>
+        <div className="hero-split mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
+          <div className="min-w-0">
+            <p className="eyebrow eyebrow-tick rise">{t.nav.about}</p>
+            <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{t.about.title}</h1>
+            <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
+              {t.about.lede}
+            </p>
+          </div>
+          <div className="hero-art rise rise-2">
+            <SpaceThumb act={5} turn={0.9} tilt={0.36} maxDots={52} maxEdges={8} />
+          </div>
         </div>
       </section>
 

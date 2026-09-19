@@ -51,7 +51,6 @@ export interface PrologueCopy {
   viewpointNudge: string;
   pointerField: string;
   reduceMotion: string;
-  verifiedPrefix: string;
 }
 
 export const prologue: Record<Lang, PrologueCopy> = {
@@ -129,7 +128,6 @@ export const prologue: Record<Lang, PrologueCopy> = {
     viewpointNudge: "Xoay một nhịp",
     pointerField: "Con trỏ tác động vào cảnh",
     reduceMotion: "Giảm chuyển động",
-    verifiedPrefix: "Dữ liệu tra cứu ngày",
   },
   en: {
     acts: [
@@ -205,7 +203,6 @@ export const prologue: Record<Lang, PrologueCopy> = {
     viewpointNudge: "Turn one step",
     pointerField: "Pointer affects the scene",
     reduceMotion: "Reduce motion",
-    verifiedPrefix: "Dataset searched on",
   },
 };
 
