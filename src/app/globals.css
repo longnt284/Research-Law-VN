@@ -1393,12 +1393,16 @@ html[data-space-ready] #space-curtain {
 
 /* ── Lối ra ───────────────────────────────────────────────────────────────── */
 
+/*
+  Phần kết không còn cao đúng một màn hình. Từ đợt này nó mang cả khối lối vào,
+  nên chiều cao do nội dung quyết định; ép `min-height: 100dvh` ở đây chỉ chèn
+  thêm một khoảng trống giữa đoạn giới thiệu và lưới thẻ. Nền phẳng và đường kẻ
+  trên vẫn giữ nguyên: đó là chỗ cảnh ba chiều kết thúc và trang trở lại thành
+  một ấn phẩm để đọc.
+*/
 .prologue-outro {
   position: relative;
   z-index: 1;
-  display: grid;
-  align-content: center;
-  min-height: 100dvh;
   background: var(--paper);
   border-top: 1px solid var(--rule);
 }
@@ -1407,13 +1411,377 @@ html[data-space-ready] #space-curtain {
   width: 100%;
   max-width: 76rem;
   margin: 0 auto;
-  padding: 4rem 1.25rem;
+  padding: 4.5rem 1.25rem 0;
 }
 
 @media (min-width: 640px) {
   .prologue-outro-inner {
-    padding: 4.5rem 2rem;
+    padding: 5.5rem 2rem 0;
   }
+}
+
+/* ── Khối lối vào ở trang chủ ─────────────────────────────────────────────── */
+
+.hub {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 4.5rem;
+}
+
+@media (min-width: 640px) {
+  .hub {
+    padding: 4.5rem 2rem 5.5rem;
+  }
+}
+
+.hub-head {
+  border-top: 1px solid var(--rule);
+  padding-top: 2.5rem;
+}
+
+/*
+  Dải số liệu. Khe một pixel giữa các ô để lộ nền kẻ, cùng thủ pháp với lưới
+  lĩnh vực; nhờ vậy hai trang kẻ giống nhau mà không cần một luật viền riêng.
+*/
+.hub-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 2.25rem;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (min-width: 760px) {
+  .hub-stats {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* Năm ô trên lưới hai cột để thừa một ô, và ô thừa đó lộ nguyên màu kẻ thành
+   một mảng xám. Ô cuối vì vậy chiếm trọn hàng cuối. */
+@media (max-width: 759px) {
+  .hub-stats > div:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.hub-stats > div {
+  background: var(--paper);
+  padding: 1rem 1.1rem 1.15rem;
+}
+
+.hub-stats dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.hub-stats dd {
+  margin-top: 0.35rem;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 2.25rem;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+}
+
+@media (max-width: 760px) {
+  .hub-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.hub-cell {
+  display: flex;
+  min-width: 0;
+}
+
+@media (min-width: 761px) {
+  .hub-cell-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.hub-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+  background: var(--paper);
+  padding: 1.5rem 1.4rem 1.6rem;
+  /* Khai lại cả hai tính chất, không chỉ màu nền: luật này đứng sau `.card-lux`
+     trong file, nên một `transition` rút gọn ở đây sẽ xoá luôn nhịp nâng thẻ mà
+     `.card-lux` đặt. */
+  transition: transform 0.35s var(--ease-out-soft), background-color 0.35s var(--ease-out-soft);
+}
+
+.hub-card:hover,
+.hub-card:focus-visible {
+  background: var(--paper-2);
+}
+
+/* Thẻ lớn nằm ngang: hình bên trái, chữ bên phải. Dưới 761px mọi thẻ đều xếp
+   dọc, vì hai cột trên màn điện thoại thì cột chữ chỉ còn vài từ mỗi dòng. */
+@media (min-width: 761px) {
+  .hub-cell-wide .hub-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 2.25rem;
+    padding: 1.9rem 1.8rem;
+  }
+  .hub-cell-wide .hub-card-art {
+    flex: 0 0 38%;
+  }
+}
+
+/* Thẻ nhỏ mang hình thấp hơn thẻ lớn. Cùng tỷ lệ 8:5 ở cả hai thì bốn thẻ nhỏ
+   chiếm gần hai màn hình, mà chúng là lối đi phụ chứ không phải lối chính. */
+.hub-cell:not(.hub-cell-wide) .hub-card-art {
+  aspect-ratio: 16 / 7;
+}
+
+.hub-card-art {
+  position: relative;
+  display: block;
+  overflow: clip;
+  border: 1px solid var(--rule);
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--paper-2) 86%, var(--brass) 14%),
+    var(--paper-2) 62%
+  );
+  aspect-ratio: 8 / 5;
+}
+
+.hub-card-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hub-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  line-height: 1.25;
+  color: var(--ink);
+  transition: color 0.3s var(--ease-out-soft);
+}
+
+.hub-card:hover .hub-card-title,
+.hub-card:focus-visible .hub-card-title {
+  color: var(--accent);
+}
+
+.hub-card-text {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  max-width: 44ch;
+}
+
+/* Mũi nhắc đi kèm lời gọi. Nó trượt sang phải khi rê chuột, đủ để nói "còn đi
+   tiếp được" mà không cần một nút thật bên trong một thẻ vốn đã là liên kết. */
+.hub-card-cta {
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hub-card-cta::after {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1px;
+  margin-left: 0.55rem;
+  vertical-align: 0.24em;
+  background: currentColor;
+  transition: width 0.35s var(--ease-out-soft);
+}
+
+.hub-card:hover .hub-card-cta::after,
+.hub-card:focus-visible .hub-card-cta::after {
+  width: 2.4rem;
+}
+
+/* ── Hình ở đầu trang ─────────────────────────────────────────────────────── */
+
+/*
+  Đầu trang chia hai: chữ bên trái, hình bên phải. Dưới 900px hình xuống dưới
+  chữ, và dưới 640px hình biến mất hẳn — trên màn điện thoại, màn hình đầu tiên
+  phải là tiêu đề và câu dẫn, không phải một hình trang trí đẩy chữ xuống dưới
+  mép màn.
+*/
+.hero-split {
+  display: grid;
+  gap: 1.75rem;
+}
+
+@media (min-width: 900px) {
+  .hero-split {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
+  }
+}
+
+.hero-art {
+  position: relative;
+  overflow: clip;
+  border: 1px solid var(--rule);
+  background: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--paper-2) 86%, var(--brass) 14%),
+    var(--paper-2) 62%
+  );
+  aspect-ratio: 8 / 5;
+}
+
+@media (max-width: 639px) {
+  .hero-art {
+    display: none;
+  }
+}
+
+/* ── Vệt thứ bậc trên thẻ lĩnh vực ────────────────────────────────────────── */
+
+.domain-spark {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.9rem;
+}
+
+.spark {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.spark-tier {
+  stroke: var(--rule);
+  stroke-width: 0.6;
+}
+
+.spark-edge {
+  stroke: var(--rule-strong);
+  stroke-width: 0.55;
+  stroke-linecap: round;
+  fill: none;
+  /* Nhạt có chủ ý: đường ở đây chỉ để thấy tầng trên nối xuống tầng dưới, còn
+     thứ cần đọc được trên thẻ là số điểm ở mỗi tầng. */
+  opacity: 0.45;
+}
+
+.spark-edge-1 {
+  stroke-dasharray: 2.4 2.2;
+}
+
+.spark-edge-2 {
+  stroke: var(--accent);
+  stroke-width: 0.9;
+}
+
+/* ── Hình thu nhỏ của các bố cục ──────────────────────────────────────────── */
+
+/*
+  Hình nằm đè lên khung chứ không đẩy khung cao lên. Một SVG có `viewBox` mang
+  sẵn tỷ lệ nội tại 8:5; để nó nằm trong dòng chảy thì tỷ lệ ấy trở thành chiều
+  cao tối thiểu của khung, và `aspect-ratio` đặt trên khung không còn tác dụng —
+  đúng cái bẫy đã làm thẻ nhỏ cao bằng thẻ lớn. Cho hình ra khỏi dòng chảy thì
+  khung tự quyết chiều cao, còn `preserveAspectRatio` lo phần thừa hai bên.
+*/
+.thumb {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.thumb-edge {
+  stroke: var(--rule-strong);
+  stroke-width: 0.7;
+  stroke-linecap: round;
+  fill: none;
+}
+
+/* Ba loại quan hệ, ba cách vẽ — cùng quy ước với bản đồ hai chiều: quy định
+   chi tiết vẽ liền mảnh, sửa đổi vẽ nét đứt, thay thế vẽ đậm bằng mực nhấn. */
+.thumb-edge-1 {
+  stroke-dasharray: 2.4 2.2;
+}
+
+.thumb-edge-2 {
+  stroke: var(--accent);
+  stroke-width: 0.9;
+}
+
+/*
+  Một nhịp trôi rất chậm của cả nhóm, và chỉ của cả nhóm. Hình nằm trong thẻ
+  tĩnh nên chuyển động ở đây chỉ để thẻ không chết cứng; nó dừng hẳn khi hệ điều
+  hành báo đã giảm chuyển động.
+*/
+.thumb-drift {
+  transform-origin: 50% 50%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .thumb-drift {
+    animation: thumb-drift 18s ease-in-out infinite;
+  }
+  .hub-card:hover .thumb-drift,
+  .hub-card:focus-visible .thumb-drift {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes thumb-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -1.6%, 0) scale(1.035);
+  }
+}
+
+/* ── Mời xem lại phần mở đầu ──────────────────────────────────────────────── */
+
+.hub-replay {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: 2.25rem;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  padding: 1.5rem 1.4rem;
+}
+
+.hub-replay-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.hub-verified {
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--ink-3);
 }
 
 /* ── Màn hẹp ──────────────────────────────────────────────────────────────── */

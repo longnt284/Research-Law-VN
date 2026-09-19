@@ -23,6 +23,11 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     : `/${otherLang}`;
 
   const links = [
+    // Trang chủ phải có mặt trong thanh điều hướng, không chỉ nằm sau dấu ấn ở
+    // góc trái: phần mở đầu ba chiều và khối lối vào là một mục thật của trang
+    // chứ không phải một tấm bìa để lướt qua một lần. So khớp đúng bằng địa chỉ
+    // gốc, nếu không mục này sáng lên ở mọi trang con.
+    { href: `/${lang}`, label: t.nav.home, exact: true },
     { href: `/${lang}/ban-do`, label: t.nav.map, exact: false },
     { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
     { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },

@@ -15,7 +15,7 @@ export const dict = {
     siteName: "Bản đồ Không gian Pháp luật",
     siteTagline: "Tra cứu quan hệ giữa các văn bản quy phạm pháp luật Việt Nam",
     nav: {
-      home: "Trang mở đầu",
+      home: "Trang chủ",
       map: "Bản đồ",
       documents: "Văn bản",
       domains: "Lĩnh vực",
@@ -28,6 +28,7 @@ export const dict = {
       tickerPast: "đã có hiệu lực",
       lede: "Một văn bản pháp luật hiếm khi đứng một mình. Luật đặt nguyên tắc, nghị định quy định chi tiết, thông tư hướng dẫn thi hành, rồi một luật sửa đổi khác đến và thay đổi cả ba. Trang này vẽ lại các mối nối đó để người đọc thấy được vị trí của một văn bản trong hệ thống, thay vì đọc nó tách rời.",
       mapHint: "Kéo để di chuyển, cuộn để phóng to, bấm vào một điểm để xem chi tiết.",
+      prologueLink: "Xem phần mở đầu ba chiều",
       filterDomain: "Lọc theo lĩnh vực",
       filterAll: "Tất cả lĩnh vực",
       legend: "Chú giải",
@@ -200,7 +201,7 @@ export const dict = {
     siteName: "Vietnamese Legal Space Map",
     siteTagline: "Tracing how Vietnam's legal instruments connect to one another",
     nav: {
-      home: "Prologue",
+      home: "Home",
       map: "Map",
       documents: "Documents",
       domains: "Domains",
@@ -213,6 +214,7 @@ export const dict = {
       tickerPast: "in force since",
       lede: "A legal instrument rarely stands alone. A law sets the principle, a decree fills in the detail, a circular explains the practice — and then an amending law arrives and changes all three. This site draws those joints, so that an instrument can be read in its place within the system rather than in isolation.",
       mapHint: "Drag to pan, scroll to zoom, click a node to open its summary.",
+      prologueLink: "See the three-dimensional prologue",
       filterDomain: "Filter by domain",
       filterAll: "All domains",
       legend: "Legend",

@@ -69,12 +69,24 @@ export function MapExplorer({ lang }: { lang: Lang }) {
           hình đầu tiên vẫn là bản đồ chứ không phải một khối chữ. */}
       <section className="rule-b hero-lux shrink-0">
         <LuxBackdrop />
-        <div className="mx-auto w-full max-w-[76rem] px-5 py-6 sm:px-8 sm:py-8">
-          <p className="eyebrow eyebrow-tick rise">{t.home.eyebrow}</p>
-          <h1 className="display-sm rise rise-1 mt-2.5">{t.siteName}</h1>
-          <p className="measure rise rise-2 mt-2 text-[0.9375rem] leading-relaxed text-[var(--ink-3)]">
-            {t.siteTagline}
-          </p>
+        <div className="mx-auto flex w-full max-w-[76rem] flex-wrap items-end justify-between gap-x-8 gap-y-3 px-5 py-6 sm:px-8 sm:py-8">
+          <div className="min-w-0">
+            <p className="eyebrow eyebrow-tick rise">{t.home.eyebrow}</p>
+            {/* Tiêu đề là tên của trang này, không phải tên của cả trang web:
+                tên trang web đã nằm ở thanh điều hướng ngay phía trên, và lặp
+                lại nó ở đây chỉ làm người đọc mất một dòng để nhận ra mình đang
+                ở công cụ nào. */}
+            <h1 className="display-sm rise rise-1 mt-2.5">{t.nav.map}</h1>
+            <p className="measure rise rise-2 mt-2 text-[0.9375rem] leading-relaxed text-[var(--ink-3)]">
+              {t.siteTagline}
+            </p>
+          </div>
+          {/* Đường về phần mở đầu ba chiều. Bản đồ là nơi người đọc thường tới
+              thẳng bằng liên kết sâu, nên lối quay lại phải có mặt ngay tại đây
+              chứ không chỉ nằm sau dấu ấn ở góc trái. */}
+          <Link href={`/${lang}`} className="link-sweep rise rise-2 text-sm">
+            {t.home.prologueLink}
+          </Link>
         </div>
       </section>
 
