@@ -111,8 +111,8 @@ Cơ chế gồm bốn lớp, tách bạch để biết mỗi dòng chữ đến 
    lĩnh vực thêm hoặc bớt. Toàn bộ là phép so sánh và phép trừ ngày.
 3. **Điểm đối chiếu nội dung** (`src/data/comparisons.ts`): mỗi điểm gồm nội
    dung ở văn bản cũ, nội dung ở văn bản mới, một nhãn phân loại lấy từ danh
-   sách đóng chín loại thay đổi, một câu nhận định, và căn cứ trỏ về bản ghi mà
-   mỗi vế được đọc ra.
+   sách đóng chín loại thay đổi, một câu nhận định, và căn cứ trỏ về đúng chỗ mà
+   mỗi vế được đọc ra. Căn cứ của hai vế hiển thị tách riêng, không gộp làm một.
 4. **Phép kiểm tính khách quan** (`src/lib/objectivity.ts`): mọi chuỗi trong
    phần đối chiếu được soi qua danh sách từ ngữ mang nghĩa khuyên nhủ, xếp hạng
    hoặc suy đoán, kèm yêu cầu dẫn đủ căn cứ ở cả hai vế. Dính một lỗi là
@@ -126,6 +126,48 @@ không đánh giá quy định nào hợp lý hơn, không dự đoán hệ qu�
 Cuối mỗi trang đối chiếu có ô so sánh hai đoạn văn bản do người đọc tự dán vào
 (`src/lib/diff.ts`). Phép so sánh chạy trong trình duyệt, thuần cơ học: nó chỉ
 ra chữ nào thêm, chữ nào bớt, không kết luận nghĩa của điều luật đã đổi hay chưa.
+
+## Cơ chế dẫn trích
+
+Một căn cứ trỏ tới cả một văn bản chỉ nói được nên mở quyển nào. `src/lib/citation.ts`
+cho phép trỏ tới đúng điều khoản. Trích dẫn viết trong dữ liệu là một chuỗi:
+
+```
+"luat-xay-dung-2025"                     cả văn bản
+"luat-xay-dung-2025#dieu:38"             Điều 38
+"luat-xay-dung-2025#dieu:38.khoan:3"     khoản 3 Điều 38
+"luat-dau-tu-2020#phuluc:IV"             Phụ lục IV
+```
+
+Sáu thành phần nhận được: `phuluc`, `chuong`, `muc`, `dieu`, `khoan`, `diem`.
+Bộ hiển thị theo quy ước của từng thứ tiếng — tiếng Việt đi từ hẹp ra rộng
+(`điểm a khoản 3 Điều 38 Luật Xây dựng (135/2025/QH15)`), tiếng Anh gộp số vào
+sau tên điều (`Article 38(3)(a), Law on Construction (No. 135/2025/QH15)`). Số
+hiệu luôn đi kèm: tên văn bản lặp lại qua các đời luật, số hiệu thì không.
+
+Phần chỉ chỗ chỉ được ghi ở chỗ chính bản ghi nói ra; bản ghi dừng ở cấp văn bản
+thì trích dẫn cũng dừng ở đó. Cú pháp đi qua cùng cổng chặn với phép kiểm từ
+ngữ: sai tên thành phần, bỏ trống giá trị hay trỏ tới mã không có thật đều làm
+`next build` dừng lại. Trang chi tiết mỗi văn bản có khối trích dẫn kèm nút sao
+chép.
+
+## Cổng chặn của kho văn bản
+
+`src/lib/integrity.ts` chạy khi nạp `src/data/documents.ts`, trước mọi thứ suy
+ra từ nó. Bảy ràng buộc:
+
+1. Mã và số hiệu không trùng nhau giữa hai bản ghi.
+2. Số hiệu khớp quy ước đánh số của loại văn bản (`…/NĐ-CP` cho nghị định,
+   `…/QH<khóa>` cho luật, `…/TT-…` cho thông tư).
+3. Ngày ghi theo ISO, và ngày hiệu lực không sớm hơn ngày ban hành.
+4. Mỗi bản ghi thuộc ít nhất một lĩnh vực có trong danh sách, không lặp.
+5. Mỗi bản ghi dẫn ít nhất một nguồn, và mọi nguồn là địa chỉ `https`.
+6. Quan hệ chỉ trỏ tới bản ghi có thật, không trỏ về chính nó, không lặp.
+7. Văn bản đã bị một văn bản đang có hiệu lực thay thế không còn được ghi là còn
+   hiệu lực.
+
+Cả bảy đều khẳng định được từ chính tập dữ liệu, không cần tra cứu bên ngoài —
+điều kiện để chúng còn chạy được lâu dài.
 
 ## Chạy dự án
 

@@ -1911,3 +1911,36 @@ html[data-space-ready] #space-curtain {
     opacity: 0.55;
   }
 }
+
+/*
+  Dải điều hướng cuộn ngang trên màn hình hẹp.
+
+  Thanh cuộn mặc định của hệ điều hành cao gần bằng khoảng trống dưới các mục
+  điều hướng, nên nó cắt ngang thanh và trông như một lỗi dựng chứ không như một
+  chỉ dẫn. Ẩn thanh cuộn đi, giữ lại hành vi cuộn: ngón tay vẫn kéo được, bàn
+  phím vẫn đi qua từng mục, chỉ phần vạch là không vẽ nữa.
+*/
+.nav-strip {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+}
+
+/*
+  Vạt mờ ở mép phải báo rằng dải còn kéo được. Không có nó, mục bị cắt ngang ở
+  mép trông như một lỗi dựng chứ không như một chỉ dẫn.
+
+  Dải có sẵn một khoảng đệm cuối rộng hơn vạt mờ, nên khi đã kéo hết thì phần
+  mờ rơi vào khoảng trống đó chứ không phủ lên mục cuối. Từ `sm` trở lên mọi mục
+  vừa đủ chỗ, dải hết cuộn, và vạt mờ được gỡ bỏ.
+*/
+@media (width < 40rem) {
+  .nav-strip {
+    padding-right: 1.75rem;
+    mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
+  }
+}
+
+.nav-strip::-webkit-scrollbar {
+  display: none;
+}

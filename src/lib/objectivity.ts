@@ -1,3 +1,4 @@
+import { checkCitation } from "@/lib/citation";
 import type { Bilingual, ComparisonEntry, Lang } from "@/data/types";
 
 /**
@@ -153,13 +154,19 @@ export function auditComparisons(
           excerpt: "Điểm đối chiếu thiếu căn cứ ở một trong hai vế.",
         });
       }
-      for (const id of cited) {
-        if (!knownIds.has(id)) {
+      /*
+        Căn cứ không còn là một mã văn bản trần mà là một chuỗi trích dẫn có thể
+        kèm phần chỉ chỗ. Phép kiểm vì vậy đi qua bộ tách của `citation.ts`: nó
+        bắt cả mã lạ lẫn cú pháp chỉ chỗ viết sai, thay vì chỉ bắt mã lạ.
+      */
+      for (const ref of cited) {
+        const problem = checkCitation(ref, knownIds);
+        if (problem) {
           out.push({
             where: `${at} · basis`,
-            category: "unknown-basis",
-            term: id,
-            excerpt: `Căn cứ trỏ tới bản ghi không có trong tập dữ liệu: ${id}.`,
+            category: "bad-citation",
+            term: ref,
+            excerpt: problem,
           });
         }
       }

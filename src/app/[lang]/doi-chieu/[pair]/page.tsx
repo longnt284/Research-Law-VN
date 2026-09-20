@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BasisSide } from "@/components/Citation";
 import { ChangeKindTag, ObjectiveNotice } from "@/components/CompareMeta";
 import { CrossCheckNotice, StatusBadge } from "@/components/DocMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { TextDiff } from "@/components/TextDiff";
-import { documentsById } from "@/data/documents";
 import type { Lang, LegalDoc } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { derivedNotes, factDeltas, pairById, pairs } from "@/lib/compare";
@@ -200,6 +200,9 @@ export default async function ComparePairPage({
                 <span className="eyebrow mr-2">{t.compare.pointsScope}</span>
                 {pair.entry.scope[lang]}
               </p>
+              <p className="measure mt-2 text-sm text-[var(--ink-3)]">
+                {t.compare.basisHint}
+              </p>
 
               <div className="mt-6 space-y-8">
                 {pair.entry.points.map((point) => (
@@ -243,24 +246,21 @@ export default async function ComparePairPage({
                       </p>
                     </div>
 
-                    <p className="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-xs text-[var(--ink-3)]">
-                      <span className="eyebrow">{t.compare.basis}</span>
-                      {[...new Set([...point.basis.before, ...point.basis.after])].map(
-                        (id) => {
-                          const doc = documentsById.get(id);
-                          if (!doc) return null;
-                          return (
-                            <Link
-                              key={id}
-                              href={`/${lang}/van-ban/${id}`}
-                              className="tnum underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors hover:text-[var(--accent)]"
-                            >
-                              {doc.number}
-                            </Link>
-                          );
-                        },
-                      )}
-                    </p>
+                    {/* Căn cứ tách theo vế. Gộp chung thì người đọc thấy được
+                        những văn bản nào đã được đọc nhưng không biết vế nào
+                        đọc từ đâu, mà đó chính là điều cần kiểm lại. */}
+                    <div className="mt-3 space-y-1">
+                      <BasisSide
+                        label={t.compare.basisOld}
+                        refs={point.basis.before}
+                        lang={lang}
+                      />
+                      <BasisSide
+                        label={t.compare.basisNew}
+                        refs={point.basis.after}
+                        lang={lang}
+                      />
+                    </div>
                   </section>
                 ))}
               </div>

@@ -7,6 +7,12 @@
 
 export type Lang = "vi" | "en";
 
+/**
+ * Một trích dẫn viết dưới dạng chuỗi. Bộ tách và bộ hiển thị nằm ở
+ * `src/lib/citation.ts`; kiểu để ở đây để phần dữ liệu không phải nhập từ lớp lib.
+ */
+export type CitationRef = string;
+
 /** Bản dịch song ngữ bắt buộc cho mọi chuỗi hiển thị. */
 export interface Bilingual {
   vi: string;
@@ -145,8 +151,16 @@ export interface ComparisonPoint {
   before: Bilingual;
   after: Bilingual;
   observation: Bilingual;
-  /** ID bản ghi mà mỗi vế được đọc ra, để người đọc lần ngược về nguồn. */
-  basis: { before: string[]; after: string[] };
+  /**
+   * Căn cứ của mỗi vế, để người đọc lần ngược về nguồn.
+   *
+   * Mỗi phần tử là một chuỗi trích dẫn: mã văn bản, kèm phần chỉ chỗ tới điều
+   * khoản nếu biết được. Xem `src/lib/citation.ts` về cú pháp và phép kiểm.
+   *
+   *     "luat-xay-dung-2025"                    cả văn bản
+   *     "luat-xay-dung-2025#dieu:38.khoan:3"    khoản 3 Điều 38
+   */
+  basis: { before: CitationRef[]; after: CitationRef[] };
   confidence: Confidence;
 }
 

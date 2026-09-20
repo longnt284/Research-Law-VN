@@ -58,6 +58,23 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       ],
     },
     {
+      h: "Dẫn trích tới đúng chỗ",
+      p: [
+        "Một căn cứ trỏ tới cả một văn bản thì chỉ nói được nên mở quyển nào. Luật Xây dựng có hàng trăm điều, nên bảo người đọc rằng nhận định này đọc từ Luật Xây dựng 2025 cũng gần như không chỉ chỗ nào cả. Vì vậy căn cứ ở đây là một trích dẫn có cấu trúc: mã văn bản, kèm phần chỉ chỗ tới phụ lục, chương, mục, điều, khoản và điểm khi biết được.",
+        "Trích dẫn được hiển thị theo quy ước của từng thứ tiếng. Bản tiếng Việt đi từ hẹp ra rộng, điểm a khoản 3 Điều 38 Luật Xây dựng, vì đó là cách người làm nghề đọc và viết. Bản tiếng Anh gộp số vào sau tên điều, Article 38(3)(a). Cả hai luôn kèm số hiệu trong ngoặc, bởi tên văn bản lặp lại qua các đời luật còn số hiệu thì không.",
+        "Phần chỉ chỗ chỉ được ghi ở những chỗ chính bản ghi nói ra. Chỗ nào bản ghi dừng ở cấp văn bản thì trích dẫn cũng dừng ở đó, thay vì đoán lấy một số điều cho đủ chi tiết. Cú pháp trích dẫn đi qua cùng cổng chặn với phép kiểm từ ngữ: viết sai tên thành phần, bỏ trống giá trị hay trỏ tới một mã không có thật đều làm bản dựng dừng lại.",
+        "Trang chi tiết mỗi văn bản có sẵn một khối trích dẫn và một nút sao chép. Việc kế tiếp sau khi tìm đúng văn bản thường là chép nó sang một bản ghi nhớ hay một bản luận cứ, và chép tay thì hay rụng mất số khóa hoặc sai một chữ trong tên.",
+      ],
+    },
+    {
+      h: "Cổng chặn của kho văn bản",
+      p: [
+        "Phần đối chiếu có cổng chặn từ đầu, kho văn bản thì không. Một bản ghi ghi sai định dạng ngày, thiếu nguồn, hay trỏ quan hệ tới một mã không tồn tại vẫn lọt qua và chỉ lộ ra khi có người tình cờ mở đúng trang đó. Với một trang tra cứu pháp luật thì đó là lỗi đắt, vì người đọc tin vào bản ghi bởi nó trông chỉn chu chứ không bởi nó đã được kiểm.",
+        "Nay kho văn bản đi qua bảy ràng buộc trước khi trang được dựng. Mã và số hiệu không trùng nhau giữa hai bản ghi. Số hiệu phải khớp quy ước đánh số của loại văn bản, nên một nghị định gán nhầm thành quyết định tự lộ ra ở phần đuôi NĐ-CP. Ngày ghi theo ISO, và ngày hiệu lực không sớm hơn ngày ban hành. Mỗi bản ghi thuộc ít nhất một lĩnh vực có thật và dẫn ít nhất một nguồn https. Quan hệ chỉ trỏ tới bản ghi có thật, không trỏ về chính nó, không lặp. Và văn bản đã bị một văn bản đang có hiệu lực thay thế thì không còn được ghi là còn hiệu lực.",
+        "Bảy ràng buộc này đều khẳng định được từ chính tập dữ liệu, không cần tra cứu bên ngoài. Đó là điều kiện để chúng còn chạy được lâu dài: một phép kiểm phải mở trình duyệt mới chạy xong thì sớm muộn cũng bị tắt đi cho nhanh việc.",
+      ],
+    },
+    {
       h: "Giới hạn phải nói rõ",
       p: [
         "Kết quả tra cứu văn bản pháp luật chỉ có giá trị tại thời điểm tra. Pháp luật Việt Nam trong các lĩnh vực đầu tư, thuế và xây dựng thay đổi nhanh; một văn bản đúng hôm nay có thể đã bị sửa sau vài tháng. Trước khi dùng bất kỳ nội dung nào ở đây vào hồ sơ chính thức, hãy đối chiếu lại với Công báo Chính phủ hoặc cơ quan ban hành.",
@@ -101,6 +118,23 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       ],
     },
     {
+      h: "Citing the actual place",
+      p: [
+        "A basis that points at a whole instrument tells the reader only which volume to open. The Construction Law runs to hundreds of articles, so saying that an observation was read from the 2025 Construction Law points almost nowhere at all. A basis here is therefore a structured citation: the instrument, together with a pinpoint down to appendix, chapter, section, article, clause and point wherever that is known.",
+        "Citations are rendered by the convention of each language. The Vietnamese runs from narrow to broad — điểm a khoản 3 Điều 38 Luật Xây dựng — because that is how the profession reads and writes. The English folds the numbers in after the article: Article 38(3)(a). Both carry the document number in brackets, because titles repeat across generations of a law and numbers do not.",
+        "A pinpoint is recorded only where the record itself states one. Where a record stops at the level of the instrument, so does the citation, rather than a plausible article number being supplied to make the entry look more precise. Citation syntax passes through the same gate as the lexical check: a misspelt component, an empty value or a reference to an identifier that does not exist stops the build.",
+        "Each record page carries a ready citation and a button to copy it. What a reader usually does on finding the right instrument is copy it into a note or a written submission, and copying by hand tends to drop the legislature number or misspell a word of the title.",
+      ],
+    },
+    {
+      h: "A gate on the document store",
+      p: [
+        "The comparison layer has had a gate from the start; the document store had none. A record with a malformed date, no source, or a relation pointing at an identifier that does not exist would pass through and surface only when somebody happened to open that page. For a legal reference site that is an expensive failure, because a reader trusts a record for looking careful rather than for having been checked.",
+        "The store now passes seven constraints before the site can be built. No two records share an identifier or a document number. A number must match the numbering convention of its type, so a decree mislabelled as a decision gives itself away at the NĐ-CP suffix. Dates are ISO-formatted, and commencement is never earlier than issue. Every record belongs to at least one real domain and cites at least one https source. Relations point only to records that exist, never to themselves, and never repeat. And a record replaced by an instrument already in force is no longer marked as still in force.",
+        "Every one of the seven can be settled from the dataset alone, with no external lookup. That is what makes them durable: a check that needs a browser open to finish will eventually be switched off to save time.",
+      ],
+    },
+    {
       h: "Limits worth stating plainly",
       p: [
         "A search of legislation is only good as at the date it was run. Vietnamese law in investment, tax and construction moves quickly; an instrument that is current today may be amended within months. Before relying on anything here in a formal filing, check it against the Official Gazette or the issuing authority.",
@@ -118,7 +152,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
   ],
 };
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI"];
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 
 export default async function AboutPage({
   params,

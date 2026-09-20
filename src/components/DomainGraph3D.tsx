@@ -338,8 +338,17 @@ export function DomainGraph3D({
 
       // ── Nhãn: phần tử HTML chiếu theo toạ độ, không phải chữ vẽ trong ảnh ──
       // Chữ HTML nét sắc ở mọi mức thu phóng và tự dùng đúng phông của trang.
+      /*
+        `overflow: hidden` đặt thẳng bằng style chứ không qua lớp tiện ích. Lớp
+        này được gán lúc chạy, nên nó không nằm trong mã nguồn mà Tailwind quét
+        để sinh CSS cho từng tuyến; trên trang lĩnh vực, quy tắc tương ứng không
+        có trong gói CSS của tuyến và nhãn tràn ra ngoài khung, kéo cả trang cuộn
+        ngang hơn một trăm điểm ảnh trên điện thoại. Style nội tuyến thì không
+        phụ thuộc vào việc quét.
+      */
       const labelLayer = document.createElement("div");
-      labelLayer.className = "pointer-events-none absolute inset-0 overflow-hidden";
+      labelLayer.className = "pointer-events-none absolute inset-0";
+      labelLayer.style.overflow = "hidden";
       host.appendChild(labelLayer);
       const labels = meshes.map(({ doc }) => {
         const el = document.createElement("span");
@@ -377,7 +386,8 @@ export function DomainGraph3D({
         h: number;
       }[] = [];
       const tierLabelLayer = document.createElement("div");
-      tierLabelLayer.className = "pointer-events-none absolute inset-0 overflow-hidden";
+      tierLabelLayer.className = "pointer-events-none absolute inset-0";
+      tierLabelLayer.style.overflow = "hidden";
       host.appendChild(tierLabelLayer);
 
       for (const tier of [...byTier.keys()].sort((a, b) => a - b)) {

@@ -38,11 +38,13 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
   return (
     <header className="rule-b header-lux sticky top-0 z-30 bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] backdrop-blur-md">
       {/*
-        `flex-wrap` chứ không phải `truncate`. Khi thanh điều hướng không còn đủ
-        chỗ trên điện thoại, nó xuống hàng; nếu cắt chữ thì tên trang bị nuốt sạch
-        và chỉ còn lại một ô vuông vô nghĩa ở góc trái.
+        Không cắt chữ, và cũng không để thanh xuống ba hàng. Trên điện thoại,
+        `flex-wrap` cũ đẩy sáu mục điều hướng thành ba hàng, nên một thanh dính
+        trên cùng ăn gần một phần bảy màn hình và theo người đọc suốt trang. Ở
+        đây tên trang giữ hàng riêng, còn phần điều hướng nằm gọn một hàng và tự
+        cuộn ngang khi thiếu chỗ — chữ vẫn đủ, thân trang không bị đẩy lệch.
       */}
-      <div className="mx-auto flex w-full max-w-[76rem] flex-wrap items-center justify-between gap-x-4 gap-y-1.5 px-5 py-2.5 sm:px-8 sm:py-3">
+      <div className="mx-auto flex w-full max-w-[76rem] flex-col gap-y-1 px-5 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:px-8 sm:py-3">
         <Link href={`/${lang}`} className="group flex items-center gap-2.5">
           {/*
             Dấu ấn là chữ § đặt trong khung vuông mực đỏ — một chi tiết đặc trưng
@@ -64,12 +66,14 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
         </Link>
 
         {/*
-          Không đặt `shrink-0` ở đây. Với bốn mục cộng nút đổi ngôn ngữ và nút
-          đổi nền, thanh điều hướng rộng hơn màn hình điện thoại; nếu cấm co thì
-          nó đẩy cả thân trang tràn ngang. Cho phép xuống hàng: thanh cao thêm
-          một dòng, đổi lại trang không bao giờ cuộn ngang.
+          Trên màn hình hẹp, thanh điều hướng là một dải cuộn ngang: `min-w-0`
+          cho phép nó co lại trong khung cha, và `overflow-x-auto` giữ phần cuộn
+          nằm trong chính dải này thay vì làm cả trang trượt ngang. Lớp
+          `nav-strip` xóa thanh cuộn hệ điều hành, vốn cắt ngang một thanh cao
+          chưa tới ba mươi sáu điểm ảnh. Từ `sm` trở lên mọi mục vừa đủ chỗ, và
+          dải trở lại một hàng tĩnh như cũ.
         */}
-        <nav className="-ml-2 flex flex-wrap items-center gap-1 sm:ml-0 sm:gap-2">
+        <nav className="nav-strip -mx-1 flex min-w-0 items-center gap-1 overflow-x-auto px-1 sm:mx-0 sm:overflow-visible sm:px-0 sm:gap-2">
           {links.map((l) => {
             const active = l.exact ? pathname === l.href : pathname.startsWith(l.href);
             return (
@@ -77,7 +81,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
                 key={l.href}
                 href={l.href}
                 aria-current={active ? "page" : undefined}
-                className={`group relative px-2 py-1.5 text-sm transition-colors sm:px-2.5 ${
+                className={`group relative shrink-0 whitespace-nowrap px-2 py-1.5 text-sm transition-colors sm:px-2.5 ${
                   active
                     ? "text-[var(--ink)]"
                     : "text-[var(--ink-3)] hover:text-[var(--ink)]"
@@ -101,7 +105,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
             href={swapped}
             hrefLang={otherLang}
             aria-label={t.footer.switchLangFull}
-            className="ml-1 border border-[var(--rule-strong)] px-2.5 py-1 text-xs font-medium tracking-wide transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="ml-1 shrink-0 whitespace-nowrap border border-[var(--rule-strong)] px-2.5 py-1 text-xs font-medium tracking-wide transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
           >
             {t.footer.switchLang}
           </Link>

@@ -1,3 +1,4 @@
+import { assertIntegrity } from "@/lib/integrity";
 import type { Domain, LegalDoc, Relation } from "./types";
 
 /**
@@ -2459,6 +2460,13 @@ export const documents: LegalDoc[] = [
     confidence: "cross-check",
   },
 ];
+
+/*
+  Cổng chặn của kho văn bản. Đặt ngay sau phần dữ liệu và trước mọi thứ suy ra
+  từ nó: một bản ghi hỏng phải chặn bản dựng, không được đi tiếp để trở thành
+  một trang trông bình thường. Xem `src/lib/integrity.ts` về từng ràng buộc.
+*/
+assertIntegrity(documents, domains);
 
 /** Bảng tra nhanh theo id. */
 export const documentsById = new Map(documents.map((d) => [d.id, d]));
