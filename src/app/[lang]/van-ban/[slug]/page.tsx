@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CopyCitation } from "@/components/Citation";
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { VERIFIED_ON, documents, documentsById, relations } from "@/data/documents";
 import type { Lang, RelationKind } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { citeDocument } from "@/lib/citation";
 import { pairsFor } from "@/lib/compare";
 import { alternatesFor } from "@/lib/site";
 
@@ -71,6 +73,7 @@ export default async function DocumentPage({
   const t = getDict(lang);
   const grouped = collectRelations(doc.id, lang);
   const comparePairs = pairsFor(doc.id);
+  const citation = citeDocument(doc, lang);
 
   return (
     <article>
@@ -151,9 +154,15 @@ export default async function DocumentPage({
                           if (!other) return null;
                           return (
                             <li key={id}>
+                              {/* Lưới hai cột thay cho `flex-wrap`. Khi tên văn
+                                  bản dài hơn một dòng, cách cũ đẩy cả tên xuống
+                                  dòng dưới và số hiệu nằm trơ lại một mình; ở
+                                  đây số hiệu giữ cột trái còn tên xuống dòng
+                                  trong cột phải, nên cặp số hiệu và tên vẫn đọc
+                                  được như một khối. */}
                               <Link
                                 href={`/${lang}/van-ban/${id}`}
-                                className="group flex flex-wrap items-baseline gap-x-2.5"
+                                className="group grid gap-x-3 sm:grid-cols-[8.5rem_1fr]"
                               >
                                 <span className="tnum text-sm font-semibold text-[var(--accent)]">
                                   {other.number}
@@ -232,6 +241,25 @@ export default async function DocumentPage({
               <dd className="mt-0.5">{formatDate(VERIFIED_ON, lang, VERIFIED_ON)}</dd>
             </div>
           </dl>
+
+          {/* Khối trích dẫn đặt trên khối nguồn. Người tra cứu tìm đúng văn
+              bản xong thì việc kế tiếp thường là chép trích dẫn sang hồ sơ, và
+              chép tay thì hay rụng mất số khóa hoặc sai một chữ trong tên. */}
+          <div className="mt-6 border-t border-[var(--rule)] pt-5">
+            <p className="eyebrow">{t.doc.citation}</p>
+            <p
+              className="mt-2 text-[0.9375rem] leading-snug text-[var(--ink-2)]"
+              style={{ fontFamily: "var(--font-serif)" }}
+            >
+              {citation}
+            </p>
+            <div className="mt-3">
+              <CopyCitation text={citation} lang={lang} />
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-[var(--ink-3)]">
+              {t.doc.citationHint}
+            </p>
+          </div>
 
           <div className="mt-6 border-t border-[var(--rule)] pt-5">
             <p className="eyebrow">{t.doc.sources}</p>

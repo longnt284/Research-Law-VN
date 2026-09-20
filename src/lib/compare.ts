@@ -192,7 +192,7 @@ export function derivedNotes(pair: Pair, lang: Lang): string[] {
   if (gap !== null && gap > 0) {
     out.push(
       vi
-        ? `Văn bản trước có hiệu lực được ${years(gap, lang)} thì văn bản sau có hiệu lực.`
+        ? `Khi văn bản sau bắt đầu có hiệu lực, văn bản trước đã có hiệu lực được ${years(gap, lang)}.`
         : `The earlier instrument had been in force for ${years(gap, lang)} when the later one commenced.`,
     );
   }

@@ -135,13 +135,21 @@ export const comparisons: ComparisonEntry[] = [
         },
         after: {
           vi: "Hiệu lực chung từ 01/3/2026; khoản 3 Điều 50 từ 01/01/2026; Điều 7 và Phụ lục IV từ 01/7/2026.",
-          en: "Generally in force from 1 March 2026; Article 50.3 from 1 January 2026; Article 7 and Appendix IV from 1 July 2026.",
+          en: "Generally in force from 1 March 2026; Article 50(3) from 1 January 2026; Article 7 and Appendix IV from 1 July 2026.",
         },
         observation: {
           vi: "Luật sau có ba mốc hiệu lực trải trong bảy tháng, trong khi bản ghi của luật trước chỉ có một mốc. Xác định luật áp dụng cho một dự án vì vậy phụ thuộc cả vào ngày nộp hồ sơ lẫn thủ tục đang xét.",
           en: "The later Law has three commencement dates spread over seven months, where the record of the earlier one shows only a single date. Identifying the applicable law for a project therefore turns on both the filing date and the procedure at issue.",
         },
-        basis: { before: ["luat-dau-tu-2020"], after: ["luat-dau-tu-2025"] },
+        basis: {
+          before: ["luat-dau-tu-2020"],
+          after: [
+            "luat-dau-tu-2025",
+            "luat-dau-tu-2025#dieu:50.khoan:3",
+            "luat-dau-tu-2025#dieu:7",
+            "luat-dau-tu-2025#phuluc:IV",
+          ],
+        },
         confidence: "verified",
       },
       {
@@ -163,7 +171,10 @@ export const comparisons: ComparisonEntry[] = [
           vi: "Từ 01/3/2026 đến 01/7/2026, thủ tục đầu tư đọc theo luật 2025 còn danh mục ngành, nghề có điều kiện vẫn đọc theo luật 2020. Hai luật cùng có hiệu lực trong bốn tháng này, mỗi luật ở một phạm vi.",
           en: "Between 1 March and 1 July 2026, investment procedure is read from the 2025 Law while the list of conditional business lines is still read from the 2020 Law. Both are in force during those four months, each over its own subject matter.",
         },
-        basis: { before: ["luat-dau-tu-2020"], after: ["luat-dau-tu-2025"] },
+        basis: {
+          before: ["luat-dau-tu-2020#dieu:7", "luat-dau-tu-2020#phuluc:IV"],
+          after: ["luat-dau-tu-2025#dieu:7", "luat-dau-tu-2025#phuluc:IV"],
+        },
         confidence: "verified",
       },
     ],
@@ -192,7 +203,10 @@ export const comparisons: ComparisonEntry[] = [
           vi: "Ngày hết hiệu lực của luật trước liền kề ngày có hiệu lực của luật sau. Điều 51 của luật trước chấm dứt sớm hơn phần còn lại sáu tháng.",
           en: "The earlier Law ends on the day before the later one begins. Article 51 of the earlier Law ended six months ahead of the rest of it.",
         },
-        basis: { before: ["luat-qlt-2019"], after: ["luat-qlt-2025"] },
+        basis: {
+          before: ["luat-qlt-2019", "luat-qlt-2019#dieu:51"],
+          after: ["luat-qlt-2025"],
+        },
         confidence: "cross-check",
       },
       {
@@ -272,13 +286,19 @@ export const comparisons: ComparisonEntry[] = [
         },
         after: {
           vi: "Có hiệu lực từ 01/3/2026; khoản 3 Điều 38 có hiệu lực từ 01/7/2026.",
-          en: "In force from 1 March 2026; Article 38.3 takes effect on 1 July 2026.",
+          en: "In force from 1 March 2026; Article 38(3) takes effect on 1 July 2026.",
         },
         observation: {
           vi: "Hiệu lực chia hai mốc, cách nhau bốn tháng.",
           en: "Commencement is split across two dates four months apart.",
         },
-        basis: { before: ["luat-pha-san-2014"], after: ["luat-phuc-hoi-pha-san-2025"] },
+        basis: {
+          before: ["luat-pha-san-2014"],
+          after: [
+            "luat-phuc-hoi-pha-san-2025",
+            "luat-phuc-hoi-pha-san-2025#dieu:38.khoan:3",
+          ],
+        },
         confidence: "cross-check",
       },
       {
