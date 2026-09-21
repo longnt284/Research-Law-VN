@@ -498,6 +498,210 @@ export const comparisons: ComparisonEntry[] = [
       },
     ],
   },
+  {
+    newId: "nd-168-2025",
+    oldId: "nd-01-2021",
+    scope: {
+      vi: "Đối chiếu ở mức bản ghi: mốc hiệu lực, phạm vi thay thế và các nhóm nội dung được liệt kê trong hai nghị định về đăng ký doanh nghiệp.",
+      en: "Compared at record level: commencement, the scope of replacement, and the headings listed in the two decrees on enterprise registration.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Ban hành ngày 04/01/2021 và có hiệu lực cùng ngày.",
+          en: "Issued on 4 January 2021 and in force the same day.",
+        },
+        after: {
+          vi: "Ban hành ngày 30/6/2025, có hiệu lực từ 01/7/2025.",
+          en: "Issued on 30 June 2025 and in force from 1 July 2025.",
+        },
+        observation: {
+          vi: "Nghị định trước có hiệu lực ngay trong ngày ký, nghị định sau cách ngày ký một ngày. Hồ sơ nộp từ 01/7/2025 đi theo nghị định sau.",
+          en: "The earlier decree took effect on the day of signature; the later one one day after. Filings made from 1 July 2025 follow the later decree.",
+        },
+        basis: { before: ["nd-01-2021"], after: ["nd-168-2025"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "pham-vi-thay-the",
+        topic: { vi: "Phạm vi thay thế", en: "Scope of replacement" },
+        kind: "mo-rong",
+        before: {
+          vi: "Nghị định 01/2021/NĐ-CP thay thế Nghị định 78/2015/NĐ-CP và Nghị định 108/2018/NĐ-CP, cả hai đều về đăng ký doanh nghiệp.",
+          en: "Decree 01/2021/NĐ-CP replaced Decrees 78/2015/NĐ-CP and 108/2018/NĐ-CP, both on enterprise registration.",
+        },
+        after: {
+          vi: "Nghị định 168/2025/NĐ-CP thay thế Nghị định 01/2021/NĐ-CP và Nghị định 122/2020/NĐ-CP về phối hợp, liên thông thủ tục đăng ký thành lập doanh nghiệp.",
+          en: "Decree 168/2025/NĐ-CP replaced Decree 01/2021/NĐ-CP and Decree 122/2020/NĐ-CP on the coordinated, single-window registration procedure.",
+        },
+        observation: {
+          vi: "Nghị định sau gom hai nghị định trước vào một văn bản, trong đó có một nghị định về liên thông thủ tục không nằm trong phạm vi của nghị định trước.",
+          en: "The later decree draws two earlier instruments into one, among them a decree on the single-window procedure that fell outside the scope of the earlier decree.",
+        },
+        basis: { before: ["nd-01-2021"], after: ["nd-168-2025"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "nhom-noi-dung",
+        topic: { vi: "Các nhóm nội dung được liệt kê", en: "Headings listed" },
+        kind: "chi-tiet-hoa",
+        before: {
+          vi: "Hồ sơ, trình tự, thủ tục đăng ký doanh nghiệp và đăng ký hộ kinh doanh, cùng thẩm quyền của Cơ quan đăng ký kinh doanh.",
+          en: "The dossier, sequence and procedure for enterprise and household-business registration, and the powers of the business registration authority.",
+        },
+        after: {
+          vi: "Cùng các nhóm trên, kèm liên thông thủ tục đăng ký, đăng ký qua mạng thông tin điện tử, cung cấp và chia sẻ thông tin đăng ký, và quản lý nhà nước về đăng ký doanh nghiệp, đăng ký hộ kinh doanh.",
+          en: "The same headings, together with the single-window procedure, online registration, the provision and sharing of registration information, and state management of enterprise and household-business registration.",
+        },
+        observation: {
+          vi: "Bản ghi của nghị định sau liệt kê thêm bốn nhóm nội dung mà bản ghi của nghị định trước không nêu. Hai bản ghi dừng ở mức liệt kê nhóm nên chưa đối chiếu được tới từng điều.",
+          en: "The later record lists four headings absent from the earlier one. Both records stop at the level of headings, so the two cannot yet be compared article by article.",
+        },
+        basis: { before: ["nd-01-2021"], after: ["nd-168-2025"] },
+        confidence: "cross-check",
+      },
+    ],
+  },
+  {
+    newId: "luat-tctand-2024",
+    oldId: "luat-tctand-2014",
+    scope: {
+      vi: "Đối chiếu ở mức bản ghi: mốc hiệu lực và vị trí của hai luật trong chuỗi các đời Luật Tổ chức Tòa án nhân dân. Chưa đối chiếu tới từng điều.",
+      en: "Compared at record level: commencement and the place of each Law in the succession of Laws on the Organisation of People's Courts. The articles have not been compared.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Thông qua ngày 24/11/2014, có hiệu lực từ 01/6/2015.",
+          en: "Passed on 24 November 2014 and in force from 1 June 2015.",
+        },
+        after: {
+          vi: "Thông qua ngày 24/6/2024, có hiệu lực từ 01/01/2025.",
+          en: "Passed on 24 June 2024 and in force from 1 January 2025.",
+        },
+        observation: {
+          vi: "Khoảng cách giữa ngày thông qua và ngày có hiệu lực là hơn sáu tháng ở luật trước và hơn sáu tháng ở luật sau.",
+          en: "The interval between passage and commencement is a little over six months in each Law.",
+        },
+        basis: { before: ["luat-tctand-2014"], after: ["luat-tctand-2024"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "chuoi-thay-the",
+        topic: { vi: "Chuỗi thay thế", en: "The succession" },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Luật Tổ chức Tòa án nhân dân 2014 thay thế Luật Tổ chức Tòa án nhân dân số 33/2002/QH10.",
+          en: "The 2014 Law replaced Law 33/2002/QH10 on the Organisation of People's Courts.",
+        },
+        after: {
+          vi: "Luật Tổ chức Tòa án nhân dân 2024 thay thế Luật Tổ chức Tòa án nhân dân số 62/2014/QH13.",
+          en: "The 2024 Law replaced Law 62/2014/QH13 on the Organisation of People's Courts.",
+        },
+        observation: {
+          vi: "Ba đời luật nối nhau trong hai mươi hai năm, mỗi lần là một lần thay toàn bộ văn bản chứ không phải sửa đổi từng điều.",
+          en: "Three generations follow one another across twenty-two years, each a replacement of the whole instrument rather than an amendment of particular articles.",
+        },
+        basis: { before: ["luat-tctand-2014"], after: ["luat-tctand-2024"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "pham-vi-dieu-chinh",
+        topic: { vi: "Phạm vi điều chỉnh", en: "Scope" },
+        kind: "giu-nguyen",
+        before: {
+          vi: "Quy định chức năng, nhiệm vụ, quyền hạn và tổ chức bộ máy của Tòa án nhân dân; về Thẩm phán, Hội thẩm và các chức danh khác; về bảo đảm hoạt động của Tòa án nhân dân.",
+          en: "It set the functions, duties, powers and organisational structure of the People's Courts; Judges, Jurors and other positions; and the means of ensuring the Courts' operation.",
+        },
+        after: {
+          vi: "Quy định vị trí, chức năng, nhiệm vụ, quyền hạn và tổ chức bộ máy của Tòa án nhân dân; về Thẩm phán, Hội thẩm và các chức danh khác; về bảo đảm hoạt động của Tòa án nhân dân.",
+          en: "It sets the position, functions, duties, powers and organisational structure of the People's Courts; Judges, Jurors and other positions; and the means of ensuring the Courts' operation.",
+        },
+        observation: {
+          vi: "Phạm vi điều chỉnh đọc từ hai bản ghi trùng nhau, khác ở chỗ bản ghi của luật sau có thêm chữ vị trí. Chênh lệch về nội dung từng điều chưa đối chiếu được từ hai bản ghi này.",
+          en: "The scope read from the two records coincides, save that the later record adds the word position. Any difference in the content of particular articles cannot be established from these records.",
+        },
+        basis: { before: ["luat-tctand-2014"], after: ["luat-tctand-2024"] },
+        confidence: "cross-check",
+      },
+    ],
+  },
+  {
+    newId: "luat-dau-tu-cong-2024",
+    oldId: "luat-dau-tu-cong-2019",
+    scope: {
+      vi: "Đối chiếu ở mức bản ghi: mốc hiệu lực, quy mô văn bản và ba nhóm thay đổi được nêu trong nguồn tra cứu. Chưa đối chiếu tới từng điều của hai luật.",
+      en: "Compared at record level: commencement, the size of each instrument, and three groups of change named in the sources. The articles of the two Laws have not been compared.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Thông qua ngày 13/6/2019, có hiệu lực từ 01/01/2020.",
+          en: "Passed on 13 June 2019 and in force from 1 January 2020.",
+        },
+        after: {
+          vi: "Thông qua ngày 29/11/2024, có hiệu lực từ 01/01/2025.",
+          en: "Passed on 29 November 2024 and in force from 1 January 2025.",
+        },
+        observation: {
+          vi: "Hai luật cùng lấy mốc hiệu lực là ngày đầu năm, cách nhau đúng năm năm.",
+          en: "Both Laws commence on the first day of a year, exactly five years apart.",
+        },
+        basis: { before: ["luat-dau-tu-cong-2019"], after: ["luat-dau-tu-cong-2024"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "quy-mo",
+        topic: { vi: "Quy mô văn bản", en: "Size of the instrument" },
+        kind: "chi-tiet-hoa",
+        before: {
+          vi: "Bản ghi của luật trước không nêu số chương và số điều.",
+          en: "The earlier record gives no chapter or article count.",
+        },
+        after: {
+          vi: "Bảy chương, 103 điều; nguồn tra được nêu luật sau thêm một chương, thêm hai điều và sửa 65 điều so với luật trước.",
+          en: "Seven chapters and 103 articles; the sources found state that the later Law adds one chapter and two articles and revises 65 articles of the earlier one.",
+        },
+        observation: {
+          vi: "Con số 65 điều được sửa lấy từ nguồn tra cứu, không đếm lại được từ hai bản ghi trong tập dữ liệu này.",
+          en: "The figure of 65 revised articles comes from the sources found and cannot be recounted from the two records in this dataset.",
+        },
+        basis: { before: ["luat-dau-tu-cong-2019"], after: ["luat-dau-tu-cong-2024"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "tach-giai-phong-mat-bang",
+        topic: {
+          vi: "Bồi thường, hỗ trợ, tái định cư và giải phóng mặt bằng",
+          en: "Compensation, support, resettlement and site clearance",
+        },
+        kind: "mo-rong",
+        before: {
+          vi: "Bản ghi của luật trước không nêu quy định tách công tác bồi thường, hỗ trợ, tái định cư và giải phóng mặt bằng thành dự án độc lập.",
+          en: "The earlier record says nothing about splitting compensation, support, resettlement and site clearance into a standalone project.",
+        },
+        after: {
+          vi: "Cho phép tách công tác bồi thường, hỗ trợ, tái định cư và giải phóng mặt bằng thành dự án độc lập đối với tất cả các nhóm dự án.",
+          en: "It allows compensation, support, resettlement and site clearance to be split into a standalone project across all project groups.",
+        },
+        observation: {
+          vi: "Bản ghi của luật sau nói phạm vi áp dụng là tất cả các nhóm dự án. Bản ghi của luật trước im lặng về điểm này, và sự im lặng đó không đọc được thành một quy định theo hướng nào.",
+          en: "The later record states that the rule applies across all project groups. The earlier record is silent on the point, and that silence cannot be read as a rule either way.",
+        },
+        basis: { before: ["luat-dau-tu-cong-2019"], after: ["luat-dau-tu-cong-2024"] },
+        confidence: "cross-check",
+      },
+    ],
+  },
 ];
 
 /**

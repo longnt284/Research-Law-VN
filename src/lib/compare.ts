@@ -163,7 +163,13 @@ export function monthsBetween(from: string, to: string): number | null {
   return months;
 }
 
-function years(months: number, lang: Lang): string {
+/**
+ * Số tháng viết thành chữ theo quy ước của từng thứ tiếng.
+ *
+ * Dùng chung cho trang cặp và trang chuỗi, để "1 năm 6 tháng" ở hai chỗ không
+ * bao giờ đọc khác nhau.
+ */
+export function spanWords(months: number, lang: Lang): string {
   const y = Math.floor(months / 12);
   const m = months % 12;
   if (lang === "vi") {
@@ -192,8 +198,8 @@ export function derivedNotes(pair: Pair, lang: Lang): string[] {
   if (gap !== null && gap > 0) {
     out.push(
       vi
-        ? `Khi văn bản sau bắt đầu có hiệu lực, văn bản trước đã có hiệu lực được ${years(gap, lang)}.`
-        : `The earlier instrument had been in force for ${years(gap, lang)} when the later one commenced.`,
+        ? `Khi văn bản sau bắt đầu có hiệu lực, văn bản trước đã có hiệu lực được ${spanWords(gap, lang)}.`
+        : `The earlier instrument had been in force for ${spanWords(gap, lang)} when the later one commenced.`,
     );
   }
 
@@ -238,6 +244,23 @@ export function derivedNotes(pair: Pair, lang: Lang): string[] {
       vi
         ? `Lĩnh vực có ở bản ghi văn bản trước, không có ở bản ghi văn bản sau: ${names(removed)}.`
         : `Domains present on the earlier record and absent from the later one: ${names(removed)}.`,
+    );
+  }
+
+  /*
+    Chuỗi văn bản thi hành cũng là một dữ kiện đếm được: một văn bản mới mà chưa
+    có nghị định, thông tư nào quy định chi tiết thì người đọc vẫn phải mở văn
+    bản thi hành của đời trước, và con số dưới đây nói ra điều đó.
+  */
+  const guidesOf = (id: string) =>
+    documents.filter((d) => (d.guides ?? []).includes(id)).length;
+  const oldGuides = guidesOf(oldDoc.id);
+  const newGuides = guidesOf(newDoc.id);
+  if (oldGuides > 0 || newGuides > 0) {
+    out.push(
+      vi
+        ? `Trong tập dữ liệu này, văn bản trước có ${oldGuides} văn bản quy định chi tiết hoặc hướng dẫn thi hành, văn bản sau có ${newGuides}.`
+        : `Within this dataset, the earlier instrument has ${oldGuides} implementing instrument${oldGuides === 1 ? "" : "s"} and the later one has ${newGuides}.`,
     );
   }
 

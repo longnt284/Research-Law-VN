@@ -5,11 +5,17 @@ import { notFound } from "next/navigation";
 import { CopyCitation } from "@/components/Citation";
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
-import { VERIFIED_ON, documents, documentsById, relations } from "@/data/documents";
+import {
+  documents,
+  documentsById,
+  relations,
+  verifiedOnOf,
+} from "@/data/documents";
 import type { Lang, RelationKind } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { citeDocument } from "@/lib/citation";
 import { pairsFor } from "@/lib/compare";
+import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -73,6 +79,7 @@ export default async function DocumentPage({
   const t = getDict(lang);
   const grouped = collectRelations(doc.id, lang);
   const comparePairs = pairsFor(doc.id);
+  const docLineages = lineagesFor(doc.id);
   const citation = citeDocument(doc, lang);
 
   return (
@@ -218,6 +225,31 @@ export default async function DocumentPage({
               </ul>
             </section>
           )}
+
+          {/* Chuỗi đặt sau danh sách cặp: cặp nói văn bản này khác văn bản nào,
+              chuỗi nói nó đứng ở đoạn nào của cả đời văn bản. */}
+          {docLineages.length > 0 && (
+            <section className="mt-9">
+              <h2 className="eyebrow eyebrow-tick">{t.compare.docLineagesTitle}</h2>
+              <ul className="mt-3 space-y-2">
+                {docLineages.map((l) => (
+                  <li key={l.id}>
+                    <Link
+                      href={`/${lang}/doi-chieu/chuoi/${l.id}`}
+                      className="group flex flex-wrap items-baseline gap-x-2.5"
+                    >
+                      <span className="tnum text-sm text-[var(--ink-3)]">
+                        {l.docs.length} {t.compare.lineageDocs}
+                      </span>
+                      <span className="text-sm text-[var(--ink-2)] underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors group-hover:decoration-[var(--accent)]">
+                        {l.current.title[lang]}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
 
         {/* Bảng dữ liệu bám theo khi cuộn: phần quan hệ bên trái có thể dài, và
@@ -238,7 +270,9 @@ export default async function DocumentPage({
             </div>
             <div>
               <dt className="eyebrow">{t.doc.verifiedOn}</dt>
-              <dd className="mt-0.5">{formatDate(VERIFIED_ON, lang, VERIFIED_ON)}</dd>
+              <dd className="mt-0.5">
+                {formatDate(verifiedOnOf(doc), lang, verifiedOnOf(doc))}
+              </dd>
             </div>
           </dl>
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Reveal } from "@/components/Reveal";
 import { SpaceThumb } from "@/components/SpaceThumb";
-import { documents, domains, VERIFIED_ON } from "@/data/documents";
+import { documents, domains, LATEST_VERIFIED_ON } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
 import { getHub, type HubCardKey } from "@/i18n/hub";
@@ -51,7 +51,7 @@ export function HomeHub({ lang }: { lang: Lang }) {
     "linh-vuc": String(domains.length),
     "van-ban": String(documents.length),
     "doi-chieu": String(pairs.length),
-    "phuong-phap": formatDate(VERIFIED_ON, lang, VERIFIED_ON),
+    "phuong-phap": formatDate(LATEST_VERIFIED_ON, lang, LATEST_VERIFIED_ON),
   };
 
   const stats = [
@@ -148,7 +148,7 @@ export function HomeHub({ lang }: { lang: Lang }) {
       </Reveal>
 
       <p className="hub-verified tnum">
-        {h.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}
+        {h.verifiedPrefix} {formatDate(LATEST_VERIFIED_ON, lang, LATEST_VERIFIED_ON)}
       </p>
     </div>
   );
