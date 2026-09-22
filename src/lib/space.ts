@@ -1,5 +1,5 @@
 import { domains, relations as allRelations, documents } from "@/data/documents";
-import type { DocType, LegalDoc, Relation } from "@/data/types";
+import type { DocStatus, DocType, LegalDoc, Relation } from "@/data/types";
 
 /**
  * Hình học của trang mở đầu, sinh thẳng từ tập dữ liệu.
@@ -30,6 +30,22 @@ export const TIER: Record<DocType, number> = {
   "quyet-dinh": 2,
   "thong-tu": 3,
   "quy-tac": 3,
+};
+
+/**
+ * Tình trạng hiệu lực, quy về một thang số để phần dựng hình đọc được.
+ *
+ * Bản đồ hai chiều và khối quan hệ của trang lĩnh vực đều đã có quy ước riêng
+ * cho văn bản hết hiệu lực. Thang này để cảnh mở đầu nói cùng một điều, thay vì
+ * vẽ một nghị định đã bị thay thế y hệt một nghị định đang áp dụng.
+ *
+ * 0 còn hiệu lực · 1 đã bị sửa đổi · 2 chưa tới ngày hiệu lực · 3 hết hiệu lực.
+ */
+export const STATE: Record<DocStatus, number> = {
+  active: 0,
+  amended: 1,
+  pending: 2,
+  expired: 3,
 };
 
 /** Sáu chương của trang mở đầu. Thứ tự này cũng là thứ tự cuộn. */
@@ -65,6 +81,8 @@ export interface SpaceNode {
   year: number;
   /** Số quan hệ chạm tới văn bản này, tính cả hai chiều. */
   degree: number;
+  /** Tình trạng hiệu lực theo thang `STATE`. */
+  state: number;
 }
 
 export interface SpaceLink {
@@ -237,6 +255,7 @@ export function buildSpace(): Space {
     anchor: doc.type === "bo-luat" || doc.type === "luat" || doc.type === "dieu-uoc",
     year: yearOf(doc),
     degree: 0,
+    state: STATE[doc.status] ?? 0,
   }));
 
   const index = new Map(nodes.map((node, i) => [node.id, i]));

@@ -33,13 +33,36 @@ Camera, đèn, sương, độ đậm đường nối và sắc độ cùng đọ
 nhất, nên chúng luôn đổi đồng bộ với hình khối. Thêm một nghị định vào tập dữ
 liệu là cảnh có thêm một điểm, không phải sửa mã.
 
+Bản thân hình khối cũng mang dữ liệu, không chỉ chỗ đứng của nó. Số mặt của một
+điểm nói tầng hiệu lực: bộ luật, luật và điều ước là khối tám mặt sắc cạnh, nghị
+quyết và văn bản hợp nhất là khối mười hai mặt, nghị định và quyết định là khối
+hai mươi mặt, thông tư và quy tắc là một hạt gần tròn. Nhờ vậy một điểm bất kỳ
+tự nói nó ở tầng nào, ở cả năm màn không xếp theo thứ bậc. Màu nói lĩnh vực, như
+cũ. Độ nhạt nói tình trạng hiệu lực: văn bản đã bị sửa đổi lui một bước về phía
+nền, văn bản hết hiệu lực lui hẳn và mất quầng sáng — cùng quy ước với chấm rỗng
+trên bản đồ hai chiều và quả cầu rỗng ở khối lĩnh vực, để người đọc không phải
+học hai bộ ký hiệu.
+
+Đường nối là một cung chia bốn đoạn, không phải một dây cung thẳng. Cung tách
+nhau ra thay vì chồng lên nhau, nên màn Quan hệ đọc ra là một bản vẽ chứ không
+phải một cuộn dây. Bán kính và màu cùng nhạt dần từ đầu này sang đầu kia: đầu
+đậm là văn bản dẫn chiếu, đầu nhạt là văn bản được dẫn chiếu, đúng quy ước đổ
+màu dọc sợi đã dùng ở khối quan hệ của trang lĩnh vực. Chiều của quan hệ vì vậy
+đọc được cả khi khối đang quay và cả khi in ra đen trắng, thay vì chỉ nằm ở ba
+màu gần nhau. Nét đậm dần theo sức nặng của quan hệ: quy định chi tiết mảnh
+nhất, thay thế đậm nhất.
+
 Ba cam kết kỹ thuật, và cả ba đều đến từ ràng buộc có sẵn của trang. Không render
 target và không postprocessing, để cảnh dựng được trên GPU tích hợp đời cũ. Không
 tài nguyên bên thứ ba, nên `Content-Security-Policy` khoá `default-src 'self'`
 không phải nới ra dòng nào. Vì vậy kim loại dùng một hộp sáng giả đọc từ pháp
 tuyến (`src/lib/surface.ts`, dùng chung với khối quan hệ của trang lĩnh vực) thay
 cho envMap; quầng sáng của văn bản cấp luật là tấm phẳng cộng dồn thay cho bloom;
-và lớp bụi đổi hành vi ngay trong vertex shader.
+và lớp bụi đổi hành vi ngay trong vertex shader. Bốn hình khối là bốn lệnh vẽ,
+mỗi lệnh gom cả tầng, và toàn bộ cung quan hệ vẫn nằm trong một lệnh vẽ duy
+nhất: cả cảnh khoảng hai nghìn tam giác. Ở giao diện tối, hộp sáng và ánh tự
+phát được hạ xuống có chủ ý — cả hai là ánh sáng cộng thêm, mà cộng thêm trên
+nền tối thì đẩy mọi thứ về trắng và nuốt mất sắc lĩnh vực, tức nuốt mất dữ liệu.
 
 Ba đường để phần này không bao giờ chặn nội dung. Toàn bộ chữ nằm trong HTML dựng
 sẵn nên đọc được khi JavaScript bị chặn. Chuyển động chỉ do GSAP đặt, nên gói mã
