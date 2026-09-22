@@ -6,10 +6,12 @@ import { BasisSide } from "@/components/Citation";
 import { ChangeKindTag, ObjectiveNotice } from "@/components/CompareMeta";
 import { CrossCheckNotice, StatusBadge } from "@/components/DocMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { PointDiff } from "@/components/PointDiff";
 import { TextDiff } from "@/components/TextDiff";
 import type { Lang, LegalDoc } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { derivedNotes, factDeltas, pairById, pairs } from "@/lib/compare";
+import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -83,6 +85,14 @@ export default async function ComparePairPage({
   const t = getDict(lang);
   const facts = factDeltas(pair, lang);
   const notes = derivedNotes(pair, lang);
+  /*
+    Một cặp hiếm khi đứng một mình: nó thường là một mắt của chuỗi dài hơn. Lối
+    lên chuỗi đặt ngay đầu trang để người đọc thấy được cặp này nằm ở đoạn nào
+    của cả đời văn bản.
+  */
+  const chains = lineagesFor(pair.newDoc.id).filter((l) =>
+    l.docs.some((d) => d.id === pair.oldDoc.id),
+  );
   const fieldLabel: Record<(typeof facts)[number]["field"], string> = {
     type: t.doc.type,
     status: t.doc.status,
@@ -122,6 +132,23 @@ export default async function ComparePairPage({
 
       <div className="mx-auto w-full max-w-[76rem] px-5 py-8 sm:px-8">
         <ObjectiveNotice lang={lang} />
+
+        {chains.length > 0 && (
+          <p className="measure mt-5 text-sm leading-relaxed text-[var(--ink-2)]">
+            <span className="eyebrow mr-2">{t.compare.lineageTitle}</span>
+            {chains.map((l, i) => (
+              <span key={l.id}>
+                {i > 0 && " · "}
+                <Link
+                  href={`/${lang}/doi-chieu/chuoi/${l.id}`}
+                  className="underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors hover:decoration-[var(--accent)]"
+                >
+                  {l.current.title[lang]} ({l.docs.length} {t.compare.lineageDocs})
+                </Link>
+              </span>
+            ))}
+          </p>
+        )}
 
         {pair.confidence === "cross-check" && (
           <div className="mt-5">
@@ -261,6 +288,14 @@ export default async function ComparePairPage({
                         lang={lang}
                       />
                     </div>
+
+                    {/* Phép so sánh cơ học chạy thẳng trên hai vế đã viết, cùng
+                        thuật toán với ô dán văn bản ở cuối trang. */}
+                    <PointDiff
+                      before={point.before[lang]}
+                      after={point.after[lang]}
+                      lang={lang}
+                    />
                   </section>
                 ))}
               </div>

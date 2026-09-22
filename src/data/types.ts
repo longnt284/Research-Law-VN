@@ -89,6 +89,14 @@ export interface LegalDoc {
   /** URL đã thực sự mở trong phiên tra cứu. */
   sources: string[];
   confidence: Confidence;
+  /**
+   * Ngày tra cứu của riêng bản ghi này, định dạng ISO.
+   *
+   * Bỏ trống nghĩa là bản ghi thuộc đợt tra cứu gốc và lấy `VERIFIED_ON` của
+   * tập dữ liệu. Ghi ngày ở từng bản ghi thay vì một hằng chung để lần bổ sung
+   * sau không làm các bản ghi cũ trông như vừa được tra lại.
+   */
+  verifiedOn?: string;
 }
 
 /** Loại quan hệ giữa hai văn bản, dùng để vẽ cạnh trên bản đồ. */

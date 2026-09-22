@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { VERIFIED_ON, documents } from "@/data/documents";
+import { LATEST_VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang, LegalDoc } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
 
@@ -22,7 +22,7 @@ export function EffectTicker({ lang }: { lang: Lang }) {
     .filter((d) => d.effectiveOn)
     .map((d) => ({
       doc: d,
-      gap: Math.abs(Date.parse(d.effectiveOn) - Date.parse(VERIFIED_ON)),
+      gap: Math.abs(Date.parse(d.effectiveOn) - Date.parse(LATEST_VERIFIED_ON)),
     }))
     .sort((a, b) => a.gap - b.gap)
     .slice(0, 14)
@@ -39,7 +39,7 @@ export function EffectTicker({ lang }: { lang: Lang }) {
       <span className="text-[var(--ink-2)]">{d.title[lang]}</span>
       <span className="tnum text-[var(--ink-3)]">{d.number}</span>
       <span className="text-[var(--ink-3)]">
-        {d.effectiveOn > VERIFIED_ON ? t.home.tickerFuture : t.home.tickerPast}
+        {d.effectiveOn > LATEST_VERIFIED_ON ? t.home.tickerFuture : t.home.tickerPast}
       </span>
     </>
   );

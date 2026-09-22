@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 
 import "../globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
-import { VERIFIED_ON } from "@/data/documents";
+import { LATEST_VERIFIED_ON } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { SITE_URL } from "@/lib/site";
@@ -128,7 +128,7 @@ export default async function LangLayout({
                 {t.siteName}
               </p>
               <p className="tnum text-sm text-[var(--ink-3)]">
-                {t.footer.verifiedPrefix} {formatDate(VERIFIED_ON, lang, VERIFIED_ON)}
+                {t.footer.verifiedPrefix} {formatDate(LATEST_VERIFIED_ON, lang, LATEST_VERIFIED_ON)}
               </p>
             </div>
 

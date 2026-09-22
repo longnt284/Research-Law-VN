@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
 
-import { VERIFIED_ON, documents, domains } from "@/data/documents";
+import { LATEST_VERIFIED_ON, documents, domains } from "@/data/documents";
 import { LANGS } from "@/i18n/dictionary";
 import { pairs } from "@/lib/compare";
+import { lineages } from "@/lib/lineage";
 import { SITE_URL, pathFor } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -25,12 +26,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...domains.map((d) => `/linh-vuc/${d.id}`),
     ...documents.map((d) => `/van-ban/${d.id}`),
     ...pairs.map((p) => `/doi-chieu/${p.id}`),
+    ...lineages.map((l) => `/doi-chieu/chuoi/${l.id}`),
   ];
 
   // Ngày tra cứu của tập dữ liệu là mốc sửa đổi thật của nội dung; lấy ngày dựng
   // trang thì mỗi lần triển khai lại báo toàn bộ trang vừa đổi, kể cả khi không
   // có chữ nào đổi.
-  const lastModified = new Date(`${VERIFIED_ON}T00:00:00Z`);
+  const lastModified = new Date(`${LATEST_VERIFIED_ON}T00:00:00Z`);
 
   return subs.flatMap((sub) =>
     LANGS.map((lang) => ({

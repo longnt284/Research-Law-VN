@@ -10,6 +10,16 @@ import type { Domain, LegalDoc, Relation } from "./types";
  */
 export const VERIFIED_ON = "2026-09-04";
 
+/**
+ * Ngày tra cứu của đợt bổ sung thứ hai.
+ *
+ * Mỗi bản ghi mang ngày tra cứu của chính nó ở trường `verifiedOn`; bản ghi
+ * không ghi thì thuộc đợt gốc và lấy `VERIFIED_ON`. Một hằng duy nhất cho cả
+ * kho sẽ nói sai ngay ở lần bổ sung đầu tiên: bản ghi tra tháng trước không trở
+ * nên mới hơn vì có một bản ghi khác vừa được tra hôm nay.
+ */
+const VERIFIED_2026_09_21 = "2026-09-21";
+
 export const domains: Domain[] = [
   {
     id: "xay-dung",
@@ -1823,7 +1833,7 @@ export const documents: LegalDoc[] = [
     domains: ["doanh-nghiep"],
     issuedOn: "2021-01-04",
     effectiveOn: "2021-01-04",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định về đăng ký doanh nghiệp",
       en: "Decree on enterprise registration",
@@ -1831,6 +1841,10 @@ export const documents: LegalDoc[] = [
     summary: {
       vi: "Quy định hồ sơ, trình tự và thủ tục đăng ký doanh nghiệp và đăng ký hộ kinh doanh, cùng thẩm quyền của Cơ quan đăng ký kinh doanh. Đây là văn bản quyết định một thay đổi về vốn, người đại diện theo pháp luật hay ngành nghề có được ghi nhận hay không. Thay thế Nghị định 78/2015/NĐ-CP và Nghị định 108/2018/NĐ-CP.",
       en: "It sets the dossier, sequence and procedure for enterprise and household-business registration and the powers of the business registration authority. It determines whether a change in charter capital, legal representative or business lines is actually recorded. It replaced Decrees 78/2015/NĐ-CP and 108/2018/NĐ-CP.",
+    },
+    note: {
+      vi: "Nghị định 168/2025/NĐ-CP thay thế nghị định này từ 01/7/2025. Hồ sơ nộp trước mốc đó được giải quyết theo nghị định này, nên bản ghi vẫn nằm trong tập dữ liệu.",
+      en: "Decree 168/2025/NĐ-CP replaced this Decree from 1 July 2025. Filings made before that date were handled under it, so the record stays in the dataset.",
     },
     guides: ["luat-dn-2020"],
     sources: [
@@ -2459,6 +2473,622 @@ export const documents: LegalDoc[] = [
     ],
     confidence: "cross-check",
   },
+  /*
+    ───────────────── ĐỢT BỔ SUNG NGÀY 21/9/2026 ─────────────────
+
+    Hai mươi lăm bản ghi dưới đây được tra trong cùng điều kiện với đợt 04/9/2026:
+    phiên làm việc không mở được thuvienphapluat.vn, vanban.chinhphu.vn, vbpl.vn
+    và luatvietnam.vn, nên số hiệu và các mốc thời gian được đối chiếu giữa ít
+    nhất hai kết quả tìm kiếm độc lập. Chi tiết nào không khớp hoặc không xuất
+    hiện thì để trống. Cả nhóm mang `confidence: "cross-check"`, và `sources` là
+    địa chỉ trang tìm được chứ không phải trang đã mở.
+  */
+  {
+    id: "luat-kien-truc-2019",
+    number: "40/2019/QH14",
+    type: "luat",
+    domains: ["xay-dung"],
+    issuedOn: "2019-06-13",
+    effectiveOn: "2020-07-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Kiến trúc",
+      en: "Law on Architecture",
+    },
+    summary: {
+      vi: "Đạo luật riêng cho hoạt động kiến trúc, đặt cạnh Luật Xây dựng chứ không nằm trong đó. Điều chỉnh quản lý kiến trúc, quy chế quản lý kiến trúc của địa phương, hành nghề kiến trúc và chứng chỉ hành nghề. Điều kiện cấp chứng chỉ gồm trình độ đại học về kiến trúc và tối thiểu ba năm kinh nghiệm dịch vụ kiến trúc.",
+      en: "A statute of its own for architectural activity, sitting beside the Construction Law rather than inside it. It governs architectural management, local architectural management regulations, architectural practice and practising certificates. A certificate requires tertiary education in architecture and at least three years of experience in architectural services.",
+    },
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-kien-truc-so-402019qh14-ngay-1362019-hieu-luc-thi-hanh-tu-ngay-0172020-5583",
+      "https://vbpl.vn/boxaydung/Pages/vbpq-van-ban-goc.aspx?ItemID=136039",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-quy-hoach-2017",
+    number: "21/2017/QH14",
+    type: "luat",
+    domains: ["xay-dung", "dau-tu"],
+    issuedOn: "2017-11-24",
+    effectiveOn: "2019-01-01",
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Quy hoạch",
+      en: "Law on Planning",
+    },
+    summary: {
+      vi: "Đặt một hệ thống quy hoạch quốc gia thống nhất và quy định việc lập, thẩm định, phê duyệt, công bố, thực hiện, đánh giá và điều chỉnh quy hoạch trong hệ thống đó. Luật gồm sáu chương, năm mươi chín điều và ba phụ lục. Đây là văn bản gốc mà quy hoạch đô thị, quy hoạch nông thôn và quy hoạch ngành phải đặt mình vào.",
+      en: "It establishes a single national planning system and governs the formulation, appraisal, approval, publication, implementation, evaluation and adjustment of plans within it. The Law has six chapters, fifty-nine articles and three appendices. Urban, rural and sectoral planning all take their place within this framework.",
+    },
+    note: {
+      vi: "Luật đã qua nhiều lần sửa đổi bằng các luật sửa nhiều luật; phạm vi từng lần sửa chưa đối chiếu được với nguồn chính thống trong phiên tra cứu.",
+      en: "The Law has been amended several times by omnibus amending laws; the scope of each amendment could not be confirmed against an official source in this search.",
+    },
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-quy-hoach-so-212017qh14-ngay-24112017-hieu-luc-thi-hanh-tu-ngay-01012019-4034",
+      "https://congbao.chinhphu.vn/van-ban/luat-so-21-2017-qh14-25327/20279.htm",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "tt-06-2021-bxd",
+    number: "06/2021/TT-BXD",
+    type: "thong-tu",
+    domains: ["xay-dung"],
+    issuedOn: "2021-06-30",
+    effectiveOn: "2021-08-15",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Thông tư quy định về phân cấp công trình xây dựng và hướng dẫn áp dụng trong quản lý hoạt động đầu tư xây dựng",
+      en: "Circular on the grading of construction works and its application in construction investment management",
+    },
+    summary: {
+      vi: "Bảng phân cấp công trình xây dựng và cách áp dụng cấp công trình trong quản lý hoạt động đầu tư xây dựng. Cấp công trình quyết định thẩm quyền thẩm định thiết kế, điều kiện năng lực nhà thầu và thời hạn bảo hành, nên đây là văn bản phải mở trước khi xác định thủ tục cho một dự án. Thông tư thay thế Thông tư 03/2016/TT-BXD và Thông tư 07/2019/TT-BXD.",
+      en: "It sets the grading table for construction works and how the grade applies across construction investment management. The grade drives design-appraisal competence, contractor capability requirements and warranty periods, so it is the document to open before fixing the procedure for a project. It replaced Circulars 03/2016/TT-BXD and 07/2019/TT-BXD.",
+    },
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/thong-tu-so-06-2021-tt-bxd-33988.htm",
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/thong-tu-so-062021tt-bxd-ngay-3062021-cua-bo-xay-dung-quy-dinh-ve-phan-cap-cong-trinh-xay-dung-va-huong-dan-ap-dung-trong-7676",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "tt-10-2021-bxd",
+    number: "10/2021/TT-BXD",
+    type: "thong-tu",
+    domains: ["xay-dung", "lao-dong"],
+    issuedOn: "2021-08-25",
+    effectiveOn: "2021-10-15",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Thông tư hướng dẫn Nghị định 06/2021/NĐ-CP và Nghị định 44/2016/NĐ-CP",
+      en: "Circular guiding Decrees 06/2021/NĐ-CP and 44/2016/NĐ-CP",
+    },
+    summary: {
+      vi: "Hướng dẫn chi tiết về quản lý an toàn lao động, chất lượng thi công và bảo trì công trình xây dựng, gồm hai mươi mốt điều. Đây là lớp dưới cùng của chuỗi quản lý chất lượng thi công: luật đặt nguyên tắc, nghị định quy định chi tiết, thông tư này nói cách làm hồ sơ. Thông tư thay thế Thông tư 26/2016/TT-BXD và Thông tư 04/2019/TT-BXD.",
+      en: "It details occupational-safety management, construction quality and the maintenance of works, in twenty-one articles. It is the bottom layer of the construction-quality chain: the statute sets principle, the decree the detail, this Circular the paperwork. It replaced Circulars 26/2016/TT-BXD and 04/2019/TT-BXD.",
+    },
+    guides: ["nd-06-2021"],
+    sources: [
+      "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=203945",
+      "https://soxaydung.hungyen.gov.vn/thong-tu-so-102021ttbxd-huong-dan-nghi-dinh-so-062021nd-cp-nghi-dinh-442016nd-cp-va-thay-the-thong-t-c2168.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-35-2023",
+    number: "35/2023/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["xay-dung"],
+    issuedOn: "2023-06-20",
+    effectiveOn: "2023-06-20",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định sửa đổi, bổ sung một số điều của các nghị định thuộc lĩnh vực quản lý nhà nước của Bộ Xây dựng",
+      en: "Decree amending decrees in the state management fields of the Ministry of Construction",
+    },
+    summary: {
+      vi: "Một nghị định sửa nhiều nghị định: quy hoạch đô thị, quy hoạch xây dựng và quản lý chất lượng thi công, bảo trì công trình. Nghị định có hiệu lực ngay từ ngày ký, không có khoảng chờ. Vì sửa rải rác nhiều văn bản nên phải đọc kèm bản gốc của từng nghị định bị sửa.",
+      en: "One decree amending several: urban planning, construction planning, and the management of construction quality and maintenance. It took effect on the date of signature, with no waiting period. Because the amendments are scattered across several instruments, each amended decree must be read alongside it.",
+    },
+    note: {
+      vi: "Nguồn tra được nêu các nghị định bị sửa gồm Nghị định 37/2010/NĐ-CP, Nghị định 44/2015/NĐ-CP, Nghị định 72/2019/NĐ-CP và Nghị định 06/2021/NĐ-CP. Chỉ Nghị định 06/2021/NĐ-CP có mặt trong tập dữ liệu này nên chỉ quan hệ đó được ghi nhận.",
+      en: "The sources found name Decrees 37/2010/NĐ-CP, 44/2015/NĐ-CP, 72/2019/NĐ-CP and 06/2021/NĐ-CP among those amended. Only Decree 06/2021/NĐ-CP is present in this dataset, so only that relation is recorded.",
+    },
+    amends: ["nd-06-2021"],
+    sources: [
+      "https://vanban.chinhphu.vn/?pageid=27160&docid=208090",
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/nghi-dinh-so-352023nd-cp-ngay-2062023-cua-chinh-phu-sua-doi-bo-sung-mot-so-dieu-cua-cac-nghi-dinh-thuoc-linh-vuc-quan-ly-9541",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-bvmt-2020",
+    number: "72/2020/QH14",
+    type: "luat",
+    domains: ["xay-dung", "dau-tu"],
+    issuedOn: "2020-11-17",
+    effectiveOn: "2022-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Bảo vệ môi trường",
+      en: "Law on Environmental Protection",
+    },
+    summary: {
+      vi: "Khung pháp lý về bảo vệ môi trường, gồm mười sáu chương và một trăm bảy mươi mốt điều. Luật đưa giấy phép môi trường và đánh giá tác động môi trường vào chuỗi thủ tục của một dự án đầu tư xây dựng, nên đây là văn bản đi kèm hồ sơ dự án chứ không đứng riêng. Luật Bảo vệ môi trường 2014 hết hiệu lực khi luật này có hiệu lực.",
+      en: "The framework statute on environmental protection, in sixteen chapters and one hundred and seventy-one articles. It places the environmental licence and the environmental impact assessment inside the procedural chain of a construction investment project, so it travels with the project file rather than standing apart. The 2014 Law ceased to have effect when this one commenced.",
+    },
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-bao-ve-moi-truong-so-722020qh14-ngay-17112020-hieu-luc-thi-hanh-tu-ngay-01012022-7518",
+      "https://english.luatvietnam.vn/law-on-environmental-protection-no-72-2020-qh14-dated-november-17-2020-of-the-national-assembly-195564-doc1.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-08-2022",
+    number: "08/2022/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["xay-dung", "dau-tu"],
+    issuedOn: "2022-01-10",
+    effectiveOn: "2022-01-10",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định chi tiết một số điều của Luật Bảo vệ môi trường",
+      en: "Decree detailing a number of articles of the Law on Environmental Protection",
+    },
+    summary: {
+      vi: "Quy định chi tiết thủ tục môi trường của một dự án: phân nhóm dự án theo tiêu chí môi trường, đánh giá tác động môi trường, giấy phép môi trường và đăng ký môi trường. Nghị định có hiệu lực từ ngày ký. Đây là văn bản quyết định một dự án phải xin giấy phép môi trường hay chỉ phải đăng ký.",
+      en: "It details the environmental procedure for a project: classification of projects by environmental criteria, environmental impact assessment, the environmental licence and environmental registration. It took effect on the date of signature. It decides whether a project needs a licence or only a registration.",
+    },
+    guides: ["luat-bvmt-2020"],
+    sources: [
+      "https://www.ddif.com.vn/mot-so-diem-noi-dung-lien-quan-den-thu-tuc-bao-ve-moi-truong-theo-luat-bao-ve-moi-truong-so-72-2020-qh14-va-nghi-dinh-so-08-2022-nd-cp-ngay-10-01-2022/",
+      "https://luatduongtri.vn/luat-bao-ve-moi-truong-2022/",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-72-2025",
+    number: "72/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["nang-luong"],
+    issuedOn: "2025-03-28",
+    effectiveOn: "2025-03-28",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định về cơ chế, thời gian điều chỉnh giá bán lẻ điện bình quân",
+      en: "Decree on the mechanism and timing for adjusting the average retail electricity price",
+    },
+    summary: {
+      vi: "Đặt cơ chế và nhịp điều chỉnh giá bán lẻ điện bình quân. Khoảng cách tối thiểu giữa hai lần điều chỉnh là ba tháng. Mức tăng từ 10% trở lên so với giá hiện hành phải qua bước kiểm tra, rà soát của Bộ Công Thương và báo cáo Chính phủ cho ý kiến. Nghị định có hiệu lực từ ngày ký.",
+      en: "It sets the mechanism and cadence for adjusting the average retail electricity price. The minimum interval between two adjustments is three months. An increase of 10% or more over the prevailing price goes through review by the Ministry of Industry and Trade and a report to the Government. The Decree took effect on the date of signature.",
+    },
+    guides: ["luat-dien-luc-2024"],
+    sources: [
+      "https://xaydungchinhsach.chinhphu.vn/nghi-dinh-72-2025-nd-cp-ve-co-che-thoi-gian-dieu-chinh-gia-ban-le-dien-binh-quan-119250401173706244.htm",
+      "https://baochinhphu.vn/quy-dinh-moi-ve-co-che-thoi-gian-dieu-chinh-gia-ban-le-dien-binh-quan-102250401145756615.htm",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-21-2021",
+    number: "21/2021/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["hop-dong"],
+    issuedOn: "2021-03-19",
+    effectiveOn: "2021-05-15",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định thi hành Bộ luật Dân sự về bảo đảm thực hiện nghĩa vụ",
+      en: "Decree implementing the Civil Code on securing the performance of obligations",
+    },
+    summary: {
+      vi: "Quy định tài sản bảo đảm, việc xác lập và thực hiện biện pháp bảo đảm, và việc xử lý tài sản bảo đảm; gồm năm chương và sáu mươi hai điều. Bộ luật Dân sự 2015 đổi nhiều quy định về tài sản và biện pháp bảo đảm nhưng chưa có nghị định hướng dẫn, nên cách làm giữa các nơi không giống nhau; nghị định này lấp chỗ đó. Văn bản gắn chặt với hoạt động cấp tín dụng và xử lý tài sản bảo đảm của ngân hàng.",
+      en: "It governs secured assets, the creation and performance of security measures and the enforcement of collateral, in five chapters and sixty-two articles. The 2015 Civil Code had changed much about assets and security without an implementing decree, so practice diverged; this Decree closes that gap. It bears directly on lending and on banks' enforcement of collateral.",
+    },
+    guides: ["blds-2015"],
+    sources: [
+      "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=202835",
+      "https://pbgdpl.haiphong.gov.vn/Tu-sach-phap-luat/Dan-su/Nghi-dinh-212021ND-CP-ngay-1932021-quy-dinh-thi-hanh-Bo-luat-Dan-su-ve-bao-dam-thuc-hien-nghia-vu-151970.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-tctand-2024",
+    number: "34/2024/QH15",
+    type: "luat",
+    domains: ["to-tung"],
+    issuedOn: "2024-06-24",
+    effectiveOn: "2025-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Tổ chức Tòa án nhân dân",
+      en: "Law on the Organisation of People's Courts",
+    },
+    summary: {
+      vi: "Quy định vị trí, chức năng, nhiệm vụ, quyền hạn và tổ chức bộ máy của Tòa án nhân dân, cùng chế độ Thẩm phán, Hội thẩm và các chức danh khác. Luật thay thế Luật Tổ chức Tòa án nhân dân 2014. Người đi kiện đọc luật này để biết vụ việc của mình được đưa tới cấp Tòa án nào và ai ngồi xử.",
+      en: "It sets the position, functions, duties, powers and organisational structure of the People's Courts, together with the regime for Judges, Jurors and other court positions. It replaced the 2014 Law. A litigant reads it to learn which level of court will take the case and who will sit on it.",
+    },
+    replaces: ["luat-tctand-2014"],
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-to-chuc-toa-an-nhan-dan-so-342024qh15-hieu-luc-thi-hanh-tu-ngay-01012025-10735",
+      "https://congly.vn/nhung-diem-moi-co-ban-cua-luat-to-chuc-toa-an-nhan-dan-2024-co-hieu-luc-tu-hom-nay-01-01-2025-465209.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-tctand-2014",
+    number: "62/2014/QH13",
+    type: "luat",
+    domains: ["to-tung"],
+    issuedOn: "2014-11-24",
+    effectiveOn: "2015-06-01",
+    status: "expired",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Tổ chức Tòa án nhân dân 2014",
+      en: "Law on the Organisation of People's Courts 2014",
+    },
+    summary: {
+      vi: "Khung tổ chức của hệ thống Tòa án nhân dân trong giai đoạn từ giữa năm 2015 tới hết năm 2024. Luật thay thế Luật Tổ chức Tòa án nhân dân số 33/2002/QH10 và hết hiệu lực khi Luật Tổ chức Tòa án nhân dân 2024 có hiệu lực. Bản án tuyên trong giai đoạn này đọc theo cơ cấu Tòa án của luật này.",
+      en: "The organisational framework of the People's Courts from mid-2015 to the end of 2024. It replaced Law 33/2002/QH10 and ceased to have effect when the 2024 Law commenced. Judgments handed down in that period are read against the court structure it set.",
+    },
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/luat-so-62-2014-qh13-12678.htm",
+      "https://congly.vn/luat-to-chuc-tand-2014-so-62-2014-qh13-dang-ap-dung-234037.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "icc-2021",
+    number: "ICC Arbitration Rules 2021",
+    type: "quy-tac",
+    domains: ["to-tung"],
+    issuedOn: "2020-12-01",
+    effectiveOn: "2021-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Quy tắc Trọng tài ICC 2021",
+      en: "ICC Arbitration Rules 2021",
+    },
+    summary: {
+      vi: "Bộ quy tắc tố tụng của Tòa Trọng tài Quốc tế ICC, áp dụng cho vụ kiện đăng ký từ ngày 01/01/2021 trừ khi thỏa thuận trọng tài quy định khác. Bản 2021 mở rộng thủ tục rút gọn lên ngưỡng ba triệu đô la Mỹ đối với thỏa thuận trọng tài giao kết từ ngày 01/01/2021, cho phép tổ chức phiên họp từ xa, và quy định rõ các trường hợp hợp nhất vụ kiện. Vụ đăng ký trước mốc đó tiếp tục theo bản 2017.",
+      en: "The procedural rules of the ICC International Court of Arbitration, applying to cases registered from 1 January 2021 unless the arbitration agreement provides otherwise. The 2021 edition raises the expedited-procedure threshold to USD 3 million for agreements concluded on or after 1 January 2021, allows hearings to be held remotely, and states the grounds for consolidation. Cases registered earlier continue under the 2017 Rules.",
+    },
+    sources: [
+      "https://iccwbo.org/dispute-resolution/dispute-resolution-services/arbitration/rules-procedure/2021-arbitration-rules/",
+      "https://www.mayerbrown.com/en/insights/publications/2021/01/icc-arbitration-rules-2021-10-key-changes-you-need-to-know",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-168-2025",
+    number: "168/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["doanh-nghiep"],
+    issuedOn: "2025-06-30",
+    effectiveOn: "2025-07-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định về đăng ký doanh nghiệp 2025",
+      en: "Decree on enterprise registration 2025",
+    },
+    summary: {
+      vi: "Quy định hồ sơ, trình tự, thủ tục đăng ký doanh nghiệp và đăng ký hộ kinh doanh, đăng ký qua mạng thông tin điện tử, việc cung cấp và chia sẻ thông tin đăng ký, cùng thẩm quyền của Cơ quan đăng ký kinh doanh. Nghị định thay thế Nghị định 01/2021/NĐ-CP và Nghị định 122/2020/NĐ-CP. Hồ sơ nộp từ 01/7/2025 đi theo nghị định này.",
+      en: "It sets the dossier, sequence and procedure for enterprise and household-business registration, online registration, the provision and sharing of registration information, and the powers of the business registration authority. It replaced Decrees 01/2021/NĐ-CP and 122/2020/NĐ-CP. Filings made from 1 July 2025 follow this Decree.",
+    },
+    replaces: ["nd-01-2021"],
+    guides: ["luat-dn-2020"],
+    sources: [
+      "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-168-2025-ND-CP-dang-ky-doanh-nghiep-623074.aspx",
+      "https://lexnovum.com.vn/nhung-diem-moi-cua-nghi-dinh-168-2025-nd-cp-so-voi-nghi-dinh-01-2021-nd-cp-ve-dang-ky-doanh-nghiep/",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-htx-2023",
+    number: "17/2023/QH15",
+    type: "luat",
+    domains: ["doanh-nghiep"],
+    issuedOn: "2023-06-20",
+    effectiveOn: "2024-07-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Hợp tác xã",
+      en: "Law on Cooperatives",
+    },
+    summary: {
+      vi: "Khung pháp lý của tổ hợp tác, hợp tác xã và liên hiệp hợp tác xã, gồm mười hai chương và một trăm mười lăm điều. Luật mở rộng tư cách thành viên thành ba nhóm là thành viên chính thức, thành viên góp vốn và thành viên liên kết không góp vốn, đồng thời đặt yêu cầu về quỹ chung không chia. Luật thay thế Luật Hợp tác xã số 23/2012/QH13.",
+      en: "The framework for cooperative groups, cooperatives and unions of cooperatives, in twelve chapters and one hundred and fifteen articles. It widens membership into official members, capital-contributing members and non-contributing affiliated members, and requires an indivisible common fund. It replaced Law 23/2012/QH13 on Cooperatives.",
+    },
+    note: {
+      vi: "Luật Hợp tác xã số 23/2012/QH13 không có trong tập dữ liệu này nên quan hệ thay thế chưa được ghi nhận thành cạnh trên bản đồ.",
+      en: "Law 23/2012/QH13 is not in this dataset, so the replacement relation is not yet drawn as an edge on the map.",
+    },
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-hop-tac-xa-so-172023qh15-hieu-luc-thi-hanh-tu-ngay-0172024-9691",
+      "https://dangkykinhdoanh.gov.vn/vn/Pages/ChiTietVanBan.aspx?vID=27019",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-155-2020",
+    number: "155/2020/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["doanh-nghiep", "dau-tu"],
+    issuedOn: "2020-12-31",
+    effectiveOn: "2021-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định chi tiết thi hành một số điều của Luật Chứng khoán",
+      en: "Decree detailing a number of articles of the Law on Securities",
+    },
+    summary: {
+      vi: "Quy định chi tiết chào bán và phát hành chứng khoán, công ty đại chúng, quản trị công ty áp dụng cho công ty đại chúng, niêm yết và đăng ký giao dịch, cùng tỷ lệ sở hữu của nhà đầu tư nước ngoài. Nghị định thay thế các Nghị định 58/2012/NĐ-CP, 60/2015/NĐ-CP, 86/2016/NĐ-CP và 71/2017/NĐ-CP. Đây là văn bản phải mở khi cấu trúc một thương vụ chào bán riêng lẻ hoặc một đợt phát hành ra công chúng.",
+      en: "It details securities offerings and issuance, public companies, corporate governance for public companies, listing and registration for trading, and foreign ownership limits. It replaced Decrees 58/2012/NĐ-CP, 60/2015/NĐ-CP, 86/2016/NĐ-CP and 71/2017/NĐ-CP. It is the instrument to open when structuring a private placement or a public offering.",
+    },
+    guides: ["luat-chung-khoan-2019"],
+    sources: [
+      "https://english.luatvietnam.vn/decree-no-155-2020-nd-cp-dated-december-31-2020-of-the-government-on-detailing-and-guiding-the-implementation-of-a-number-of-articles-of-the-law-on-196539-doc1.html",
+      "https://vcci.com.vn/legal-document/nghi-dinh-1552020nd-cp-huong-dan-luat-chung-khoan",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-dau-tu-cong-2024",
+    number: "58/2024/QH15",
+    type: "luat",
+    domains: ["dau-tu", "xay-dung"],
+    issuedOn: "2024-11-29",
+    effectiveOn: "2025-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Đầu tư công",
+      en: "Law on Public Investment",
+    },
+    summary: {
+      vi: "Quy định quản lý nhà nước về đầu tư công, quản lý và sử dụng vốn đầu tư công, cùng quyền và trách nhiệm của các chủ thể liên quan; gồm bảy chương và một trăm lẻ ba điều. Luật cho phép tách công tác bồi thường, hỗ trợ, tái định cư và giải phóng mặt bằng thành dự án độc lập ở tất cả các nhóm dự án. Luật thay thế Luật Đầu tư công 2019.",
+      en: "It governs state management of public investment, the management and use of public investment capital, and the rights and responsibilities of those involved, in seven chapters and one hundred and three articles. It allows compensation, support, resettlement and site clearance to be split into a standalone project across all project groups. It replaced the 2019 Law on Public Investment.",
+    },
+    replaces: ["luat-dau-tu-cong-2019"],
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-dau-tu-cong-so-582024qh15-hieu-luc-thi-hanh-tu-ngay-01012025-11190",
+      "https://thuvienphapluat.vn/van-ban/Dau-tu/Luat-Dau-tu-cong-2024-so-58-2024-QH15-621645.aspx",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-dau-tu-cong-2019",
+    number: "39/2019/QH14",
+    type: "luat",
+    domains: ["dau-tu", "xay-dung"],
+    issuedOn: "2019-06-13",
+    effectiveOn: "2020-01-01",
+    status: "expired",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Đầu tư công 2019",
+      en: "Law on Public Investment 2019",
+    },
+    summary: {
+      vi: "Khung pháp lý của đầu tư công trong giai đoạn 2020 tới hết năm 2024: quản lý nhà nước về đầu tư công, quản lý và sử dụng vốn đầu tư công, quyền và nghĩa vụ của các chủ thể liên quan. Luật hết hiệu lực khi Luật Đầu tư công 2024 có hiệu lực. Dự án phê duyệt chủ trương đầu tư trong giai đoạn này vẫn phải đọc theo luật cũ ở những nội dung đã hoàn tất.",
+      en: "The public-investment framework from 2020 to the end of 2024: state management of public investment, the management and use of public investment capital, and the rights and duties of those involved. It ceased to have effect when the 2024 Law commenced. Projects whose investment policy was approved in that period are still read against it for steps already completed.",
+    },
+    sources: [
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-dau-tu-cong-so-392019qh14-ngay-1362019-hieu-luc-thi-hanh-tu-ngay-01012020-5582",
+      "https://luatvietnam.vn/dau-tu/luat-dau-tu-cong-2019-175007-d1.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-19-2025",
+    number: "19/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dau-tu"],
+    issuedOn: "2025-02-10",
+    effectiveOn: "2025-02-10",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định chi tiết Luật Đầu tư về thủ tục đầu tư đặc biệt",
+      en: "Decree detailing the Law on Investment regarding the special investment procedure",
+    },
+    summary: {
+      vi: "Quy định chi tiết thủ tục đầu tư đặc biệt tại Điều 36a Luật Đầu tư, điều được bổ sung bởi khoản 8 Điều 2 Luật số 57/2024/QH15. Thủ tục áp dụng cho dự án công nghiệp bán dẫn và công nghệ cao trong khu công nghiệp, khu chế xuất, khu công nghệ cao và khu kinh tế, chuyển từ tiền kiểm sang hậu kiểm. Nhà đầu tư được cấp Giấy chứng nhận đăng ký đầu tư trong mười lăm ngày và không phải thực hiện một số thủ tục cấp phép về xây dựng, phòng cháy chữa cháy và môi trường. Nghị định có hiệu lực từ ngày ký.",
+      en: "It details the special investment procedure under Article 36a of the Law on Investment, inserted by clause 8 of Article 2 of Law 57/2024/QH15. The procedure covers semiconductor and high-technology projects in industrial parks, export processing zones, hi-tech parks and economic zones, moving from prior control to post control. The investor receives the investment registration certificate within fifteen days and is relieved of certain construction, fire-safety and environmental permits. The Decree took effect on the date of signature.",
+    },
+    guides: ["luat-dau-tu-2020", "luat-57-2024"],
+    sources: [
+      "https://vanban.chinhphu.vn/?pageid=27160&docid=212708",
+      "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/nghi-dinh-so-192025nd-cp-ngay-10022025-cua-chinh-phu-quy-dinh-chi-tiet-luat-dau-tu-ve-thu-tuc-dau-tu-dac-biet-11369",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-182-2024",
+    number: "182/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dau-tu", "thue"],
+    issuedOn: "2024-12-31",
+    effectiveOn: "",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định về thành lập, quản lý và sử dụng Quỹ Hỗ trợ đầu tư",
+      en: "Decree on the establishment, management and use of the Investment Support Fund",
+    },
+    summary: {
+      vi: "Lập Quỹ Hỗ trợ đầu tư và quy định việc quản lý, sử dụng quỹ này. Doanh nghiệp công nghệ cao đáp ứng điều kiện được nhận hỗ trợ từ quỹ. Nghị định ra đời cùng thời điểm với cơ chế thuế tối thiểu toàn cầu, nên thường được đọc kèm phần ưu đãi đầu tư đã bị cơ chế ấy chạm tới.",
+      en: "It establishes the Investment Support Fund and governs its management and use. High-technology enterprises meeting the stated conditions may receive support from it. It arrived alongside the global minimum tax mechanism and is usually read together with the investment incentives that mechanism reaches.",
+    },
+    note: {
+      vi: "Nguồn tra được nói nghị định áp dụng từ năm tài chính 2024 nhưng không nêu một ngày có hiệu lực cụ thể, nên trường ngày hiệu lực để trống.",
+      en: "The sources found state that the Decree applies from the 2024 financial year but give no specific commencement date, so the effective-date field is left blank.",
+    },
+    sources: [
+      "https://vanban.chinhphu.vn/?classid=1&docid=212199&pageid=27160&typegroupid=4",
+      "https://www.pwc.com/vn/vn/publications/news-brief/250117-decree-on-investment-support.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "luat-69-2020",
+    number: "69/2020/QH14",
+    type: "luat",
+    domains: ["lao-dong"],
+    issuedOn: "2020-11-13",
+    effectiveOn: "2022-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Luật Người lao động Việt Nam đi làm việc ở nước ngoài theo hợp đồng",
+      en: "Law on Vietnamese Workers Working Abroad under Contract",
+    },
+    summary: {
+      vi: "Quy định quyền, nghĩa vụ và trách nhiệm của người lao động Việt Nam đi làm việc ở nước ngoài theo hợp đồng và của doanh nghiệp, đơn vị sự nghiệp, tổ chức đưa người lao động đi. Người lao động được đơn phương chấm dứt hợp đồng khi bị ngược đãi, bị cưỡng bức lao động, bị quấy rối tình dục, hoặc khi có nguy cơ rõ ràng đe dọa trực tiếp tính mạng và sức khỏe. Luật cũng cho phép doanh nghiệp phối hợp với cơ sở giáo dục nghề nghiệp và trung tâm dịch vụ việc làm để chuẩn bị nguồn lao động.",
+      en: "It sets the rights, duties and responsibilities of Vietnamese workers going abroad under contract and of the enterprises, public units and organisations that send them. A worker may unilaterally terminate the contract on ill-treatment, forced labour, sexual harassment, or a clear risk directly threatening life or health. Enterprises may also work with vocational institutions and employment service centres to prepare the labour supply.",
+    },
+    sources: [
+      "https://vanban.chinhphu.vn/?pageid=27160&docid=202610",
+      "https://english.luatvietnam.vn/law-no-69-2020-qh14-dated-november-13-2020-of-the-national-assembly-on-vietnamese-guest-workers-195185-doc1.html",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-12-2022",
+    number: "12/2022/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["lao-dong"],
+    issuedOn: "2022-01-17",
+    effectiveOn: "2022-01-17",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định xử phạt vi phạm hành chính trong lĩnh vực lao động, bảo hiểm xã hội, người lao động Việt Nam đi làm việc ở nước ngoài theo hợp đồng",
+      en: "Decree on administrative sanctions in labour, social insurance and Vietnamese workers working abroad under contract",
+    },
+    summary: {
+      vi: "Bảng chế tài hành chính của ba nhóm quan hệ: lao động, bảo hiểm xã hội và đưa người lao động đi làm việc ở nước ngoài. Đây là nơi đọc ra mức phạt cho từng hành vi như chậm trả lương, ký sai loại hợp đồng hay không đóng bảo hiểm xã hội. Nghị định thay thế Nghị định 28/2020/NĐ-CP và có hiệu lực từ ngày ký.",
+      en: "The administrative-sanction table for three groups of relations: labour, social insurance and sending workers abroad. It is where the fine for a given act is read, such as late payment of wages, the wrong contract type, or failure to pay social insurance. It replaced Decree 28/2020/NĐ-CP and took effect on the date of signature.",
+    },
+    sources: [
+      "https://vanban.chinhphu.vn/?pageid=27160&docid=205182",
+      "https://vcci.com.vn/legal-document/nghi-dinh-122022nd-cp-ve-xu-phat-vi-pham-hanh-chinh-trong-linh-vuc-lao-dong-bao-hiem-xa-hoi-nguoi-lao-dong-viet-nam-di-lam-viec-o-nuoc-ngoai-theo-hop-dong",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-135-2020",
+    number: "135/2020/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["lao-dong"],
+    issuedOn: "2020-11-18",
+    effectiveOn: "2021-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định về tuổi nghỉ hưu",
+      en: "Decree on the retirement age",
+    },
+    summary: {
+      vi: "Quy định chi tiết Điều 169 Bộ luật Lao động 2019 về tuổi nghỉ hưu. Từ 01/01/2021, tuổi nghỉ hưu trong điều kiện lao động bình thường là 60 tuổi 03 tháng với lao động nam và 55 tuổi 04 tháng với lao động nữ, sau đó mỗi năm tăng thêm 03 tháng với nam cho tới 62 tuổi vào năm 2028 và 04 tháng với nữ cho tới 60 tuổi vào năm 2035. Nghị định cũng quy định riêng cho người làm nghề nặng nhọc, độc hại, nguy hiểm và người bị suy giảm khả năng lao động.",
+      en: "It details Article 169 of the 2019 Labour Code on the retirement age. From 1 January 2021 the age under normal working conditions is 60 years and 3 months for men and 55 years and 4 months for women, rising each year by 3 months for men until 62 in 2028 and by 4 months for women until 60 in 2035. It also provides separately for arduous, hazardous or dangerous occupations and for reduced working capacity.",
+    },
+    guides: ["blld-2019"],
+    sources: [
+      "https://vanban.chinhphu.vn/?pageid=27160&docid=201650",
+      "https://vbpl.vn/bolaodong/Pages/vbpq-van-ban-goc.aspx?ItemID=152734",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-181-2025",
+    number: "181/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["thue"],
+    issuedOn: "2025-07-01",
+    effectiveOn: "2025-07-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định chi tiết thi hành một số điều của Luật Thuế giá trị gia tăng",
+      en: "Decree detailing a number of articles of the Law on Value Added Tax",
+    },
+    summary: {
+      vi: "Quy định chi tiết người nộp thuế, đối tượng không chịu thuế, giá tính thuế, thời điểm xác định thuế, thuế suất, phương pháp khấu trừ, khấu trừ thuế đầu vào và hoàn thuế giá trị gia tăng; gồm bốn chương và bốn mươi điều. Nghị định đặt ngưỡng năm triệu đồng đã bao gồm thuế cho yêu cầu chứng từ thanh toán không dùng tiền mặt khi khấu trừ thuế đầu vào. Nghị định có hiệu lực cùng ngày Luật Thuế giá trị gia tăng 2024 bắt đầu áp dụng.",
+      en: "It details taxpayers, non-taxable objects, the taxable price, the time of determination, rates, the credit method, input tax credit and VAT refunds, in four chapters and forty articles. It sets a threshold of five million dong including tax for the non-cash payment document required to claim an input credit. It commenced on the same day as the 2024 VAT Law.",
+    },
+    guides: ["luat-gtgt-2024"],
+    sources: [
+      "https://vanban.chinhphu.vn/?pageid=27160&docid=214336",
+      "https://xaydungchinhsach.chinhphu.vn/nghi-dinh-181-2025-nd-cp-quy-dinh-chi-tiet-thi-hanh-mot-so-dieu-cua-luat-thue-gia-tri-gia-tang-119250707172930626.htm",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "nd-236-2025",
+    number: "236/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["thue", "dau-tu"],
+    issuedOn: "2025-08-29",
+    effectiveOn: "2025-10-15",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Nghị định quy định chi tiết một số điều của Nghị quyết 107/2023/QH15 về thuế thu nhập doanh nghiệp bổ sung theo quy định chống xói mòn cơ sở thuế toàn cầu",
+      en: "Decree detailing Resolution 107/2023/QH15 on top-up corporate income tax under the global anti-base-erosion rules",
+    },
+    summary: {
+      vi: "Quy định chi tiết người nộp thuế, đối tượng chịu thuế, căn cứ tính thuế, thuế suất, thời điểm xác định thuế, khai thuế, nộp thuế và quyết toán thuế theo Nghị quyết 107/2023/QH15, bám theo bộ quy tắc thuế tối thiểu toàn cầu do OECD khuyến nghị. Đối tượng là đơn vị hợp thành của tập đoàn đa quốc gia có doanh thu từ 750 triệu euro trở lên. Nghị định có hiệu lực từ 15/10/2025 và áp dụng từ năm tài chính 2024, nên kỳ đầu tiên đã kết thúc trước khi nghị định ra đời.",
+      en: "It details taxpayers, taxable objects, the tax base, rates, the time of determination, and the filing, payment and finalisation of tax under Resolution 107/2023/QH15, following the OECD's GloBE rules. It applies to constituent entities of multinational groups with revenue of at least EUR 750 million. It takes effect from 15 October 2025 and applies from the 2024 financial year, so the first period had closed before the Decree appeared.",
+    },
+    guides: ["nq-107-2023"],
+    sources: [
+      "https://vanban.chinhphu.vn/?docid=215112&pageid=27160",
+      "https://xaydungchinhsach.chinhphu.vn/nghi-dinh-so-236-2025-nd-cp-quy-dinh-ve-thue-toi-thieu-toan-cau-119250903135325963.htm",
+    ],
+    confidence: "cross-check",
+  },
+  {
+    id: "tt-80-2021-btc",
+    number: "80/2021/TT-BTC",
+    type: "thong-tu",
+    domains: ["thue"],
+    issuedOn: "2021-09-29",
+    effectiveOn: "2022-01-01",
+    status: "active",
+    verifiedOn: VERIFIED_2026_09_21,
+    title: {
+      vi: "Thông tư hướng dẫn thi hành một số điều của Luật Quản lý thuế và Nghị định 126/2020/NĐ-CP",
+      en: "Circular guiding the Law on Tax Administration and Decree 126/2020/NĐ-CP",
+    },
+    summary: {
+      vi: "Hướng dẫn thủ tục của khâu quản lý thuế: hồ sơ khai thuế, phân bổ nghĩa vụ thuế giữa các địa phương, hoàn thuế, miễn giảm và xử lý tiền thuế nộp thừa. Đây là lớp biểu mẫu và trình tự của Luật Quản lý thuế, nên kế toán thuế mở thông tư này nhiều hơn mở luật. Thông tư bãi bỏ các Thông tư 156/2013/TT-BTC, 99/2016/TT-BTC, 31/2017/TT-BTC, 208/2015/TT-BTC và 71/2010/TT-BTC.",
+      en: "It guides the procedural layer of tax administration: returns, the allocation of tax obligations across localities, refunds, exemptions and reductions, and the handling of overpaid tax. It carries the forms and sequences of the Law on Tax Administration, which is why tax accountants open it more often than the statute. It repealed Circulars 156/2013/TT-BTC, 99/2016/TT-BTC, 31/2017/TT-BTC, 208/2015/TT-BTC and 71/2010/TT-BTC.",
+    },
+    guides: ["luat-qlt-2019", "nd-126-2020"],
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/thong-tu-so-80-2021-tt-btc-34774.htm",
+      "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Thong-tu-80-2021-TT-BTC-huong-dan-Luat-Quan-ly-thue-Nghi-dinh-126-2020-ND-CP-466716.aspx",
+    ],
+    confidence: "cross-check",
+  },
 ];
 
 /*
@@ -2470,6 +3100,22 @@ assertIntegrity(documents, domains);
 
 /** Bảng tra nhanh theo id. */
 export const documentsById = new Map(documents.map((d) => [d.id, d]));
+
+/** Ngày tra cứu của một bản ghi; bản ghi không ghi thì thuộc đợt gốc. */
+export function verifiedOnOf(doc: LegalDoc): string {
+  return doc.verifiedOn ?? VERIFIED_ON;
+}
+
+/**
+ * Ngày tra cứu gần nhất trong cả kho.
+ *
+ * Tính từ dữ liệu chứ không viết tay: thêm một đợt bổ sung là con số ở chân
+ * trang tự đúng theo, không phải nhớ sửa ở một chỗ thứ hai.
+ */
+export const LATEST_VERIFIED_ON = documents.reduce(
+  (latest, doc) => (verifiedOnOf(doc) > latest ? verifiedOnOf(doc) : latest),
+  VERIFIED_ON,
+);
 
 /**
  * Suy ra danh sách cạnh từ các trường quan hệ của từng văn bản.
