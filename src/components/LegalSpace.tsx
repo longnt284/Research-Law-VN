@@ -105,7 +105,15 @@ const PALETTE = {
     rimStrength: 0.62,
     envSky: "#9aa8bd",
     envGround: "#0b0f14",
-    envStrength: 1.0,
+    /*
+      Hộp sáng và ánh tự phát đều là ánh sáng cộng thêm, mà cộng thêm trên nền
+      tối thì đẩy mọi thứ về trắng. Ở bản trước, hai lượng này đủ lớn để nuốt
+      sắc lĩnh vực: cả khối ngả vàng kem, và màu — thứ dữ liệu duy nhất trên
+      điểm nói văn bản thuộc lĩnh vực nào — không đọc ra được ở giao diện tối.
+      Hạ xuống để `--node-chroma` và `--node-lightness` còn sống tới màn hình;
+      phần rực rỡ đã có quầng sáng của tầng luật lo.
+    */
+    envStrength: 0.8,
     ambient: 0.4,
     hemiSky: "#dfe6f0",
     hemiGround: "#12161d",
@@ -117,7 +125,7 @@ const PALETTE = {
     nodeSat: 0.52,
     nodeLum: 0.66,
     anchorEmissive: "#c9a961",
-    emissive: 0.5,
+    emissive: 0.3,
     linkColors: ["#8d8779", "#e0917f", "#c9705c"],
     linkMetal: 0.55,
     mote: "#d8c188",
@@ -131,6 +139,95 @@ const PALETTE = {
 } as const;
 
 type Theme = (typeof PALETTE)["dark"];
+
+/**
+ * Hình khối của một điểm nói tầng hiệu lực của văn bản.
+ *
+ * Bản trước vẽ cả trăm văn bản bằng đúng một khối hai mươi mặt, nên thứ bậc chỉ
+ * còn nằm ở chỗ đứng: đọc ra được ở chương Thứ bậc, mất sạch ở năm chương còn
+ * lại. Ở đây số mặt tăng dần khi hiệu lực pháp lý giảm — luật là một khối tám
+ * mặt sắc cạnh, thông tư là một hạt gần tròn — nên một điểm bất kỳ, ở chương
+ * nào, cũng tự nói nó thuộc tầng nào.
+ *
+ * Bốn hình là bốn lệnh vẽ thay vì một, và cả bốn đều là hình nguyên thuỷ dựng
+ * tại chỗ. Tổng cộng khoảng hai nghìn tam giác cho cả cảnh, và không một byte
+ * tài nguyên nào tải thêm, nên `default-src 'self'` không phải nới ra dòng nào.
+ */
+function tierGeometry(tier: number): THREE.BufferGeometry {
+  if (tier <= 0) return new THREE.OctahedronGeometry(0.5, 0);
+  if (tier === 1) return new THREE.DodecahedronGeometry(0.5, 0);
+  if (tier === 2) return new THREE.IcosahedronGeometry(0.5, 0);
+  return new THREE.IcosahedronGeometry(0.5, 1);
+}
+
+/**
+ * Bù cỡ cho từng hình. Bốn hình cùng bán kính ngoại tiếp 0.5 nhưng khối càng ít
+ * mặt thì càng lọt sâu vào trong quả cầu đó, nên nếu không bù thì khối tám mặt
+ * của tầng luật trông nhỏ hơn hạt của tầng thông tư — đúng ngược điều muốn nói.
+ */
+const TIER_GAIN = [1.2, 1.06, 1.0, 0.97];
+
+/**
+ * Tình trạng hiệu lực, đọc theo thang `STATE` của `lib/space.ts`.
+ *
+ * Quy ước lấy nguyên từ bản đồ hai chiều và khối quan hệ của trang lĩnh vực:
+ * văn bản hết hiệu lực phải trông xỉn hơn văn bản đang áp dụng. Ở đây "xỉn" là
+ * lui về phía màu nền chứ không phải tối đi — trên nền giấy, tối đi là nổi lên.
+ * Văn bản hết hiệu lực cũng mất hẳn quầng sáng: một văn bản đã bị thay thế thì
+ * không còn là mốc để các văn bản khác quy về.
+ */
+const STATE_FADE = [0, 0.14, 0.26, 0.52];
+const STATE_SIZE = [1, 0.97, 0.92, 0.82];
+const STATE_HALO = [1, 0.92, 0.7, 0];
+
+/**
+ * Đường nối là một cung, không phải một dây cung thẳng.
+ *
+ * Mỗi quan hệ được chia thành bốn đoạn trên một đường bậc hai, và bốn đoạn ấy
+ * mua về ba thứ mà một hình trụ thẳng không có. Một, cung tách nhau ra thay vì
+ * chồng lên nhau, nên chương Quan hệ đọc ra là một bản vẽ chứ không phải một
+ * cuộn dây. Hai, bán kính thu dần theo cấp số nhân nên cả sợi là một nét vuốt
+ * có đầu có đuôi. Ba, màu của từng đoạn nhạt dần về phía nền, đúng quy ước đã
+ * dùng ở khối quan hệ của trang lĩnh vực: đầu đậm là văn bản dẫn chiếu, đầu
+ * nhạt là văn bản được dẫn chiếu. Chiều của quan hệ vì vậy đọc được cả khi
+ * khối đang quay và cả khi in ra đen trắng.
+ *
+ * Giá phải trả là bốn lần số thể hiện, tức khoảng ba trăm rưởi thay vì tám
+ * mươi bảy — vẫn nằm trong một lệnh vẽ duy nhất và vẫn là một phần nghìn ngân
+ * sách của cảnh.
+ */
+const LINK_SEG = 4;
+/** Bán kính ở hai đầu, tính theo bề dày gốc. Đầu dày là văn bản dẫn chiếu. */
+const LINK_HEAD = 1.5;
+const LINK_TAIL = 0.55;
+/**
+ * Tỷ lệ thu giữa hai đoạn liền nhau. Hình trụ gốc có đáy 1 và ngọn đúng bằng tỷ
+ * lệ này, nên ngọn đoạn trước và đáy đoạn sau luôn bằng nhau: nét vuốt liền
+ * mạch, không có bậc thang ở mối nối.
+ */
+const LINK_TAPER = Math.pow(LINK_TAIL / LINK_HEAD, 1 / LINK_SEG);
+const LINK_STEP = Array.from({ length: LINK_SEG }, (_, k) => Math.pow(LINK_TAPER, k));
+/** Quan hệ càng mạnh càng đậm nét: quy định chi tiết · sửa đổi bổ sung · thay thế. */
+const LINK_KIND = [0.85, 1.05, 1.3];
+/** Độ võng của cung tại điểm giữa, tính theo chiều dài dây cung. */
+const LINK_BOW = 0.12;
+/** Độ nhạt tối đa về phía nền, ở đoạn cuối cùng. */
+const LINK_FADE = 0.6;
+
+/** Một điểm trên đường bậc hai qua `a` và `b`, uốn theo điểm điều khiển `c`. */
+function bezier(
+  a: THREE.Vector3,
+  c: THREE.Vector3,
+  b: THREE.Vector3,
+  t: number,
+  out: THREE.Vector3,
+) {
+  const u = 1 - t;
+  out.set(0, 0, 0)
+    .addScaledVector(a, u * u)
+    .addScaledVector(c, 2 * u * t)
+    .addScaledVector(b, t * t);
+}
 
 /**
  * Một bảng trạng thái duy nhất cho camera, đèn, sương, độ đậm đường nối và sắc
@@ -574,12 +671,29 @@ function Corpus({
 
   const geometries = useMemo(
     () => ({
-      node: new THREE.IcosahedronGeometry(0.5, 0),
-      link: new THREE.CylinderGeometry(0.5, 0.5, 1, 5, 1),
+      node: [0, 1, 2, 3].map(tierGeometry),
+      // Hình trụ hở hai đầu: hai đầu sợi nằm sâu trong khối của điểm nên nắp
+      // không bao giờ lộ ra, mà bỏ nắp thì mối nối giữa hai đoạn không còn hai
+      // mặt trùng nhau cùng vẽ lên một chỗ.
+      link: new THREE.CylinderGeometry(LINK_TAPER, 1, 1, 6, 1, true),
       halo: new THREE.PlaneGeometry(1, 1),
     }),
     [],
   );
+
+  /**
+   * Chỗ của mỗi văn bản trong khối thể hiện của tầng nó. Tính một lần: tầng là
+   * thuộc tính của loại văn bản, không đổi trong vòng đời trang.
+   */
+  const tierSlots = useMemo(() => {
+    const slot = new Int32Array(n);
+    const counts = [0, 0, 0, 0];
+    for (let i = 0; i < n; i++) {
+      const t = clamp(nodes[i].tier, 0, 3) | 0;
+      slot[i] = counts[t]++;
+    }
+    return { slot, counts };
+  }, [nodes, n]);
 
   const materials = useMemo(
     () => ({ node: makeSurface(theme, "node"), link: makeSurface(theme, "link") }),
@@ -598,17 +712,24 @@ function Corpus({
     [low],
   );
 
-  const nodeMesh = useMemo(() => {
-    const mesh = new THREE.InstancedMesh(geometries.node, materials.node, n);
-    mesh.frustumCulled = false;
-    return mesh;
-  }, [geometries.node, materials.node, n]);
+  const nodeMeshes = useMemo(
+    () =>
+      geometries.node.map((geo, t) => {
+        const count = tierSlots.counts[t];
+        const mesh = new THREE.InstancedMesh(geo, materials.node, Math.max(count, 1));
+        mesh.frustumCulled = false;
+        // Tầng rỗng vẫn dựng một chỗ để bộ đệm hợp lệ, nhưng không vẽ thể hiện nào.
+        mesh.count = count;
+        return mesh;
+      }),
+    [geometries.node, materials.node, tierSlots],
+  );
 
   const linkMesh = useMemo(() => {
     const mesh = new THREE.InstancedMesh(
       geometries.link,
       materials.link,
-      Math.max(links.length, 1),
+      Math.max(links.length * LINK_SEG, 1),
     );
     mesh.frustumCulled = false;
     mesh.renderOrder = 1;
@@ -634,6 +755,8 @@ function Corpus({
   // được nướng cứng lúc dựng cảnh.
   useEffect(() => {
     const c = new THREE.Color();
+    // Lui về phía nền, không lui về phía đen: trên nền giấy, tối đi là nổi lên.
+    const back = new THREE.Color(theme.bg);
     for (let i = 0; i < n; i++) {
       const node = nodes[i];
       c.setHSL(
@@ -641,13 +764,19 @@ function Corpus({
         theme.nodeSat,
         theme.nodeLum * (node.anchor ? 1.12 : 1) + (node.anchor ? 0.02 : 0),
       );
-      nodeMesh.setColorAt(i, c);
+      c.lerp(back, STATE_FADE[node.state] ?? 0);
+      nodeMeshes[clamp(node.tier, 0, 3) | 0].setColorAt(tierSlots.slot[i], c);
     }
-    if (nodeMesh.instanceColor) nodeMesh.instanceColor.needsUpdate = true;
+    for (const mesh of nodeMeshes) {
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    }
 
     for (let i = 0; i < links.length; i++) {
-      c.set(theme.linkColors[links[i].kind] ?? theme.linkColors[0]);
-      linkMesh.setColorAt(i, c);
+      const base = theme.linkColors[links[i].kind] ?? theme.linkColors[0];
+      for (let k = 0; k < LINK_SEG; k++) {
+        c.set(base).lerp(back, (k / (LINK_SEG - 1)) * LINK_FADE);
+        linkMesh.setColorAt(i * LINK_SEG + k, c);
+      }
     }
     if (linkMesh.instanceColor) linkMesh.instanceColor.needsUpdate = true;
 
@@ -658,21 +787,21 @@ function Corpus({
       m.userData.envBox.uRim.value.set(theme.rim);
     }
     invalidate();
-  }, [theme, nodes, links, nodeMesh, linkMesh, materials, n, invalidate]);
+  }, [theme, nodes, links, nodeMeshes, tierSlots, linkMesh, materials, n, invalidate]);
 
   useEffect(
     () => () => {
-      nodeMesh.dispose();
+      for (const mesh of nodeMeshes) mesh.dispose();
       linkMesh.dispose();
       haloMesh.dispose();
       (haloMesh.material as THREE.Material).dispose();
-      geometries.node.dispose();
+      for (const geo of geometries.node) geo.dispose();
       geometries.link.dispose();
       geometries.halo.dispose();
       materials.node.dispose();
       materials.link.dispose();
     },
-    [nodeMesh, linkMesh, haloMesh, geometries, materials],
+    [nodeMeshes, linkMesh, haloMesh, geometries, materials],
   );
 
   useEffect(() => {
@@ -705,6 +834,11 @@ function Corpus({
       mid: new THREE.Vector3(),
       dir: new THREE.Vector3(),
       up: new THREE.Vector3(0, 1, 0),
+      bow: new THREE.Vector3(),
+      ctrl: new THREE.Vector3(),
+      p0: new THREE.Vector3(),
+      p1: new THREE.Vector3(),
+      seg: new THREE.Vector3(),
       q: new THREE.Quaternion(),
       tgt: new THREE.Vector3(),
       ray: new THREE.Vector3(),
@@ -819,22 +953,23 @@ function Corpus({
       d.position.set(x, y, z);
       d.rotation.set(i * 0.7 + time.current * 0.08, i * 1.3 + time.current * 0.05, i * 0.4);
       const breathe = 1 + Math.sin(time.current * 0.7 + seed * TAU) * 0.03 * alive;
-      const r = (node.anchor ? 0.152 : 0.088 + (3 - node.tier) * 0.011) * nodeScale;
+      const tier = clamp(node.tier, 0, 3) | 0;
+      const r =
+        (node.anchor ? 0.152 : 0.088 + (3 - node.tier) * 0.011) *
+        nodeScale *
+        TIER_GAIN[tier] *
+        (STATE_SIZE[node.state] ?? 1);
       d.scale.setScalar(r * ease * breathe * (1 - burst * 0.16));
       d.updateMatrix();
-      nodeMesh.setMatrixAt(i, d.matrix);
+      nodeMeshes[tier].setMatrixAt(tierSlots.slot[i], d.matrix);
 
       // Quầng dùng lại đúng vị trí của điểm nên không bao giờ lệch khỏi điểm nó thuộc về.
-      if (node.anchor) {
-        d.scale.setScalar(r * ease * 1.15);
-        d.updateMatrix();
-      } else {
-        d.scale.setScalar(0);
-        d.updateMatrix();
-      }
+      const halo = node.anchor ? (STATE_HALO[node.state] ?? 1) : 0;
+      d.scale.setScalar(halo > 0 ? r * ease * 1.15 * halo : 0);
+      d.updateMatrix();
       haloMesh.setMatrixAt(i, d.matrix);
     }
-    nodeMesh.instanceMatrix.needsUpdate = true;
+    for (const mesh of nodeMeshes) mesh.instanceMatrix.needsUpdate = true;
     haloMesh.instanceMatrix.needsUpdate = true;
 
     // Đường nối đọc lại toạ độ vừa tính, nên nó luôn dính đúng hai đầu kể cả giữa
@@ -851,18 +986,52 @@ function Corpus({
       scratch.dir.subVectors(scratch.b, scratch.a);
       const len = scratch.dir.length();
       if (len < 1e-5) {
-        d.scale.set(0, 0, 0);
         d.position.copy(scratch.mid);
         d.quaternion.identity();
-      } else {
-        scratch.dir.divideScalar(len);
-        scratch.q.setFromUnitVectors(scratch.up, scratch.dir);
-        d.position.copy(scratch.mid);
-        d.quaternion.copy(scratch.q);
-        d.scale.set(thick, len, thick);
+        d.scale.set(0, 0, 0);
+        d.updateMatrix();
+        for (let k = 0; k < LINK_SEG; k++) linkMesh.setMatrixAt(i * LINK_SEG + k, d.matrix);
+        continue;
       }
-      d.updateMatrix();
-      linkMesh.setMatrixAt(i, d.matrix);
+      scratch.dir.divideScalar(len);
+      /*
+        Hướng võng là phần của điểm giữa vuông góc với dây cung, tức hướng từ
+        tâm cảnh ra chỗ sợi đi gần tâm nhất. Sợi vì vậy uốn ra ngoài chứ không
+        uốn về một phía tuỳ tiện, và hai sợi song song nhau vẫn tách được ra.
+        Sợi xuyên đúng qua tâm không có hướng nào như thế nên mượn một trục
+        vuông góc — tất định theo chính hướng sợi, không phải một số ngẫu nhiên.
+      */
+      scratch.bow
+        .copy(scratch.mid)
+        .addScaledVector(scratch.dir, -scratch.mid.dot(scratch.dir));
+      if (scratch.bow.lengthSq() < 1e-6) scratch.bow.crossVectors(scratch.dir, scratch.up);
+      if (scratch.bow.lengthSq() < 1e-6) scratch.bow.set(0, 0, 1);
+      scratch.bow.normalize();
+      // Điểm điều khiển đặt gấp đôi độ võng mong muốn: đường bậc hai chỉ đi
+      // được nửa đường tới điểm điều khiển của nó.
+      scratch.ctrl.copy(scratch.mid).addScaledVector(scratch.bow, len * LINK_BOW * 2);
+
+      const head = thick * LINK_HEAD * (LINK_KIND[link.kind] ?? 1);
+      bezier(scratch.a, scratch.ctrl, scratch.b, 0, scratch.p0);
+      for (let k = 0; k < LINK_SEG; k++) {
+        bezier(scratch.a, scratch.ctrl, scratch.b, (k + 1) / LINK_SEG, scratch.p1);
+        scratch.seg.subVectors(scratch.p1, scratch.p0);
+        const sl = scratch.seg.length();
+        scratch.mid.addVectors(scratch.p0, scratch.p1).multiplyScalar(0.5);
+        d.position.copy(scratch.mid);
+        if (sl < 1e-6) {
+          d.quaternion.identity();
+          d.scale.set(0, 0, 0);
+        } else {
+          scratch.seg.divideScalar(sl);
+          d.quaternion.copy(scratch.q.setFromUnitVectors(scratch.up, scratch.seg));
+          const rk = head * LINK_STEP[k];
+          d.scale.set(rk, sl, rk);
+        }
+        d.updateMatrix();
+        linkMesh.setMatrixAt(i * LINK_SEG + k, d.matrix);
+        scratch.p0.copy(scratch.p1);
+      }
     }
     linkMesh.instanceMatrix.needsUpdate = true;
     materials.link.opacity = clamp(0.1 + weight * 0.62, 0, 1) * ease;
@@ -966,7 +1135,9 @@ function Corpus({
       />
       <group ref={group}>
         <primitive object={linkMesh} />
-        <primitive object={nodeMesh} />
+        {nodeMeshes.map((mesh, t) => (
+          <primitive key={t} object={mesh} />
+        ))}
         <primitive object={haloMesh} />
       </group>
     </>
