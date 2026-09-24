@@ -252,8 +252,8 @@ export const documents: LegalDoc[] = [
       en: "Decree on capacity conditions for construction activity and the national construction activity database",
     },
     summary: {
-      vi: "Đặt ra điều kiện năng lực của tổ chức và cá nhân tham gia hoạt động xây dựng, từ chứng chỉ hành nghề tới chứng chỉ năng lực của nhà thầu. Đồng thời hình thành cơ sở dữ liệu quốc gia để tra cứu năng lực nhà thầu, một thay đổi đáng chú ý cho khâu đánh giá hồ sơ dự thầu.",
-      en: "It fixes the capacity requirements for organisations and individuals in construction, from individual practising certificates to contractor capacity certificates, and establishes a national database for verifying contractor credentials — a notable change for bid evaluation.",
+      vi: "Đặt ra điều kiện năng lực của tổ chức và cá nhân tham gia hoạt động xây dựng, từ chứng chỉ hành nghề tới chứng chỉ năng lực của nhà thầu. Đồng thời hình thành cơ sở dữ liệu quốc gia để tra cứu năng lực nhà thầu, điều có tác động trực tiếp tới khâu đánh giá hồ sơ dự thầu.",
+      en: "It fixes the capacity requirements for organisations and individuals in construction, from individual practising certificates to contractor capacity certificates, and establishes a national database for verifying contractor credentials, which bears directly on bid evaluation.",
     },
     guides: ["luat-xay-dung-2025"],
     sources: [
@@ -1081,7 +1081,7 @@ export const documents: LegalDoc[] = [
       en: "Law amending and supplementing a number of articles of the Law on Enterprises",
     },
     summary: {
-      vi: "Bổ sung nghĩa vụ kê khai chủ sở hữu hưởng lợi của doanh nghiệp, định nghĩa lại cổ tức là khoản lợi nhuận sau thuế trả cho mỗi cổ phần bằng tiền hoặc tài sản khác, và sửa một số quy định về giấy tờ pháp lý của cá nhân. Nghĩa vụ kê khai chủ sở hữu hưởng lợi là thay đổi đáng chú ý nhất với doanh nghiệp có cấu trúc sở hữu nhiều tầng.",
+      vi: "Bổ sung nghĩa vụ kê khai chủ sở hữu hưởng lợi của doanh nghiệp, định nghĩa lại cổ tức là khoản lợi nhuận sau thuế trả cho mỗi cổ phần bằng tiền hoặc tài sản khác, và sửa một số quy định về giấy tờ pháp lý của cá nhân. Với doanh nghiệp có cấu trúc sở hữu nhiều tầng, nghĩa vụ kê khai chủ sở hữu hưởng lợi là thay đổi tác động lớn nhất.",
       en: "It introduces the obligation to declare the beneficial owner of an enterprise, redefines dividend as after-tax profit paid per share in cash or other assets, and adjusts rules on personal legal papers. The beneficial ownership declaration is the change that matters most to groups with layered ownership.",
     },
     amends: ["luat-dn-2020"],
@@ -2012,7 +2012,7 @@ export const documents: LegalDoc[] = [
       en: "Vietnam approved accession on 18 December 2015, becoming the 84th contracting state, and the Convention entered into force for Vietnam on 1 January 2017. From that date most international sale-of-goods contracts between Vietnamese traders and traders of other contracting states are governed by the Convention unless the parties exclude it.",
     },
     note: {
-      vi: "Việt Nam bảo lưu về hình thức hợp đồng theo Điều 11, Điều 29 và Phần II của Công ước, nên hợp đồng vẫn cần lập bằng văn bản. Điều 6 cho phép các bên loại trừ toàn bộ hoặc một phần Công ước — điều khoản luật áp dụng trong hợp đồng vì thế quyết định rất nhiều.",
+      vi: "Việt Nam bảo lưu về hình thức hợp đồng theo Điều 11, Điều 29 và Phần II của Công ước, nên hợp đồng vẫn cần lập bằng văn bản. Điều 6 cho phép các bên loại trừ toàn bộ hoặc một phần Công ước, nên điều khoản luật áp dụng trong hợp đồng quyết định rất nhiều.",
       en: "Vietnam entered reservations as to form under Articles 11 and 29 and Part II, so contracts must still be in writing. Article 6 allows the parties to exclude the Convention wholly or in part, which makes the governing-law clause decisive.",
     },
     sources: [
@@ -2118,8 +2118,8 @@ export const documents: LegalDoc[] = [
       en: "Law on Prices",
     },
     summary: {
-      vi: "Gồm tám chương và 75 điều, thay thế Luật Giá 2012. Quy định danh mục hàng hóa, dịch vụ do Nhà nước định giá, nguyên tắc hiệp thương giá và toàn bộ chế định thẩm định giá — phần thường được viện dẫn khi tranh chấp về giá trị tài sản hoặc khối lượng công việc.",
-      en: "In eight chapters and 75 articles, it replaces the 2012 Law on Prices. It sets the list of goods and services priced by the State, the rules on price negotiation, and the whole regime of valuation — the part most often invoked in disputes over asset value or the value of work done.",
+      vi: "Gồm tám chương và 75 điều, thay thế Luật Giá 2012. Quy định danh mục hàng hóa, dịch vụ do Nhà nước định giá, nguyên tắc hiệp thương giá và toàn bộ chế định thẩm định giá, là phần thường được viện dẫn khi tranh chấp về giá trị tài sản hoặc khối lượng công việc.",
+      en: "In eight chapters and 75 articles, it replaces the 2012 Law on Prices. It sets the list of goods and services priced by the State, the rules on price negotiation, and the whole regime of valuation, which is the part most often invoked in disputes over asset value or the value of work done.",
     },
     note: {
       vi: "Hiệu lực chung từ 01/7/2024, riêng khoản 2 Điều 60 áp dụng từ 01/01/2026.",
@@ -2233,8 +2233,8 @@ export const documents: LegalDoc[] = [
       en: "Law on Administrative Procedure",
     },
     summary: {
-      vi: "Gồm 23 chương và 372 điều, thay thế Luật Tố tụng hành chính 2010. Đây là con đường pháp lý để khởi kiện quyết định hành chính và hành vi hành chính — thứ mà nhà đầu tư dùng khi bị thu hồi đất, bị từ chối cấp phép hoặc bị xử phạt.",
-      en: "In 23 chapters and 372 articles, it replaced the 2010 Administrative Procedure Law. It is the route for challenging administrative decisions and administrative conduct — the one an investor uses when land is recovered, a licence refused or a penalty imposed.",
+      vi: "Gồm 23 chương và 372 điều, thay thế Luật Tố tụng hành chính 2010. Đây là con đường pháp lý để khởi kiện quyết định hành chính và hành vi hành chính, và nhà đầu tư dùng đến nó khi bị thu hồi đất, bị từ chối cấp phép hoặc bị xử phạt.",
+      en: "In 23 chapters and 372 articles, it replaced the 2010 Administrative Procedure Law. It is the route for challenging administrative decisions and administrative conduct, the one an investor uses when land is recovered, a licence refused or a penalty imposed.",
     },
     note: {
       vi: "Một số quy định liên quan tới Bộ luật Dân sự 2015 áp dụng từ 01/01/2017. Luật đã được sửa đổi, bổ sung bởi Luật số 85/2025/QH15.",
@@ -2376,8 +2376,8 @@ export const documents: LegalDoc[] = [
       en: "Law amending the Law on Securities, the Accounting Law, the Independent Audit Law, the State Budget Law, the Law on Management and Use of Public Assets, the Tax Administration Law, the Personal Income Tax Law, the National Reserves Law and the Law on Handling of Administrative Violations",
     },
     summary: {
-      vi: "Một luật sửa chín luật cùng lúc — dạng văn bản khiến người tra cứu dễ bỏ sót nhất, vì nội dung sửa nằm rải trong chín đạo luật khác nhau chứ không tập trung ở một chỗ. Ba đạo luật chịu tác động rõ nhất với doanh nghiệp là Luật Chứng khoán, Luật Kế toán và Luật Quản lý thuế.",
-      en: "One Law amending nine at once — the kind of instrument most easily missed, since its content is scattered across nine separate statutes rather than gathered in one place. The three that matter most to companies are the Securities Law, the Accounting Law and the Tax Administration Law.",
+      vi: "Một luật sửa chín luật cùng lúc. Đây là dạng văn bản người tra cứu dễ bỏ sót nhất, vì nội dung sửa nằm rải trong chín đạo luật khác nhau chứ không tập trung ở một chỗ. Ba đạo luật chịu tác động rõ nhất với doanh nghiệp là Luật Chứng khoán, Luật Kế toán và Luật Quản lý thuế.",
+      en: "One Law amending nine at once. It is the kind of instrument most easily missed, since its content is scattered across nine separate statutes rather than gathered in one place. The three that matter most to companies are the Securities Law, the Accounting Law and the Tax Administration Law.",
     },
     note: {
       vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 04/4/2026). Đây là luật sửa đổi nhiều luật cùng lúc; nội dung sửa đổi được đọc cùng các luật mà nó sửa.",
@@ -2599,8 +2599,8 @@ export const documents: LegalDoc[] = [
       en: "Decree on land prices",
     },
     summary: {
-      vi: "Quy định bốn phương pháp định giá đất — so sánh, thu nhập, thặng dư và hệ số điều chỉnh giá đất — cùng trình tự xây dựng, điều chỉnh bảng giá đất và định giá đất cụ thể. Đây là căn cứ của tiền sử dụng đất, tiền thuê đất và tiền bồi thường, nên nó quyết định phần lớn chi phí đất của một dự án.",
-      en: "It prescribes four land valuation methods — comparison, income, surplus and price-adjustment coefficient — together with the procedures for building and adjusting the land price table and for specific land valuation. It underpins land use levies, land rent and compensation, and so drives most of a project's land cost.",
+      vi: "Quy định bốn phương pháp định giá đất (so sánh, thu nhập, thặng dư và hệ số điều chỉnh giá đất) cùng trình tự xây dựng, điều chỉnh bảng giá đất và định giá đất cụ thể. Đây là căn cứ của tiền sử dụng đất, tiền thuê đất và tiền bồi thường, nên nó quyết định phần lớn chi phí đất của một dự án.",
+      en: "It prescribes four land valuation methods (comparison, income, surplus and price-adjustment coefficient) together with the procedures for building and adjusting the land price table and for specific land valuation. It underpins land use levies, land rent and compensation, and so drives most of a project's land cost.",
     },
     note: {
       vi: "Hiệu lực cùng ngày Luật Đất đai 2024 có hiệu lực là 01/8/2024, riêng Điều 37 áp dụng ngay từ ngày ký 27/6/2024.",
@@ -2860,8 +2860,8 @@ export const documents: LegalDoc[] = [
       en: "Law on Occupational Safety and Health",
     },
     summary: {
-      vi: "Quy định việc bảo đảm an toàn, vệ sinh lao động, chế độ đối với người bị tai nạn lao động và bệnh nghề nghiệp, cùng trách nhiệm của các bên liên quan. Trên công trường, đây là đạo luật đặt nghĩa vụ huấn luyện, kiểm soát rủi ro và khai báo, điều tra tai nạn lao động — nền của trách nhiệm khi có sự cố.",
-      en: "It governs occupational safety and health, the benefits for victims of occupational accidents and diseases, and the duties of the parties involved. On site it is the statute imposing training, risk control and the duty to report and investigate accidents — the basis of liability when something goes wrong.",
+      vi: "Quy định việc bảo đảm an toàn, vệ sinh lao động, chế độ đối với người bị tai nạn lao động và bệnh nghề nghiệp, cùng trách nhiệm của các bên liên quan. Trên công trường, đây là đạo luật đặt nghĩa vụ huấn luyện, kiểm soát rủi ro và khai báo, điều tra tai nạn lao động, tức là nền của trách nhiệm khi có sự cố.",
+      en: "It governs occupational safety and health, the benefits for victims of occupational accidents and diseases, and the duties of the parties involved. On site it is the statute imposing training, risk control and the duty to report and investigate accidents, which is the basis of liability when something goes wrong.",
     },
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-an-toan-ve-sinh-lao-dong-so-842015qh13-ngay-2562015-cua-quoc-hoi-hieu-luc-thi-hanh-tu-ngay-0172016-1510",
@@ -2945,8 +2945,8 @@ export const documents: LegalDoc[] = [
       en: "In nine chapters and 125 articles, it replaced Law 71/2006/QH11 on Social Insurance. It set the social insurance regimes and policies, the rights and duties of employees and employers, the social insurance funds and the procedures. It ceased to have effect when the 2024 Social Insurance Law entered into force on 1 July 2025.",
     },
     note: {
-      vi: "Quyền lợi phát sinh trong thời kỳ luật này còn hiệu lực — thời gian đóng, chế độ hưu trí, trợ cấp một lần — cần đối chiếu điều khoản chuyển tiếp của Luật Bảo hiểm xã hội số 41/2024/QH15.",
-      en: "Entitlements accrued while this Law was in force — contribution periods, pension regimes, lump-sum benefits — must be checked against the transitional provisions of Law 41/2024/QH15 on Social Insurance.",
+      vi: "Quyền lợi phát sinh trong thời kỳ luật này còn hiệu lực, như thời gian đóng, chế độ hưu trí và trợ cấp một lần, cần đối chiếu điều khoản chuyển tiếp của Luật Bảo hiểm xã hội số 41/2024/QH15.",
+      en: "Entitlements accrued while this Law was in force, such as contribution periods, pension regimes and lump-sum benefits, must be checked against the transitional provisions of Law 41/2024/QH15 on Social Insurance.",
     },
     sources: [
       "https://mt.gov.vn/cntt/tin-tuc/1140/39986/nhung-diem-moi-cua-luat-bao-hiem-xa-hoi--so--58-2014-qh13-ngay-20-11-2014.aspx",
@@ -2975,8 +2975,8 @@ export const documents: LegalDoc[] = [
       en: "The principal implementing decree of the 2019 Tax Administration Law: declaration, calculation, refunds, payment extensions, debt freezing and write-off, and enforcement of administrative tax decisions. Banks must supply taxpayer account information at the tax authority's request.",
     },
     note: {
-      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này. Nghị định không điều chỉnh giao dịch liên kết, hóa đơn chứng từ và xử phạt vi phạm hành chính về thuế — ba mảng đó nằm ở các nghị định riêng.",
-      en: "The National Legal Database labels this decree as wholly expired (updated 8 May 2026). The replacing instrument was not checked in this search. It did not cover related-party transactions, invoices and vouchers, or administrative penalties in tax matters — those three sat in separate decrees.",
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này. Nghị định không điều chỉnh giao dịch liên kết, hóa đơn chứng từ và xử phạt vi phạm hành chính về thuế; ba mảng đó nằm ở các nghị định riêng.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 8 May 2026). The replacing instrument was not checked in this search. It did not cover related-party transactions, invoices and vouchers, or administrative penalties in tax matters; those three sat in separate decrees.",
     },
     guides: ["luat-qlt-2019"],
     sources: [

@@ -72,8 +72,10 @@ cùng một văn bản vào hai tầng khác nhau.
 
 ## Phạm vi
 
-Tám lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
-Doanh nghiệp, Đầu tư, Lao động, Thuế.
+Mười lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
+Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản, Đối tác công tư.
+Hai lĩnh vực sau cùng được thêm trong đợt rà soát ngày 24/9/2026, mỗi lĩnh vực
+có cây văn bản riêng dựng từ các văn bản trụ cột đã đọc trên vbpl.vn.
 
 ## Nguyên tắc về dữ liệu
 
@@ -99,6 +101,50 @@ và cũng mang `confidence: "cross-check"`. Từ đợt này, ngày tra cứu đ
 từng bản ghi qua trường `verifiedOn`; bản ghi không ghi thì thuộc đợt gốc và lấy
 `VERIFIED_ON`. Chân trang và các trang thống kê đọc `LATEST_VERIFIED_ON`, tính
 từ chính tập dữ liệu, nên thêm một đợt là con số tự đúng theo.
+
+Đợt rà soát ngày 24/9/2026 đọc lại toàn bộ văn bản Việt Nam trên Cơ sở dữ liệu
+quốc gia về pháp luật (vbpl.vn), là nguồn ghi tình trạng hiệu lực bằng chữ kèm
+ngày cập nhật. Ngày ban hành và ngày có hiệu lực còn thiếu được lấy từ Công báo
+hoặc Cổng Thông tin điện tử Chính phủ. Bản ghi đọc được trang của chính văn bản
+trên vbpl.vn được nâng lên `confidence: "verified"`, mang đường dẫn tới trang đó
+và `verifiedOn: VERIFIED_2026_09_24`. Nhãn "Hết hiệu lực một phần" của vbpl.vn
+ứng với trạng thái `amended`, nay hiển thị là "Còn hiệu lực, đã sửa đổi hoặc hết
+hiệu lực một phần".
+
+Khi hai nguồn nhà nước nói khác nhau, bản ghi không lặng lẽ chọn một bên: mâu
+thuẫn được ghi trong trường `note` và hiển thị trên trang. Các trường hợp đã ghi
+gồm Luật Bảo hiểm xã hội 41/2024/QH15 (vbpl.vn ghi hết hiệu lực toàn bộ nhưng
+không tìm thấy văn bản thay thế), Luật Tổ chức Tòa án nhân dân 62/2014/QH13
+(vbpl.vn vẫn ghi còn hiệu lực dù Luật 34/2024/QH15 đã chấm dứt hiệu lực của nó),
+Luật Quản lý thuế 38/2019/QH14 (ngày hiệu lực trên vbpl.vn khác Công báo), và các
+luật hết hiệu lực ngày 01/7/2026 mà nhãn trên vbpl.vn được cập nhật trước mốc đó.
+
+Các nghị định thi hành Luật Xây dựng 2025 chưa có trang trên vbpl.vn được thêm
+với ngày đối chiếu trên Công báo và điều khoản hiệu lực, chuyển tiếp đọc trên
+toàn văn; chúng giữ `confidence: "cross-check"` cho tới khi đọc được tình trạng
+hiệu lực từ nguồn nhà nước. Nhật ký rà soát từng văn bản không nằm trong kho mã;
+nguồn của mỗi bản ghi là nơi lần lại.
+
+## Hiệu lực tại một ngày và tra theo điều khoản
+
+`src/lib/validity.ts` trả lời câu hỏi "tại ngày X, văn bản này còn hiệu lực
+không" từ chính quan hệ trong tập dữ liệu: trước ngày có hiệu lực là chưa có
+hiệu lực; từ ngày văn bản thay thế có hiệu lực là hết hiệu lực; từ ngày văn bản
+sửa đổi có hiệu lực là còn hiệu lực nhưng phải đọc cùng văn bản sửa đổi. Luật sửa
+đổi được ghi hết hiệu lực mà không có văn bản thay trực tiếp thì hết hiệu lực khi
+luật mà nó sửa bị thay thế. Chỗ dữ liệu không đủ, hàm trả về "không xác định
+được" thay vì đoán.
+
+Trang văn bản hiện dòng thời gian các mốc đó và một ô chọn ngày. Ô chọn ngày nhận
+các đoạn đã tính sẵn ở máy chủ (`validitySegments`, kiểu ở
+`src/lib/validity-segment.ts`), nên trình duyệt không phải tải cả tập dữ liệu.
+Danh mục văn bản nhận một ngày, gắn lại nhãn cho mọi bản ghi theo ngày đó, lọc
+được văn bản đang có hiệu lực và đếm tổng.
+
+Ô tìm kiếm của danh mục nhận số điều ("Điều 76", "Article 53"), có hoặc không kèm
+số hiệu. Chỉ mục (`src/lib/articles.ts`) dựng từ các căn cứ có chỉ điểm tới điều
+khoản trong `src/data/comparisons.ts`, tức chỉ những điều đã thực sự được đọc và
+dẫn; kết quả dẫn thẳng tới điểm đối chiếu qua neo `#<mã điểm>`.
 
 ## Cơ chế đối chiếu văn bản
 
@@ -314,12 +360,13 @@ date it was run; check against the Official Gazette before relying on it in a
 formal filing.
 
 The comparison pages at `/en/doi-chieu` set the earlier and later position of
-each pair side by side, in four separate layers: pairs derived from the
+each pair side by side, in five separate layers: pairs derived from the
 `replaces` and `amends` relations; a table of facts and notes computed from the
 two records; content comparison points written by an editor, each citing the
-record it was read from; and a lexical check that scans every string in the
-comparison layer for advisory, evaluative or speculative language and fails the
-build on a single hit. An observation there describes only the difference that
+record or provision it was read from; a lexical check that scans every string in
+the comparison layer for advisory, evaluative or speculative language and fails
+the build on a single hit; and lineages that string replacements and amendments
+into one timeline. An observation there describes only the difference that
 can be read off the two texts — it ranks nothing, predicts nothing, and is not
 legal advice. Each page also carries a browser-side word diff for pasting two
 passages of your own.
@@ -331,6 +378,26 @@ corroborated across at least two independent search results, and anything that
 did not agree was left blank. All fifty carry `confidence: "cross-check"`, so the
 interface flags them, and their `sources` are addresses found rather than pages
 opened.
+
+The dataset covers ten domains; Land & Real Estate and Public-Private
+Partnership were added in the review of 24 September 2026. In that review every
+Vietnamese instrument was read again on the National Legal Database (vbpl.vn),
+which states each instrument's status in words with the date it was last
+updated; missing dates came from the Official Gazette or the Government portal.
+Records whose own vbpl.vn page was read are marked `verified`. Where two official
+sources disagree, the conflict is stated in the record's note rather than
+resolved silently. New construction decrees not yet on vbpl.vn were added with
+Gazette dates and their commencement and transitional articles read in full,
+and stay at `cross-check` until their status can be read from an official
+source.
+
+`src/lib/validity.ts` answers whether an instrument was in force on a given
+date, using only the relations in the dataset, and says "cannot be determined"
+where the data is not enough. Each document page shows a dated timeline and a
+date picker; the document index re-labels every record for a chosen date and can
+hide what was not in force. The index search also takes article numbers
+("Article 53", "Điều 76") and lists every comparison point that cites that
+article, from an index built only of provisions actually read.
 
 To deploy, set `NEXT_PUBLIC_SITE_URL` to the site's origin. Canonical tags,
 hreflang tags and `sitemap.xml` all need absolute addresses, and that address

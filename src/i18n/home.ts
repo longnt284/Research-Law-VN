@@ -136,7 +136,7 @@ export const home: Record<Lang, HomeCopy> = {
     timeline: {
       eyebrow: "TRỤC THỜI GIAN",
       title: ["Hiệu lực là", "một ngày cụ thể."],
-      text: "Mỗi cột đếm số văn bản có hiệu lực trong năm đó. Văn bản đã ban hành nhưng chưa tới ngày hiệu lực nằm bên phải vạch tra cứu: kết quả tra cứu văn bản pháp luật chỉ đúng tại thời điểm tra.",
+      text: "Mỗi cột đếm số văn bản có hiệu lực trong năm đó. Văn bản đã ban hành nhưng chưa tới ngày hiệu lực nằm bên phải vạch tra cứu: kết quả tra cứu văn bản pháp luật chỉ đúng tại thời điểm tra. Danh mục văn bản trả lời cùng câu hỏi cho bất kỳ ngày nào người đọc chọn.",
       before: "Trước",
       verified: "Ngày tra cứu",
       active: "Còn hiệu lực",
@@ -219,7 +219,7 @@ export const home: Record<Lang, HomeCopy> = {
     timeline: {
       eyebrow: "THE TIME AXIS",
       title: ["Entry into force", "is a specific date."],
-      text: "Each column counts the instruments that entered into force in that year. An instrument issued but not yet in force sits to the right of the search line: a search of legislation is only good as at the date it was run.",
+      text: "Each column counts the instruments that entered into force in that year. An instrument issued but not yet in force sits to the right of the search line: a search of legislation is only good as at the date it was run. The index answers the same question for any date a reader picks.",
       before: "Before",
       verified: "Search date",
       active: "In force",

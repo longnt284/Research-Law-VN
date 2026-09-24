@@ -57,7 +57,7 @@ export const hub: Record<Lang, HubCopy> = {
       {
         key: "van-ban",
         title: "Danh mục văn bản",
-        text: "Danh sách đầy đủ, tìm được bằng số hiệu hoặc từ khóa trong tên. Mỗi bản ghi mở ra một trang chi tiết kèm nguồn đã tra và ngày tra.",
+        text: "Danh sách đầy đủ, tìm được bằng số hiệu, từ khóa trong tên hoặc số điều. Chọn một ngày để xem văn bản nào đang có hiệu lực tại ngày đó; mỗi bản ghi mở ra trang chi tiết kèm nguồn đã tra và ngày tra.",
         meta: "văn bản",
         cta: "Mở danh mục",
       },
@@ -105,7 +105,7 @@ export const hub: Record<Lang, HubCopy> = {
       {
         key: "van-ban",
         title: "Index of instruments",
-        text: "The full list, searchable by number or by words in the title. Every record opens a detail page carrying the sources consulted and the date of the search.",
+        text: "The full list, searchable by number, by words in the title or by article. Pick a date to see which instruments were in force that day; every record opens a detail page carrying the sources consulted and the date of the search.",
         meta: "instruments",
         cta: "Open the index",
       },

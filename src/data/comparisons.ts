@@ -379,7 +379,7 @@ export const comparisons: ComparisonEntry[] = [
         },
         observation: {
           vi: "Quy định áp dụng cho giai đoạn trước ngày 01/01/2026 gồm luật 2013 cùng phần đã được sửa đổi tại Luật số 41/2024/QH15, tức là hai văn bản chứ không phải một.",
-          en: "The law applying before 1 January 2026 consists of the 2013 Law together with the amendments in Law 41/2024/QH15 — two instruments, not one.",
+          en: "The law applying before 1 January 2026 consists of the 2013 Law together with the amendments in Law 41/2024/QH15: two instruments, not one.",
         },
         basis: { before: ["luat-viec-lam-2013", "luat-bhxh-2024"], after: ["luat-viec-lam-2025"] },
         confidence: "verified",

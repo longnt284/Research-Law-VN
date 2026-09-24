@@ -77,7 +77,7 @@ export const dict = {
       how: [
         "Cặp văn bản lấy thẳng từ quan hệ thay thế và sửa đổi trong tập dữ liệu, không cặp nào được thêm vào bằng tay.",
         "Bảng dữ kiện và các câu suy ra bên dưới là kết quả tính toán trên hai bản ghi: cùng dữ liệu thì ai chạy cũng ra đúng như vậy.",
-        "Điểm đối chiếu nội dung do người biên soạn viết, và mỗi vế phải dẫn đúng chỗ mình đọc ra — tới từng điều, khoản, điểm nếu biết được.",
+        "Điểm đối chiếu nội dung do người biên soạn viết, và mỗi vế phải dẫn đúng chỗ mình đọc ra, tới từng điều, khoản, điểm nếu biết được.",
         "Toàn bộ chữ trong phần đối chiếu đi qua một phép kiểm từ ngữ khi dựng trang; dính một từ mang nghĩa khuyên nhủ, xếp hạng hay suy đoán là bản dựng dừng lại.",
         "Kho văn bản cũng có cổng chặn riêng: số hiệu, mốc thời gian, nguồn và quan hệ giữa các bản ghi đều phải qua bảy ràng buộc trước khi trang được dựng.",
         "Chuỗi văn bản dựng từ cùng dữ liệu quan hệ: các lần thay thế nối thành trục, các lần sửa đổi treo vào mắt xích mà chúng chạm tới, và cả chuỗi đặt trên một dòng thời gian.",
@@ -262,7 +262,7 @@ export const dict = {
       eyebrow: "Relational map · Every number traced to source",
       tickerFuture: "comes into force",
       tickerPast: "in force since",
-      lede: "A legal instrument rarely stands alone. A law sets the principle, a decree fills in the detail, a circular explains the practice — and then an amending law arrives and changes all three. This site draws those joints, so that an instrument can be read in its place within the system rather than in isolation.",
+      lede: "A legal instrument rarely stands alone. A law sets the principle, a decree fills in the detail, a circular explains the practice, and then an amending law arrives and changes all three. This site draws those joints, so that an instrument can be read in its place within the system rather than in isolation.",
       mapHint: "Drag to pan, scroll to zoom, click a node to open its summary.",
       prologueLink: "Back to the home page",
       filterDomain: "Filter by domain",
@@ -313,7 +313,7 @@ export const dict = {
       how: [
         "Pairs are taken directly from the replacement and amendment relations in the dataset; none is added by hand.",
         "The table of facts and the notes below it are computed from the two records: on the same data, anyone gets the same output.",
-        "Content comparison points are written by an editor, and each side must cite exactly where it was read from — down to the article, clause and point where that is known.",
+        "Content comparison points are written by an editor, and each side must cite exactly where it was read from, down to the article, clause and point where that is known.",
         "Every string in the comparison layer passes a lexical check at build time; a single word of advice, ranking or speculation stops the build.",
         "The document store has a gate of its own: numbers, dates, sources and the relations between records must satisfy seven constraints before the site can be built.",
         "Lineages are built from the same relations: replacements strung into a spine, amendments hanging from the link they touch, and the whole set on one timeline.",
