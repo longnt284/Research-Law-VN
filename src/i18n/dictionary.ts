@@ -207,7 +207,7 @@ export const dict = {
     },
     status: {
       active: "Còn hiệu lực",
-      amended: "Còn hiệu lực, đã bị sửa đổi",
+      amended: "Còn hiệu lực, đã sửa đổi hoặc hết hiệu lực một phần",
       pending: "Chưa tới ngày có hiệu lực",
       expired: "Hết hiệu lực",
     },
@@ -443,7 +443,7 @@ export const dict = {
     },
     status: {
       active: "In force",
-      amended: "In force, as amended",
+      amended: "In force, amended or partly lapsed",
       pending: "Not yet in force",
       expired: "No longer in force",
     },
