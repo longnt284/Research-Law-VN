@@ -4,9 +4,13 @@ import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 
 import { DomainChip, StatusBadge } from "@/components/DocMeta";
+import { ValidityBadge } from "@/components/validity/ValidityBadge";
 import { documents, domains } from "@/data/documents";
 import type { DocType, DomainId, Lang } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
+import { getValidityCopy } from "@/i18n/validity";
+import { articleQuery, type ArticleEntry } from "@/lib/article-query";
+import { validityAt } from "@/lib/validity";
 
 const RANK: Record<DocType, number> = {
   "bo-luat": 0,
@@ -30,19 +34,42 @@ function fold(s: string): string {
     .toLowerCase();
 }
 
-export function DocumentIndex({ lang }: { lang: Lang }) {
+export function DocumentIndex({
+  lang,
+  articles,
+}: {
+  lang: Lang;
+  /** Chỉ mục điều khoản, dựng sẵn ở máy chủ. */
+  articles: ArticleEntry[];
+}) {
   const t = getDict(lang);
+  const v = getValidityCopy(lang);
   const [query, setQuery] = useState("");
+  // Ngày người đọc hỏi. Rỗng nghĩa là giữ tình trạng tại ngày tra cứu.
+  const [asOf, setAsOf] = useState("");
+  const [onlyInForce, setOnlyInForce] = useState(false);
   const [domain, setDomain] = useState<DomainId | "all">("all");
   const [sort, setSort] = useState<"rank" | "recent">("rank");
 
   // Giữ ô nhập phản hồi tức thì kể cả khi danh sách bên dưới đang dựng lại.
   const deferred = useDeferredValue(query);
 
+  // Câu tìm có nhắc "Điều N" thì tách phần đó ra để tra chỉ mục điều khoản;
+  // phần còn lại (thường là số hiệu) vẫn lọc danh sách văn bản như cũ.
+  const folded = fold(deferred.trim());
+  const art = articleQuery(folded);
+  const q = art ? art.rest : folded;
+
+  // Tình trạng tại ngày được hỏi, tính một lần cho cả tập.
+  const states = useMemo(
+    () => (asOf ? new Map(documents.map((d) => [d.id, validityAt(d, asOf)])) : null),
+    [asOf],
+  );
+
   const results = useMemo(() => {
-    const q = fold(deferred.trim());
     let list = documents;
     if (domain !== "all") list = list.filter((d) => d.domains.includes(domain));
+    if (states && onlyInForce) list = list.filter((d) => states.get(d.id)?.state === "in-force");
     if (q) {
       list = list.filter((d) => {
         const hay = fold(`${d.number} ${d.title.vi} ${d.title.en} ${d.summary[lang]}`);
@@ -59,7 +86,20 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
       if (r !== 0) return r;
       return (b.effectiveOn || "").localeCompare(a.effectiveOn || "");
     });
-  }, [deferred, domain, sort, lang]);
+  }, [q, domain, sort, lang, states, onlyInForce]);
+
+  const articleHits = useMemo(() => {
+    if (!art) return null;
+    const ids = q ? new Set(results.map((d) => d.id)) : null;
+    return articles.filter((a) => a.dieu === art.article && (!ids || ids.has(a.docId)));
+  }, [art, articles, q, results]);
+
+  const tally = useMemo(() => {
+    if (!states) return null;
+    const n = { "in-force": 0, pending: 0, expired: 0, unknown: 0 };
+    for (const d of results) n[states.get(d.id)!.state]++;
+    return n;
+  }, [states, results]);
 
   return (
     <>
@@ -106,10 +146,44 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
                 <option value="recent">{t.list.sortNewest}</option>
               </select>
             </div>
+            <div>
+              <label htmlFor="doc-asof" className="eyebrow block">
+                {v.listAsOf}
+              </label>
+              <div className="mt-1.5 flex items-center gap-2">
+                <input
+                  id="doc-asof"
+                  type="date"
+                  value={asOf}
+                  onChange={(e) => setAsOf(e.target.value)}
+                  aria-describedby="doc-asof-hint"
+                  className="tnum w-full border border-[var(--rule-strong)] bg-[var(--paper)] px-2.5 py-[0.4375rem] text-[0.9375rem] outline-none focus:border-[var(--accent)] sm:w-auto"
+                />
+                {asOf && (
+                  <button type="button" onClick={() => setAsOf("")} className="chip shrink-0">
+                    {v.listClear}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
+          <p id="doc-asof-hint" className="sr-only">
+            {v.listAsOfHint}
+          </p>
+          {asOf && (
+            <label className="mt-2.5 inline-flex cursor-pointer items-center gap-2 text-sm text-[var(--ink-2)]">
+              <input
+                type="checkbox"
+                checked={onlyInForce}
+                onChange={(e) => setOnlyInForce(e.target.checked)}
+                className="accent-[var(--accent)]"
+              />
+              {v.listOnlyInForce}
+            </label>
+          )}
 
           <div className="scroll-x thin-scroll -mx-1 mt-3">
-            <div className="flex items-center gap-1.5 px-1 pb-1">
+            <div className="flex items-center gap-1.5 px-1 pb-1 lg:flex-wrap">
               <button
                 type="button"
                 onClick={() => setDomain("all")}
@@ -148,7 +222,41 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
         <p aria-live="polite" className="tnum eyebrow">
           {results.length}{" "}
           {results.length === 1 ? t.list.countOne : t.list.countMany}
+          {tally && asOf && (
+            <span className="ml-2 normal-case tracking-normal text-[var(--ink-3)]">
+              · {formatDate(asOf, lang, asOf)}:{" "}
+              {v.listSummary(tally["in-force"], tally.pending, tally.expired, tally.unknown)}
+            </span>
+          )}
         </p>
+
+        {/* Tra theo điều khoản: chỉ hiện khi câu tìm có nhắc tới một điều. */}
+        {art && articleHits && (
+          <section className="mt-4 border border-[var(--rule)] bg-[var(--paper-2)] px-4 py-3.5">
+            <h2 className="eyebrow">{v.articleTitle}</h2>
+            {articleHits.length === 0 ? (
+              <p className="mt-1.5 text-sm text-[var(--ink-3)]">{v.articleNone(art.article)}</p>
+            ) : (
+              <ul className="mt-2 space-y-2">
+                {articleHits.map((a, i) => (
+                  <li key={i} className="text-sm leading-relaxed">
+                    <Link
+                      href={a.href}
+                      className="font-medium text-[var(--accent)] underline decoration-[var(--rule-strong)] underline-offset-2 hover:decoration-[var(--accent)]"
+                    >
+                      {a.label}
+                    </Link>
+                    <span className="text-[var(--ink-3)]">
+                      {" "}
+                      — {a.topic} · <span className="tnum">{a.pair}</span> ({v.articleSide[a.side]})
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-2 text-xs text-[var(--ink-3)]">{v.articleHint}</p>
+          </section>
+        )}
 
         {results.length === 0 ? (
           <div className="mt-8 border border-dashed border-[var(--rule-strong)] px-6 py-12 text-center">
@@ -184,7 +292,15 @@ export function DocumentIndex({ lang }: { lang: Lang }) {
                       {d.title[lang]}
                     </h2>
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1.5">
-                      <StatusBadge status={d.status} lang={lang} size="sm" />
+                      {states ? (
+                        <ValidityBadge
+                          state={states.get(d.id)!.state}
+                          amended={states.get(d.id)!.amended}
+                          lang={lang}
+                        />
+                      ) : (
+                        <StatusBadge status={d.status} lang={lang} size="sm" />
+                      )}
                       <span className="tnum text-xs text-[var(--ink-3)]">
                         {t.doc.effectiveOn}:{" "}
                         {formatDate(d.effectiveOn, lang, t.doc.unknownDate)}

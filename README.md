@@ -6,101 +6,76 @@ tiết, sửa đổi bổ sung, hoặc thay thế.
 
 Trang có hai phiên bản đầy đủ, tiếng Việt tại `/vi` và tiếng Anh tại `/en`.
 
-Trang chủ `/vi` là phần mở đầu ba chiều; bản đồ tương tác nằm ở `/vi/ban-do`.
+Trang chủ `/vi` là dải văn bản nối xích; bản đồ tương tác nằm ở `/vi/ban-do`.
 
-## Trang mở đầu ba chiều
+## Trang chủ: văn bản nối xích
 
-Trang chủ trước đây mở thẳng vào bản đồ. Hai việc khác nhau bị nhồi vào một địa
-chỉ: người mở lần đầu cần biết trang này làm gì, người đã biết cần vào thẳng
-công cụ. Nay trang chủ là sáu màn cuộn trên một cảnh ba chiều duy nhất, và có
-lối vào bản đồ ở cả sáu màn lẫn thanh dưới cùng.
+Trang chủ mở bằng ba dải thẻ văn bản chạy không dứt, nối nhau bằng mắt xích.
+Hình không phải trang trí: mỗi thẻ là một văn bản có thật trong tập dữ liệu, mỗi
+mắt xích là một quan hệ có thật, và thứ tự thẻ do `src/lib/strands.ts` quyết
+định. Thư viện đó chia toàn bộ quan hệ thành các sợi — đường đơn đi qua mỗi quan
+hệ đúng một lần — nên sợi dài nhất xuất hiện đúng ở chỗ một luật sửa đổi nhiều
+luật cùng lúc bắc cầu giữa hai hệ văn bản. Thêm một nghị định hướng dẫn vào tập
+dữ liệu là một sợi dài thêm một mắt, không phải sửa mã.
 
-Cảnh không phải hình trang trí. `src/lib/space.ts` sinh toàn bộ hình học từ
-`documents` và `relations`: mỗi điểm sáng là một văn bản, mỗi thanh nối là một
-quan hệ có thật, và sáu màn là sáu cách sắp xếp cùng tập điểm đó.
+Mắt xích nói loại quan hệ bằng ba cách cùng lúc: kim loại đồng cho quy định chi
+tiết, thép cho sửa đổi bổ sung, son đỏ cho thay thế; một nhãn chữ có mũi tên chỉ
+vào văn bản bị tác động; và một câu đầy đủ trong `title`. Chấm sáng chạy dọc xích
+đi từ văn bản tác động sang văn bản bị tác động. Thẻ văn bản hết hiệu lực, đã sửa
+đổi hoặc chưa có hiệu lực mang một con dấu tình trạng.
 
-1. **Khối** — toàn bộ tập văn bản như một thiên thể, luật ở lõi, thông tư ở lớp vỏ.
-2. **Thứ bậc** — bốn tầng theo hiệu lực pháp lý, trục đứng mang nghĩa.
-3. **Lĩnh vực** — tám chùm, mỗi chùm một sắc màu dùng chung với bản đồ hai chiều.
-4. **Quan hệ** — văn bản bị nhiều văn bản khác dẫn chiếu bị kéo vào tâm, nên các
-   đường nối cắt qua lòng khối thay vì bò trên mặt.
-5. **Thời gian** — trục ngang là năm có hiệu lực, trục đứng vẫn là thứ bậc.
-6. **Ngưỡng** — hai vành lồng vào nhau, trước lối vào bản đồ.
+Dưới dải là ba khối, mỗi khối trả lời một câu hỏi người làm hồ sơ vẫn hỏi:
 
-Một điểm giữ nguyên danh tính qua cả sáu màn, nên chuyển màn là các văn bản di
-chuyển sang chỗ mới chứ không phải một cảnh tắt đi và một cảnh khác hiện ra.
-Camera, đèn, sương, độ đậm đường nối và sắc độ cùng đọc một bảng trạng thái duy
-nhất, nên chúng luôn đổi đồng bộ với hình khối. Thêm một nghị định vào tập dữ
-liệu là cảnh có thêm một điểm, không phải sửa mã.
+1. **Thứ bậc hiệu lực** — bốn bậc thang, mỗi ô nhỏ là một văn bản tô theo màu
+   lĩnh vực.
+2. **Quan hệ** — ba loại mắt xích, mỗi loại một ví dụ thật do `exampleOf` chọn
+   từ tập dữ liệu, ưu tiên cặp đã xác minh.
+3. **Trục thời gian** — số văn bản có hiệu lực theo năm, chia theo tình trạng,
+   kèm vạch ngày tra cứu; bảng số đi kèm cho trình đọc màn hình.
 
-Bản thân hình khối cũng mang dữ liệu, không chỉ chỗ đứng của nó. Số mặt của một
-điểm nói tầng hiệu lực: bộ luật, luật và điều ước là khối tám mặt sắc cạnh, nghị
-quyết và văn bản hợp nhất là khối mười hai mặt, nghị định và quyết định là khối
-hai mươi mặt, thông tư và quy tắc là một hạt gần tròn. Nhờ vậy một điểm bất kỳ
-tự nói nó ở tầng nào, ở cả năm màn không xếp theo thứ bậc. Màu nói lĩnh vực, như
-cũ. Độ nhạt nói tình trạng hiệu lực: văn bản đã bị sửa đổi lui một bước về phía
-nền, văn bản hết hiệu lực lui hẳn và mất quầng sáng — cùng quy ước với chấm rỗng
-trên bản đồ hai chiều và quả cầu rỗng ở khối lĩnh vực, để người đọc không phải
-học hai bộ ký hiệu.
+Toàn bộ là HTML và SVG dựng ở máy chủ. Không có WebGL, không có thư viện đồ họa
+phải tải: `three` và `@react-three/fiber` đã rời khỏi `dependencies`. Chuyển động
+nằm trong CSS và chỉ dịch `transform`, nên trình duyệt đẩy xuống bộ tổng hợp.
+Chuyển động dừng khi rê chuột vào một làn, khi bấm nút "Dừng chuyển động" (lựa
+chọn được nhớ và áp cho cả lớp nền đầu trang), và khi hệ điều hành báo giảm
+chuyển động — lúc đó dải thành một hàng cuộn ngang bằng tay. Dải được ẩn khỏi
+cây trợ năng và thẻ trong dải không nhận tiêu điểm bàn phím; một câu tóm tắt thay
+chỗ, và cùng nội dung nằm ở danh mục và bản đồ dưới dạng đọc được.
 
-Đường nối là một cung chia bốn đoạn, không phải một dây cung thẳng. Cung tách
-nhau ra thay vì chồng lên nhau, nên màn Quan hệ đọc ra là một bản vẽ chứ không
-phải một cuộn dây. Bán kính và màu cùng nhạt dần từ đầu này sang đầu kia: đầu
-đậm là văn bản dẫn chiếu, đầu nhạt là văn bản được dẫn chiếu, đúng quy ước đổ
-màu dọc sợi đã dùng ở khối quan hệ của trang lĩnh vực. Chiều của quan hệ vì vậy
-đọc được cả khi khối đang quay và cả khi in ra đen trắng, thay vì chỉ nằm ở ba
-màu gần nhau. Nét đậm dần theo sức nặng của quan hệ: quy định chi tiết mảnh
-nhất, thay thế đậm nhất.
+## Hình minh họa ở các trang
 
-Ba cam kết kỹ thuật, và cả ba đều đến từ ràng buộc có sẵn của trang. Không render
-target và không postprocessing, để cảnh dựng được trên GPU tích hợp đời cũ. Không
-tài nguyên bên thứ ba, nên `Content-Security-Policy` khoá `default-src 'self'`
-không phải nới ra dòng nào. Vì vậy kim loại dùng một hộp sáng giả đọc từ pháp
-tuyến (`src/lib/surface.ts`, dùng chung với khối quan hệ của trang lĩnh vực) thay
-cho envMap; quầng sáng của văn bản cấp luật là tấm phẳng cộng dồn thay cho bloom;
-và lớp bụi đổi hành vi ngay trong vertex shader. Bốn hình khối là bốn lệnh vẽ,
-mỗi lệnh gom cả tầng, và toàn bộ cung quan hệ vẫn nằm trong một lệnh vẽ duy
-nhất: cả cảnh khoảng hai nghìn tam giác. Ở giao diện tối, hộp sáng và ánh tự
-phát được hạ xuống có chủ ý — cả hai là ánh sáng cộng thêm, mà cộng thêm trên
-nền tối thì đẩy mọi thứ về trắng và nuốt mất sắc lĩnh vực, tức nuốt mất dữ liệu.
+Hình ở đầu mỗi trang và trên thẻ lối vào trang chủ vẽ đúng vật mà trang đó làm
+việc cùng (`src/components/art/PageArt.tsx`): bản đồ là một luật cùng văn bản cũ
+nó thay thế, luật sửa đổi nó và các nghị định, thông tư hướng dẫn; danh mục là
+tháp thứ bậc với số văn bản thật mỗi tầng; đối chiếu là hai trang cùng một điều
+có dòng bị gạch và dòng được chèn; phương pháp là kính lúp trên số hiệu cùng danh
+sách những gì đã kiểm và con dấu ngày tra. Mỗi lĩnh vực có một biểu tượng nét
+(`src/components/art/DomainGlyph.tsx`): cần cẩu, cột điện, trang hợp đồng có chữ
+ký, cán cân, tòa văn phòng, đồ thị tăng trưởng, mũ bảo hộ, biên lai thuế, thửa
+đất có mốc giới, cây cầu hạ tầng.
 
-Ba đường để phần này không bao giờ chặn nội dung. Toàn bộ chữ nằm trong HTML dựng
-sẵn nên đọc được khi JavaScript bị chặn. Chuyển động chỉ do GSAP đặt, nên gói mã
-hỏng thì chữ vẫn hiện chứ không mất. Và cảnh nằm sau một ranh giới lỗi: WebGL
-không dựng được thì trang tiếp tục như một trang chữ. Bảng tùy chỉnh ở thanh dưới
-cùng có nút dừng chuyển động, giảm chuyển động và tắt tác động của con trỏ; lựa
-chọn của hệ điều hành được tôn trọng cho tới khi người đọc tự chọn.
+Trang của từng lĩnh vực thay khối quan hệ ba chiều bằng cây văn bản phẳng
+(`src/lib/tree.ts`, `src/components/DomainTree.tsx`): mỗi cột một tầng hiệu lực,
+thứ tự trong cột theo phép trọng tâm để đường nối ít cắt nhau, quan hệ giữa hai
+văn bản cùng cột vẽ thành cung bên trái cột. Mỗi văn bản trên cây là một liên kết
+thật dùng được bằng bàn phím.
 
-Cảnh ba chiều chỉ sống ở phần mở đầu. Từ khối kết trở xuống, nền phẳng trở lại:
-nền động sau một đoạn văn dài làm mắt trượt khỏi dòng đang đọc, mà đây là trang
-để đọc điều luật.
+Bản đồ hai chiều giữ nguyên cơ chế, thêm ký hiệu theo tầng hiệu lực: luật là
+hình vuông, nghị quyết và văn bản hợp nhất là hình thoi, nghị định là hình tròn,
+thông tư là tam giác, văn bản hết hiệu lực rỗng ruột. Chú giải liệt kê đủ bốn
+hình và ba kiểu nét.
 
-Thư viện tham khảo và lý do chọn hoặc loại từng thư viện nằm ở `references/`.
-
-## Khối lối vào ở trang chủ
-
-Hết sáu màn, trang chủ trả lời câu hỏi kế tiếp: vào đâu bây giờ. Khối lối vào
-(`src/components/HomeHub.tsx`) đặt năm thẻ — bản đồ tương tác, khối lĩnh vực ba
-chiều, danh mục văn bản, đối chiếu, phương pháp — kèm một dải số liệu và lối
-quay lại màn đầu. Mọi con số trên các thẻ đếm thẳng từ tập dữ liệu; không có con
-số nào viết tay trong file lời.
-
-Mỗi thẻ mang một hình thu nhỏ, và hình đó là một bố cục thật của cảnh mở đầu
-chiếu xuống mặt phẳng (`src/lib/preview.ts`, `src/components/SpaceThumb.tsx`).
-Hình xuất ra SVG tĩnh ở máy chủ: không ngữ cảnh WebGL nào được mở thêm, không
-một byte `three` nào phải tải, và hình có mặt cả khi JavaScript bị chặn. Đầu các
-trang danh mục, lĩnh vực, đối chiếu và phương pháp lặp lại đúng hình của thẻ dẫn
-tới nó, nên người đọc bấm một hình rồi gặp lại chính hình ấy ở trang đích.
-
-Thẻ lĩnh vực ở `/vi/linh-vuc` mang một vệt bốn tầng hiệu lực của riêng lĩnh vực
-đó (`src/components/DomainSpark.tsx`), cũng là SVG tĩnh. Giới hạn cũ vẫn giữ
-nguyên: tám thẻ trên một trang không được phép là tám ngữ cảnh WebGL, nên vật
-thể ba chiều để dành cho trang riêng của từng lĩnh vực.
+Ba kiểu nét quan hệ dùng chung ở mọi hình: nét liền cho quy định chi tiết, nét
+đứt cho sửa đổi bổ sung, nét chấm đỏ cho thay thế. Thang bốn tầng hiệu lực và
+các con số dùng chung nằm ở `src/lib/corpus.ts`, nên không có hai hình nào xếp
+cùng một văn bản vào hai tầng khác nhau.
 
 ## Phạm vi
 
-Tám lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
-Doanh nghiệp, Đầu tư, Lao động, Thuế.
+Mười lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
+Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản, Đối tác công tư.
+Hai lĩnh vực sau cùng được thêm trong đợt rà soát ngày 24/9/2026, mỗi lĩnh vực
+có cây văn bản riêng dựng từ các văn bản trụ cột đã đọc trên vbpl.vn.
 
 ## Nguyên tắc về dữ liệu
 
@@ -126,6 +101,50 @@ và cũng mang `confidence: "cross-check"`. Từ đợt này, ngày tra cứu đ
 từng bản ghi qua trường `verifiedOn`; bản ghi không ghi thì thuộc đợt gốc và lấy
 `VERIFIED_ON`. Chân trang và các trang thống kê đọc `LATEST_VERIFIED_ON`, tính
 từ chính tập dữ liệu, nên thêm một đợt là con số tự đúng theo.
+
+Đợt rà soát ngày 24/9/2026 đọc lại toàn bộ văn bản Việt Nam trên Cơ sở dữ liệu
+quốc gia về pháp luật (vbpl.vn), là nguồn ghi tình trạng hiệu lực bằng chữ kèm
+ngày cập nhật. Ngày ban hành và ngày có hiệu lực còn thiếu được lấy từ Công báo
+hoặc Cổng Thông tin điện tử Chính phủ. Bản ghi đọc được trang của chính văn bản
+trên vbpl.vn được nâng lên `confidence: "verified"`, mang đường dẫn tới trang đó
+và `verifiedOn: VERIFIED_2026_09_24`. Nhãn "Hết hiệu lực một phần" của vbpl.vn
+ứng với trạng thái `amended`, nay hiển thị là "Còn hiệu lực, đã sửa đổi hoặc hết
+hiệu lực một phần".
+
+Khi hai nguồn nhà nước nói khác nhau, bản ghi không lặng lẽ chọn một bên: mâu
+thuẫn được ghi trong trường `note` và hiển thị trên trang. Các trường hợp đã ghi
+gồm Luật Bảo hiểm xã hội 41/2024/QH15 (vbpl.vn ghi hết hiệu lực toàn bộ nhưng
+không tìm thấy văn bản thay thế), Luật Tổ chức Tòa án nhân dân 62/2014/QH13
+(vbpl.vn vẫn ghi còn hiệu lực dù Luật 34/2024/QH15 đã chấm dứt hiệu lực của nó),
+Luật Quản lý thuế 38/2019/QH14 (ngày hiệu lực trên vbpl.vn khác Công báo), và các
+luật hết hiệu lực ngày 01/7/2026 mà nhãn trên vbpl.vn được cập nhật trước mốc đó.
+
+Các nghị định thi hành Luật Xây dựng 2025 chưa có trang trên vbpl.vn được thêm
+với ngày đối chiếu trên Công báo và điều khoản hiệu lực, chuyển tiếp đọc trên
+toàn văn; chúng giữ `confidence: "cross-check"` cho tới khi đọc được tình trạng
+hiệu lực từ nguồn nhà nước. Nhật ký rà soát từng văn bản không nằm trong kho mã;
+nguồn của mỗi bản ghi là nơi lần lại.
+
+## Hiệu lực tại một ngày và tra theo điều khoản
+
+`src/lib/validity.ts` trả lời câu hỏi "tại ngày X, văn bản này còn hiệu lực
+không" từ chính quan hệ trong tập dữ liệu: trước ngày có hiệu lực là chưa có
+hiệu lực; từ ngày văn bản thay thế có hiệu lực là hết hiệu lực; từ ngày văn bản
+sửa đổi có hiệu lực là còn hiệu lực nhưng phải đọc cùng văn bản sửa đổi. Luật sửa
+đổi được ghi hết hiệu lực mà không có văn bản thay trực tiếp thì hết hiệu lực khi
+luật mà nó sửa bị thay thế. Chỗ dữ liệu không đủ, hàm trả về "không xác định
+được" thay vì đoán.
+
+Trang văn bản hiện dòng thời gian các mốc đó và một ô chọn ngày. Ô chọn ngày nhận
+các đoạn đã tính sẵn ở máy chủ (`validitySegments`, kiểu ở
+`src/lib/validity-segment.ts`), nên trình duyệt không phải tải cả tập dữ liệu.
+Danh mục văn bản nhận một ngày, gắn lại nhãn cho mọi bản ghi theo ngày đó, lọc
+được văn bản đang có hiệu lực và đếm tổng.
+
+Ô tìm kiếm của danh mục nhận số điều ("Điều 76", "Article 53"), có hoặc không kèm
+số hiệu. Chỉ mục (`src/lib/articles.ts`) dựng từ các căn cứ có chỉ điểm tới điều
+khoản trong `src/data/comparisons.ts`, tức chỉ những điều đã thực sự được đọc và
+dẫn; kết quả dẫn thẳng tới điểm đối chiếu qua neo `#<mã điểm>`.
 
 ## Cơ chế đối chiếu văn bản
 
@@ -246,11 +265,9 @@ render lại của React mà chỉ đánh dấu khung hình cần vẽ; khi khô
 đổi, vòng lặp vẽ dừng hẳn. Nhãn trên bản đồ có kiểm tra chồng lấn nên chữ không
 đè lên nhau ở bất kỳ mức phóng nào.
 
-Khối quan hệ ba chiều ở trang lĩnh vực và vật thể biểu trưng đều đọc lại bảng
-màu khi người đọc đổi nền sáng/tối, thay vì nướng cứng màu lúc dựng cảnh. Nhãn
-trên cả bản đồ hai chiều lẫn khối ba chiều được đo một lần rồi mới dùng cho phép
-chống chồng; phép đo chạy lại đúng một lần nữa khi phông chữ thật đã thay phông
-dự phòng, vì lúc đó bề rộng chữ mới đổi.
+Nhãn trên bản đồ hai chiều được đo một lần rồi mới dùng cho phép chống chồng;
+phép đo chạy lại đúng một lần nữa khi phông chữ thật đã thay phông dự phòng, vì
+lúc đó bề rộng chữ mới đổi.
 
 `sitemap.xml` và `robots.txt` sinh từ chính tập dữ liệu, dùng cùng nguồn với
 `generateStaticParams` của từng trang, nên không có trang nào lên được mà thiếu
@@ -268,27 +285,27 @@ Cấu trúc chính:
 ```
 src/
   app/[lang]/               # định tuyến song ngữ, sinh tĩnh toàn bộ
-  app/[lang]/page.tsx       # trang mở đầu ba chiều
+  app/[lang]/page.tsx       # trang chủ: dải văn bản nối xích và ba khối
   app/[lang]/ban-do/        # bản đồ tương tác
   app/sitemap.ts            # sitemap sinh từ tập dữ liệu
   app/robots.ts             # robots.txt
   components/               # bản đồ, danh mục, các mảnh giao diện dùng lại
-  components/Prologue.tsx   # sáu màn cuộn, GSAP ScrollTrigger
-  components/LegalSpace.tsx # cảnh ba chiều, React Three Fiber
+  components/home/          # dải xích, thẻ văn bản, ba khối của trang chủ
+  components/art/           # hình minh họa đầu trang và biểu tượng lĩnh vực
+  components/DomainTree.tsx # cây văn bản của một lĩnh vực
   components/HomeHub.tsx    # khối lối vào ở trang chủ
-  components/SpaceThumb.tsx # hình thu nhỏ của một bố cục, SVG tĩnh
   components/DomainSpark.tsx # vệt bốn tầng của một lĩnh vực
   data/                     # tập dữ liệu văn bản và kiểu dữ liệu
   i18n/                     # từ điển giao diện hai thứ tiếng
+  lib/corpus.ts             # thang thứ bậc và các con số dùng chung
+  lib/strands.ts            # chia quan hệ thành sợi cho dải xích
+  lib/tree.ts               # bố cục cây văn bản của một lĩnh vực
   lib/layout.ts             # thuật toán bố cục bản đồ
-  lib/space.ts              # sáu bố cục ba chiều, sinh từ tập dữ liệu
-  lib/preview.ts            # chiếu bố cục xuống mặt phẳng cho hình thu nhỏ
-  lib/surface.ts            # hộp sáng giả, dùng chung cho hai cảnh ba chiều
   lib/compare.ts            # ghép cặp và tính dữ kiện đối chiếu
   lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
   lib/diff.ts               # so sánh cơ học hai đoạn văn bản
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
-references/                 # thư viện 3D đã khảo sát, và lý do dùng hay loại
+references/                 # thư viện đã khảo sát, và lý do dùng hay loại
 ```
 
 ## Miễn trừ trách nhiệm
@@ -305,41 +322,36 @@ another. Each point on the map is an instrument; each line is a relation that
 actually exists — detailing, amending, or replacing. Fully available in
 Vietnamese at `/vi` and English at `/en`.
 
-The home page is a three-dimensional prologue; the interactive map lives at
-`/en/ban-do`. The prologue is not decoration: `src/lib/space.ts` derives all of
-its geometry from `documents` and `relations`, and its six acts are six
-arrangements of that same set of points — the corpus as one body, four strata of
-legal force, eight domain clusters, the relation web, the time axis, and a
-closing pair of rings. A point keeps its identity across all six, so moving
-between acts moves the instruments rather than swapping one scene for another.
-Adding a decree to the dataset adds a point to the scene.
+The home page opens with three strips of instrument cards running without end,
+joined by chain links. Each card is a real instrument and each link a real
+relation; `src/lib/strands.ts` splits every relation into single paths so that
+each relation appears in exactly one strand, and the longest strands form where
+one amending law bridges several bodies of legislation. A link states its kind
+three ways at once — brass for detailing, steel for amending, red for replacing;
+a label whose arrow points at the instrument acted upon; and a full sentence in
+its `title`. Below the strips, three blocks answer the questions a practitioner
+asks: which instrument ranks above which, how they are related (with a real
+example of each kind), and how many came into force in each year, with the
+search date marked.
 
-Three technical commitments, all inherited from constraints the site already
-had: no render targets and no postprocessing, so the scene builds on old
-integrated GPUs, and no third-party assets, so the `default-src 'self'` policy
-needed no loosening. Metal therefore uses a fake light box read off the surface
-normal (`src/lib/surface.ts`, shared with the relation block on the domain
-pages) in place of an environment map, the glow on primary legislation is an
-additive billboard in place of bloom, and the dust layer changes behaviour in
-the vertex shader. All of the prose sits in the prerendered HTML, motion is
-applied only by GSAP, and the scene is wrapped in an error boundary — so with
-JavaScript blocked, a broken bundle, or no WebGL, the page continues as a text
-page. The scene is confined to the prologue; below it the background goes flat
-again, because this is a site for reading legislation.
+Everything is server-rendered HTML and SVG. There is no WebGL and no graphics
+library to download — `three` and `@react-three/fiber` have left the
+dependencies. Motion lives in CSS, pauses on hover, stops with a remembered
+"Pause motion" button, and gives way to a hand-scrolled row when the system asks
+for reduced motion. The strip is hidden from assistive technology and its cards
+take no keyboard focus; a summary sentence stands in, and the same content is
+readable in the index and on the map.
 
-Below the prologue, the home page answers the question that follows it — where
-to go now. The hub (`src/components/HomeHub.tsx`) sets out five ways in: the
-interactive map, the three-dimensional domain bodies, the index of instruments,
-the comparison pages and the method. Every figure on those cards is counted
-from the dataset itself. Each card carries a thumbnail that is one of the
-prologue's own layouts projected onto the plane (`src/lib/preview.ts`,
-`src/components/SpaceThumb.tsx`), emitted as static SVG on the server: no extra
-WebGL context, no `three` to download, and the figure is there with JavaScript
-blocked. The index, domain, comparison and method pages open with the same
-figure as the card that leads to them. On `/en/linh-vuc`, each domain card
-carries a four-strata spark of its own instruments
-(`src/components/DomainSpark.tsx`) — also static SVG, because eight cards on one
-page must not become eight WebGL contexts.
+The other pages carry explicit illustrations instead of point clouds: a law with
+its predecessor, amending law and implementing decrees for the map; a hierarchy
+pyramid with real counts for the index; two pages of the same article, one line
+struck and one inserted, for the comparison pages; a magnifier over a document
+number with a checklist and a dated stamp for the method page. Each domain has a
+line glyph, and each domain page replaces the old three-dimensional block with a
+flat tree of instruments, one column per stratum of legal force, every node a
+real keyboard-reachable link. The two-dimensional map keeps its mechanics and
+now draws each stratum with its own shape: square for laws, diamond for
+resolutions and consolidated texts, circle for decrees, triangle for circulars.
 
 Data rule: no document number appears unless it was actually looked up. Every
 record carries its sources and a confidence flag, and records with an unconfirmed
@@ -348,12 +360,13 @@ date it was run; check against the Official Gazette before relying on it in a
 formal filing.
 
 The comparison pages at `/en/doi-chieu` set the earlier and later position of
-each pair side by side, in four separate layers: pairs derived from the
+each pair side by side, in five separate layers: pairs derived from the
 `replaces` and `amends` relations; a table of facts and notes computed from the
 two records; content comparison points written by an editor, each citing the
-record it was read from; and a lexical check that scans every string in the
-comparison layer for advisory, evaluative or speculative language and fails the
-build on a single hit. An observation there describes only the difference that
+record or provision it was read from; a lexical check that scans every string in
+the comparison layer for advisory, evaluative or speculative language and fails
+the build on a single hit; and lineages that string replacements and amendments
+into one timeline. An observation there describes only the difference that
 can be read off the two texts — it ranks nothing, predicts nothing, and is not
 legal advice. Each page also carries a browser-side word diff for pasting two
 passages of your own.
@@ -365,6 +378,26 @@ corroborated across at least two independent search results, and anything that
 did not agree was left blank. All fifty carry `confidence: "cross-check"`, so the
 interface flags them, and their `sources` are addresses found rather than pages
 opened.
+
+The dataset covers ten domains; Land & Real Estate and Public-Private
+Partnership were added in the review of 24 September 2026. In that review every
+Vietnamese instrument was read again on the National Legal Database (vbpl.vn),
+which states each instrument's status in words with the date it was last
+updated; missing dates came from the Official Gazette or the Government portal.
+Records whose own vbpl.vn page was read are marked `verified`. Where two official
+sources disagree, the conflict is stated in the record's note rather than
+resolved silently. New construction decrees not yet on vbpl.vn were added with
+Gazette dates and their commencement and transitional articles read in full,
+and stay at `cross-check` until their status can be read from an official
+source.
+
+`src/lib/validity.ts` answers whether an instrument was in force on a given
+date, using only the relations in the dataset, and says "cannot be determined"
+where the data is not enough. Each document page shows a dated timeline and a
+date picker; the document index re-labels every record for a chosen date and can
+hide what was not in force. The index search also takes article numbers
+("Article 53", "Điều 76") and lists every comparison point that cites that
+article, from an index built only of provisions actually read.
 
 To deploy, set `NEXT_PUBLIC_SITE_URL` to the site's origin. Canonical tags,
 hreflang tags and `sitemap.xml` all need absolute addresses, and that address

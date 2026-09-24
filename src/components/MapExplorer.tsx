@@ -10,6 +10,7 @@ import { LegalMap } from "@/components/LegalMap";
 import { documents, documentsById, domains, relations } from "@/data/documents";
 import type { DomainId, Lang } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
+import { getHome } from "@/i18n/home";
 
 /**
  * Trang bản đồ: phần giới thiệu, bộ lọc, vùng vẽ và bảng chi tiết.
@@ -81,7 +82,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
               {t.siteTagline}
             </p>
           </div>
-          {/* Đường về phần mở đầu ba chiều. Bản đồ là nơi người đọc thường tới
+          {/* Đường về trang chủ. Bản đồ là nơi người đọc thường tới
               thẳng bằng liên kết sâu, nên lối quay lại phải có mặt ngay tại đây
               chứ không chỉ nằm sau dấu ấn ở góc trái. */}
           <Link href={`/${lang}`} className="link-sweep rise rise-2 text-sm">
@@ -92,12 +93,13 @@ export function MapExplorer({ lang }: { lang: Lang }) {
 
       <EffectTicker lang={lang} />
 
-      {/* Thanh công cụ. Danh sách lĩnh vực cuộn ngang được, nhưng nút đưa khung
+      {/* Thanh công cụ. Trên điện thoại danh sách lĩnh vực cuộn ngang; từ màn hình
+          rộng trở lên nó xuống dòng để cả mười lĩnh vực cùng hiện. Nút đưa khung
           nhìn về mặc định nằm ngoài vùng cuộn nên không bao giờ bị đẩy khuất. */}
       <div className="rule-b shrink-0 bg-[var(--paper-2)]">
         <div className="mx-auto flex w-full max-w-[76rem] items-center gap-3 px-5 py-2.5 sm:px-8">
           <div className="scroll-x thin-scroll min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 lg:flex-wrap">
               {/* Nhãn "lọc theo lĩnh vực" chỉ hiện khi thật sự còn chỗ. Ở màn
                   hình vừa, nó chiếm đúng phần bề ngang khiến lĩnh vực cuối cùng
                   bị đẩy khuất sau nút bên phải. */}
@@ -135,8 +137,8 @@ export function MapExplorer({ lang }: { lang: Lang }) {
               })}
             </div>
           </div>
-          {/* Khi đã lọc về một lĩnh vực, mở lối sang không gian ba chiều của
-              lĩnh vực đó. Giữ chip làm bộ lọc như cũ: đổi chúng thành liên kết
+          {/* Khi đã lọc về một lĩnh vực, mở lối sang cây văn bản của lĩnh vực
+              đó. Giữ chip làm bộ lọc như cũ: đổi chúng thành liên kết
               thì mất chức năng lọc, thứ người dùng dùng thường xuyên hơn. */}
           {activeDomain !== "all" && (
             <Link href={`/${lang}/linh-vuc/${activeDomain}`} className="chip shrink-0">
@@ -178,7 +180,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
               data-map-overlay
               className="hidden bg-[color-mix(in_oklab,var(--paper)_86%,transparent)] px-2.5 py-1.5 backdrop-blur-sm sm:block"
             >
-              <Legend t={t} />
+              <Legend t={t} lang={lang} />
             </div>
           </div>
         </div>
@@ -199,7 +201,7 @@ export function MapExplorer({ lang }: { lang: Lang }) {
                 {t.home.selectHint}
               </p>
               <div className="mt-5 border-t border-[var(--rule)] pt-4 sm:hidden">
-                <Legend t={t} />
+                <Legend t={t} lang={lang} />
               </div>
             </div>
           ) : (
@@ -282,11 +284,22 @@ export function MapExplorer({ lang }: { lang: Lang }) {
   );
 }
 
-function Legend({ t }: { t: ReturnType<typeof getDict> }) {
+function Legend({ t, lang }: { t: ReturnType<typeof getDict>; lang: Lang }) {
+  const tiers = getHome(lang).hierarchy.tierNames;
   return (
     <>
       <p className="eyebrow mb-1">{t.home.legend}</p>
       <ul className="space-y-0.5 text-[0.6875rem] text-[var(--ink-2)]">
+        {tiers.map((name, tier) => (
+          <li key={name} className="flex items-center gap-2">
+            <Shape tier={tier} /> {name}
+          </li>
+        ))}
+        <li className="flex items-center gap-2">
+          <Shape tier={2} hollow /> {t.home.legendExpired}
+        </li>
+      </ul>
+      <ul className="mt-1.5 space-y-0.5 border-t border-[var(--rule)] pt-1.5 text-[0.6875rem] text-[var(--ink-2)]">
         <li className="flex items-center gap-2">
           <Dash pattern="solid" /> {t.home.legendGuides}
         </li>
@@ -317,6 +330,23 @@ function Stat({ n, label }: { n: number; label: string }) {
       </dt>
       <dd className="eyebrow">{label}</dd>
     </div>
+  );
+}
+
+/** Ký hiệu tầng hiệu lực, vẽ đúng như `tracePath` của bản đồ. */
+function Shape({ tier, hollow = false }: { tier: number; hollow?: boolean }) {
+  const common = {
+    fill: hollow ? "var(--paper)" : "var(--ink-3)",
+    stroke: "var(--ink-3)",
+    strokeWidth: hollow ? 2 : 0,
+  };
+  return (
+    <svg width="22" height="12" viewBox="0 0 22 12" aria-hidden="true" className="shrink-0">
+      {tier === 0 && <rect x="6" y="1" width="10" height="10" {...common} />}
+      {tier === 1 && <polygon points="11,0 17,6 11,12 5,6" {...common} />}
+      {tier === 2 && <circle cx="11" cy="6" r="5" {...common} />}
+      {tier === 3 && <polygon points="11,0 17,11 5,11" {...common} />}
+    </svg>
   );
 }
 

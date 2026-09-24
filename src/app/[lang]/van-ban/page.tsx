@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { HierarchyArt } from "@/components/art/PageArt";
 import { DocumentIndex } from "@/components/DocumentIndex";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
-import { SpaceThumb } from "@/components/SpaceThumb";
 import { documents, domains } from "@/data/documents";
 import { getDict, isLang } from "@/i18n/dictionary";
+import { articleEntries } from "@/lib/articles";
 import { alternatesFor } from "@/lib/site";
 
 export async function generateMetadata({
@@ -49,13 +50,13 @@ export default async function DocumentsPage({
               {t.list.lede}
             </p>
           </div>
-          {/* Bố cục khối: luật ở lõi, văn bản hướng dẫn ở lớp ngoài. */}
+          {/* Tháp thứ bậc: danh mục xếp văn bản theo đúng các tầng này. */}
           <div className="hero-art rise rise-2">
-            <SpaceThumb act={0} turn={0.6} tilt={0.3} maxDots={78} maxEdges={14} />
+            <HierarchyArt lang={lang} />
           </div>
         </div>
       </section>
-      <DocumentIndex lang={lang} />
+      <DocumentIndex lang={lang} articles={articleEntries(lang)} />
     </>
   );
 }

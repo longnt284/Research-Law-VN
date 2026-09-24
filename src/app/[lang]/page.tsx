@@ -1,19 +1,27 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { ChainDefs } from "@/components/home/ChainParts";
+import { ChainHero } from "@/components/home/ChainHero";
+import { HierarchyBlock } from "@/components/home/HierarchyBlock";
+import { RelationBlock } from "@/components/home/RelationBlock";
+import { TimelineBlock } from "@/components/home/TimelineBlock";
 import { HomeHub } from "@/components/HomeHub";
-import { Prologue } from "@/components/Prologue";
+import { Reveal } from "@/components/Reveal";
 import { isLang } from "@/i18n/dictionary";
 import { alternatesFor } from "@/lib/site";
 
 /**
- * Trang chủ: phần mở đầu ba chiều.
+ * Trang chủ.
  *
- * Bản đồ tương tác chuyển sang `/[lang]/ban-do` ở đợt này. Lý do là hai việc
- * khác nhau bị nhồi vào một địa chỉ: người mở trang lần đầu cần biết trang này
- * làm gì, còn người đã biết cần vào thẳng công cụ. Trang chủ nay trả lời câu hỏi
- * thứ nhất và dẫn tới công cụ bằng một lối vào rõ ràng ở cả sáu màn lẫn thanh
- * dưới cùng; thanh điều hướng trỏ thẳng tới địa chỉ mới.
+ * Bốn phần, đi từ nhìn thấy tới đọc được. Đầu trang là ba dải văn bản nối xích
+ * chạy không dứt: hình ảnh của cả hệ thống. Ba khối tiếp theo gỡ hình ảnh đó ra
+ * thành ba câu hỏi mà người làm hồ sơ vẫn hỏi — văn bản nào đứng trên văn bản
+ * nào, chúng nối nhau bằng quan hệ gì, và quy định nào đang có hiệu lực vào ngày
+ * nào. Cuối trang là năm lối vào các công cụ.
+ *
+ * Toàn bộ trang là HTML và SVG dựng ở máy chủ. Không có cảnh WebGL nào, không
+ * có thư viện đồ họa nào phải tải; chuyển động nằm trong CSS và dừng được.
  *
  * Tiêu đề và mô tả kế thừa từ layout; ở đây chỉ khai báo bản dịch, thứ mà layout
  * không tự biết được.
@@ -35,7 +43,22 @@ export default async function HomePage({
 }) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-  // Khối lối vào dựng ở máy chủ rồi truyền vào phần mở đầu. Nhờ vậy nó nằm
-  // trong gói HTML đầu tiên và đọc được cả khi cảnh ba chiều không dựng nổi.
-  return <Prologue lang={lang} hub={<HomeHub lang={lang} />} />;
+  return (
+    <>
+      <ChainDefs />
+      <ChainHero lang={lang} />
+      <div className="home-blocks">
+        <Reveal>
+          <HierarchyBlock lang={lang} />
+        </Reveal>
+        <Reveal>
+          <RelationBlock lang={lang} />
+        </Reveal>
+        <Reveal>
+          <TimelineBlock lang={lang} />
+        </Reveal>
+      </div>
+      <HomeHub lang={lang} />
+    </>
+  );
 }

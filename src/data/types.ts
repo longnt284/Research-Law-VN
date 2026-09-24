@@ -35,7 +35,11 @@ export type DocType =
 export type DocStatus =
   /** Còn hiệu lực toàn bộ. */
   | "active"
-  /** Còn hiệu lực nhưng đã bị sửa đổi, bổ sung. */
+  /**
+   * Còn hiệu lực nhưng đã bị sửa đổi, bổ sung, hoặc hết hiệu lực một phần. Ứng với
+   * nhãn "Hết hiệu lực một phần" của CSDL quốc gia về pháp luật: nhãn đó thường chỉ
+   * nghĩa là một số điều đã bị văn bản sau sửa hoặc bãi bỏ.
+   */
   | "amended"
   /** Đã được thông qua, chưa tới ngày có hiệu lực. */
   | "pending"
@@ -50,7 +54,9 @@ export type DomainId =
   | "doanh-nghiep"
   | "dau-tu"
   | "lao-dong"
-  | "thue";
+  | "thue"
+  | "dat-dai"
+  | "ppp";
 
 /**
  * Mức độ xác minh của bản ghi.
@@ -111,6 +117,8 @@ export interface Relation {
 export interface Domain {
   id: DomainId;
   label: Bilingual;
+  /** Tên ngắn cho chỗ chật như ô minh họa; bỏ trống thì dùng `label`. */
+  short?: Bilingual;
   blurb: Bilingual;
   /** Màu nhận diện, dùng chung cho node trên bản đồ và nhãn lĩnh vực. */
   hue: number;

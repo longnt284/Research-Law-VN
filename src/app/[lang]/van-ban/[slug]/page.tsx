@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { CopyCitation } from "@/components/Citation";
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { ValidityProbe } from "@/components/validity/ValidityProbe";
+import { ValidityTimeline } from "@/components/validity/ValidityTimeline";
 import {
   documents,
   documentsById,
@@ -17,6 +19,7 @@ import { citeDocument } from "@/lib/citation";
 import { pairsFor } from "@/lib/compare";
 import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor } from "@/lib/site";
+import { validitySegments } from "@/lib/validity";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => documents.map((d) => ({ lang, slug: d.id })));
@@ -144,6 +147,10 @@ export default async function DocumentPage({
               </p>
             </section>
           )}
+
+          {/* Diễn biến hiệu lực đặt trước phần quan hệ: câu hỏi đầu tiên của
+              người mở một văn bản là nó còn dùng được không, và từ khi nào. */}
+          <ValidityTimeline doc={doc} lang={lang} />
 
           <section className="mt-9">
             <h2 className="eyebrow eyebrow-tick">{t.doc.relations}</h2>
@@ -275,6 +282,14 @@ export default async function DocumentPage({
               </dd>
             </div>
           </dl>
+
+          <div className="mt-6">
+            <ValidityProbe
+              segments={validitySegments(doc)}
+              initial={verifiedOnOf(doc)}
+              lang={lang}
+            />
+          </div>
 
           {/* Khối trích dẫn đặt trên khối nguồn. Người tra cứu tìm đúng văn
               bản xong thì việc kế tiếp thường là chép trích dẫn sang hồ sơ, và

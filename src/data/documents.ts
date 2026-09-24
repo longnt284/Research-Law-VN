@@ -20,6 +20,13 @@ export const VERIFIED_ON = "2026-09-04";
  */
 const VERIFIED_2026_09_21 = "2026-09-21";
 
+/**
+ * Ngày của đợt rà soát hiệu lực toàn bộ kho. Mỗi bản ghi mang ngày này đã được
+ * đối chiếu lại trên CSDL quốc gia về pháp luật (vbpl.vn) hoặc Công báo trong
+ * đợt đó; bản ghi không mang ngày này giữ ngày tra cứu của đợt trước.
+ */
+const VERIFIED_2026_09_24 = "2026-09-24";
+
 export const domains: Domain[] = [
   {
     id: "xay-dung",
@@ -92,12 +99,32 @@ export const domains: Domain[] = [
       en: "Value-added tax, corporate and personal income tax, and the whole of tax administration.",
     },
     hue: 302,
+  },  {
+    id: "dat-dai",
+    label: { vi: "Đất đai & Bất động sản", en: "Land & Real Estate" },
+    blurb: {
+      vi: "Quyền sử dụng đất, giá đất và tiền sử dụng đất, thu hồi và bồi thường, cùng chế độ nhà ở và kinh doanh bất động sản theo thế hệ luật 2023-2024.",
+      en: "Land-use rights, land prices and land levies, recovery and compensation, together with the housing and real-estate business regimes of the 2023-2024 statutes.",
+    },
+    hue: 96,
+  },
+  {
+    id: "ppp",
+    label: { vi: "Đối tác công tư", en: "Public-Private Partnership" },
+    short: { vi: "Đối tác công tư", en: "PPP" },
+    blurb: {
+      vi: "Đầu tư theo phương thức đối tác công tư: chuẩn bị dự án, lựa chọn nhà đầu tư, cơ chế tài chính, vốn nhà nước tham gia và hợp đồng BT.",
+      en: "Investment by public-private partnership: project preparation, investor selection, the financial regime, state capital participation and BT contracts.",
+    },
+    hue: 240,
   },
 ];
 
 const TVPL = "https://thuvienphapluat.vn";
 const CP = "https://vanban.chinhphu.vn";
 const LVN = "https://luatvietnam.vn";
+/** Trang chi tiết văn bản trên CSDL quốc gia về pháp luật; đuôi là mã văn bản của hệ thống. */
+const VBPL = "https://vbpl.vn/van-ban/chi-tiet";
 
 export const documents: LegalDoc[] = [
   // ─────────────────────────────── XÂY DỰNG ───────────────────────────────
@@ -122,8 +149,13 @@ export const documents: LegalDoc[] = [
       en: "Generally effective from 1 July 2026, save for the permit-exemption provisions which applied earlier, from 1 January 2026. Construction contracts signed before 1 July 2026 remain governed by the 2014 Law, unless force majeure or a fundamental change of circumstances arises.",
     },
     replaces: ["luat-xay-dung-2014"],
-    sources: [`${CP}/?pageid=27160&docid=216514`, `${LVN}/tin-van-ban-moi/tai-luat-xay-dung-2025-so-135-2025-qh15-186-106120-article.html`],
+    sources: [
+      `${CP}/?pageid=27160&docid=216514`,
+      `${LVN}/tin-van-ban-moi/tai-luat-xay-dung-2025-so-135-2025-qh15-186-106120-article.html`,
+      `${VBPL}/185659`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-xay-dung-2014",
@@ -141,8 +173,17 @@ export const documents: LegalDoc[] = [
       vi: "Khung pháp lý về xây dựng suốt giai đoạn 2015 đến giữa năm 2026, đã được sửa đổi một lần lớn vào năm 2020. Văn bản này hết hiệu lực từ 01/7/2026, nhưng vẫn là luật áp dụng cho những hợp đồng ký trước mốc đó, nên chưa thể bỏ ra khỏi hồ sơ tra cứu.",
       en: "The governing construction framework from 2015 until mid-2026, substantially amended once in 2020. It ceased to have effect on 1 July 2026 but still governs contracts signed before that date, and so cannot yet be retired from a practitioner's shelf.",
     },
-    sources: [`${CP}/default.aspx?pageid=27160&docid=175348`, `${TVPL}/phap-luat-doanh-nghiep/bai-viet/chinh-thuc-luat-xay-dung-2014-het-hieu-luc-tu-01-07-2026-17475.html`],
+    note: {
+      vi: "Hết hiệu lực từ 01/7/2026, khi Luật Xây dựng 135/2025/QH15 có hiệu lực. Nhãn trên CSDL quốc gia về pháp luật (hết hiệu lực một phần, cập nhật 08/5/2026) được ghi trước mốc này.",
+      en: "Ceased to have effect on 1 July 2026, when Construction Law No. 135/2025/QH15 took effect. The label on the National Legal Database (partly expired, updated 8 May 2026) was set before that date.",
+    },
+    sources: [
+      `${CP}/default.aspx?pageid=27160&docid=175348`,
+      `${TVPL}/phap-luat-doanh-nghiep/bai-viet/chinh-thuc-luat-xay-dung-2014-het-hieu-luc-tu-01-07-2026-17475.html`,
+      `${VBPL}/36867`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-62-2020",
@@ -160,16 +201,24 @@ export const documents: LegalDoc[] = [
       vi: "Đợt sửa đổi lớn của Luật Xây dựng 2014, tinh giản thủ tục thẩm định và mở rộng diện công trình được miễn giấy phép xây dựng. Hết hiệu lực cùng thời điểm với luật gốc.",
       en: "The major amendment to the 2014 Construction Law, streamlining design appraisal and widening the class of works exempt from a construction permit. It lapsed together with the parent statute.",
     },
+    note: {
+      vi: "Nhãn trên CSDL quốc gia về pháp luật vẫn là còn hiệu lực, nhưng lần cập nhật gần nhất (03/4/2026) có trước ngày luật gốc hết hiệu lực. Bản ghi theo tình trạng của luật gốc.",
+      en: "The National Legal Database still labels this law as in force, but its latest update (3 April 2026) predates the lapse of the parent statute. The record follows the parent statute.",
+    },
     amends: ["luat-xay-dung-2014"],
-    sources: [`${TVPL}/van-ban/Xay-dung-Do-thi/Luat-Xay-dung-sua-doi-2020-so-62-2020-QH14-418229.aspx`],
+    sources: [
+      `${TVPL}/van-ban/Xay-dung-Do-thi/Luat-Xay-dung-sua-doi-2020-so-62-2020-QH14-418229.aspx`,
+      `${VBPL}/144268`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-207-2026",
     number: "207/2026/NĐ-CP",
     type: "nghi-dinh",
     domains: ["xay-dung"],
-    issuedOn: "",
+    issuedOn: "2026-06-15",
     effectiveOn: "2026-07-01",
     status: "active",
     title: {
@@ -181,15 +230,21 @@ export const documents: LegalDoc[] = [
       en: "The decree a contractor or employer opens most often: it sets out acceptance procedures, quality records, warranty liability and maintenance obligations across the life of the works. It supersedes the previous quality-management regime upon entry into force of the 2025 Construction Law.",
     },
     guides: ["luat-xay-dung-2025"],
-    sources: [`${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`],
+    replaces: ["nd-06-2021"],
+    sources: [
+      `${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`,
+      `${CP}/?pageid=27160&docid=218450`,
+      `${TVPL}/van-ban/Xay-dung-Do-thi/Nghi-dinh-207-2026-ND-CP-huong-dan-Luat-Xay-dung-quan-ly-chat-luong-thi-cong-xay-dung-701883.aspx`,
+    ],
     confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-212-2026",
     number: "212/2026/NĐ-CP",
     type: "nghi-dinh",
     domains: ["xay-dung"],
-    issuedOn: "",
+    issuedOn: "2026-06-17",
     effectiveOn: "2026-07-01",
     status: "active",
     title: {
@@ -197,19 +252,111 @@ export const documents: LegalDoc[] = [
       en: "Decree on capacity conditions for construction activity and the national construction activity database",
     },
     summary: {
-      vi: "Đặt ra điều kiện năng lực của tổ chức và cá nhân tham gia hoạt động xây dựng, từ chứng chỉ hành nghề tới chứng chỉ năng lực của nhà thầu. Đồng thời hình thành cơ sở dữ liệu quốc gia để tra cứu năng lực nhà thầu, một thay đổi đáng chú ý cho khâu đánh giá hồ sơ dự thầu.",
-      en: "It fixes the capacity requirements for organisations and individuals in construction, from individual practising certificates to contractor capacity certificates, and establishes a national database for verifying contractor credentials — a notable change for bid evaluation.",
+      vi: "Đặt ra điều kiện năng lực của tổ chức và cá nhân tham gia hoạt động xây dựng, từ chứng chỉ hành nghề tới chứng chỉ năng lực của nhà thầu. Đồng thời hình thành cơ sở dữ liệu quốc gia để tra cứu năng lực nhà thầu, điều có tác động trực tiếp tới khâu đánh giá hồ sơ dự thầu.",
+      en: "It fixes the capacity requirements for organisations and individuals in construction, from individual practising certificates to contractor capacity certificates, and establishes a national database for verifying contractor credentials, which bears directly on bid evaluation.",
     },
     guides: ["luat-xay-dung-2025"],
-    sources: [`${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`],
+    sources: [
+      `${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`,
+      `${CP}/?pageid=27160&docid=218489`,
+    ],
     confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-217-2026",
+    number: "217/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["xay-dung"],
+    issuedOn: "2026-06-19",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định chi tiết một số điều của Luật Xây dựng về quản lý hoạt động xây dựng",
+      en: "Decree detailing certain articles of the Construction Law on management of construction activity",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật Xây dựng 2025 về quản lý hoạt động xây dựng, thay chỗ Nghị định 175/2024/NĐ-CP từ ngày 01/7/2026. Điều 75 đồng thời bãi bỏ một số điều, khoản của năm nghị định khác, trong đó có các nghị định về phân định thẩm quyền và phân cấp trong lĩnh vực xây dựng. Điều 76 giữ lại kết quả thẩm định đã có: dự án đã được thông báo kết quả thẩm định thiết kế cơ sở hoặc báo cáo nghiên cứu khả thi trước ngày nghị định có hiệu lực thì không phải thẩm định lại.",
+      en: "The implementing decree of the 2025 Construction Law on management of construction activity, taking the place of Decree 175/2024/NĐ-CP from 1 July 2026. Article 75 also repeals certain provisions of five other decrees, among them the decrees on allocation and decentralisation of powers in construction. Article 76 preserves appraisals already made: a project notified of the appraisal result for its basic design or feasibility study before the decree took effect need not be appraised again.",
+    },
+    note: {
+      vi: "Ngày ban hành và ngày có hiệu lực đối chiếu trên Công báo; Điều 75 và Điều 76 đọc trên toàn văn tại Thư Viện Pháp Luật. Tình trạng hiệu lực chưa đọc được trên CSDL quốc gia về pháp luật.",
+      en: "Dates of issue and commencement checked against the Official Gazette; Articles 75 and 76 read in the full text on Thư Viện Pháp Luật. The status could not yet be read on the National Legal Database.",
+    },
+    guides: ["luat-xay-dung-2025"],
+    replaces: ["nd-175-2024"],
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-217-2026-nd-cp-469819.htm",
+      `${CP}/?pageid=27160&docid=218509`,
+      `${TVPL}/van-ban/Xay-dung-Do-thi/Nghi-dinh-217-2026-ND-CP-huong-dan-Luat-Xay-dung-quan-ly-hoat-dong-xay-dung-696494.aspx`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-210-2026",
+    number: "210/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["xay-dung", "hop-dong"],
+    issuedOn: "2026-06-15",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định chi tiết và hướng dẫn thi hành một số điều của Luật Xây dựng về hợp đồng xây dựng",
+      en: "Decree detailing and guiding certain articles of the Construction Law on construction contracts",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật Xây dựng 2025 về hợp đồng xây dựng, có hiệu lực từ ngày 01/7/2026. Điều 32 chấm dứt hiệu lực của Nghị định 37/2015/NĐ-CP và Nghị định 50/2021/NĐ-CP, cùng Điều 9 Nghị định 35/2023/NĐ-CP. Với hợp đồng thi công, đây là văn bản thay chỗ cặp nghị định mà các bên đã viện dẫn suốt giai đoạn 2015-2026.",
+      en: "The implementing decree of the 2025 Construction Law on construction contracts, in force from 1 July 2026. Article 32 ends Decree 37/2015/NĐ-CP and Decree 50/2021/NĐ-CP, together with Article 9 of Decree 35/2023/NĐ-CP. For works contracts, it takes the place of the pair of decrees the parties relied on throughout 2015-2026.",
+    },
+    note: {
+      vi: "Ngày ban hành và ngày có hiệu lực đối chiếu trên Công báo; Điều 32 đọc trên toàn văn tại Thư Viện Pháp Luật. Tình trạng hiệu lực chưa đọc được trên CSDL quốc gia về pháp luật.",
+      en: "Dates of issue and commencement checked against the Official Gazette; Article 32 read in the full text on Thư Viện Pháp Luật. The status could not yet be read on the National Legal Database.",
+    },
+    guides: ["luat-xay-dung-2025"],
+    replaces: ["nd-37-2015", "nd-50-2021"],
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-210-2026-nd-cp-469772.htm",
+      `${TVPL}/van-ban/Xay-dung-Do-thi/Nghi-dinh-210-2026-ND-CP-huong-dan-Luat-Xay-dung-ve-hop-dong-xay-dung-696691.aspx`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-206-2026",
+    number: "206/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["xay-dung"],
+    issuedOn: "2026-06-15",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định chi tiết về quản lý chi phí đầu tư xây dựng",
+      en: "Decree detailing management of construction investment cost",
+    },
+    summary: {
+      vi: "Văn bản thay Nghị định 10/2021/NĐ-CP về quản lý chi phí đầu tư xây dựng, có hiệu lực từ ngày 01/7/2026. Điều khoản hiệu lực dẫn một phần nội dung sang nghị định về hợp đồng xây dựng, nghị định về quyết toán vốn đầu tư dự án và pháp luật về ngân sách nhà nước, đầu tư công, PPP, nên chi phí của một hợp đồng cụ thể phải đọc cùng các văn bản đó.",
+      en: "It replaces Decree 10/2021/NĐ-CP on construction investment cost management from 1 July 2026. Its commencement article routes part of the subject matter to the decrees on construction contracts and on final settlement of project investment capital, and to the law on the state budget, public investment and PPP, so the cost of a given contract has to be read together with those instruments.",
+    },
+    note: {
+      vi: "Ngày ban hành và ngày có hiệu lực đối chiếu trên Cổng Thông tin điện tử Chính phủ; điều khoản hiệu lực đọc trên toàn văn tại Thư Viện Pháp Luật. Tình trạng hiệu lực chưa đọc được trên CSDL quốc gia về pháp luật.",
+      en: "Dates of issue and commencement checked against the Government portal; the commencement article read in the full text on Thư Viện Pháp Luật. The status could not yet be read on the National Legal Database.",
+    },
+    guides: ["luat-xay-dung-2025"],
+    replaces: ["nd-10-2021"],
+    sources: [
+      `${CP}/?pageid=27160&docid=218454`,
+      `${TVPL}/van-ban/Xay-dung-Do-thi/Nghi-dinh-206-2026-ND-CP-huong-dan-quan-ly-chi-phi-dau-tu-xay-dung-457659.aspx`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-209-2026",
     number: "209/2026/NĐ-CP",
     type: "nghi-dinh",
     domains: ["xay-dung"],
-    issuedOn: "",
+    issuedOn: "2026-06-15",
     effectiveOn: "2026-07-01",
     status: "active",
     title: {
@@ -221,15 +368,20 @@ export const documents: LegalDoc[] = [
       en: "It regulates the production, trading and use of construction materials, including conformity declaration and quality control of materials incorporated into the works. It bears directly on disputes over non-conforming materials under construction contracts.",
     },
     guides: ["luat-xay-dung-2025"],
-    sources: [`${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`],
+    sources: [
+      `${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`,
+      "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-209-2026-nd-cp-469771.htm",
+      `${CP}/?pageid=27160&docid=218449`,
+    ],
     confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-193-2026",
     number: "193/2026/NĐ-CP",
     type: "nghi-dinh",
     domains: ["xay-dung", "dau-tu"],
-    issuedOn: "",
+    issuedOn: "2026-06-01",
     effectiveOn: "2026-07-01",
     status: "active",
     title: {
@@ -241,8 +393,12 @@ export const documents: LegalDoc[] = [
       en: "It governs the final settlement of investment capital on completion, covering the dossier, the audit sequence and approval deadlines. Most disputes over outstanding quantities and value between employer and contractor arise at this stage.",
     },
     guides: ["luat-xay-dung-2025"],
-    sources: [`${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`],
-    confidence: "cross-check",
+    sources: [
+      `${TVPL}/phap-luat-doanh-nghiep/bai-viet/tong-hop-nghi-dinh-huong-dan-luat-xay-dung-2026-21761.html`,
+      `https://vbpl.vn/van-ban/chi-tiet/2ac52350-686e-11f1-b924-494b4f899991`,
+    ],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-dau-thau-2023",
@@ -260,8 +416,13 @@ export const documents: LegalDoc[] = [
       vi: "Luật gốc về lựa chọn nhà thầu và nhà đầu tư cho dự án sử dụng vốn nhà nước. Kể từ khi có hiệu lực đầu năm 2024, luật đã qua nhiều đợt sửa đổi liên tiếp, nên khi trích dẫn cần bám bản hợp nhất thay vì bản gốc năm 2023.",
       en: "The parent statute on contractor and investor selection for state-funded projects. Since taking effect in early 2024 it has been amended repeatedly, so citations should follow the consolidated text rather than the 2023 original.",
     },
-    sources: [`${CP}/?pageid=27160&docid=208419`, `${TVPL}/van-ban/Dau-tu/Luat-Dau-thau-2023-22-2023-QH15-518805.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=208419`,
+      `${TVPL}/van-ban/Dau-tu/Luat-Dau-thau-2023-22-2023-QH15-518805.aspx`,
+      `${VBPL}/166581`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "vbhn-74-2026",
@@ -287,10 +448,10 @@ export const documents: LegalDoc[] = [
     id: "luat-57-2024",
     number: "57/2024/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["ppp", "dau-tu", "xay-dung"],
     issuedOn: "2024-11-29",
     effectiveOn: "2025-01-15",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật sửa đổi, bổ sung một số điều của Luật Quy hoạch, Luật Đầu tư, Luật Đầu tư theo phương thức đối tác công tư và Luật Đấu thầu",
       en: "Law amending the Planning Law, Investment Law, PPP Law and Bidding Law",
@@ -300,17 +461,21 @@ export const documents: LegalDoc[] = [
       en: "One law amending four, enacted in late 2024 to unblock investment and procurement procedure. It is the first link in the dense chain of amendments to investment law across 2024 and 2025.",
     },
     amends: ["luat-dau-thau-2023", "luat-ppp-2020"],
-    sources: [`${LVN}/linh-vuc-khac/tong-hop-nghi-dinh-huong-dan-luat-dau-thau-cap-nhat-moi-nhat-883-105096-article.html`],
+    sources: [
+      `${LVN}/linh-vuc-khac/tong-hop-nghi-dinh-huong-dan-luat-dau-thau-cap-nhat-moi-nhat-883-105096-article.html`,
+      `${VBPL}/173404`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-90-2025",
     number: "90/2025/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung", "thue"],
+    domains: ["ppp", "dau-tu", "xay-dung", "thue"],
     issuedOn: "2025-06-25",
     effectiveOn: "2025-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật sửa đổi, bổ sung một số điều của Luật Đấu thầu, Luật Đầu tư theo phương thức đối tác công tư, Luật Hải quan, Luật Thuế giá trị gia tăng, Luật Thuế xuất khẩu, thuế nhập khẩu, Luật Đầu tư, Luật Đầu tư công, Luật Quản lý, sử dụng tài sản công",
       en: "Law amending the Bidding Law, PPP Law, Customs Law, VAT Law, Import-Export Duty Law, Investment Law, Public Investment Law and Law on Management and Use of Public Assets",
@@ -320,8 +485,13 @@ export const documents: LegalDoc[] = [
       en: "A single law amending eight statutes, effective from mid-2025. For packages whose dossiers were issued before that date, the transitional provisions allow the former rules to continue where bids had already been opened; identifying the timeline therefore precedes identifying the applicable law.",
     },
     amends: ["luat-dau-thau-2023", "luat-ppp-2020", "luat-gtgt-2024"],
-    sources: [`${CP}/?pageid=27160&docid=214558`, `${TVPL}/van-ban/Dau-tu/Luat-sua-doi-Luat-Dau-thau-Luat-Dau-tu-theo-phuong-thuc-doi-tac-cong-tu-2025-so-90-2025-QH15-662379.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=214558`,
+      `${TVPL}/van-ban/Dau-tu/Luat-sua-doi-Luat-Dau-thau-Luat-Dau-tu-theo-phuong-thuc-doi-tac-cong-tu-2025-so-90-2025-QH15-662379.aspx`,
+      `${VBPL}/179382`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-225-2025",
@@ -344,10 +514,31 @@ export const documents: LegalDoc[] = [
     confidence: "cross-check",
   },
   {
+    id: "nd-274-2026",
+    number: "274/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dau-tu"],
+    issuedOn: "2026-07-07",
+    effectiveOn: "2026-08-21",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định chi tiết một số điều và biện pháp thi hành Luật Đấu thầu về lựa chọn nhà đầu tư thực hiện dự án đầu tư kinh doanh",
+      en: "Decree detailing the Procurement Law on selecting investors for business investment projects",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật Đấu thầu về lựa chọn nhà đầu tư cho dự án đầu tư kinh doanh, có hiệu lực từ ngày 21/8/2026. Hồ sơ lựa chọn nhà đầu tư đang dở dang tại thời điểm đó cần đối chiếu quy định chuyển tiếp của nghị định.",
+      en: "The implementing decree of the Procurement Law on investor selection for business investment projects, in force from 21 August 2026. Investor selections under way at that date should be checked against the decree's transitional provisions.",
+    },
+    guides: ["luat-dau-thau-2023"],
+    sources: [`${VBPL}/1add3c70-8033-11f1-9838-03b17791d6e9`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
     id: "luat-ppp-2020",
     number: "64/2020/QH14",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["ppp", "dau-tu", "xay-dung"],
     issuedOn: "2020-06-18",
     effectiveOn: "2021-01-01",
     status: "amended",
@@ -359,14 +550,19 @@ export const documents: LegalDoc[] = [
       vi: "Khung pháp lý cho dự án PPP, từ chuẩn bị dự án, lựa chọn nhà đầu tư đến ký kết và thực hiện hợp đồng dự án. Đã được sửa đổi bởi Luật 57/2024/QH15 và Luật 90/2025/QH15, nên bản hợp nhất là bản đáng tin cậy để trích dẫn.",
       en: "The framework for PPP projects, from preparation and investor selection through signature and performance of the project contract. Amended by Laws 57/2024/QH15 and 90/2025/QH15, so the consolidated text is the reliable one to cite.",
     },
-    sources: [`${CP}/?pageid=27160&docid=200452`, `${LVN}/dau-tu/van-ban-hop-nhat-81-vbhn-vpqh-2026-luat-dau-tu-theo-phuong-thuc-doi-tac-cong-tu-430285-d5.html`],
+    sources: [
+      `${CP}/?pageid=27160&docid=200452`,
+      `${LVN}/dau-tu/van-ban-hop-nhat-81-vbhn-vpqh-2026-luat-dau-tu-theo-phuong-thuc-doi-tac-cong-tu-430285-d5.html`,
+      `${VBPL}/142882`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-243-2025",
     number: "243/2025/NĐ-CP",
     type: "nghi-dinh",
-    domains: ["dau-tu"],
+    domains: ["ppp", "dau-tu"],
     issuedOn: "2025-09-11",
     effectiveOn: "2025-09-11",
     status: "active",
@@ -379,8 +575,73 @@ export const documents: LegalDoc[] = [
       en: "It details the preparation and implementation of PPP projects following the 2024 and 2025 amendments, effective on the date of signature. It is the principal working instrument for PPP project files today.",
     },
     guides: ["luat-ppp-2020"],
-    sources: [`${LVN}/dau-tu/nghi-dinh-243-2025-nd-cp-quy-dinh-chi-tiet-luat-dau-tu-theo-phuong-thuc-doi-tac-cong-tu-411082-d1.html`],
+    sources: [
+      `${LVN}/dau-tu/nghi-dinh-243-2025-nd-cp-quy-dinh-chi-tiet-luat-dau-tu-theo-phuong-thuc-doi-tac-cong-tu-411082-d1.html`,
+      "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-243-2025-nd-cp-46228.htm",
+    ],
     confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-28-2021",
+    number: "28/2021/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["ppp"],
+    issuedOn: "2021-03-26",
+    effectiveOn: "2021-03-26",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định cơ chế quản lý tài chính dự án đầu tư theo phương thức đối tác công tư",
+      en: "Decree on the financial management regime for public-private partnership projects",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật PPP về cơ chế quản lý tài chính của dự án, có hiệu lực từ ngày 26/3/2021. Nghị định 35/2021/NĐ-CP lo phần thủ tục của dự án; nghị định này điều chỉnh mặt tài chính, nên hai văn bản thường phải đọc cùng nhau.",
+      en: "The implementing decree of the PPP Law on the project financial regime, in force from 26 March 2021. Decree 35/2021/NĐ-CP handles the project procedure; this decree governs the financial side, so the two are usually read together.",
+    },
+    guides: ["luat-ppp-2020"],
+    sources: [`${VBPL}/151158`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-11-2024",
+    number: "11/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["ppp", "thue"],
+    issuedOn: "2024-02-02",
+    effectiveOn: "2024-02-02",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định lãi vay, lợi nhuận hợp lý, phương thức thanh toán, quyết toán dự án đầu tư theo hợp đồng BT; miễn thuế thu nhập doanh nghiệp, miễn thuế thu nhập cá nhân trên địa bàn Thành phố Hồ Chí Minh",
+      en: "Decree on interest, reasonable profit, payment and settlement of BT projects, and corporate and personal income tax exemptions, in Ho Chi Minh City",
+    },
+    summary: {
+      vi: "Văn bản áp dụng riêng cho Thành phố Hồ Chí Minh, có hiệu lực từ ngày 02/02/2024: quy định lãi vay, lợi nhuận hợp lý và cách thanh toán, quyết toán dự án theo hợp đồng xây dựng - chuyển giao (BT), cùng một số ưu đãi thuế. Với dự án BT tại thành phố, đây là nơi các con số tài chính của hợp đồng được neo lại.",
+      en: "An instrument specific to Ho Chi Minh City, in force from 2 February 2024: it sets interest, reasonable profit and the payment and settlement of build-transfer (BT) projects, together with certain tax exemptions. For a BT project in the city, this is where the contract's financial figures are anchored.",
+    },
+    sources: [`${VBPL}/166095`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-91-2025",
+    number: "91/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["ppp", "dat-dai"],
+    issuedOn: "2025-04-24",
+    effectiveOn: "2025-04-24",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định thời điểm xác định giá đất của quỹ đất thanh toán theo hợp đồng Xây dựng - Chuyển giao tại Khu đô thị mới Thủ Thiêm, Thành phố Hồ Chí Minh",
+      en: "Decree on the land-valuation date for land used to pay under BT contracts in the Thu Thiem New Urban Area, Ho Chi Minh City",
+    },
+    summary: {
+      vi: "Văn bản xử lý một câu hỏi hẹp nhưng quyết định giá trị hợp đồng: giá đất của quỹ đất dùng để thanh toán cho nhà đầu tư BT tại Thủ Thiêm được xác định tại thời điểm nào. Có hiệu lực từ ngày 24/4/2025, nó là ví dụ cho thấy thời điểm định giá đất có thể thay đổi đáng kể nghĩa vụ giữa Nhà nước và nhà đầu tư.",
+      en: "It answers a narrow question that decides the value of the contract: at what date the land used to pay BT investors in Thu Thiem is valued. In force from 24 April 2025, it shows how the valuation date alone can shift the obligations between the State and the investor.",
+    },
+    sources: [`${VBPL}/177770`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────────────────────── NĂNG LƯỢNG ──────────────────────────────
@@ -400,8 +661,13 @@ export const documents: LegalDoc[] = [
       vi: "Thay thế Luật Điện lực 2004 sau hai mươi năm, mở đường cho cơ chế mua bán điện trực tiếp và đặt lại khung phát triển nguồn điện tái tạo. Đây là văn bản gốc của cả chùm nghị định năng lượng ban hành đầu năm 2025.",
       en: "It replaced the 2004 Electricity Law after twenty years, opening the way for direct power trading and resetting the framework for renewable generation. It is the source of the cluster of energy decrees issued in early 2025.",
     },
-    sources: [`${CP}/?pageid=27160&docid=212489`, `${TVPL}/van-ban/Tai-nguyen-Moi-truong/Luat-Dien-luc-2024-so-61-2024-QH15-613892.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=212489`,
+      `${TVPL}/van-ban/Tai-nguyen-Moi-truong/Luat-Dien-luc-2024-so-61-2024-QH15-613892.aspx`,
+      `${VBPL}/173332`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-57-2025",
@@ -410,7 +676,7 @@ export const documents: LegalDoc[] = [
     domains: ["nang-luong"],
     issuedOn: "2025-03-03",
     effectiveOn: "2025-03-03",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định quy định cơ chế mua bán điện trực tiếp giữa đơn vị phát điện năng lượng tái tạo với khách hàng sử dụng điện lớn",
       en: "Decree on the direct power purchase mechanism between renewable generators and large electricity consumers",
@@ -420,8 +686,12 @@ export const documents: LegalDoc[] = [
       en: "The legal basis of the DPPA mechanism, allowing large consumers to buy directly from renewable plants through a private wire or across the national grid. It is the first text to read when negotiating a power purchase outside the EVN framework.",
     },
     guides: ["luat-dien-luc-2024"],
-    sources: [`${LVN}/tin-van-ban-moi/chinh-phu-ban-hanh-3-nghi-dinh-quy-dinh-chi-tiet-luat-dien-luc-186-101221-article.html`],
+    sources: [
+      `${LVN}/tin-van-ban-moi/chinh-phu-ban-hanh-3-nghi-dinh-quy-dinh-chi-tiet-luat-dien-luc-186-101221-article.html`,
+      `${VBPL}/176043`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-58-2025",
@@ -430,7 +700,7 @@ export const documents: LegalDoc[] = [
     domains: ["nang-luong"],
     issuedOn: "2025-03-03",
     effectiveOn: "2025-03-03",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định quy định chi tiết một số điều của Luật Điện lực về phát triển điện năng lượng tái tạo, điện năng lượng mới",
       en: "Decree detailing the Electricity Law on the development of renewable and new energy electricity",
@@ -441,8 +711,34 @@ export const documents: LegalDoc[] = [
     },
     guides: ["luat-dien-luc-2024"],
     replaces: ["nd-135-2024"],
-    sources: [`${CP}/?pageid=27160&docid=213011`, `${TVPL}/van-ban/Tai-nguyen-Moi-truong/Nghi-dinh-58-2025-ND-CP-huong-dan-Luat-Dien-luc-phat-trien-dien-nang-luong-tai-tao-dien-nang-luong-moi-636865.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=213011`,
+      `${TVPL}/van-ban/Tai-nguyen-Moi-truong/Nghi-dinh-58-2025-ND-CP-huong-dan-Luat-Dien-luc-phat-trien-dien-nang-luong-tai-tao-dien-nang-luong-moi-636865.aspx`,
+      `${VBPL}/175742`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-243-2026",
+    number: "243/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["nang-luong"],
+    issuedOn: "2026-06-26",
+    effectiveOn: "2026-06-26",
+    status: "active",
+    title: {
+      vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 57/2025/NĐ-CP và Nghị định số 58/2025/NĐ-CP",
+      en: "Decree amending Decree 57/2025/NĐ-CP and Decree 58/2025/NĐ-CP",
+    },
+    summary: {
+      vi: "Sửa đổi, bổ sung cùng lúc hai nghị định thi hành Luật Điện lực 2024: Nghị định 57/2025/NĐ-CP về cơ chế mua bán điện trực tiếp giữa đơn vị phát điện năng lượng tái tạo và khách hàng sử dụng điện lớn, và Nghị định 58/2025/NĐ-CP về phát triển điện năng lượng tái tạo, điện năng lượng mới. Hợp đồng DPPA và dự án điện mặt trời mái nhà vì vậy phải đọc hai nghị định gốc ở bản đã sửa từ ngày 26/6/2026.",
+      en: "It amends at once two implementing decrees of the 2024 Electricity Law: Decree 57/2025/NĐ-CP on direct power purchase between renewable generators and large consumers, and Decree 58/2025/NĐ-CP on renewable and new-energy power. DPPA contracts and rooftop solar projects must therefore read both parent decrees as amended from 26 June 2026.",
+    },
+    amends: ["nd-57-2025", "nd-58-2025"],
+    sources: ["https://vbpl.vn/van-ban/chi-tiet/0e8b0e40-7500-11f1-a0d4-21ec1b6cbb6d"],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-56-2025",
@@ -490,8 +786,8 @@ export const documents: LegalDoc[] = [
     number: "61/2025/NĐ-CP",
     type: "nghi-dinh",
     domains: ["nang-luong"],
-    issuedOn: "",
-    effectiveOn: "",
+    issuedOn: "2025-03-04",
+    effectiveOn: "2025-03-04",
     status: "active",
     title: {
       vi: "Nghị định quy định chi tiết một số điều của Luật Điện lực về giấy phép hoạt động điện lực",
@@ -502,8 +798,13 @@ export const documents: LegalDoc[] = [
       en: "It sets the conditions, dossier and licensing authority for generation, transmission, distribution, wholesale and retail. Holding the licence is a precondition to commercial operation of any power project.",
     },
     guides: ["luat-dien-luc-2024"],
-    sources: [`${CP}/?pageid=27160&docid=213013`, `${TVPL}/van-ban/Bo-may-hanh-chinh/Nghi-dinh-61-2025-ND-CP-huong-dan-Luat-Dien-luc-ve-giay-phep-hoat-dong-dien-luc-645625.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=213013`,
+      `${TVPL}/van-ban/Bo-may-hanh-chinh/Nghi-dinh-61-2025-ND-CP-huong-dan-Luat-Dien-luc-ve-giay-phep-hoat-dong-dien-luc-645625.aspx`,
+      `${VBPL}/177348`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ───────────────────────── HỢP ĐỒNG THƯƠNG MẠI ──────────────────────────
@@ -523,8 +824,13 @@ export const documents: LegalDoc[] = [
       vi: "Nền của toàn bộ quan hệ hợp đồng tại Việt Nam: giao kết, hiệu lực, giải thích hợp đồng, vi phạm, bồi thường thiệt hại và thời hiệu khởi kiện. Khi luật chuyên ngành im lặng, đây là văn bản được viện dẫn.",
       en: "The foundation of every contractual relationship in Vietnam: formation, validity, interpretation, breach, damages and limitation periods. Where sector-specific law is silent, this is the text invoked.",
     },
-    sources: [`${CP}/default.aspx?pageid=27160&docid=183188`, `${TVPL}/van-ban/Quyen-dan-su/Bo-luat-dan-su-2015-296215.aspx`],
+    sources: [
+      `${CP}/default.aspx?pageid=27160&docid=183188`,
+      `${TVPL}/van-ban/Quyen-dan-su/Bo-luat-dan-su-2015-296215.aspx`,
+      `${VBPL}/95942`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-thuong-mai-2005",
@@ -533,7 +839,7 @@ export const documents: LegalDoc[] = [
     domains: ["hop-dong"],
     issuedOn: "2005-06-14",
     effectiveOn: "2006-01-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật Thương mại",
       en: "Commercial Law",
@@ -546,8 +852,12 @@ export const documents: LegalDoc[] = [
       vi: "Mức phạt vi phạm theo Luật Thương mại bị giới hạn theo tỷ lệ trên giá trị phần nghĩa vụ bị vi phạm, khác với nguyên tắc tự do thỏa thuận của Bộ luật Dân sự. Xác định luật áp dụng trước khi tính toán chế tài.",
       en: "The contractual penalty under the Commercial Law is capped as a proportion of the breached obligation, unlike the freedom of agreement under the Civil Code. Settle which law applies before computing remedies.",
     },
-    sources: [`${LVN}/linh-vuc-khac/luat-thuong-mai-so-36-2005-qh11-con-hieu-luc-khong-883-105487-article.html`],
+    sources: [
+      `${LVN}/linh-vuc-khac/luat-thuong-mai-so-36-2005-qh11-con-hieu-luc-khong-883-105487-article.html`,
+      `${VBPL}/26117`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ───────────────────────── TỐ TỤNG & TRỌNG TÀI ──────────────────────────
@@ -567,17 +877,22 @@ export const documents: LegalDoc[] = [
       vi: "Quy định thẩm quyền của Tòa án, trình tự sơ thẩm, phúc thẩm, giám đốc thẩm, cùng thủ tục công nhận và cho thi hành phán quyết trọng tài nước ngoài tại Việt Nam. Đã qua nhiều lần sửa đổi, gần nhất là Luật 85/2025/QH15.",
       en: "It sets out court jurisdiction, first-instance, appellate and cassation procedure, and the procedure for recognising and enforcing foreign arbitral awards in Vietnam. It has been amended repeatedly, most recently by Law 85/2025/QH15.",
     },
-    sources: [`${CP}/default.aspx?pageid=27160&docid=183189`, `${TVPL}/van-ban/Thu-tuc-To-tung/Bo-luat-to-tung-dan-su-2015-296861.aspx`],
+    sources: [
+      `${CP}/default.aspx?pageid=27160&docid=183189`,
+      `${TVPL}/van-ban/Thu-tuc-To-tung/Bo-luat-to-tung-dan-su-2015-296861.aspx`,
+      `${VBPL}/96115`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-85-2025",
     number: "85/2025/QH15",
     type: "luat",
     domains: ["to-tung"],
-    issuedOn: "",
+    issuedOn: "2025-06-25",
     effectiveOn: "2025-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật sửa đổi, bổ sung một số điều của Bộ luật Tố tụng dân sự, Luật Tố tụng hành chính, Luật Tư pháp người chưa thành niên và các luật liên quan",
       en: "Law amending the Civil Procedure Code, Law on Administrative Procedure, Law on Juvenile Justice and related laws",
@@ -586,9 +901,13 @@ export const documents: LegalDoc[] = [
       vi: "Đợt sửa đổi tố tụng năm 2025, gắn với việc sắp xếp lại hệ thống Tòa án. Khi xác định thẩm quyền theo cấp Tòa án cho một vụ việc khởi kiện sau ngày 01/7/2025, phải đọc bản đã sửa chứ không dùng bản 2015 nguyên gốc.",
       en: "The 2025 procedural amendment, tied to the restructuring of the court system. For a claim filed after 1 July 2025, jurisdiction by court level must be read from the amended text, not the 2015 original.",
     },
-    amends: ["bltds-2015", "luat-tthc-2015", "luat-hgdt-2020"],
-    sources: [`${LVN}/tin-van-ban-moi/da-co-luat-sua-doi-bo-luat-to-tung-dan-su-luat-to-tung-hanh-chinh-luat-tu-phap-nguoi-chua-thanh-nien-186-102734-article.html`],
-    confidence: "cross-check",
+    amends: ["bltds-2015", "luat-tthc-2015", "luat-hgdt-2020", "luat-pha-san-2014"],
+    sources: [
+      `${LVN}/tin-van-ban-moi/da-co-luat-sua-doi-bo-luat-to-tung-dan-su-luat-to-tung-hanh-chinh-luat-tu-phap-nguoi-chua-thanh-nien-186-102734-article.html`,
+      `${VBPL}/179420`,
+    ],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-ttm-2010",
@@ -606,8 +925,13 @@ export const documents: LegalDoc[] = [
       vi: "Điều chỉnh thỏa thuận trọng tài, thẩm quyền của hội đồng trọng tài, thủ tục tố tụng trọng tài trong nước và căn cứ hủy phán quyết trọng tài. Chưa bị thay thế, nhưng đã được sửa đổi bởi Luật 81/2025/QH15 nên bản hợp nhất mới là bản nên dùng.",
       en: "It governs the arbitration agreement, the tribunal's jurisdiction, domestic arbitral procedure and the grounds for setting aside an award. Not replaced, but amended by Law 81/2025/QH15, so the consolidated text is the one to use.",
     },
-    sources: [`${CP}/default.aspx?pageid=27160&docid=98345`, `${TVPL}/van-ban/Thu-tuc-To-tung/Luat-Trong-tai-thuong-mai-2010-108083.aspx`],
+    sources: [
+      `${CP}/default.aspx?pageid=27160&docid=98345`,
+      `${TVPL}/van-ban/Thu-tuc-To-tung/Luat-Trong-tai-thuong-mai-2010-108083.aspx`,
+      `${VBPL}/25700`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-81-2025",
@@ -626,8 +950,12 @@ export const documents: LegalDoc[] = [
       en: "It reorganised the court system and, in consequence, altered the parts of the Arbitration Law dealing with judicial support and supervision of arbitration. The court competent to hear a set-aside application must be identified under this amendment.",
     },
     amends: ["luat-ttm-2010"],
-    sources: [`${LVN}/thuong-mai/van-ban-hop-nhat-60-vbhn-vpqh-nam-2025-do-van-phong-quoc-hoi-ban-hanh-hop-nhat-luat-trong-tai-thuong-mai-408965-d5.html`],
+    sources: [
+      `${LVN}/thuong-mai/van-ban-hop-nhat-60-vbhn-vpqh-nam-2025-do-van-phong-quoc-hoi-ban-hanh-hop-nhat-luat-trong-tai-thuong-mai-408965-d5.html`,
+      `${VBPL}/179416`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "vbhn-60-2025",
@@ -732,8 +1060,13 @@ export const documents: LegalDoc[] = [
       vi: "Quy định thành lập, quản trị, tổ chức lại và giải thể doanh nghiệp, cùng quyền và nghĩa vụ của thành viên, cổ đông. Đã được sửa đổi bởi Luật 03/2022/QH15 và Luật 76/2025/QH15.",
       en: "It governs the establishment, governance, restructuring and dissolution of enterprises, together with the rights and obligations of members and shareholders. Amended by Laws 03/2022/QH15 and 76/2025/QH15.",
     },
-    sources: [`${TVPL}/van-ban/Doanh-nghiep/Luat-Doanh-nghiep-sua-doi-2025-so-76-2025-QH15-659899.aspx`, `${LVN}/linh-vuc-khac/luat-doanh-nghiep-moi-nhat-2026-va-danh-sach-van-ban-huong-dan-883-105164-article.html`],
+    sources: [
+      `${TVPL}/van-ban/Doanh-nghiep/Luat-Doanh-nghiep-sua-doi-2025-so-76-2025-QH15-659899.aspx`,
+      `${LVN}/linh-vuc-khac/luat-doanh-nghiep-moi-nhat-2026-va-danh-sach-van-ban-huong-dan-883-105164-article.html`,
+      `${VBPL}/142881`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-76-2025",
@@ -748,12 +1081,17 @@ export const documents: LegalDoc[] = [
       en: "Law amending and supplementing a number of articles of the Law on Enterprises",
     },
     summary: {
-      vi: "Bổ sung nghĩa vụ kê khai chủ sở hữu hưởng lợi của doanh nghiệp, định nghĩa lại cổ tức là khoản lợi nhuận sau thuế trả cho mỗi cổ phần bằng tiền hoặc tài sản khác, và sửa một số quy định về giấy tờ pháp lý của cá nhân. Nghĩa vụ kê khai chủ sở hữu hưởng lợi là thay đổi đáng chú ý nhất với doanh nghiệp có cấu trúc sở hữu nhiều tầng.",
+      vi: "Bổ sung nghĩa vụ kê khai chủ sở hữu hưởng lợi của doanh nghiệp, định nghĩa lại cổ tức là khoản lợi nhuận sau thuế trả cho mỗi cổ phần bằng tiền hoặc tài sản khác, và sửa một số quy định về giấy tờ pháp lý của cá nhân. Với doanh nghiệp có cấu trúc sở hữu nhiều tầng, nghĩa vụ kê khai chủ sở hữu hưởng lợi là thay đổi tác động lớn nhất.",
       en: "It introduces the obligation to declare the beneficial owner of an enterprise, redefines dividend as after-tax profit paid per share in cash or other assets, and adjusts rules on personal legal papers. The beneficial ownership declaration is the change that matters most to groups with layered ownership.",
     },
     amends: ["luat-dn-2020"],
-    sources: [`${CP}/?pageid=27160&docid=214562`, `${TVPL}/chinh-sach-phap-luat-moi/vn/ho-tro-phap-luat/chinh-sach-moi/92502/mot-so-diem-moi-cua-luat-sua-doi-luat-doanh-nghiep-2025-luat-so-76-2025-qh15`],
+    sources: [
+      `${CP}/?pageid=27160&docid=214562`,
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/ho-tro-phap-luat/chinh-sach-moi/92502/mot-so-diem-moi-cua-luat-sua-doi-luat-doanh-nghiep-2025-luat-so-76-2025-qh15`,
+      `${VBPL}/179095`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-phuc-hoi-pha-san-2025",
@@ -772,8 +1110,13 @@ export const documents: LegalDoc[] = [
       en: "It resets the procedure for insolvent enterprises, shifting the emphasis from liquidation towards rehabilitation. In force from 1 March 2026, it materially changes a creditor's calculus when a debtor runs into financial distress.",
     },
     replaces: ["luat-pha-san-2014"],
-    sources: [`${LVN}/dau-thau/van-ban-hop-nhat-74-vbhn-vpqh-2026-luat-dau-thau-430280-d5.html`],
-    confidence: "cross-check",
+    sources: [
+      `${LVN}/dau-thau/van-ban-hop-nhat-74-vbhn-vpqh-2026-luat-dau-thau-430280-d5.html`,
+      `${VBPL}/187584`,
+      "https://congbao.chinhphu.vn/van-ban/luat-so-142-2025-qh15-468702.htm",
+    ],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────────────────────── ĐẦU TƯ ─────────────────────────────────
@@ -798,8 +1141,13 @@ export const documents: LegalDoc[] = [
       en: "Generally effective from 1 March 2026. Article 7 and the list of conditional business lines in Appendix IV take effect from 1 July 2026. Article 50.3 took effect earlier, from 1 January 2026.",
     },
     replaces: ["luat-dau-tu-2020"],
-    sources: [`${CP}/?pageid=27160&docid=216524`, `${TVPL}/phap-luat-nha-dat/luat-dau-tu-2025-luat-so-1432025qh15-co-hieu-luc-tu-khi-nao-13533.html`],
+    sources: [
+      `${CP}/?pageid=27160&docid=216524`,
+      `${TVPL}/phap-luat-nha-dat/luat-dau-tu-2025-luat-so-1432025qh15-co-hieu-luc-tu-khi-nao-13533.html`,
+      `${VBPL}/187601`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-dau-tu-2020",
@@ -817,17 +1165,21 @@ export const documents: LegalDoc[] = [
       vi: "Khung pháp lý đầu tư giai đoạn 2021 đến đầu năm 2026, đã qua nhiều lần sửa đổi trước khi bị thay thế. Điều 7 và Phụ lục IV về ngành, nghề đầu tư kinh doanh có điều kiện vẫn còn hiệu lực tới 01/7/2026, tạo ra một giai đoạn giao thoa mà người tư vấn dễ nhầm.",
       en: "The investment framework from 2021 until early 2026, amended several times before being replaced. Article 7 and Appendix IV on conditional business lines remain in force until 1 July 2026, creating an overlap that is easy to misread.",
     },
-    sources: [`${CP}/default.aspx?pageid=27160&docid=200449`],
+    sources: [
+      `${CP}/default.aspx?pageid=27160&docid=200449`,
+      `${VBPL}/142867`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-96-2026",
     number: "96/2026/NĐ-CP",
     type: "nghi-dinh",
     domains: ["dau-tu"],
-    issuedOn: "",
-    effectiveOn: "",
-    status: "active",
+    issuedOn: "2026-03-31",
+    effectiveOn: "2026-03-31",
+    status: "amended",
     title: {
       vi: "Nghị định quy định chi tiết và hướng dẫn thi hành một số điều của Luật Đầu tư",
       en: "Decree detailing and guiding the implementation of the Law on Investment",
@@ -837,14 +1189,18 @@ export const documents: LegalDoc[] = [
       en: "The implementing decree for the 2025 Investment Law, prescribing forms, sequence and competence in investment procedure. It is the day-to-day instrument for approval and registration filings.",
     },
     guides: ["luat-dau-tu-2025"],
-    sources: [`${LVN}/dau-tu/nghi-dinh-96-2026-nd-cp-huong-dan-thi-hanh-luat-dau-tu-chinh-phu-430524-d1.html`],
-    confidence: "cross-check",
+    sources: [
+      `${LVN}/dau-tu/nghi-dinh-96-2026-nd-cp-huong-dan-thi-hanh-luat-dau-tu-chinh-phu-430524-d1.html`,
+      `https://vbpl.vn/van-ban/chi-tiet/7312bea0-6004-11f1-8acb-1d4dfc6bccbe`,
+    ],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-dat-dai-2024",
     number: "31/2024/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["dat-dai", "dau-tu", "xay-dung"],
     issuedOn: "2024-01-18",
     effectiveOn: "2024-08-01",
     status: "amended",
@@ -856,17 +1212,26 @@ export const documents: LegalDoc[] = [
       vi: "Quy định chế độ sở hữu, quản lý và sử dụng đất, thu hồi và bồi thường, giao đất và cho thuê đất. Với dự án đầu tư có sử dụng đất, đây là văn bản quyết định khả năng tiếp cận mặt bằng, thường là nút thắt thực sự của tiến độ.",
       en: "It governs the regime of land ownership, administration and use, recovery and compensation, allocation and lease. For a land-based project this is the law that decides site access, usually the real bottleneck on programme.",
     },
-    sources: [`${CP}/?pageid=27160&docid=211189`, `${TVPL}/van-ban/Bat-dong-san/Luat-Dat-dai-2024-31-2024-QH15-523642.aspx`],
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi ngày có hiệu lực 01/01/2025 theo văn bản gốc. Luật 43/2024/QH15 đưa phần lớn luật này vào hiệu lực sớm từ 01/8/2024, và bản ghi lấy mốc đó.",
+      en: "The National Legal Database gives 1 January 2025 as the commencement date of the original text. Law No. 43/2024/QH15 brought most of this Law forward to 1 August 2024, and the record uses that date.",
+    },
+    sources: [
+      `${CP}/?pageid=27160&docid=211189`,
+      `${TVPL}/van-ban/Bat-dong-san/Luat-Dat-dai-2024-31-2024-QH15-523642.aspx`,
+      `${VBPL}/177815`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-43-2024",
     number: "43/2024/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["dat-dai", "dau-tu", "xay-dung"],
     issuedOn: "2024-06-29",
     effectiveOn: "2024-08-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật sửa đổi, bổ sung một số điều của Luật Đất đai, Luật Nhà ở, Luật Kinh doanh bất động sản và Luật Các tổ chức tín dụng",
       en: "Law amending the Land Law, Housing Law, Law on Real Estate Business and Law on Credit Institutions",
@@ -876,14 +1241,18 @@ export const documents: LegalDoc[] = [
       en: "It advanced the entry into force of the land and real estate cluster from 1 January 2025 to 1 August 2024. A purely temporal change, but consequential for projects straddling the two frameworks.",
     },
     amends: ["luat-dat-dai-2024", "luat-nha-o-2023", "luat-kdbds-2023"],
-    sources: [`${TVPL}/van-ban/Bo-may-hanh-chinh/Luat-sua-doi-Luat-Dat-dai-Luat-Nha-o-Luat-Kinh-doanh-bat-dong-san-Luat-Cac-to-chuc-tin-dung-2024-612195.aspx`],
+    sources: [
+      `${TVPL}/van-ban/Bo-may-hanh-chinh/Luat-sua-doi-Luat-Dat-dai-Luat-Nha-o-Luat-Kinh-doanh-bat-dong-san-Luat-Cac-to-chuc-tin-dung-2024-612195.aspx`,
+      `${VBPL}/170509`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-nha-o-2023",
     number: "27/2023/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["dat-dai", "dau-tu", "xay-dung"],
     issuedOn: "2023-11-27",
     effectiveOn: "2024-08-01",
     status: "amended",
@@ -895,8 +1264,12 @@ export const documents: LegalDoc[] = [
       vi: "Điều chỉnh phát triển, quản lý và giao dịch nhà ở, gồm nhà ở xã hội và nhà chung cư. Ngày có hiệu lực ban đầu là 01/01/2025, sau được đẩy lên 01/8/2024 theo Luật 43/2024/QH15.",
       en: "It governs the development, management and transaction of housing, including social housing and apartment buildings. Its original effective date of 1 January 2025 was advanced to 1 August 2024 by Law 43/2024/QH15.",
     },
-    sources: [`${TVPL}/van-ban/Bo-may-hanh-chinh/Luat-sua-doi-Luat-Dat-dai-Luat-Nha-o-Luat-Kinh-doanh-bat-dong-san-Luat-Cac-to-chuc-tin-dung-2024-612195.aspx`],
+    sources: [
+      `${TVPL}/van-ban/Bo-may-hanh-chinh/Luat-sua-doi-Luat-Dat-dai-Luat-Nha-o-Luat-Kinh-doanh-bat-dong-san-Luat-Cac-to-chuc-tin-dung-2024-612195.aspx`,
+      `${VBPL}/169032`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────────────────────── LAO ĐỘNG ───────────────────────────────
@@ -907,7 +1280,7 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong"],
     issuedOn: "2019-11-20",
     effectiveOn: "2021-01-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Bộ luật Lao động",
       en: "Labour Code",
@@ -916,8 +1289,13 @@ export const documents: LegalDoc[] = [
       vi: "Điều chỉnh hợp đồng lao động, thời giờ làm việc, tiền lương, kỷ luật lao động và chấm dứt quan hệ lao động. Chưa có văn bản nào thay thế, nên vẫn là bộ luật nền của quan hệ lao động tại Việt Nam.",
       en: "It governs employment contracts, working time, wages, labour discipline and termination. No replacement has been enacted, so it remains the foundational code for employment relations in Vietnam.",
     },
-    sources: [`${CP}/?pageid=27160&docid=198540`, `${TVPL}/van-ban/Lao-dong-Tien-luong/Bo-Luat-lao-dong-2019-333670.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=198540`,
+      `${TVPL}/van-ban/Lao-dong-Tien-luong/Bo-Luat-lao-dong-2019-333670.aspx`,
+      `${VBPL}/139264`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "vbhn-18-2026",
@@ -955,9 +1333,18 @@ export const documents: LegalDoc[] = [
       vi: "Quy định chế độ, chính sách bảo hiểm xã hội cùng quyền và trách nhiệm của người lao động, người sử dụng lao động. Thay thế khung bảo hiểm xã hội cũ từ giữa năm 2025, kéo theo thay đổi trong nghĩa vụ đóng của doanh nghiệp.",
       en: "It sets out social insurance regimes and policies and the rights and responsibilities of employees and employers. It replaced the former framework from mid-2025, changing employers' contribution obligations.",
     },
+    note: {
+      vi: "Mâu thuẫn giữa các nguồn: CSDL quốc gia về pháp luật ghi luật này hết hiệu lực toàn bộ (cập nhật 15/6/2026), nhưng phiên tra cứu không tìm thấy văn bản nào thay thế hoặc tuyên bố chấm dứt hiệu lực của luật. Bản ghi giữ tình trạng còn hiệu lực và hạ mức xác minh cho tới khi đối chiếu được văn bản gốc.",
+      en: "Sources conflict: the National Legal Database labels this Law as wholly expired (updated 15 June 2026), yet this search found no instrument replacing it or declaring it lapsed. The record keeps it in force and lowers its verification level until the primary text can be checked.",
+    },
     replaces: ["luat-bhxh-2014"],
-    sources: [`${CP}/?pageid=27160&docid=211199`, `${TVPL}/van-ban/Bao-hiem/Luat-Bao-hiem-xa-hoi-2024-557190.aspx`],
-    confidence: "verified",
+    sources: [
+      `${CP}/?pageid=27160&docid=211199`,
+      `${TVPL}/van-ban/Bao-hiem/Luat-Bao-hiem-xa-hoi-2024-557190.aspx`,
+      `${VBPL}/175027`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-viec-lam-2025",
@@ -976,8 +1363,13 @@ export const documents: LegalDoc[] = [
       en: "In eight chapters and fifty-five articles, it covers job creation support, labour registration, the labour market information system, skills development, employment services and unemployment insurance. It replaced the 2013 Employment Law from the beginning of 2026.",
     },
     replaces: ["luat-viec-lam-2013"],
-    sources: [`${CP}/?pageid=27160&docid=214560`, `${TVPL}/van-ban/Lao-dong-Tien-luong/Luat-Viec-lam-2025-so-74-2025-QH15-530912.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=214560`,
+      `${TVPL}/van-ban/Lao-dong-Tien-luong/Luat-Viec-lam-2025-so-74-2025-QH15-530912.aspx`,
+      `${VBPL}/179273`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-viec-lam-2013",
@@ -995,8 +1387,12 @@ export const documents: LegalDoc[] = [
       vi: "Khung pháp lý về việc làm và bảo hiểm thất nghiệp trong hơn một thập kỷ, đã được sửa đổi bởi Luật Bảo hiểm xã hội 2024 trước khi hết hiệu lực từ 01/01/2026.",
       en: "The employment and unemployment insurance framework for over a decade, amended by the 2024 Social Insurance Law before ceasing to have effect on 1 January 2026.",
     },
-    sources: [`${TVPL}/phap-luat-viec-lam/tong-hop-diem-moi-luat-viec-lam-2025-ap-dung-tu-ngay-01-01-2026-thay-the-luat-viec-lam-2013-35806.html`],
+    sources: [
+      `${TVPL}/phap-luat-viec-lam/tong-hop-diem-moi-luat-viec-lam-2025-ap-dung-tu-ngay-01-01-2026-thay-the-luat-viec-lam-2013-35806.html`,
+      `${VBPL}/32912`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-318-2025",
@@ -1025,7 +1421,7 @@ export const documents: LegalDoc[] = [
     number: "108/2025/QH15",
     type: "luat",
     domains: ["thue"],
-    issuedOn: "",
+    issuedOn: "2025-12-10",
     effectiveOn: "2026-07-01",
     status: "active",
     title: {
@@ -1037,8 +1433,12 @@ export const documents: LegalDoc[] = [
       en: "It replaces the 2019 Tax Administration Law from 1 July 2026. It creates no new tax but concentrates on modernising administration, with electronic transactions in tax administration to be completed before 1 January 2027.",
     },
     replaces: ["luat-qlt-2019"],
-    sources: [`${TVPL}/ma-so-thue/phap-luat-thue/chinh-thuc-luat-quan-ly-thue-2019-het-hieu-luc-tu-01072026-theo-luat-quan-ly-thue-2025-216925.html`],
-    confidence: "cross-check",
+    sources: [
+      `${TVPL}/ma-so-thue/phap-luat-thue/chinh-thuc-luat-quan-ly-thue-2019-het-hieu-luc-tu-01072026-theo-luat-quan-ly-thue-2025-216925.html`,
+      `${VBPL}/187043`,
+    ],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-qlt-2019",
@@ -1056,8 +1456,18 @@ export const documents: LegalDoc[] = [
       vi: "Khung quản lý thuế giai đoạn 2020 đến giữa năm 2026, đã được sửa đổi bởi Luật 56/2024/QH15. Hết hiệu lực từ 30/6/2026, riêng Điều 51 chấm dứt sớm hơn, từ 31/12/2025.",
       en: "The tax administration framework from 2020 until mid-2026, amended by Law 56/2024/QH15. It ceased to have effect on 30 June 2026, save for Article 51 which ended earlier, on 31 December 2025.",
     },
-    sources: [`${CP}/?pageid=27160&docid=197312`, `${TVPL}/van-ban/Thue-Phi-Le-Phi/Luat-quan-ly-thue-2019-387595.aspx`],
+    note: {
+      vi: "Hai nguồn chính thống ghi khác nhau về ngày có hiệu lực: CSDL quốc gia về pháp luật ghi 01/7/2019, Công báo ghi 01/7/2020. Bản ghi theo Công báo. Luật hết hiệu lực từ 01/7/2026 khi Luật Quản lý thuế 108/2025/QH15 có hiệu lực; nhãn trên CSDL quốc gia (hết hiệu lực một phần, cập nhật 08/5/2026) được ghi trước mốc này.",
+      en: "The two official sources disagree on commencement: the National Legal Database gives 1 July 2019, the Official Gazette 1 July 2020. The record follows the Gazette. The Law lapsed on 1 July 2026 when Tax Administration Law No. 108/2025/QH15 took effect; the database label (partly expired, updated 8 May 2026) predates that.",
+    },
+    sources: [
+      `${CP}/?pageid=27160&docid=197312`,
+      `${TVPL}/van-ban/Thue-Phi-Le-Phi/Luat-quan-ly-thue-2019-387595.aspx`,
+      `${VBPL}/136036`,
+      "https://congbao.chinhphu.vn/van-ban/luat-so-38-2019-qh14-29256.htm",
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-gtgt-2024",
@@ -1076,8 +1486,12 @@ export const documents: LegalDoc[] = [
       en: "It defines taxable and non-taxable objects, rates and the conditions for input credit and refund. Amended by Laws 90/2025/QH15, 149/2025/QH15 and 09/2026/QH16.",
     },
     replaces: ["luat-gtgt-2008"],
-    sources: [`${TVPL}/van-ban/Thue-Phi-Le-Phi/Luat-Thue-gia-tri-gia-tang-2024-so-48-2024-QH15-556390.aspx`],
+    sources: [
+      `${TVPL}/van-ban/Thue-Phi-Le-Phi/Luat-Thue-gia-tri-gia-tang-2024-so-48-2024-QH15-556390.aspx`,
+      `${VBPL}/174917`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-tndn-2025",
@@ -1096,8 +1510,13 @@ export const documents: LegalDoc[] = [
       en: "It sets out taxpayers, taxable income, exempt income, the tax base, the method of computation and corporate tax incentives. Amended by Law 09/2026/QH16, which added an exemption for enterprises with annual revenue below a threshold set by the Government.",
     },
     replaces: ["luat-tndn-2008"],
-    sources: [`${CP}/?pageid=27160&docid=214607`, `${TVPL}/van-ban/Doanh-nghiep/Luat-Thue-thu-nhap-doanh-nghiep-2025-so-67-2025-QH15-580594.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=214607`,
+      `${TVPL}/van-ban/Doanh-nghiep/Luat-Thue-thu-nhap-doanh-nghiep-2025-so-67-2025-QH15-580594.aspx`,
+      `${VBPL}/179941`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-tncn-2025",
@@ -1119,8 +1538,13 @@ export const documents: LegalDoc[] = [
       vi: "Hiệu lực từ 01/7/2026, trừ một số quy định. Quy định về thu nhập từ kinh doanh và từ tiền lương, tiền công của cá nhân cư trú áp dụng từ kỳ tính thuế năm 2026.",
       en: "Effective from 1 July 2026, subject to exceptions. The provisions on business income and on salaries and wages of resident individuals apply from the 2026 tax period.",
     },
-    sources: [`${CP}/?pageid=27160&docid=216495`, `${TVPL}/van-ban/Thue-Phi-Le-Phi/Luat-Thue-thu-nhap-ca-nhan-2025-so-109-2025-QH15-665870.aspx`],
+    sources: [
+      `${CP}/?pageid=27160&docid=216495`,
+      `${TVPL}/van-ban/Thue-Phi-Le-Phi/Luat-Thue-thu-nhap-ca-nhan-2025-so-109-2025-QH15-665870.aspx`,
+      `${VBPL}/187045`,
+    ],
     confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-09-2026",
@@ -1189,7 +1613,7 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung"],
     issuedOn: "2024-12-30",
     effectiveOn: "2024-12-30",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định quy định chi tiết một số điều và biện pháp thi hành Luật Xây dựng về quản lý hoạt động xây dựng",
       en: "Decree detailing and implementing the Construction Law on management of construction activity",
@@ -1199,16 +1623,18 @@ export const documents: LegalDoc[] = [
       en: "It governs the procedural chain from formulation, appraisal and approval of projects and designs through site investigation and construction permitting. It replaced Decree 15/2021/NĐ-CP and served as the implementing instrument for the 2014 Construction Law in the period before the 2025 Law took effect.",
     },
     note: {
-      vi: "Luật Xây dựng 2025 có hiệu lực từ 01/7/2026 cùng bộ nghị định thi hành mới. Phạm vi còn áp dụng của nghị định này sau mốc đó chưa đối chiếu được với nguồn chính thống trong phiên tra cứu.",
-      en: "The 2025 Construction Law took effect on 1 July 2026 together with a new set of implementing decrees. The extent to which this decree continues to apply after that date could not be confirmed against an official source in this search.",
+      vi: "Hết hiệu lực từ 01/7/2026 theo khoản 2 Điều 75 Nghị định 217/2026/NĐ-CP. Khoản 2 Điều 76 của nghị định mới cho phép dự án đã trình thẩm định trước ngày đó, đủ điều kiện nhưng chưa có thông báo kết quả, tiếp tục được thẩm định theo nghị định này.",
+      en: "Ceased to have effect on 1 July 2026 under Article 75(2) of Decree 217/2026/NĐ-CP. Under Article 76(2) of the new decree, a project submitted for appraisal before that date, eligible but not yet notified of the result, continues to be appraised under this decree.",
     },
     guides: ["luat-xay-dung-2014"],
     replaces: ["nd-15-2021"],
     sources: [
       `${CP}/?pageid=27160&docid=212166`,
       `${LVN}/dau-tu/nghi-dinh-175-2024-nd-cp-quy-dinh-chi-tiet-luat-xay-dung-ve-quan-ly-hoat-dong-xay-dung-382971-d1.html`,
+      `${VBPL}/173849`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-15-2021",
@@ -1230,8 +1656,10 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=202756`,
       "https://vcci.com.vn/legal-document/nghi-dinh-152021nd-cp-huong-dan-mot-so-noi-dung-ve-quan-ly-du-an-dau-tu-xay-dung",
+      `${VBPL}/147607`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-06-2021",
@@ -1240,7 +1668,7 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung"],
     issuedOn: "2021-01-26",
     effectiveOn: "2021-01-26",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định quy định chi tiết một số nội dung về quản lý chất lượng, thi công xây dựng và bảo trì công trình xây dựng",
       en: "Decree detailing quality management, construction execution and maintenance of construction works",
@@ -1250,15 +1678,17 @@ export const documents: LegalDoc[] = [
       en: "The decree an employer or contractor opened most often through 2021-2026: acceptance procedures, quality records, the respective duties of employer, works contractor, designer and supervision consultant, and maintenance obligations. It replaced Decree 46/2015/NĐ-CP.",
     },
     note: {
-      vi: "Nghị định 207/2026/NĐ-CP điều chỉnh cùng phạm vi theo Luật Xây dựng 2025 từ 01/7/2026. Quan hệ thay thế giữa hai văn bản chưa đối chiếu được với nguồn chính thống trong phiên tra cứu.",
-      en: "Decree 207/2026/NĐ-CP covers the same subject matter under the 2025 Construction Law from 1 July 2026. The replacement relationship between the two could not be confirmed against an official source in this search.",
+      vi: "Hết hiệu lực từ 01/7/2026 theo khoản 2 Điều 52 Nghị định 207/2026/NĐ-CP, gồm cả các phần đã được Nghị định 35/2023/NĐ-CP, 175/2024/NĐ-CP, 14/2026/NĐ-CP và 67/2026/NĐ-CP sửa đổi, bổ sung.",
+      en: "Ceased to have effect on 1 July 2026 under Article 52(2) of Decree 207/2026/NĐ-CP, including the parts amended by Decrees 35/2023/NĐ-CP, 175/2024/NĐ-CP, 14/2026/NĐ-CP and 67/2026/NĐ-CP.",
     },
     guides: ["luat-xay-dung-2014"],
     sources: [
       `${CP}/?pageid=27160&docid=202585`,
       "https://vcci.com.vn/legal-document/nghi-dinh-062021nd-cp-huong-dan-ve-quan-ly-chat-luong-thi-cong-xay-dung-va-bao-tri-cong-trinh-xay-dung",
+      `${VBPL}/147597`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-10-2021",
@@ -1267,7 +1697,7 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung"],
     issuedOn: "2021-02-09",
     effectiveOn: "2021-02-09",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định về quản lý chi phí đầu tư xây dựng",
       en: "Decree on management of construction investment cost",
@@ -1276,12 +1706,18 @@ export const documents: LegalDoc[] = [
       vi: "Quy định cách xác định và quản lý tổng mức đầu tư, dự toán, định mức, giá xây dựng và chỉ số giá cho dự án dùng vốn đầu tư công, vốn nhà nước ngoài đầu tư công, dự án PPP và dự án dùng vốn ODA. Đây là căn cứ thường được viện dẫn trong tranh chấp về điều chỉnh giá hợp đồng và khối lượng phát sinh.",
       en: "It fixes how total investment, cost estimates, norms, construction prices and price indices are determined and managed for projects using public investment capital, state capital outside public investment, PPP projects and ODA-funded projects. It is the provision most often invoked in disputes over contract price adjustment and variations.",
     },
+    note: {
+      vi: "Hết hiệu lực từ 01/7/2026 theo khoản 3 điều khoản hiệu lực thi hành của Nghị định 206/2026/NĐ-CP.",
+      en: "Ceased to have effect on 1 July 2026 under paragraph 3 of the entry-into-force article of Decree 206/2026/NĐ-CP.",
+    },
     guides: ["luat-xay-dung-2014"],
     sources: [
       `${CP}/?pageid=27160&docid=202663`,
       "https://vcci.com.vn/legal-document/nghi-dinh-102021nd-cp-ve-quan-ly-chi-phi-dau-tu-xay-dung",
+      `${VBPL}/147606`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-37-2015",
@@ -1289,8 +1725,8 @@ export const documents: LegalDoc[] = [
     type: "nghi-dinh",
     domains: ["xay-dung", "hop-dong"],
     issuedOn: "2015-04-22",
-    effectiveOn: "",
-    status: "amended",
+    effectiveOn: "2015-06-15",
+    status: "expired",
     title: {
       vi: "Nghị định quy định chi tiết về hợp đồng xây dựng",
       en: "Decree detailing construction contracts",
@@ -1300,15 +1736,17 @@ export const documents: LegalDoc[] = [
       en: "The core instrument on construction contracts: contract types, principles of formation, contract documents, advance payment and settlement, price adjustment, suspension and termination. It applies mandatorily to contracts under publicly funded projects and to contracts between a PPP project enterprise and its works contractors.",
     },
     note: {
-      vi: "Đã được Nghị định 50/2021/NĐ-CP sửa đổi, bổ sung. Ngày có hiệu lực của bản gốc không xuất hiện thống nhất trong các nguồn tra được nên để trống.",
-      en: "Amended and supplemented by Decree 50/2021/NĐ-CP. The entry-into-force date of the original decree did not appear consistently across the sources found and is therefore left blank.",
+      vi: "Đã được Nghị định 50/2021/NĐ-CP sửa đổi, bổ sung. Cả hai nghị định hết hiệu lực từ 01/7/2026 theo điểm a khoản 2 Điều 32 Nghị định 210/2026/NĐ-CP. Hợp đồng ký trước mốc này cần đối chiếu quy định chuyển tiếp của nghị định mới.",
+      en: "Amended and supplemented by Decree 50/2021/NĐ-CP. Both decrees ceased to have effect on 1 July 2026 under Article 32(2)(a) of Decree 210/2026/NĐ-CP. Contracts signed before that date should be checked against the transitional provisions of the new decree.",
     },
     guides: ["luat-xay-dung-2014"],
     sources: [
       `${CP}/?pageid=27160&docid=202990`,
       `${TVPL}/van-ban/Xay-dung-Do-thi/Nghi-dinh-50-2021-ND-CP-sua-doi-Nghi-dinh-37-2015-ND-CP-huong-dan-hop-dong-xay-dung-393920.aspx`,
+      `${VBPL}/61838`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-50-2021",
@@ -1317,7 +1755,7 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung", "hop-dong"],
     issuedOn: "2021-04-01",
     effectiveOn: "2021-04-01",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 37/2015/NĐ-CP quy định chi tiết về hợp đồng xây dựng",
       en: "Decree amending Decree 37/2015/NĐ-CP detailing construction contracts",
@@ -1326,21 +1764,27 @@ export const documents: LegalDoc[] = [
       vi: "Sửa nhóm quy định về điều chỉnh giá hợp đồng, tạm ứng, thanh toán và quyết toán hợp đồng xây dựng, đồng thời làm rõ phạm vi áp dụng cho hợp đồng của doanh nghiệp dự án PPP. Trong tranh chấp hợp đồng thi công ký sau 01/4/2021, phải đọc Nghị định 37/2015 ở bản đã hợp nhất với nghị định này.",
       en: "It revises the rules on contract price adjustment, advance payment, payment and final settlement, and clarifies the scope of application to contracts of PPP project enterprises. In disputes over works contracts signed after 1 April 2021, Decree 37/2015 must be read as consolidated with this decree.",
     },
+    note: {
+      vi: "Hết hiệu lực từ 01/7/2026 theo điểm a khoản 2 Điều 32 Nghị định 210/2026/NĐ-CP, cùng với Nghị định 37/2015/NĐ-CP mà nó sửa đổi.",
+      en: "Ceased to have effect on 1 July 2026 under Article 32(2)(a) of Decree 210/2026/NĐ-CP, together with Decree 37/2015/NĐ-CP which it amended.",
+    },
     amends: ["nd-37-2015"],
     sources: [
       `${CP}/?pageid=27160&docid=202990`,
       "https://vcci.com.vn/legal-document/nghi-dinh-502021nd-cp-sua-doi-nghi-dinh-372015nd-cp-quy-dinh-chi-tiet-ve-hop-dong-xay-dung",
+      `${VBPL}/148071`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-qhdt-nt-2024",
     number: "47/2024/QH15",
     type: "luat",
-    domains: ["xay-dung", "dau-tu"],
+    domains: ["dat-dai", "xay-dung", "dau-tu"],
     issuedOn: "2024-11-26",
     effectiveOn: "2025-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật Quy hoạch đô thị và nông thôn",
       en: "Law on Urban and Rural Planning",
@@ -1352,8 +1796,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-quy-hoach-do-thi-va-nong-thon-so-472024qh15-hieu-luc-thi-hanh-ke-tu-ngay-0172025-11179",
       `${LVN}/xay-dung/luat-quy-hoach-do-thi-va-nong-thon-2024-moi-nhat-so-47-2024-qh15-379072-d1.html`,
+      `${VBPL}/172548`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────────── NĂNG LƯỢNG — NỀN CŨ VÀ QUY HOẠCH ──────────────────
@@ -1362,8 +1808,8 @@ export const documents: LegalDoc[] = [
     number: "28/2004/QH11",
     type: "luat",
     domains: ["nang-luong"],
-    issuedOn: "",
-    effectiveOn: "",
+    issuedOn: "2004-12-03",
+    effectiveOn: "2005-07-01",
     status: "expired",
     title: {
       vi: "Luật Điện lực 2004",
@@ -1374,14 +1820,16 @@ export const documents: LegalDoc[] = [
       en: "The framework statute of the power sector for two decades, amended five times by Laws 24/2012/QH13, 28/2018/QH14, 03/2022/QH15, 16/2023/QH15 and 35/2024/QH15. It ceased to have effect in full when the 2024 Electricity Law entered into force, save for the transitional cases in Article 81 of the new Law.",
     },
     note: {
-      vi: "Hết hiệu lực từ 01/02/2025. Ngày ban hành và ngày có hiệu lực của bản gốc không xuất hiện thống nhất trong các nguồn tra được nên để trống. Hợp đồng mua bán điện ký trong thời kỳ luật này còn hiệu lực cần đối chiếu Điều 81 Luật Điện lực 2024.",
-      en: "Ceased to have effect on 1 February 2025. The date of issue and original entry into force did not appear consistently across the sources found and are left blank. Power purchase agreements signed while this Law was in force should be checked against Article 81 of the 2024 Electricity Law.",
+      vi: "Hết hiệu lực từ 01/02/2025. Hợp đồng mua bán điện ký trong thời kỳ luật này còn hiệu lực cần đối chiếu Điều 81 Luật Điện lực 2024.",
+      en: "Ceased to have effect on 1 February 2025. Power purchase agreements signed while this Law was in force should be checked against Article 81 of the 2024 Electricity Law.",
     },
     sources: [
       "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong/gioi-thieu-luat-dien-luc-so-61-2024-qh15.html",
       "https://www.erav.vn/tin-tuc/t58176/gioi-thieu-luat-dien-luc-so-61-2024-qh15.html",
+      `${VBPL}/18565`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-80-2024",
@@ -1390,7 +1838,7 @@ export const documents: LegalDoc[] = [
     domains: ["nang-luong", "hop-dong"],
     issuedOn: "2024-07-03",
     effectiveOn: "2024-07-03",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định quy định về cơ chế mua bán điện trực tiếp giữa đơn vị phát điện năng lượng tái tạo với khách hàng sử dụng điện lớn",
       en: "Decree on the direct power purchase mechanism between renewable generators and large electricity users",
@@ -1400,14 +1848,16 @@ export const documents: LegalDoc[] = [
       en: "The first instrument to give the direct power purchase arrangement a legal basis in Vietnam, opening two routes: a private connection line and the national grid. It underpins the DPPA arrangements signed in 2024-2025, before the 2024 Electricity Law and its implementing decree changed the framework.",
     },
     note: {
-      vi: "Nghị định 57/2025/NĐ-CP ngày 03/3/2025 quy định cùng cơ chế theo Luật Điện lực 2024. Không tra được nguồn khẳng định nghị định mới thay thế nghị định này, nên quan hệ giữa hai văn bản để ngỏ; hợp đồng DPPA đang thực hiện cần đối chiếu điều khoản chuyển tiếp của cả hai.",
-      en: "Decree 57/2025/NĐ-CP of 3 March 2025 governs the same mechanism under the 2024 Electricity Law. No source confirming that the newer decree replaces this one was found, so the relationship is left open; live DPPA arrangements should be checked against the transitional provisions of both.",
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 26/3/2026). Nghị định 57/2025/NĐ-CP ngày 03/3/2025 quy định cùng cơ chế theo Luật Điện lực 2024; quan hệ thay thế giữa hai văn bản chưa đối chiếu được trên văn bản gốc, nên bản đồ không vẽ cạnh thay thế. Hợp đồng DPPA đang thực hiện cần đối chiếu điều khoản chuyển tiếp của cả hai.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 26 March 2026). Decree 57/2025/NĐ-CP of 3 March 2025 governs the same mechanism under the 2024 Electricity Law; the replacement relationship could not be checked against the primary text, so the map draws no replacement edge. Live DPPA arrangements should be checked against the transitional provisions of both.",
     },
     sources: [
       `${CP}/?pageid=27160&docid=210545`,
       `${TVPL}/van-ban/Thuong-mai/Nghi-dinh-80-2024-ND-CP-co-che-mua-ban-dien-truc-tiep-giua-Don-vi-phat-dien-voi-Khach-hang-615882.aspx`,
+      `${VBPL}/168548`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-135-2024",
@@ -1432,8 +1882,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://chinhphu.vn/?pageid=27160&docid=211466&classid=1",
       "https://www.frasersvn.com/vi/legal-updates-and-publications/decree-135-2024-nd-cp-on-rooftop-solar-power",
+      `${VBPL}/174906`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-nltkhq-2010",
@@ -1458,8 +1910,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://chinhphu.vn/default.aspx?pageid=27160&docid=96051",
       `${LVN}/linh-vuc-khac/luat-su-dung-nang-luong-tiet-kiem-va-hieu-qua-moi-nhat-la-luat-nao-883-106793-article.html`,
+      `${VBPL}/25703`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-77-2025",
@@ -1481,8 +1935,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://moit.gov.vn/tin-tuc/quoc-hoi-thong-qua-luat-sua-doi-bo-sung-mot-so-dieu-cua-luat-su-dung-nang-luong-tiet-kiem-va-hieu-qua..html",
       `${LVN}/linh-vuc-khac/luat-su-dung-nang-luong-tiet-kiem-va-hieu-qua-moi-nhat-la-luat-nao-883-106793-article.html`,
+      `${VBPL}/179990`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "qd-768-2025",
@@ -1556,7 +2012,7 @@ export const documents: LegalDoc[] = [
       en: "Vietnam approved accession on 18 December 2015, becoming the 84th contracting state, and the Convention entered into force for Vietnam on 1 January 2017. From that date most international sale-of-goods contracts between Vietnamese traders and traders of other contracting states are governed by the Convention unless the parties exclude it.",
     },
     note: {
-      vi: "Việt Nam bảo lưu về hình thức hợp đồng theo Điều 11, Điều 29 và Phần II của Công ước, nên hợp đồng vẫn cần lập bằng văn bản. Điều 6 cho phép các bên loại trừ toàn bộ hoặc một phần Công ước — điều khoản luật áp dụng trong hợp đồng vì thế quyết định rất nhiều.",
+      vi: "Việt Nam bảo lưu về hình thức hợp đồng theo Điều 11, Điều 29 và Phần II của Công ước, nên hợp đồng vẫn cần lập bằng văn bản. Điều 6 cho phép các bên loại trừ toàn bộ hoặc một phần Công ước, nên điều khoản luật áp dụng trong hợp đồng quyết định rất nhiều.",
       en: "Vietnam entered reservations as to form under Articles 11 and 29 and Part II, so contracts must still be in writing. Article 6 allows the parties to exclude the Convention wholly or in part, which makes the governing-law clause decisive.",
     },
     sources: [
@@ -1588,8 +2044,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-canh-tranh-so-232018qh14-ngay-1262018-hieu-luc-thi-hanh-tu-ngay-0172019-4473",
       "https://www.wipo.int/wipolex/en/legislation/details/19109",
+      `${VBPL}/133401`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-bvqlntd-2023",
@@ -1614,8 +2072,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-bao-ve-quyen-loi-nguoi-tieu-dung-so-192023qh15-hieu-luc-thi-hanh-tu-ngay-0172024-9693",
       "https://congbao.chinhphu.vn/van-ban/luat-so-19-2023-qh15-39843.htm",
+      `${VBPL}/161263`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-gddt-2023",
@@ -1624,7 +2084,7 @@ export const documents: LegalDoc[] = [
     domains: ["hop-dong", "doanh-nghiep"],
     issuedOn: "2023-06-22",
     effectiveOn: "2024-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật Giao dịch điện tử",
       en: "Law on Electronic Transactions",
@@ -1640,8 +2100,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-giao-dich-dien-tu-so-202023qh15-hieu-luc-thi-hanh-tu-ngay-0172024-9710",
       `${CP}/?pageid=27160&docid=208421`,
+      `${VBPL}/165913`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-gia-2023",
@@ -1650,14 +2112,14 @@ export const documents: LegalDoc[] = [
     domains: ["hop-dong", "xay-dung"],
     issuedOn: "2023-06-19",
     effectiveOn: "2024-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật Giá",
       en: "Law on Prices",
     },
     summary: {
-      vi: "Gồm tám chương và 75 điều, thay thế Luật Giá 2012. Quy định danh mục hàng hóa, dịch vụ do Nhà nước định giá, nguyên tắc hiệp thương giá và toàn bộ chế định thẩm định giá — phần thường được viện dẫn khi tranh chấp về giá trị tài sản hoặc khối lượng công việc.",
-      en: "In eight chapters and 75 articles, it replaces the 2012 Law on Prices. It sets the list of goods and services priced by the State, the rules on price negotiation, and the whole regime of valuation — the part most often invoked in disputes over asset value or the value of work done.",
+      vi: "Gồm tám chương và 75 điều, thay thế Luật Giá 2012. Quy định danh mục hàng hóa, dịch vụ do Nhà nước định giá, nguyên tắc hiệp thương giá và toàn bộ chế định thẩm định giá, là phần thường được viện dẫn khi tranh chấp về giá trị tài sản hoặc khối lượng công việc.",
+      en: "In eight chapters and 75 articles, it replaces the 2012 Law on Prices. It sets the list of goods and services priced by the State, the rules on price negotiation, and the whole regime of valuation, which is the part most often invoked in disputes over asset value or the value of work done.",
     },
     note: {
       vi: "Hiệu lực chung từ 01/7/2024, riêng khoản 2 Điều 60 áp dụng từ 01/01/2026.",
@@ -1666,8 +2128,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-gia-so-162023qh15-hieu-luc-thi-hanh-tu-ngay-0172024-9690",
       `${LVN}/tai-chinh/luat-gia-moi-nhat-so-16-2023-qh15-259728-d1.html`,
+      `${VBPL}/167565`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────── TỐ TỤNG & TRỌNG TÀI — THI HÀNH VÀ HÒA GIẢI ────────────
@@ -1694,8 +2158,10 @@ export const documents: LegalDoc[] = [
     sources: [
       `${TVPL}/van-ban/Thu-tuc-To-tung/Luat-thi-hanh-an-dan-su-2008-26-2008-QH12-82197.aspx`,
       `${LVN}/an-ninh-trat-tu/luat-thi-hanh-an-dan-su-2008-39054-d1.html`,
+      `${VBPL}/12318`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-64-2014",
@@ -1713,12 +2179,18 @@ export const documents: LegalDoc[] = [
       vi: "Lần sửa đổi lớn nhất của pháp luật thi hành án dân sự, chuyển nhiều việc từ cơ chế đơn yêu cầu sang cơ chế cơ quan thi hành án chủ động, và siết lại nghĩa vụ cung cấp thông tin về tài sản của người phải thi hành án. Phải đọc kèm bản gốc năm 2008 chứ không đọc rời.",
       en: "The most substantial amendment to civil judgment enforcement, shifting much of the process from application-driven to enforcement-agency-driven and tightening the duty to disclose the debtor's assets. It must be read together with the 2008 original, not on its own.",
     },
+    note: {
+      vi: "Luật sửa đổi Luật Thi hành án dân sự 2008. CSDL quốc gia về pháp luật ghi hết hiệu lực một phần (cập nhật 08/5/2026), trong khi luật gốc được ghi hết hiệu lực toàn bộ ở lần cập nhật 01/7/2026. Bản ghi theo tình trạng của luật gốc.",
+      en: "An amending law to the 2008 Civil Judgment Enforcement Law. The National Legal Database labels it partly expired (updated 8 May 2026), while the parent statute is labelled wholly expired as of the 1 July 2026 update. The record follows the parent statute.",
+    },
     amends: ["luat-thads-2008"],
     sources: [
       `${TVPL}/van-ban/thu-tuc-to-tung/Luat-Thi-hanh-an-dan-su-sua-doi-2014-259728.aspx`,
       `${LVN}/dan-su/luat-thi-hanh-an-dan-su-sua-doi-2014-so-64-2014-qh13-91357-d1.html`,
+      `${VBPL}/46740`,
     ],
     confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-22-2017",
@@ -1727,7 +2199,7 @@ export const documents: LegalDoc[] = [
     domains: ["to-tung"],
     issuedOn: "2017-02-24",
     effectiveOn: "2017-04-15",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định về hòa giải thương mại",
       en: "Decree on commercial mediation",
@@ -1743,8 +2215,10 @@ export const documents: LegalDoc[] = [
     sources: [
       `${TVPL}/van-ban/Thuong-mai/Nghi-dinh-22-2017-ND-CP-hoa-giai-thuong-mai-280010.aspx`,
       "https://vmc.org.vn/thu-tuc-hoa-giai/nghi-dinh-so-222017ndcp-ve-hoa-giai-thuong-mai-a115.html",
+      `${VBPL}/119091`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-tthc-2015",
@@ -1759,8 +2233,8 @@ export const documents: LegalDoc[] = [
       en: "Law on Administrative Procedure",
     },
     summary: {
-      vi: "Gồm 23 chương và 372 điều, thay thế Luật Tố tụng hành chính 2010. Đây là con đường pháp lý để khởi kiện quyết định hành chính và hành vi hành chính — thứ mà nhà đầu tư dùng khi bị thu hồi đất, bị từ chối cấp phép hoặc bị xử phạt.",
-      en: "In 23 chapters and 372 articles, it replaced the 2010 Administrative Procedure Law. It is the route for challenging administrative decisions and administrative conduct — the one an investor uses when land is recovered, a licence refused or a penalty imposed.",
+      vi: "Gồm 23 chương và 372 điều, thay thế Luật Tố tụng hành chính 2010. Đây là con đường pháp lý để khởi kiện quyết định hành chính và hành vi hành chính, và nhà đầu tư dùng đến nó khi bị thu hồi đất, bị từ chối cấp phép hoặc bị xử phạt.",
+      en: "In 23 chapters and 372 articles, it replaced the 2010 Administrative Procedure Law. It is the route for challenging administrative decisions and administrative conduct, the one an investor uses when land is recovered, a licence refused or a penalty imposed.",
     },
     note: {
       vi: "Một số quy định liên quan tới Bộ luật Dân sự 2015 áp dụng từ 01/01/2017. Luật đã được sửa đổi, bổ sung bởi Luật số 85/2025/QH15.",
@@ -1769,8 +2243,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-to-tung-hanh-chinh-so-932015qh13-ngay-25112015-cua-quoc-hoi-hieu-luc-thi-hanh-tu-ngay-172016-1512",
       "https://english.luatvietnam.vn/law-no-93-2015-qh13-of-the-national-assembly-on-administrative-procedures-101331-doc1.html",
+      `${VBPL}/96035`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-hgdt-2020",
@@ -1795,8 +2271,10 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=200446`,
       `${TVPL}/van-ban/Thu-tuc-To-tung/Luat-Hoa-giai-doi-thoai-tai-Toa-an-so-58-2020-QH14-395767.aspx`,
+      `${VBPL}/147588`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-pha-san-2014",
@@ -1821,8 +2299,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=175356",
       "https://vcci.com.vn/legal-document/luat-pha-san-cua-quoc-hoi-so-512014qh13",
+      `${VBPL}/36869`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────── DOANH NGHIỆP — ĐĂNG KÝ, VỐN VÀ SỔ SÁCH ────────────────
@@ -1850,8 +2330,10 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=202344`,
       "https://dangkykinhdoanh.gov.vn/vn/Pages/ChiTietVanBan.aspx?vID=27030",
+      `${VBPL}/153870`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-chung-khoan-2019",
@@ -1876,8 +2358,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-chung-khoan-so-542019qh14-ngay-26112019-hieu-luc-thi-hanh-tu-ngay-01012021-6034",
       "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=198541",
+      `${VBPL}/139885`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-56-2024",
@@ -1886,21 +2370,27 @@ export const documents: LegalDoc[] = [
     domains: ["doanh-nghiep", "thue", "dau-tu"],
     issuedOn: "2024-11-29",
     effectiveOn: "2025-01-01",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Luật sửa đổi, bổ sung một số điều của Luật Chứng khoán, Luật Kế toán, Luật Kiểm toán độc lập, Luật Ngân sách nhà nước, Luật Quản lý, sử dụng tài sản công, Luật Quản lý thuế, Luật Thuế thu nhập cá nhân, Luật Dự trữ quốc gia, Luật Xử lý vi phạm hành chính",
       en: "Law amending the Law on Securities, the Accounting Law, the Independent Audit Law, the State Budget Law, the Law on Management and Use of Public Assets, the Tax Administration Law, the Personal Income Tax Law, the National Reserves Law and the Law on Handling of Administrative Violations",
     },
     summary: {
-      vi: "Một luật sửa chín luật cùng lúc — dạng văn bản khiến người tra cứu dễ bỏ sót nhất, vì nội dung sửa nằm rải trong chín đạo luật khác nhau chứ không tập trung ở một chỗ. Ba đạo luật chịu tác động rõ nhất với doanh nghiệp là Luật Chứng khoán, Luật Kế toán và Luật Quản lý thuế.",
-      en: "One Law amending nine at once — the kind of instrument most easily missed, since its content is scattered across nine separate statutes rather than gathered in one place. The three that matter most to companies are the Securities Law, the Accounting Law and the Tax Administration Law.",
+      vi: "Một luật sửa chín luật cùng lúc. Đây là dạng văn bản người tra cứu dễ bỏ sót nhất, vì nội dung sửa nằm rải trong chín đạo luật khác nhau chứ không tập trung ở một chỗ. Ba đạo luật chịu tác động rõ nhất với doanh nghiệp là Luật Chứng khoán, Luật Kế toán và Luật Quản lý thuế.",
+      en: "One Law amending nine at once. It is the kind of instrument most easily missed, since its content is scattered across nine separate statutes rather than gathered in one place. The three that matter most to companies are the Securities Law, the Accounting Law and the Tax Administration Law.",
+    },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 04/4/2026). Đây là luật sửa đổi nhiều luật cùng lúc; nội dung sửa đổi được đọc cùng các luật mà nó sửa.",
+      en: "The National Legal Database labels this Law as wholly expired (updated 4 April 2026). It amended several statutes at once; its amendments are read together with the statutes it amended.",
     },
     amends: ["luat-chung-khoan-2019", "luat-ke-toan-2015", "luat-qlt-2019"],
     sources: [
       "https://xaydungchinhsach.chinhphu.vn/toan-van-luat-sua-doi-bo-sung-mot-so-dieu-cua-luat-chung-khoan-luat-ke-toan-luat-kiem-toan-doc-lap-119241225125001042.htm",
       "https://luatminhkhue.vn/van-ban/luat-56-2024-qh15-nam-2024.aspx",
+      `${VBPL}/173331`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-ke-toan-2015",
@@ -1925,8 +2415,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-ke-toan-so-882015qh13-ngay-20112015-cua-quoc-hoi-hieu-luc-thi-hanh-tu-ngay-01012017-1521",
       `${LVN}/ke-toan/luat-ke-toan-2015-101336-d1.html`,
+      `${VBPL}/95924`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-tctd-2024",
@@ -1935,7 +2427,7 @@ export const documents: LegalDoc[] = [
     domains: ["doanh-nghiep", "dau-tu"],
     issuedOn: "2024-01-18",
     effectiveOn: "2024-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật Các tổ chức tín dụng",
       en: "Law on Credit Institutions",
@@ -1951,8 +2443,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-cac-to-chuc-tin-dung-so-322024qh15-hieu-luc-thi-hanh-tu-ngay-0172024-10722",
       `${LVN}/tai-chinh/luat-cac-to-chuc-tin-dung-2024-moi-nhat-so-32-2024-qh15-296639-d1.html`,
+      `${VBPL}/166170`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────── ĐẦU TƯ — NGHỊ ĐỊNH THI HÀNH VÀ ĐẤT ĐAI ────────────────
@@ -1963,7 +2457,7 @@ export const documents: LegalDoc[] = [
     domains: ["dau-tu"],
     issuedOn: "2021-03-26",
     effectiveOn: "2021-03-26",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định quy định chi tiết và hướng dẫn thi hành một số điều của Luật Đầu tư",
       en: "Decree detailing and guiding the implementation of the Investment Law",
@@ -1972,21 +2466,27 @@ export const documents: LegalDoc[] = [
       vi: "Nghị định thi hành Luật Đầu tư 2020: điều kiện đầu tư kinh doanh, ngành nghề và điều kiện tiếp cận thị trường đối với nhà đầu tư nước ngoài, bảo đảm đầu tư, ưu đãi và hỗ trợ đầu tư, thủ tục đầu tư và đầu tư ra nước ngoài. Phụ lục về điều kiện tiếp cận thị trường là chỗ tra đầu tiên khi thẩm định một khoản đầu tư nước ngoài.",
       en: "The implementing decree for the 2020 Investment Law: business investment conditions, market-access lines and conditions for foreign investors, investment guarantees, incentives and support, investment procedures and outbound investment. Its market-access appendix is the first place to look when screening a foreign investment.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Luật Đầu tư 2025 có nghị định quy định chi tiết riêng là Nghị định 96/2026/NĐ-CP, có hiệu lực từ 31/3/2026; quan hệ thay thế giữa hai nghị định chưa đối chiếu được trên văn bản gốc.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 8 May 2026). The 2025 Investment Law has its own implementing decree, Decree 96/2026/NĐ-CP, in force from 31 March 2026; whether it formally replaces this decree could not be checked against the primary text.",
+    },
     guides: ["luat-dau-tu-2020"],
     sources: [
       `${CP}/?pageid=27160&docid=202988`,
       "https://dangkykinhdoanh.gov.vn/vn/Pages/ChiTietVanBan.aspx?vID=27030",
+      `${VBPL}/147720`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-35-2021",
     number: "35/2021/NĐ-CP",
     type: "nghi-dinh",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["ppp", "dau-tu", "xay-dung"],
     issuedOn: "2021-03-29",
-    effectiveOn: "",
-    status: "active",
+    effectiveOn: "2021-03-29",
+    status: "amended",
     title: {
       vi: "Nghị định quy định chi tiết và hướng dẫn thi hành Luật Đầu tư theo phương thức đối tác công tư",
       en: "Decree detailing and guiding the implementation of the PPP Investment Law",
@@ -2003,14 +2503,16 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=202963`,
       `${TVPL}/van-ban/Dau-tu/Nghi-dinh-35-2021-ND-CP-huong-dan-Luat-Dau-tu-theo-phuong-thuc-doi-tac-cong-tu-463635.aspx`,
+      `${VBPL}/147719`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-kdbds-2023",
     number: "29/2023/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["dat-dai", "dau-tu", "xay-dung"],
     issuedOn: "2023-11-28",
     effectiveOn: "2024-08-01",
     status: "amended",
@@ -2029,17 +2531,19 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-kinh-doanh-bat-dong-san-so-292023qh15-hieu-luc-thi-hanh-tu-ngay-01012025-10319",
       "https://nxbtuphap.moj.gov.vn/Pages/chi-tiet-tin-tuc.aspx?ItemID=52&l=tintucchung",
+      `${VBPL}/169027`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-96-2024",
     number: "96/2024/NĐ-CP",
     type: "nghi-dinh",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["dat-dai", "dau-tu", "xay-dung"],
     issuedOn: "2024-07-24",
     effectiveOn: "2024-08-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định quy định chi tiết một số điều của Luật Kinh doanh bất động sản",
       en: "Decree detailing the Law on Real Estate Business",
@@ -2052,17 +2556,19 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/?pageid=27160&docid=210798&classid=1",
       `${LVN}/dau-tu/nghi-dinh-96-2024-nd-cp-quy-dinh-chi-tiet-mot-so-dieu-cua-luat-kinh-doanh-bat-dong-san-362072-d1.html`,
+      `${VBPL}/169708`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-102-2024",
     number: "102/2024/NĐ-CP",
     type: "nghi-dinh",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["dat-dai", "dau-tu", "xay-dung"],
     issuedOn: "2024-07-30",
-    effectiveOn: "",
-    status: "active",
+    effectiveOn: "2024-08-01",
+    status: "amended",
     title: {
       vi: "Nghị định quy định chi tiết thi hành một số điều của Luật Đất đai",
       en: "Decree detailing the implementation of the Land Law",
@@ -2071,32 +2577,30 @@ export const documents: LegalDoc[] = [
       vi: "Nghị định thi hành chính của Luật Đất đai 2024, kế thừa khung của Nghị định 43/2014/NĐ-CP và hướng dẫn chi tiết hơn về phân loại đất, thủ tục giao đất, cho thuê đất và chuyển mục đích sử dụng đất. Đây là văn bản mà chủ đầu tư dự án phải mở khi xử lý khâu tiếp cận đất đai.",
       en: "The principal implementing decree for the 2024 Land Law, carrying over the framework of Decree 43/2014/NĐ-CP and giving fuller guidance on land classification and the procedures for allocation, lease and change of land-use purpose. It is the decree a project developer opens when dealing with access to land.",
     },
-    note: {
-      vi: "Ngày có hiệu lực không xuất hiện thống nhất trong các nguồn tra được nên để trống; các nguồn chỉ thống nhất về ngày ban hành 30/7/2024.",
-      en: "The entry-into-force date did not appear consistently across the sources found and is left blank; the sources agree only on the date of issue, 30 July 2024.",
-    },
     guides: ["luat-dat-dai-2024"],
     sources: [
       `${CP}/?pageid=27160&docid=210795`,
       "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-102-2024-nd-cp-quy-dinh-chi-tiet-thi-hanh-mot-so-dieu-cua-luat-dat-dai-119240815163801541.htm",
+      `${VBPL}/169363`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-71-2024",
     number: "71/2024/NĐ-CP",
     type: "nghi-dinh",
-    domains: ["dau-tu", "thue"],
+    domains: ["dat-dai", "dau-tu", "thue"],
     issuedOn: "2024-06-27",
     effectiveOn: "2024-08-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định quy định về giá đất",
       en: "Decree on land prices",
     },
     summary: {
-      vi: "Quy định bốn phương pháp định giá đất — so sánh, thu nhập, thặng dư và hệ số điều chỉnh giá đất — cùng trình tự xây dựng, điều chỉnh bảng giá đất và định giá đất cụ thể. Đây là căn cứ của tiền sử dụng đất, tiền thuê đất và tiền bồi thường, nên nó quyết định phần lớn chi phí đất của một dự án.",
-      en: "It prescribes four land valuation methods — comparison, income, surplus and price-adjustment coefficient — together with the procedures for building and adjusting the land price table and for specific land valuation. It underpins land use levies, land rent and compensation, and so drives most of a project's land cost.",
+      vi: "Quy định bốn phương pháp định giá đất (so sánh, thu nhập, thặng dư và hệ số điều chỉnh giá đất) cùng trình tự xây dựng, điều chỉnh bảng giá đất và định giá đất cụ thể. Đây là căn cứ của tiền sử dụng đất, tiền thuê đất và tiền bồi thường, nên nó quyết định phần lớn chi phí đất của một dự án.",
+      en: "It prescribes four land valuation methods (comparison, income, surplus and price-adjustment coefficient) together with the procedures for building and adjusting the land price table and for specific land valuation. It underpins land use levies, land rent and compensation, and so drives most of a project's land cost.",
     },
     note: {
       vi: "Hiệu lực cùng ngày Luật Đất đai 2024 có hiệu lực là 01/8/2024, riêng Điều 37 áp dụng ngay từ ngày ký 27/6/2024.",
@@ -2106,8 +2610,156 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=210523`,
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/nghi-dinh-so-712024nd-cp-ngay-2762024-cua-chinh-phu-quy-dinh-ve-gia-dat-10510",
+      `${VBPL}/168381`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nq-254-2025",
+    number: "254/2025/QH15",
+    type: "nghi-quyet",
+    domains: ["dat-dai"],
+    issuedOn: "2025-12-11",
+    effectiveOn: "2026-01-01",
+    status: "active",
+    title: {
+      vi: "Nghị quyết quy định một số cơ chế, chính sách tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai",
+      en: "Resolution on mechanisms and policies to resolve difficulties in implementing the Land Law",
+    },
+    summary: {
+      vi: "Nghị quyết của Quốc hội đặt ra các cơ chế riêng để gỡ những điểm nghẽn phát sinh khi thi hành Luật Đất đai 2024, có hiệu lực từ ngày 01/01/2026. Là văn bản do Quốc hội ban hành, nó được áp dụng song song với Luật Đất đai trong phạm vi các vấn đề nghị quyết điều chỉnh, nên hồ sơ đất đai từ mốc này phải đọc cả hai.",
+      en: "A National Assembly resolution creating specific mechanisms to clear the bottlenecks that arose in implementing the 2024 Land Law, in force from 1 January 2026. Being an act of the National Assembly, it applies alongside the Land Law on the matters it governs, so land files from that date must read both.",
+    },
+    sources: [`${VBPL}/186273`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-49-2026",
+    number: "49/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dat-dai"],
+    issuedOn: "2026-01-31",
+    effectiveOn: "2026-01-31",
+    status: "active",
+    title: {
+      vi: "Nghị định quy định chi tiết và hướng dẫn một số điều của Nghị quyết số 254/2025/QH15 về tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai",
+      en: "Decree detailing Resolution 254/2025/QH15 on resolving difficulties in implementing the Land Law",
+    },
+    summary: {
+      vi: "Văn bản hướng dẫn Nghị quyết 254/2025/QH15, có hiệu lực từ ngày 31/01/2026. Các cơ chế tháo gỡ mà nghị quyết đặt ra được đưa vào thủ tục cụ thể ở nghị định này, nên hồ sơ áp dụng nghị quyết phải đọc kèm cả hai văn bản.",
+      en: "The implementing decree of Resolution 254/2025/QH15, in force from 31 January 2026. The mechanisms the resolution creates are turned into concrete procedure here, so any file relying on the resolution has to read both texts.",
+    },
+    guides: ["nq-254-2025"],
+    sources: [`${VBPL}/187157`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-101-2024",
+    number: "101/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dat-dai"],
+    issuedOn: "2024-07-29",
+    effectiveOn: "2024-08-01",
+    status: "amended",
+    title: {
+      vi: "Nghị định quy định về điều tra cơ bản đất đai; đăng ký, cấp Giấy chứng nhận quyền sử dụng đất, quyền sở hữu tài sản gắn liền với đất và Hệ thống thông tin đất đai",
+      en: "Decree on land surveys, registration and issuance of land-use and property certificates, and the land information system",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật Đất đai 2024 về đăng ký đất đai và cấp giấy chứng nhận, có hiệu lực cùng ngày với phần lớn luật là 01/8/2024. Giao dịch về quyền sử dụng đất phải qua thủ tục đăng ký, và thủ tục đó được quy định chi tiết tại đây, nên thẩm định pháp lý thửa đất thường bắt đầu từ nghị định này.",
+      en: "The implementing decree of the 2024 Land Law on land registration and certificates, in force on 1 August 2024 together with most of the Law. Transactions in land-use rights must be registered, and the registration procedure is detailed here, which is why land due diligence usually starts with this decree.",
+    },
+    guides: ["luat-dat-dai-2024"],
+    sources: [`${VBPL}/169188`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-103-2024",
+    number: "103/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dat-dai", "thue"],
+    issuedOn: "2024-07-30",
+    effectiveOn: "2024-08-01",
+    status: "amended",
+    title: {
+      vi: "Nghị định quy định về tiền sử dụng đất, tiền thuê đất",
+      en: "Decree on land-use levies and land rent",
+    },
+    summary: {
+      vi: "Quy định cách tính, thu, miễn giảm tiền sử dụng đất và tiền thuê đất theo Luật Đất đai 2024, có hiệu lực từ ngày 01/8/2024. Đây là khoản chi phí thường quyết định tính khả thi của một dự án bất động sản.",
+      en: "It governs the calculation, collection and relief of land-use levies and land rent under the 2024 Land Law, in force from 1 August 2024. This is often the cost that decides whether a real-estate project is viable.",
+    },
+    guides: ["luat-dat-dai-2024"],
+    sources: [`${VBPL}/172729`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-88-2024",
+    number: "88/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dat-dai"],
+    issuedOn: "2024-07-15",
+    effectiveOn: "2024-08-01",
+    status: "amended",
+    title: {
+      vi: "Nghị định quy định về bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất",
+      en: "Decree on compensation, support and resettlement upon land recovery by the State",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật Đất đai 2024 về bồi thường, hỗ trợ và tái định cư khi Nhà nước thu hồi đất, có hiệu lực từ ngày 01/8/2024. Phương án bồi thường ở từng địa phương được lập trên khung của nghị định này, nên đây là căn cứ đầu tiên khi xem xét một quyết định thu hồi đất.",
+      en: "The implementing decree of the 2024 Land Law on compensation, support and resettlement upon State land recovery, in force from 1 August 2024. Each locality's compensation plan is built on its framework, which makes it the first reference when reviewing a land recovery decision.",
+    },
+    guides: ["luat-dat-dai-2024"],
+    sources: [`${VBPL}/168582`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-95-2024",
+    number: "95/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dat-dai"],
+    issuedOn: "2024-07-24",
+    effectiveOn: "2024-08-01",
+    status: "amended",
+    title: {
+      vi: "Nghị định quy định chi tiết một số điều của Luật Nhà ở",
+      en: "Decree detailing certain articles of the Housing Law",
+    },
+    summary: {
+      vi: "Văn bản thi hành chung của Luật Nhà ở 2023, có hiệu lực từ ngày 01/8/2024. Các nội dung về nhà ở xã hội được tách sang một nghị định riêng, nên khi tra một vấn đề nhà ở cần xác định trước nó thuộc văn bản nào.",
+      en: "The general implementing decree of the 2023 Housing Law, in force from 1 August 2024. Social housing is dealt with in a separate decree, so a housing question should first be placed in the right instrument.",
+    },
+    guides: ["luat-nha-o-2023"],
+    sources: [`${VBPL}/169709`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
+  },
+  {
+    id: "nd-100-2024",
+    number: "100/2024/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dat-dai"],
+    issuedOn: "2024-07-26",
+    effectiveOn: "2024-08-01",
+    status: "amended",
+    title: {
+      vi: "Nghị định quy định chi tiết một số điều của Luật Nhà ở về phát triển và quản lý nhà ở xã hội",
+      en: "Decree detailing the Housing Law on the development and management of social housing",
+    },
+    summary: {
+      vi: "Văn bản thi hành Luật Nhà ở 2023 riêng cho nhà ở xã hội, từ khâu phát triển dự án tới quản lý sau đầu tư, có hiệu lực từ ngày 01/8/2024. Chủ đầu tư dự án nhà ở xã hội và người mua, thuê mua đều phải đọc nghị định này cùng với luật.",
+      en: "The implementing decree of the 2023 Housing Law specific to social housing, from project development to post-investment management, in force from 1 August 2024. Social housing developers, buyers and hire-purchasers all need to read it alongside the Law.",
+    },
+    guides: ["luat-nha-o-2023"],
+    sources: [`${VBPL}/169712`],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────── LAO ĐỘNG — NGHỊ ĐỊNH THI HÀNH VÀ NỀN CŨ ───────────────
@@ -2118,7 +2770,7 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong"],
     issuedOn: "2020-12-14",
     effectiveOn: "2021-02-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định quy định chi tiết và hướng dẫn thi hành một số điều của Bộ luật Lao động về điều kiện lao động và quan hệ lao động",
       en: "Decree detailing the Labour Code on working conditions and labour relations",
@@ -2135,8 +2787,10 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=201967`,
       "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-145-2020-nd-cp-32732.htm",
+      `${VBPL}/152668`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-152-2020",
@@ -2144,7 +2798,7 @@ export const documents: LegalDoc[] = [
     type: "nghi-dinh",
     domains: ["lao-dong", "dau-tu"],
     issuedOn: "2020-12-30",
-    effectiveOn: "",
+    effectiveOn: "2021-02-15",
     status: "amended",
     title: {
       vi: "Nghị định quy định về người lao động nước ngoài làm việc tại Việt Nam và tuyển dụng, quản lý người lao động Việt Nam làm việc cho tổ chức, cá nhân nước ngoài tại Việt Nam",
@@ -2155,24 +2809,27 @@ export const documents: LegalDoc[] = [
       en: "It sets the conditions and procedure for work permits for foreign nationals, including the explanation of demand for foreign labour, the evidence required for expert or manager status, and the exemption cases. Every project bringing in foreign specialists must clear it before they may lawfully work.",
     },
     note: {
-      vi: "Được sửa đổi, bổ sung bởi Nghị định 70/2023/NĐ-CP. Ngày có hiệu lực của bản gốc không xuất hiện trong các nguồn tra được nên để trống.",
-      en: "Amended and supplemented by Decree 70/2023/NĐ-CP. The entry-into-force date of the original decree did not appear in the sources found and is left blank.",
+      vi: "Được sửa đổi, bổ sung bởi Nghị định 70/2023/NĐ-CP. CSDL quốc gia về pháp luật ghi hết hiệu lực một phần (cập nhật 08/5/2026). Nghị định 219/2025/NĐ-CP về người lao động nước ngoài làm việc tại Việt Nam có hiệu lực từ 07/8/2025; phạm vi nghị định này còn áp dụng cần đối chiếu điều khoản thi hành của nghị định mới.",
+      en: "Amended and supplemented by Decree 70/2023/NĐ-CP. The National Legal Database labels it partly expired (updated 8 May 2026). Decree 219/2025/NĐ-CP on foreign workers in Vietnam took effect on 7 August 2025; how much of this decree still applies should be checked against the final provisions of the new decree.",
     },
     guides: ["blld-2019"],
     sources: [
       `${CP}/?pageid=27160&docid=208673`,
       `${TVPL}/van-ban/Lao-dong-Tien-luong/Nghi-dinh-70-2023-ND-CP-sua-doi-Nghi-dinh-152-2020-ND-CP-lao-dong-nuoc-ngoai-579513.aspx`,
+      `${VBPL}/152669`,
+      `${VBPL}/180273`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-70-2023",
     number: "70/2023/NĐ-CP",
     type: "nghi-dinh",
     domains: ["lao-dong", "dau-tu"],
-    issuedOn: "",
+    issuedOn: "2023-09-18",
     effectiveOn: "2023-09-18",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 152/2020/NĐ-CP về người lao động nước ngoài làm việc tại Việt Nam",
       en: "Decree amending Decree 152/2020/NĐ-CP on foreign employees working in Vietnam",
@@ -2181,16 +2838,14 @@ export const documents: LegalDoc[] = [
       vi: "Rút thời hạn nộp báo cáo giải trình nhu cầu sử dụng lao động nước ngoài từ ít nhất 30 ngày xuống ít nhất 15 ngày trước ngày dự kiến sử dụng, mở rộng cách hiểu về giám đốc điều hành để gồm cả người đứng đầu chi nhánh, văn phòng đại diện hoặc địa điểm kinh doanh, và ấn định thời hạn cấp giấy phép lao động là 05 ngày làm việc kể từ khi nhận đủ hồ sơ.",
       en: "It shortens the lead time for the foreign-labour demand report from at least 30 days to at least 15 days before the intended start, widens the notion of executive director to cover the head of a branch, representative office or business location, and fixes the work permit issuance period at five working days from a complete dossier.",
     },
-    note: {
-      vi: "Ngày ban hành không xuất hiện thống nhất trong các nguồn tra được nên để trống; các nguồn thống nhất về ngày có hiệu lực 18/9/2023.",
-      en: "The date of issue did not appear consistently across the sources found and is left blank; the sources agree on the entry into force of 18 September 2023.",
-    },
     amends: ["nd-152-2020"],
     sources: [
       `${CP}/?pageid=27160&docid=208673`,
       "https://thesaigontimes.vn/nghi-dinh-70-va-giay-phep-lao-dong-cho-nguoi-nuoc-ngoai/",
+      `${VBPL}/162330`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-atvsld-2015",
@@ -2199,20 +2854,22 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong", "xay-dung"],
     issuedOn: "2015-06-25",
     effectiveOn: "2016-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật An toàn, vệ sinh lao động",
       en: "Law on Occupational Safety and Health",
     },
     summary: {
-      vi: "Quy định việc bảo đảm an toàn, vệ sinh lao động, chế độ đối với người bị tai nạn lao động và bệnh nghề nghiệp, cùng trách nhiệm của các bên liên quan. Trên công trường, đây là đạo luật đặt nghĩa vụ huấn luyện, kiểm soát rủi ro và khai báo, điều tra tai nạn lao động — nền của trách nhiệm khi có sự cố.",
-      en: "It governs occupational safety and health, the benefits for victims of occupational accidents and diseases, and the duties of the parties involved. On site it is the statute imposing training, risk control and the duty to report and investigate accidents — the basis of liability when something goes wrong.",
+      vi: "Quy định việc bảo đảm an toàn, vệ sinh lao động, chế độ đối với người bị tai nạn lao động và bệnh nghề nghiệp, cùng trách nhiệm của các bên liên quan. Trên công trường, đây là đạo luật đặt nghĩa vụ huấn luyện, kiểm soát rủi ro và khai báo, điều tra tai nạn lao động, tức là nền của trách nhiệm khi có sự cố.",
+      en: "It governs occupational safety and health, the benefits for victims of occupational accidents and diseases, and the duties of the parties involved. On site it is the statute imposing training, risk control and the duty to report and investigate accidents, which is the basis of liability when something goes wrong.",
     },
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-an-toan-ve-sinh-lao-dong-so-842015qh13-ngay-2562015-cua-quoc-hoi-hieu-luc-thi-hanh-tu-ngay-0172016-1510",
       "https://english.luatvietnam.vn/law-no-84-2015-qh13-dated-june-25-2015-of-the-national-assembly-on-occupational-safety-and-health-96265-doc1.html",
+      `${VBPL}/70811`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-cong-doan-2024",
@@ -2221,7 +2878,7 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong"],
     issuedOn: "2024-11-27",
     effectiveOn: "2025-07-01",
-    status: "active",
+    status: "amended",
     title: {
       vi: "Luật Công đoàn",
       en: "Law on Trade Unions",
@@ -2237,8 +2894,10 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-cong-doan-so-502024qh15-hieu-luc-thi-hanh-tu-ngay-0172025-11182",
       "https://congbao.chinhphu.vn/van-ban/luat-so-50-2024-qh15-43589.htm",
+      `${VBPL}/172553`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-74-2024",
@@ -2247,7 +2906,7 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong"],
     issuedOn: "2024-06-30",
     effectiveOn: "2024-07-01",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định quy định mức lương tối thiểu đối với người lao động làm việc theo hợp đồng lao động",
       en: "Decree on the minimum wage for employees working under labour contracts",
@@ -2256,12 +2915,18 @@ export const documents: LegalDoc[] = [
       vi: "Nâng mức lương tối thiểu vùng thêm khoảng 200.000 tới 280.000 đồng so với mức của Nghị định 38/2022/NĐ-CP, đồng thời chấm dứt hiệu lực của nghị định đó. Mức lương tối thiểu tháng là căn cứ để thoả thuận và trả lương, không được trả thấp hơn cho công việc làm đủ thời giờ.",
       en: "It raises the regional minimum wage by roughly VND 200,000 to 280,000 above the levels in Decree 38/2022/NĐ-CP and terminates that decree. The monthly minimum is the floor for wage negotiation and payment for full normal working time.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 01/4/2026). Mức lương tối thiểu hiện hành cần tra ở văn bản thay thế, chưa được đối chiếu trong phiên tra cứu này.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 1 April 2026). Current minimum wages must be taken from the replacing instrument, which was not checked in this search.",
+    },
     guides: ["blld-2019"],
     sources: [
       `${CP}/?pageid=27160&docid=210536`,
       "https://xaydungchinhsach.chinhphu.vn/toan-van-nghi-dinh-74-2024-nd-cp-quy-dinh-muc-luong-toi-thieu-vung-119240701122135822.htm",
+      `${VBPL}/168670`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-bhxh-2014",
@@ -2280,14 +2945,16 @@ export const documents: LegalDoc[] = [
       en: "In nine chapters and 125 articles, it replaced Law 71/2006/QH11 on Social Insurance. It set the social insurance regimes and policies, the rights and duties of employees and employers, the social insurance funds and the procedures. It ceased to have effect when the 2024 Social Insurance Law entered into force on 1 July 2025.",
     },
     note: {
-      vi: "Quyền lợi phát sinh trong thời kỳ luật này còn hiệu lực — thời gian đóng, chế độ hưu trí, trợ cấp một lần — cần đối chiếu điều khoản chuyển tiếp của Luật Bảo hiểm xã hội số 41/2024/QH15.",
-      en: "Entitlements accrued while this Law was in force — contribution periods, pension regimes, lump-sum benefits — must be checked against the transitional provisions of Law 41/2024/QH15 on Social Insurance.",
+      vi: "Quyền lợi phát sinh trong thời kỳ luật này còn hiệu lực, như thời gian đóng, chế độ hưu trí và trợ cấp một lần, cần đối chiếu điều khoản chuyển tiếp của Luật Bảo hiểm xã hội số 41/2024/QH15.",
+      en: "Entitlements accrued while this Law was in force, such as contribution periods, pension regimes and lump-sum benefits, must be checked against the transitional provisions of Law 41/2024/QH15 on Social Insurance.",
     },
     sources: [
       "https://mt.gov.vn/cntt/tin-tuc/1140/39986/nhung-diem-moi-cua-luat-bao-hiem-xa-hoi--so--58-2014-qh13-ngay-20-11-2014.aspx",
       `${TVPL}/van-ban/Bao-hiem/Luat-Bao-hiem-xa-hoi-2014-259700.aspx`,
+      `${VBPL}/46744`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
 
   // ─────────────── THUẾ — NGHỊ ĐỊNH THI HÀNH VÀ NỀN CŨ ───────────────────
@@ -2298,7 +2965,7 @@ export const documents: LegalDoc[] = [
     domains: ["thue"],
     issuedOn: "2020-10-19",
     effectiveOn: "2020-12-05",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định quy định chi tiết một số điều của Luật Quản lý thuế",
       en: "Decree detailing the Law on Tax Administration",
@@ -2308,15 +2975,17 @@ export const documents: LegalDoc[] = [
       en: "The principal implementing decree of the 2019 Tax Administration Law: declaration, calculation, refunds, payment extensions, debt freezing and write-off, and enforcement of administrative tax decisions. Banks must supply taxpayer account information at the tax authority's request.",
     },
     note: {
-      vi: "Không điều chỉnh giao dịch liên kết, hóa đơn chứng từ và xử phạt vi phạm hành chính về thuế — ba mảng đó nằm ở các nghị định riêng.",
-      en: "It does not cover related-party transactions, invoices and vouchers, or administrative penalties in tax matters — those three sit in separate decrees.",
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này. Nghị định không điều chỉnh giao dịch liên kết, hóa đơn chứng từ và xử phạt vi phạm hành chính về thuế; ba mảng đó nằm ở các nghị định riêng.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 8 May 2026). The replacing instrument was not checked in this search. It did not cover related-party transactions, invoices and vouchers, or administrative penalties in tax matters; those three sat in separate decrees.",
     },
     guides: ["luat-qlt-2019"],
     sources: [
       `${CP}/?pageid=27160&docid=201402`,
       "https://dangkykinhdoanh.gov.vn/vn/Pages/ChiTietVanBan.aspx?vID=27029&TypeVB=1",
+      `${VBPL}/146459`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-132-2020",
@@ -2325,7 +2994,7 @@ export const documents: LegalDoc[] = [
     domains: ["thue", "doanh-nghiep"],
     issuedOn: "2020-11-05",
     effectiveOn: "2020-12-20",
-    status: "amended",
+    status: "expired",
     title: {
       vi: "Nghị định quy định về quản lý thuế đối với doanh nghiệp có giao dịch liên kết",
       en: "Decree on tax administration for enterprises with related-party transactions",
@@ -2335,15 +3004,17 @@ export const documents: LegalDoc[] = [
       en: "It sets the principles, methods and sequence for determining related-party transaction prices and the taxpayer's declaration and transfer-pricing documentation duties. It applies from the 2020 corporate income tax period and replaced Decrees 20/2017/NĐ-CP and 68/2020/NĐ-CP.",
     },
     note: {
-      vi: "Được sửa đổi, bổ sung bởi Nghị định 20/2025/NĐ-CP. Ngưỡng khống chế chi phí lãi vay của doanh nghiệp có giao dịch liên kết là nội dung bị truy thu nhiều nhất khi thanh tra thuế.",
-      en: "Amended and supplemented by Decree 20/2025/NĐ-CP. The cap on deductible interest expense for enterprises with related-party transactions is the item most often reassessed on tax audit.",
+      vi: "Được sửa đổi, bổ sung bởi Nghị định 20/2025/NĐ-CP. CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này. Ngưỡng khống chế chi phí lãi vay của doanh nghiệp có giao dịch liên kết là nội dung bị truy thu nhiều nhất khi thanh tra thuế trong thời kỳ nghị định còn hiệu lực.",
+      en: "Amended and supplemented by Decree 20/2025/NĐ-CP. The National Legal Database labels it wholly expired (updated 8 May 2026). The replacing instrument was not checked in this search. While it was in force, the interest-deduction cap for enterprises with related-party transactions was the item most often reassessed in tax audits.",
     },
     guides: ["luat-qlt-2019"],
     sources: [
       "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=201522",
       `${TVPL}/van-ban/Doanh-nghiep/Nghi-dinh-132-2020-ND-CP-quy-dinh-quan-ly-thue-doi-voi-doanh-nghiep-co-giao-dich-lien-ket-452218.aspx`,
+      `${VBPL}/146463`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-123-2020",
@@ -2351,8 +3022,8 @@ export const documents: LegalDoc[] = [
     type: "nghi-dinh",
     domains: ["thue", "hop-dong"],
     issuedOn: "2020-10-19",
-    effectiveOn: "",
-    status: "amended",
+    effectiveOn: "2022-07-01",
+    status: "expired",
     title: {
       vi: "Nghị định quy định về hóa đơn, chứng từ",
       en: "Decree on invoices and vouchers",
@@ -2362,15 +3033,17 @@ export const documents: LegalDoc[] = [
       en: "The framework for electronic invoicing: invoice types, the time of issue, mandatory content, correction of erroneous invoices and withholding vouchers. In contract disputes the invoice date is often the point that proves the payment obligation arose.",
     },
     note: {
-      vi: "Được sửa đổi, bổ sung bởi Nghị định 70/2025/NĐ-CP. Ngày có hiệu lực của bản gốc không xuất hiện trong các nguồn tra được nên để trống.",
-      en: "Amended and supplemented by Decree 70/2025/NĐ-CP. The entry-into-force date of the original decree did not appear in the sources found and is left blank.",
+      vi: "Được sửa đổi, bổ sung bởi Nghị định 70/2025/NĐ-CP. CSDL quốc gia về pháp luật ghi cả hai nghị định hết hiệu lực toàn bộ (cập nhật 08/5/2026 và 18/4/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này.",
+      en: "Amended and supplemented by Decree 70/2025/NĐ-CP. The National Legal Database labels both decrees as wholly expired (updated 8 May 2026 and 18 April 2026). The replacing instrument was not checked in this search.",
     },
     guides: ["luat-qlt-2019"],
     sources: [
       `${CP}/?pageid=27160&docid=213179`,
       `${TVPL}/van-ban/Thue-Phi-Le-Phi/Nghi-dinh-70-2025-ND-CP-sua-doi-Nghi-dinh-123-2020-ND-CP-hoa-don-chung-tu-577816.aspx`,
+      `${VBPL}/146457`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-70-2025",
@@ -2379,7 +3052,7 @@ export const documents: LegalDoc[] = [
     domains: ["thue", "hop-dong"],
     issuedOn: "2025-03-20",
     effectiveOn: "2025-06-01",
-    status: "active",
+    status: "expired",
     title: {
       vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 123/2020/NĐ-CP quy định về hóa đơn, chứng từ",
       en: "Decree amending Decree 123/2020/NĐ-CP on invoices and vouchers",
@@ -2388,12 +3061,18 @@ export const documents: LegalDoc[] = [
       vi: "Sửa khoản 1 và khoản 2 Điều 9 về thời điểm lập hóa đơn: với bán hàng hóa, hóa đơn lập tại thời điểm chuyển giao quyền sở hữu hoặc quyền sử dụng cho người mua, không phân biệt đã thu được tiền hay chưa. Bổ sung chứng từ khấu trừ thuế cho hoạt động kinh doanh trên nền tảng thương mại điện tử và nền tảng số.",
       en: "It amends Article 9.1 and 9.2 on the time of invoicing: for a sale of goods the invoice is issued when ownership or the right of use passes to the buyer, whether or not payment has been received. It adds a withholding voucher for business on e-commerce and digital platforms.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 18/4/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 18 April 2026). The replacing instrument was not checked in this search.",
+    },
     amends: ["nd-123-2020"],
     sources: [
       `${CP}/?pageid=27160&docid=213179`,
       "https://xaydungchinhsach.chinhphu.vn/mot-so-noi-dung-moi-cua-nghi-dinh-so-70-2025-nd-cp-ve-hoa-don-chung-tu-119250403074719995.htm",
+      `${VBPL}/177581`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nq-107-2023",
@@ -2444,16 +3123,18 @@ export const documents: LegalDoc[] = [
     sources: [
       `${CP}/?pageid=27160&docid=70797`,
       "https://vbpl.vn/TW/Pages/vbpq-luocdo.aspx?ItemID=12806",
+      `${VBPL}/12806`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-tndn-2008",
     number: "14/2008/QH12",
     type: "luat",
     domains: ["thue", "doanh-nghiep"],
-    issuedOn: "",
-    effectiveOn: "",
+    issuedOn: "2008-06-03",
+    effectiveOn: "2009-01-01",
     status: "expired",
     title: {
       vi: "Luật Thuế thu nhập doanh nghiệp 2008",
@@ -2464,14 +3145,16 @@ export const documents: LegalDoc[] = [
       en: "The corporate income tax statute in force for nearly two decades, amended by Laws 32/2013/QH13, 71/2014/QH13, 61/2020/QH14, 12/2022/QH15 and 15/2023/QH15. It ceased to have effect when Law 67/2025/QH15 on Corporate Income Tax entered into force on 1 October 2025.",
     },
     note: {
-      vi: "Ngày ban hành và ngày có hiệu lực của bản gốc không xuất hiện trong các nguồn tra được nên để trống. Luật mới áp dụng ngay cho kỳ tính thuế năm 2025, nên kỳ chuyển tiếp cần đọc kỹ điều khoản thi hành.",
-      en: "The date of issue and original entry into force did not appear in the sources found and are left blank. The new Law applies from the 2025 tax period itself, so the transitional provisions repay careful reading.",
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực một phần (cập nhật 08/5/2026). Bản ghi xếp vào nhóm hết hiệu lực vì Luật Thuế thu nhập doanh nghiệp 2025 đã thay luật này. Luật mới áp dụng ngay cho kỳ tính thuế năm 2025, nên kỳ chuyển tiếp cần đọc kỹ điều khoản thi hành.",
+      en: "The National Legal Database labels this Law as partly expired (updated 8 May 2026). The record treats it as expired because the 2025 Corporate Income Tax Law replaced it. The new Law applies from the 2025 tax period itself, so the transitional provisions repay careful reading.",
     },
     sources: [
       `${TVPL}/van-ban/Doanh-nghiep/Luat-Thue-thu-nhap-doanh-nghiep-2025-so-67-2025-QH15-580594.aspx`,
       "https://congbao.chinhphu.vn/tai-ve-van-ban-so-67-2025-qh15-45557-57755?format=pdf",
+      `${VBPL}/12807`,
     ],
     confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   /*
     ───────────────── ĐỢT BỔ SUNG NGÀY 21/9/2026 ─────────────────
@@ -2490,8 +3173,8 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung"],
     issuedOn: "2019-06-13",
     effectiveOn: "2020-07-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Kiến trúc",
       en: "Law on Architecture",
@@ -2503,8 +3186,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-kien-truc-so-402019qh14-ngay-1362019-hieu-luc-thi-hanh-tu-ngay-0172020-5583",
       "https://vbpl.vn/boxaydung/Pages/vbpq-van-ban-goc.aspx?ItemID=136039",
+      `${VBPL}/136039`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "luat-quy-hoach-2017",
@@ -2514,7 +3198,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2017-11-24",
     effectiveOn: "2019-01-01",
     status: "amended",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Quy hoạch",
       en: "Law on Planning",
@@ -2530,8 +3214,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-quy-hoach-so-212017qh14-ngay-24112017-hieu-luc-thi-hanh-tu-ngay-01012019-4034",
       "https://congbao.chinhphu.vn/van-ban/luat-so-21-2017-qh14-25327/20279.htm",
+      `${VBPL}/131014`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "tt-06-2021-bxd",
@@ -2540,8 +3225,8 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung"],
     issuedOn: "2021-06-30",
     effectiveOn: "2021-08-15",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "expired",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Thông tư quy định về phân cấp công trình xây dựng và hướng dẫn áp dụng trong quản lý hoạt động đầu tư xây dựng",
       en: "Circular on the grading of construction works and its application in construction investment management",
@@ -2550,11 +3235,16 @@ export const documents: LegalDoc[] = [
       vi: "Bảng phân cấp công trình xây dựng và cách áp dụng cấp công trình trong quản lý hoạt động đầu tư xây dựng. Cấp công trình quyết định thẩm quyền thẩm định thiết kế, điều kiện năng lực nhà thầu và thời hạn bảo hành, nên đây là văn bản phải mở trước khi xác định thủ tục cho một dự án. Thông tư thay thế Thông tư 03/2016/TT-BXD và Thông tư 07/2019/TT-BXD.",
       en: "It sets the grading table for construction works and how the grade applies across construction investment management. The grade drives design-appraisal competence, contractor capability requirements and warranty periods, so it is the document to open before fixing the procedure for a project. It replaced Circulars 03/2016/TT-BXD and 07/2019/TT-BXD.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này.",
+      en: "The National Legal Database labels this circular as wholly expired (updated 8 May 2026). The replacing instrument was not checked in this search.",
+    },
     sources: [
       "https://congbao.chinhphu.vn/van-ban/thong-tu-so-06-2021-tt-bxd-33988.htm",
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/thong-tu-so-062021tt-bxd-ngay-3062021-cua-bo-xay-dung-quy-dinh-ve-phan-cap-cong-trinh-xay-dung-va-huong-dan-ap-dung-trong-7676",
+      `${VBPL}/152328`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "tt-10-2021-bxd",
@@ -2563,8 +3253,8 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung", "lao-dong"],
     issuedOn: "2021-08-25",
     effectiveOn: "2021-10-15",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Thông tư hướng dẫn Nghị định 06/2021/NĐ-CP và Nghị định 44/2016/NĐ-CP",
       en: "Circular guiding Decrees 06/2021/NĐ-CP and 44/2016/NĐ-CP",
@@ -2573,10 +3263,15 @@ export const documents: LegalDoc[] = [
       vi: "Hướng dẫn chi tiết về quản lý an toàn lao động, chất lượng thi công và bảo trì công trình xây dựng, gồm hai mươi mốt điều. Đây là lớp dưới cùng của chuỗi quản lý chất lượng thi công: luật đặt nguyên tắc, nghị định quy định chi tiết, thông tư này nói cách làm hồ sơ. Thông tư thay thế Thông tư 26/2016/TT-BXD và Thông tư 04/2019/TT-BXD.",
       en: "It details occupational-safety management, construction quality and the maintenance of works, in twenty-one articles. It is the bottom layer of the construction-quality chain: the statute sets principle, the decree the detail, this Circular the paperwork. It replaced Circulars 26/2016/TT-BXD and 04/2019/TT-BXD.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực một phần (cập nhật 31/3/2026). Nghị định 06/2021/NĐ-CP mà thông tư này hướng dẫn đã hết hiệu lực từ 01/7/2026; tình trạng của thông tư sau mốc đó chưa được đối chiếu.",
+      en: "The National Legal Database labels this circular as partly expired (updated 31 March 2026). Decree 06/2021/NĐ-CP, which it implements, lapsed on 1 July 2026; the circular's status after that date has not been checked.",
+    },
     guides: ["nd-06-2021"],
     sources: [
       "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=203945",
       "https://soxaydung.hungyen.gov.vn/thong-tu-so-102021ttbxd-huong-dan-nghi-dinh-so-062021nd-cp-nghi-dinh-442016nd-cp-va-thay-the-thong-t-c2168.html",
+      `${VBPL}/152359`,
     ],
     confidence: "cross-check",
   },
@@ -2587,8 +3282,8 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung"],
     issuedOn: "2023-06-20",
     effectiveOn: "2023-06-20",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định sửa đổi, bổ sung một số điều của các nghị định thuộc lĩnh vực quản lý nhà nước của Bộ Xây dựng",
       en: "Decree amending decrees in the state management fields of the Ministry of Construction",
@@ -2598,15 +3293,16 @@ export const documents: LegalDoc[] = [
       en: "One decree amending several: urban planning, construction planning, and the management of construction quality and maintenance. It took effect on the date of signature, with no waiting period. Because the amendments are scattered across several instruments, each amended decree must be read alongside it.",
     },
     note: {
-      vi: "Nguồn tra được nêu các nghị định bị sửa gồm Nghị định 37/2010/NĐ-CP, Nghị định 44/2015/NĐ-CP, Nghị định 72/2019/NĐ-CP và Nghị định 06/2021/NĐ-CP. Chỉ Nghị định 06/2021/NĐ-CP có mặt trong tập dữ liệu này nên chỉ quan hệ đó được ghi nhận.",
-      en: "The sources found name Decrees 37/2010/NĐ-CP, 44/2015/NĐ-CP, 72/2019/NĐ-CP and 06/2021/NĐ-CP among those amended. Only Decree 06/2021/NĐ-CP is present in this dataset, so only that relation is recorded.",
+      vi: "Nguồn tra được nêu các nghị định bị sửa gồm Nghị định 37/2010/NĐ-CP, Nghị định 44/2015/NĐ-CP, Nghị định 72/2019/NĐ-CP và Nghị định 06/2021/NĐ-CP. Chỉ Nghị định 06/2021/NĐ-CP có mặt trong tập dữ liệu này nên chỉ quan hệ đó được ghi nhận. Điều 9 của nghị định này hết hiệu lực từ 01/7/2026 theo điểm b khoản 2 Điều 32 Nghị định 210/2026/NĐ-CP.",
+      en: "The sources found name Decrees 37/2010/NĐ-CP, 44/2015/NĐ-CP, 72/2019/NĐ-CP and 06/2021/NĐ-CP among those amended. Only Decree 06/2021/NĐ-CP is present in this dataset, so only that relation is recorded. Article 9 of this decree ceased to have effect on 1 July 2026 under Article 32(2)(b) of Decree 210/2026/NĐ-CP.",
     },
     amends: ["nd-06-2021"],
     sources: [
       "https://vanban.chinhphu.vn/?pageid=27160&docid=208090",
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/nghi-dinh-so-352023nd-cp-ngay-2062023-cua-chinh-phu-sua-doi-bo-sung-mot-so-dieu-cua-cac-nghi-dinh-thuoc-linh-vuc-quan-ly-9541",
+      `${VBPL}/160908`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "luat-bvmt-2020",
@@ -2615,8 +3311,8 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung", "dau-tu"],
     issuedOn: "2020-11-17",
     effectiveOn: "2022-01-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Bảo vệ môi trường",
       en: "Law on Environmental Protection",
@@ -2628,8 +3324,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-bao-ve-moi-truong-so-722020qh14-ngay-17112020-hieu-luc-thi-hanh-tu-ngay-01012022-7518",
       "https://english.luatvietnam.vn/law-on-environmental-protection-no-72-2020-qh14-dated-november-17-2020-of-the-national-assembly-195564-doc1.html",
+      `${VBPL}/146609`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-08-2022",
@@ -2638,8 +3335,8 @@ export const documents: LegalDoc[] = [
     domains: ["xay-dung", "dau-tu"],
     issuedOn: "2022-01-10",
     effectiveOn: "2022-01-10",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định chi tiết một số điều của Luật Bảo vệ môi trường",
       en: "Decree detailing a number of articles of the Law on Environmental Protection",
@@ -2652,8 +3349,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://www.ddif.com.vn/mot-so-diem-noi-dung-lien-quan-den-thu-tuc-bao-ve-moi-truong-theo-luat-bao-ve-moi-truong-so-72-2020-qh14-va-nghi-dinh-so-08-2022-nd-cp-ngay-10-01-2022/",
       "https://luatduongtri.vn/luat-bao-ve-moi-truong-2022/",
+      `${VBPL}/168754`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-72-2025",
@@ -2662,8 +3360,8 @@ export const documents: LegalDoc[] = [
     domains: ["nang-luong"],
     issuedOn: "2025-03-28",
     effectiveOn: "2025-03-28",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định về cơ chế, thời gian điều chỉnh giá bán lẻ điện bình quân",
       en: "Decree on the mechanism and timing for adjusting the average retail electricity price",
@@ -2676,8 +3374,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://xaydungchinhsach.chinhphu.vn/nghi-dinh-72-2025-nd-cp-ve-co-che-thoi-gian-dieu-chinh-gia-ban-le-dien-binh-quan-119250401173706244.htm",
       "https://baochinhphu.vn/quy-dinh-moi-ve-co-che-thoi-gian-dieu-chinh-gia-ban-le-dien-binh-quan-102250401145756615.htm",
+      `${VBPL}/177349`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-21-2021",
@@ -2687,7 +3386,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2021-03-19",
     effectiveOn: "2021-05-15",
     status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định thi hành Bộ luật Dân sự về bảo đảm thực hiện nghĩa vụ",
       en: "Decree implementing the Civil Code on securing the performance of obligations",
@@ -2700,8 +3399,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/default.aspx?pageid=27160&docid=202835",
       "https://pbgdpl.haiphong.gov.vn/Tu-sach-phap-luat/Dan-su/Nghi-dinh-212021ND-CP-ngay-1932021-quy-dinh-thi-hanh-Bo-luat-Dan-su-ve-bao-dam-thuc-hien-nghia-vu-151970.html",
+      `${VBPL}/147004`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "luat-tctand-2024",
@@ -2710,8 +3410,8 @@ export const documents: LegalDoc[] = [
     domains: ["to-tung"],
     issuedOn: "2024-06-24",
     effectiveOn: "2025-01-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Tổ chức Tòa án nhân dân",
       en: "Law on the Organisation of People's Courts",
@@ -2724,8 +3424,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-to-chuc-toa-an-nhan-dan-so-342024qh15-hieu-luc-thi-hanh-tu-ngay-01012025-10735",
       "https://congly.vn/nhung-diem-moi-co-ban-cua-luat-to-chuc-toa-an-nhan-dan-2024-co-hieu-luc-tu-hom-nay-01-01-2025-465209.html",
+      `${VBPL}/170570`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "luat-tctand-2014",
@@ -2735,7 +3436,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2014-11-24",
     effectiveOn: "2015-06-01",
     status: "expired",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Tổ chức Tòa án nhân dân 2014",
       en: "Law on the Organisation of People's Courts 2014",
@@ -2744,9 +3445,14 @@ export const documents: LegalDoc[] = [
       vi: "Khung tổ chức của hệ thống Tòa án nhân dân trong giai đoạn từ giữa năm 2015 tới hết năm 2024. Luật thay thế Luật Tổ chức Tòa án nhân dân số 33/2002/QH10 và hết hiệu lực khi Luật Tổ chức Tòa án nhân dân 2024 có hiệu lực. Bản án tuyên trong giai đoạn này đọc theo cơ cấu Tòa án của luật này.",
       en: "The organisational framework of the People's Courts from mid-2015 to the end of 2024. It replaced Law 33/2002/QH10 and ceased to have effect when the 2024 Law commenced. Judgments handed down in that period are read against the court structure it set.",
     },
+    note: {
+      vi: "Mâu thuẫn giữa các nguồn: CSDL quốc gia về pháp luật vẫn ghi còn hiệu lực (cập nhật 06/4/2026). Điều khoản thi hành của Luật Tổ chức Tòa án nhân dân 34/2024/QH15 quy định luật này hết hiệu lực từ ngày luật mới có hiệu lực, trừ các trường hợp tại khoản 1 và khoản 2 Điều 152 của luật mới. Bản ghi theo văn bản luật.",
+      en: "Sources conflict: the National Legal Database still labels this Law as in force (updated 6 April 2026). The final provisions of the Law on Organisation of People's Courts No. 34/2024/QH15 end this Law on the day the new Law takes effect, save for the cases in Article 152(1) and (2) of the new Law. The record follows the statute.",
+    },
     sources: [
       "https://congbao.chinhphu.vn/van-ban/luat-so-62-2014-qh13-12678.htm",
       "https://congly.vn/luat-to-chuc-tand-2014-so-62-2014-qh13-dang-ap-dung-234037.html",
+      `${VBPL}/44169`,
     ],
     confidence: "cross-check",
   },
@@ -2780,8 +3486,8 @@ export const documents: LegalDoc[] = [
     domains: ["doanh-nghiep"],
     issuedOn: "2025-06-30",
     effectiveOn: "2025-07-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định về đăng ký doanh nghiệp 2025",
       en: "Decree on enterprise registration 2025",
@@ -2795,8 +3501,30 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-168-2025-ND-CP-dang-ky-doanh-nghiep-623074.aspx",
       "https://lexnovum.com.vn/nhung-diem-moi-cua-nghi-dinh-168-2025-nd-cp-so-voi-nghi-dinh-01-2021-nd-cp-ve-dang-ky-doanh-nghiep/",
+      `${VBPL}/179096`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+  },
+  {
+    id: "nd-296-2026",
+    number: "296/2026/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["doanh-nghiep"],
+    issuedOn: "2026-07-23",
+    effectiveOn: "2026-07-23",
+    status: "active",
+    title: {
+      vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 168/2025/NĐ-CP về đăng ký doanh nghiệp",
+      en: "Decree amending Decree 168/2025/NĐ-CP on enterprise registration",
+    },
+    summary: {
+      vi: "Sửa đổi, bổ sung Nghị định 168/2025/NĐ-CP về đăng ký doanh nghiệp, có hiệu lực từ ngày 23/7/2026. Hồ sơ đăng ký nộp từ mốc này phải theo nghị định gốc ở bản đã sửa.",
+      en: "It amends Decree 168/2025/NĐ-CP on enterprise registration, in force from 23 July 2026. Registration filings from that date follow the parent decree as amended.",
+    },
+    amends: ["nd-168-2025"],
+    sources: ["https://vbpl.vn/van-ban/chi-tiet/7c5f36e0-8a44-11f1-908c-4d81544d74b3"],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-htx-2023",
@@ -2806,7 +3534,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2023-06-20",
     effectiveOn: "2024-07-01",
     status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Hợp tác xã",
       en: "Law on Cooperatives",
@@ -2822,8 +3550,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-hop-tac-xa-so-172023qh15-hieu-luc-thi-hanh-tu-ngay-0172024-9691",
       "https://dangkykinhdoanh.gov.vn/vn/Pages/ChiTietVanBan.aspx?vID=27019",
+      `${VBPL}/166269`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-155-2020",
@@ -2832,8 +3561,8 @@ export const documents: LegalDoc[] = [
     domains: ["doanh-nghiep", "dau-tu"],
     issuedOn: "2020-12-31",
     effectiveOn: "2021-01-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định chi tiết thi hành một số điều của Luật Chứng khoán",
       en: "Decree detailing a number of articles of the Law on Securities",
@@ -2842,22 +3571,52 @@ export const documents: LegalDoc[] = [
       vi: "Quy định chi tiết chào bán và phát hành chứng khoán, công ty đại chúng, quản trị công ty áp dụng cho công ty đại chúng, niêm yết và đăng ký giao dịch, cùng tỷ lệ sở hữu của nhà đầu tư nước ngoài. Nghị định thay thế các Nghị định 58/2012/NĐ-CP, 60/2015/NĐ-CP, 86/2016/NĐ-CP và 71/2017/NĐ-CP. Đây là văn bản phải mở khi cấu trúc một thương vụ chào bán riêng lẻ hoặc một đợt phát hành ra công chúng.",
       en: "It details securities offerings and issuance, public companies, corporate governance for public companies, listing and registration for trading, and foreign ownership limits. It replaced Decrees 58/2012/NĐ-CP, 60/2015/NĐ-CP, 86/2016/NĐ-CP and 71/2017/NĐ-CP. It is the instrument to open when structuring a private placement or a public offering.",
     },
+    note: {
+      vi: "Được sửa đổi, bổ sung bởi Nghị định 245/2025/NĐ-CP, có hiệu lực từ 11/9/2025 theo CSDL quốc gia về pháp luật. Trang của chính nghị định này trên CSDL quốc gia chưa đọc được trong phiên tra cứu.",
+      en: "Amended and supplemented by Decree 245/2025/NĐ-CP, in force from 11 September 2025 according to the National Legal Database. This decree's own page on that database could not be read in this search.",
+    },
     guides: ["luat-chung-khoan-2019"],
     sources: [
       "https://english.luatvietnam.vn/decree-no-155-2020-nd-cp-dated-december-31-2020-of-the-government-on-detailing-and-guiding-the-implementation-of-a-number-of-articles-of-the-law-on-196539-doc1.html",
       "https://vcci.com.vn/legal-document/nghi-dinh-1552020nd-cp-huong-dan-luat-chung-khoan",
+      `${VBPL}/182266`,
     ],
     confidence: "cross-check",
+  },
+  {
+    id: "nd-245-2025",
+    number: "245/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["doanh-nghiep"],
+    issuedOn: "2025-09-11",
+    effectiveOn: "2025-09-11",
+    status: "amended",
+    title: {
+      vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 155/2020/NĐ-CP quy định chi tiết thi hành một số điều của Luật Chứng khoán",
+      en: "Decree amending Decree 155/2020/NĐ-CP detailing the Securities Law",
+    },
+    summary: {
+      vi: "Sửa đổi, bổ sung nghị định thi hành Luật Chứng khoán, có hiệu lực từ ngày 11/9/2025. Việc áp dụng Luật Chứng khoán từ mốc này phải đọc Nghị định 155/2020/NĐ-CP ở bản đã sửa.",
+      en: "It amends the implementing decree of the Securities Law, in force from 11 September 2025. Applying the Securities Law from that date means reading Decree 155/2020/NĐ-CP as amended.",
+    },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực một phần (cập nhật 18/4/2026). Văn bản sửa đổi nghị định này chưa được đối chiếu trong phiên tra cứu.",
+      en: "The National Legal Database labels it partly expired (updated 18 April 2026). The instrument amending it was not checked in this search.",
+    },
+    amends: ["nd-155-2020"],
+    sources: ["https://vbpl.vn/van-ban/chi-tiet/182266"],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "luat-dau-tu-cong-2024",
     number: "58/2024/QH15",
     type: "luat",
-    domains: ["dau-tu", "xay-dung"],
+    domains: ["ppp", "dau-tu", "xay-dung"],
     issuedOn: "2024-11-29",
     effectiveOn: "2025-01-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Đầu tư công",
       en: "Law on Public Investment",
@@ -2870,8 +3629,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-dau-tu-cong-so-582024qh15-hieu-luc-thi-hanh-tu-ngay-01012025-11190",
       "https://thuvienphapluat.vn/van-ban/Dau-tu/Luat-Dau-tu-cong-2024-so-58-2024-QH15-621645.aspx",
+      `${VBPL}/174098`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "luat-dau-tu-cong-2019",
@@ -2881,7 +3641,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2019-06-13",
     effectiveOn: "2020-01-01",
     status: "expired",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Đầu tư công 2019",
       en: "Law on Public Investment 2019",
@@ -2890,9 +3650,14 @@ export const documents: LegalDoc[] = [
       vi: "Khung pháp lý của đầu tư công trong giai đoạn 2020 tới hết năm 2024: quản lý nhà nước về đầu tư công, quản lý và sử dụng vốn đầu tư công, quyền và nghĩa vụ của các chủ thể liên quan. Luật hết hiệu lực khi Luật Đầu tư công 2024 có hiệu lực. Dự án phê duyệt chủ trương đầu tư trong giai đoạn này vẫn phải đọc theo luật cũ ở những nội dung đã hoàn tất.",
       en: "The public-investment framework from 2020 to the end of 2024: state management of public investment, the management and use of public investment capital, and the rights and duties of those involved. It ceased to have effect when the 2024 Law commenced. Projects whose investment policy was approved in that period are still read against it for steps already completed.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực một phần (cập nhật 08/5/2026). Luật Đầu tư công 58/2024/QH15 đã thay luật này; phần còn được áp dụng là các quy định chuyển tiếp.",
+      en: "The National Legal Database labels this Law as partly expired (updated 8 May 2026). Public Investment Law No. 58/2024/QH15 replaced it; what survives are the transitional arrangements.",
+    },
     sources: [
       "https://tulieuvankien.dangcongsan.vn/he-thong-van-ban/van-ban-quy-pham-phap-luat/luat-dau-tu-cong-so-392019qh14-ngay-1362019-hieu-luc-thi-hanh-tu-ngay-01012020-5582",
       "https://luatvietnam.vn/dau-tu/luat-dau-tu-cong-2019-175007-d1.html",
+      `${VBPL}/136038`,
     ],
     confidence: "cross-check",
   },
@@ -2955,7 +3720,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2020-11-13",
     effectiveOn: "2022-01-01",
     status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Luật Người lao động Việt Nam đi làm việc ở nước ngoài theo hợp đồng",
       en: "Law on Vietnamese Workers Working Abroad under Contract",
@@ -2967,8 +3732,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/?pageid=27160&docid=202610",
       "https://english.luatvietnam.vn/law-no-69-2020-qh14-dated-november-13-2020-of-the-national-assembly-on-vietnamese-guest-workers-195185-doc1.html",
+      `${VBPL}/146643`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-12-2022",
@@ -2977,8 +3743,8 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong"],
     issuedOn: "2022-01-17",
     effectiveOn: "2022-01-17",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "expired",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định xử phạt vi phạm hành chính trong lĩnh vực lao động, bảo hiểm xã hội, người lao động Việt Nam đi làm việc ở nước ngoài theo hợp đồng",
       en: "Decree on administrative sanctions in labour, social insurance and Vietnamese workers working abroad under contract",
@@ -2987,11 +3753,17 @@ export const documents: LegalDoc[] = [
       vi: "Bảng chế tài hành chính của ba nhóm quan hệ: lao động, bảo hiểm xã hội và đưa người lao động đi làm việc ở nước ngoài. Đây là nơi đọc ra mức phạt cho từng hành vi như chậm trả lương, ký sai loại hợp đồng hay không đóng bảo hiểm xã hội. Nghị định thay thế Nghị định 28/2020/NĐ-CP và có hiệu lực từ ngày ký.",
       en: "The administrative-sanction table for three groups of relations: labour, social insurance and sending workers abroad. It is where the fine for a given act is read, such as late payment of wages, the wrong contract type, or failure to pay social insurance. It replaced Decree 28/2020/NĐ-CP and took effect on the date of signature.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 10/9/2026). Cùng ngày, Nghị định 283/2026/NĐ-CP về xử phạt vi phạm hành chính trong lĩnh vực lao động, bảo hiểm xã hội và người lao động Việt Nam đi làm việc ở nước ngoài theo hợp đồng có hiệu lực. Hành vi vi phạm xảy ra trước ngày này cần đối chiếu quy định chuyển tiếp của nghị định mới.",
+      en: "The National Legal Database labels this decree as wholly expired (updated 10 September 2026). Decree 283/2026/NĐ-CP on administrative penalties in labour, social insurance and overseas contract work took effect on the same day. Violations committed before that date should be checked against the transitional provisions of the new decree.",
+    },
     sources: [
       "https://vanban.chinhphu.vn/?pageid=27160&docid=205182",
       "https://vcci.com.vn/legal-document/nghi-dinh-122022nd-cp-ve-xu-phat-vi-pham-hanh-chinh-trong-linh-vuc-lao-dong-bao-hiem-xa-hoi-nguoi-lao-dong-viet-nam-di-lam-viec-o-nuoc-ngoai-theo-hop-dong",
+      `${VBPL}/153913`,
+      `https://vbpl.vn/van-ban/chi-tiet/787d3780-866f-11f1-8511-612429c9d15e`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-135-2020",
@@ -3000,8 +3772,8 @@ export const documents: LegalDoc[] = [
     domains: ["lao-dong"],
     issuedOn: "2020-11-18",
     effectiveOn: "2021-01-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định về tuổi nghỉ hưu",
       en: "Decree on the retirement age",
@@ -3014,8 +3786,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/?pageid=27160&docid=201650",
       "https://vbpl.vn/bolaodong/Pages/vbpq-van-ban-goc.aspx?ItemID=152734",
+      `${VBPL}/152734`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "nd-181-2025",
@@ -3024,8 +3797,8 @@ export const documents: LegalDoc[] = [
     domains: ["thue"],
     issuedOn: "2025-07-01",
     effectiveOn: "2025-07-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "amended",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định chi tiết thi hành một số điều của Luật Thuế giá trị gia tăng",
       en: "Decree detailing a number of articles of the Law on Value Added Tax",
@@ -3038,8 +3811,34 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/?pageid=27160&docid=214336",
       "https://xaydungchinhsach.chinhphu.vn/nghi-dinh-181-2025-nd-cp-quy-dinh-chi-tiet-thi-hanh-mot-so-dieu-cua-luat-thue-gia-tri-gia-tang-119250707172930626.htm",
+      `${VBPL}/187347`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
+  },
+  {
+    id: "nd-359-2025",
+    number: "359/2025/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["thue"],
+    issuedOn: "2025-12-31",
+    effectiveOn: "2026-01-01",
+    status: "active",
+    title: {
+      vi: "Nghị định sửa đổi, bổ sung một số điều của Nghị định số 181/2025/NĐ-CP quy định chi tiết thi hành một số điều của Luật Thuế giá trị gia tăng",
+      en: "Decree amending Decree 181/2025/NĐ-CP detailing the Value Added Tax Law",
+    },
+    summary: {
+      vi: "Sửa đổi, bổ sung nghị định thi hành Luật Thuế giá trị gia tăng 2024, có hiệu lực từ ngày 01/01/2026. Việc áp dụng thuế giá trị gia tăng từ mốc này phải đọc Nghị định 181/2025/NĐ-CP ở bản đã sửa.",
+      en: "It amends the implementing decree of the 2024 VAT Law, in force from 1 January 2026. VAT applied from that date must read Decree 181/2025/NĐ-CP as amended.",
+    },
+    note: {
+      vi: "Trường ngày có hiệu lực trên CSDL quốc gia về pháp luật để trống; ngày 01/01/2026 lấy từ điều khoản hiệu lực của chính nghị định, hiển thị trên cùng trang đó.",
+      en: "The commencement field on the National Legal Database is blank; 1 January 2026 is taken from the decree's own commencement clause, shown on the same page.",
+    },
+    amends: ["nd-181-2025"],
+    sources: ["https://vbpl.vn/van-ban/chi-tiet/186979"],
+    confidence: "verified",
+    verifiedOn: VERIFIED_2026_09_24,
   },
   {
     id: "nd-236-2025",
@@ -3049,7 +3848,7 @@ export const documents: LegalDoc[] = [
     issuedOn: "2025-08-29",
     effectiveOn: "2025-10-15",
     status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Nghị định quy định chi tiết một số điều của Nghị quyết 107/2023/QH15 về thuế thu nhập doanh nghiệp bổ sung theo quy định chống xói mòn cơ sở thuế toàn cầu",
       en: "Decree detailing Resolution 107/2023/QH15 on top-up corporate income tax under the global anti-base-erosion rules",
@@ -3062,8 +3861,9 @@ export const documents: LegalDoc[] = [
     sources: [
       "https://vanban.chinhphu.vn/?docid=215112&pageid=27160",
       "https://xaydungchinhsach.chinhphu.vn/nghi-dinh-so-236-2025-nd-cp-quy-dinh-ve-thue-toi-thieu-toan-cau-119250903135325963.htm",
+      `${VBPL}/181849`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
   {
     id: "tt-80-2021-btc",
@@ -3072,8 +3872,8 @@ export const documents: LegalDoc[] = [
     domains: ["thue"],
     issuedOn: "2021-09-29",
     effectiveOn: "2022-01-01",
-    status: "active",
-    verifiedOn: VERIFIED_2026_09_21,
+    status: "expired",
+    verifiedOn: VERIFIED_2026_09_24,
     title: {
       vi: "Thông tư hướng dẫn thi hành một số điều của Luật Quản lý thuế và Nghị định 126/2020/NĐ-CP",
       en: "Circular guiding the Law on Tax Administration and Decree 126/2020/NĐ-CP",
@@ -3082,12 +3882,17 @@ export const documents: LegalDoc[] = [
       vi: "Hướng dẫn thủ tục của khâu quản lý thuế: hồ sơ khai thuế, phân bổ nghĩa vụ thuế giữa các địa phương, hoàn thuế, miễn giảm và xử lý tiền thuế nộp thừa. Đây là lớp biểu mẫu và trình tự của Luật Quản lý thuế, nên kế toán thuế mở thông tư này nhiều hơn mở luật. Thông tư bãi bỏ các Thông tư 156/2013/TT-BTC, 99/2016/TT-BTC, 31/2017/TT-BTC, 208/2015/TT-BTC và 71/2010/TT-BTC.",
       en: "It guides the procedural layer of tax administration: returns, the allocation of tax obligations across localities, refunds, exemptions and reductions, and the handling of overpaid tax. It carries the forms and sequences of the Law on Tax Administration, which is why tax accountants open it more often than the statute. It repealed Circulars 156/2013/TT-BTC, 99/2016/TT-BTC, 31/2017/TT-BTC, 208/2015/TT-BTC and 71/2010/TT-BTC.",
     },
+    note: {
+      vi: "CSDL quốc gia về pháp luật ghi hết hiệu lực toàn bộ (cập nhật 08/5/2026). Văn bản thay thế chưa được đối chiếu trong phiên tra cứu này.",
+      en: "The National Legal Database labels this circular as wholly expired (updated 8 May 2026). The replacing instrument was not checked in this search.",
+    },
     guides: ["luat-qlt-2019", "nd-126-2020"],
     sources: [
       "https://congbao.chinhphu.vn/van-ban/thong-tu-so-80-2021-tt-btc-34774.htm",
       "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Thong-tu-80-2021-TT-BTC-huong-dan-Luat-Quan-ly-thue-Nghi-dinh-126-2020-ND-CP-466716.aspx",
+      `${VBPL}/151086`,
     ],
-    confidence: "cross-check",
+    confidence: "verified",
   },
 ];
 

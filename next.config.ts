@@ -4,8 +4,8 @@ import type { NextConfig } from "next";
   Chính sách nguồn nội dung.
 
   Trang này không nạp mã, kiểu dáng, ảnh hay phông chữ từ bên thứ ba: phông do
-  `next/font` tải về và phục vụ ngay tại chỗ, thư viện three nằm trong gói mã
-  của trang, và không có đoạn mã theo dõi nào. Vì vậy khoá `default-src 'self'`
+  `next/font` tải về và phục vụ ngay tại chỗ, mọi hình minh họa là SVG dựng
+  sẵn trong HTML, và không có đoạn mã theo dõi nào. Vì vậy khoá `default-src 'self'`
   không làm hỏng thứ gì mà lại chặn hẳn một nhánh tấn công: mã lạ chèn được vào
   trang vẫn không gửi được dữ liệu đi đâu.
 

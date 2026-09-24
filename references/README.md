@@ -1,4 +1,10 @@
-# Thư viện tham khảo cho lớp ba chiều
+# Thư viện tham khảo cho lớp hình ảnh
+
+> Ghi chú ngày 24/09/2026: lớp ba chiều đã được gỡ khỏi trang. Trang chủ nay là
+> dải văn bản nối xích, các trang khác dùng hình minh họa SVG tường minh (xem
+> `README.md` ở gốc repo). `three` và `@react-three/fiber` không còn trong
+> `dependencies`; GSAP cũng không còn được dùng, vì mọi chuyển động nay nằm
+> trong CSS. Bảng dưới giữ lại làm hồ sơ của đợt khảo sát trước.
 
 Khảo sát và clone ngày 18/09/2026. Số hiệu commit của từng bản clone nằm trong
 `repositories.json`. Mã nguồn upstream **không** nằm trong repo này: bảng dưới

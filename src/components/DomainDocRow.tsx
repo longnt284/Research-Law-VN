@@ -7,9 +7,9 @@ import { formatDate, getDict } from "@/i18n/dictionary";
 /**
  * Một dòng văn bản trong trang lĩnh vực.
  *
- * Danh sách này là đường đi chính, không phải khối ba chiều phía trên: nó dùng
- * được bằng bàn phím, đọc được bằng trình đọc màn hình, và hiện ra cả khi trình
- * duyệt không dựng được WebGL.
+ * Danh sách này là đường đi chính, không phải cây văn bản phía trên: nó đầy đủ,
+ * gồm cả văn bản chưa có quan hệ nào trong lĩnh vực, và đọc được theo thứ tự
+ * bằng trình đọc màn hình.
  */
 export function DocMetaRow({ doc, lang }: { doc: LegalDoc; lang: Lang }) {
   const t = getDict(lang);

@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { DomainGlyph } from "@/components/art/DomainGlyph";
+import { DomainsArt } from "@/components/art/PageArt";
 import { DomainSpark } from "@/components/DomainSpark";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { Reveal } from "@/components/Reveal";
-import { SpaceThumb } from "@/components/SpaceThumb";
 import { documents, domains } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { getDict, isLang } from "@/i18n/dictionary";
@@ -54,7 +55,7 @@ export default async function DomainsPage({
               rồi gặp lại chính hình đó ở đầu trang đích, nên biết mình đã tới
               đúng chỗ mà không cần một dòng chữ nói điều đó. */}
           <div className="hero-art rise rise-2">
-            <SpaceThumb act={2} turn={1.1} tilt={0.42} maxDots={58} maxEdges={14} />
+            <DomainsArt lang={lang} />
           </div>
         </div>
       </section>
@@ -80,27 +81,22 @@ export default async function DomainsPage({
                   className="group card-lux row-mark flex h-full flex-col gap-4 bg-[var(--paper)] p-5 transition-colors hover:bg-[var(--paper-2)] sm:p-6"
                 >
                   {/*
-                    Ở đây cố ý KHÔNG đặt vật thể ba chiều. Tám thẻ nghĩa là tám
-                    ngữ cảnh WebGL cùng sống trên một trang; trình duyệt chịu được
-                    nhưng máy yếu thì quạt chạy và trang cuộn giật, đổi lấy tám
-                    hình trang trí. Vật thể để dành cho trang riêng của từng lĩnh
-                    vực, nơi nó đứng một mình và có chỗ để nhìn.
-
-                    Cái thay vào chỗ đó là một vệt SVG tĩnh dựng từ chính tập dữ
-                    liệu: bốn tầng hiệu lực của riêng lĩnh vực này. Nó nặng vài
-                    trăm byte, không mở ngữ cảnh vẽ nào, và nói được một điều mà
-                    dòng chữ đếm văn bản không nói: lĩnh vực nặng về luật hay nặng
-                    về văn bản hướng dẫn.
+                    Thẻ mang hai hình, mỗi hình trả lời một câu hỏi. Biểu tượng
+                    nét nói "lĩnh vực gì" trước khi người đọc kịp đọc tên. Vệt bốn
+                    tầng ở chân thẻ, dựng từ chính tập dữ liệu, nói điều mà dòng
+                    chữ đếm văn bản không nói: lĩnh vực nặng về luật hay nặng về
+                    văn bản hướng dẫn.
                   */}
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <span
-                        aria-hidden="true"
-                        className="inline-block h-2 w-2 shrink-0 rounded-full"
+                        className="domain-card-glyph"
                         style={{
-                          background: `hsl(${d.hue} var(--node-chroma) var(--node-lightness))`,
+                          color: `hsl(${d.hue} var(--node-chroma) var(--node-lightness))`,
                         }}
-                      />
+                      >
+                        <DomainGlyph id={d.id} />
+                      </span>
                       <span className="eyebrow tnum">
                         {count} {t.domainPage.countDocs}
                       </span>

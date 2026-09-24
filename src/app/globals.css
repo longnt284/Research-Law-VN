@@ -765,661 +765,6 @@ a {
   transform: scaleX(1);
 }
 
-/* ── Trang mở đầu ba chiều ────────────────────────────────────────────────────
-   Một quy tắc chi phối cả khối này: cảnh ba chiều chỉ sống ở phần mở đầu. Từ
-   khối `.prologue-outro` trở xuống, nền phẳng trở lại và trang quay về đúng thứ
-   nó vốn là — một ấn phẩm để đọc điều luật. Nền động sau một đoạn văn dài làm
-   mắt trượt khỏi dòng đang đọc, và giới hạn đó đã đặt ra từ đợt trước cho lớp
-   nền sang trọng; ở đây nó áp dụng nguyên vẹn cho lớp WebGL.
-
-   Canvas dùng `position: sticky` chứ không `fixed`. Cả hai đều giữ cảnh đứng
-   yên trong lúc chữ cuộn qua, nhưng `fixed` tạo một phần tử nằm ngoài dòng chảy
-   và vẽ đè lên chân trang, buộc phải đi sửa chỉ số lớp ở những chỗ không liên
-   quan. `sticky` nằm trong dòng chảy: cảnh tự lùi đúng lúc phần mở đầu kết thúc,
-   và mọi thứ phía sau nó xếp lớp như bình thường. */
-
-.prologue {
-  position: relative;
-}
-
-.space-world {
-  position: sticky;
-  top: 0;
-  z-index: 0;
-  height: 100dvh;
-  pointer-events: none;
-  overflow: clip;
-  background: var(--paper);
-}
-
-/*
-  Khối các màn chữ được kéo lên chồng đúng lên canvas. Lề âm phải đặt ở đây chứ
-  không đặt thành `margin-bottom` của canvas: lề âm ở canvas làm hộp lề của nó
-  cao bằng 0, mà phạm vi dính lại đo trên hộp lề, nên canvas dính tới tận đáy
-  khối cha rồi thò hẳn một màn hình xuống dưới — đúng chỗ phần kết và chân trang
-  đứng. Đặt ở khối sau thì hộp lề của canvas vẫn cao 100dvh và nó lùi đúng lúc.
-*/
-.prologue-acts {
-  margin-top: -100dvh;
-}
-
-.space-world canvas {
-  display: block;
-}
-
-.act {
-  position: relative;
-  z-index: 1;
-  height: 118dvh;
-  min-height: 46rem;
-  overflow: clip;
-}
-
-.act-inner {
-  position: relative;
-  display: flex;
-  align-items: center;
-  height: 100dvh;
-  min-height: 40rem;
-  /* Chừa chỗ cho thanh điều hướng dính ở trên và thanh tiến độ ở dưới. */
-  padding: 6rem 8% 7rem;
-}
-
-.act-copy {
-  position: relative;
-  width: 42%;
-  max-width: 34rem;
-  pointer-events: auto;
-}
-
-.act-right .act-copy {
-  margin-left: 56%;
-}
-
-/*
-  Chữ đè lên khối ba chiều là lỗi nặng nhất mà một trang kiểu này mắc phải. Lời
-  giải là một lớp mờ đặt sau khối chữ, không phải đổ bóng lên từng ký tự: lớp mờ
-  đi theo chính khối chữ nên nó đúng chỗ ở mọi vị trí cuộn và mọi bố cục. Bán
-  kính gradient phải chạm 0 trước mép hộp, nếu không mép hộp còn màu và lớp mờ
-  đọc ra thành một hình chữ nhật dán lên cảnh.
-*/
-.act-copy::before,
-.act-note::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    color-mix(in oklab, var(--paper) 94%, transparent) 0,
-    color-mix(in oklab, var(--paper) 94%, transparent) 64%,
-    transparent 100%
-  );
-}
-
-.act-copy::before {
-  inset: -6rem -48% -6rem -42%;
-}
-
-.act-right .act-copy::before {
-  inset: -6rem -42% -6rem -48%;
-}
-
-.act-note::before {
-  inset: -1.9rem -2.8rem;
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    color-mix(in oklab, var(--paper) 88%, transparent) 0,
-    color-mix(in oklab, var(--paper) 88%, transparent) 30%,
-    transparent 100%
-  );
-}
-
-.act-title {
-  font-family: var(--font-serif);
-  font-size: clamp(2.1rem, 4.4vw, 3.9rem);
-  font-weight: 500;
-  line-height: 1.14;
-  letter-spacing: -0.028em;
-  margin: 0.9rem 0 1.1rem;
-  text-wrap: balance;
-}
-
-.act-title .line {
-  display: block;
-  overflow: clip;
-}
-
-.act-title .line-in {
-  display: block;
-  will-change: transform;
-}
-
-.act-text {
-  max-width: 30rem;
-  margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  color: var(--ink-2);
-}
-
-.act-note {
-  position: absolute;
-  right: 8%;
-  bottom: 9rem;
-  z-index: 1;
-  width: 15rem;
-  margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.7;
-  color: var(--ink-3);
-}
-
-.act-right .act-note {
-  right: auto;
-  left: 8%;
-}
-
-/* Chữ số khổng lồ của màn. Nó là một dấu chìm nằm trên cảnh nhưng dưới lớp mờ
-   của khối chữ, nên nó không bao giờ tranh chỗ với câu đang đọc: chỗ nào có chữ
-   thì lớp mờ phủ lên nó, chỗ nào trống thì nó neo màn vào đúng số thứ tự. */
-.act-ordinal {
-  position: absolute;
-  top: 26dvh;
-  right: 5%;
-  z-index: -1;
-  font-family: var(--font-serif);
-  font-size: clamp(9rem, 22vw, 22rem);
-  font-weight: 600;
-  line-height: 0.82;
-  letter-spacing: -0.06em;
-  color: color-mix(in oklab, var(--brass) 16%, transparent);
-  will-change: transform;
-  user-select: none;
-}
-
-.act-right .act-ordinal {
-  right: auto;
-  left: 5%;
-}
-
-/* Hai bố cục căn đáy dùng lớp mờ dạng dải ngang, không phải hình bầu dục, nên
-   chữ số nằm phía trên nó vẫn sạch và giữ được chỗ cũ bên trái. */
-.act-wide .act-ordinal,
-.act-close .act-ordinal {
-  right: auto;
-  left: 4%;
-  top: 30dvh;
-}
-
-.act-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 2.6rem;
-  margin: 1.8rem 0 0;
-}
-
-.act-stats div {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 0.15rem;
-}
-
-.act-stats dt {
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-.act-stats dd {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-size: 1.75rem;
-  line-height: 1;
-  color: var(--ink);
-}
-
-.act-span {
-  margin: 1.4rem 0 0;
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-
-.act-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1.9rem;
-}
-
-/* Hai bố cục căn đáy chiếm trọn bề ngang: trục thời gian cần cả chiều ngang, và
-   màn cuối phải nhường khoảng giữa cho lối vào bản đồ. */
-.act-wide .act-inner,
-.act-close .act-inner {
-  align-items: flex-end;
-  padding-bottom: 9rem;
-}
-
-.act-wide .act-copy,
-.act-close .act-copy {
-  width: 100%;
-  max-width: 62rem;
-}
-
-.act-wide .act-copy::before,
-.act-close .act-copy::before {
-  inset: -5rem -50vw -7rem -50vw;
-  background: linear-gradient(
-    transparent 0,
-    color-mix(in oklab, var(--paper) 90%, transparent) 30%,
-    color-mix(in oklab, var(--paper) 90%, transparent) 74%,
-    transparent 100%
-  );
-}
-
-.act-wide .act-note,
-.act-close .act-note {
-  top: 7.5rem;
-  bottom: auto;
-}
-
-/* ── Thanh chương bên phải ─────────────────────────────────────────────────── */
-
-.act-nav {
-  position: fixed;
-  right: 1.6%;
-  top: 50%;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  transform: translateY(-50%);
-  transition: opacity 0.35s var(--ease-out-soft), visibility 0.35s;
-}
-
-.act-nav[data-live="off"],
-.space-bar[data-live="off"] {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.act-nav button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  min-width: 2.25rem;
-  height: 2.1rem;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  color: inherit;
-}
-
-.act-nav-tick {
-  width: 0.6rem;
-  height: 2px;
-  background: var(--ink-3);
-  opacity: 0.5;
-  transition: width 0.3s var(--ease-out-soft), opacity 0.3s, background 0.3s;
-}
-
-.act-nav [aria-current] .act-nav-tick {
-  width: 1.5rem;
-  background: var(--accent);
-  opacity: 1;
-}
-
-.act-nav-label {
-  position: absolute;
-  right: 2.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.4rem 0.6rem;
-  white-space: nowrap;
-  font-size: 0.75rem;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  opacity: 0;
-  transform: translateX(0.5rem);
-  transition: opacity 0.2s, transform 0.2s;
-  pointer-events: none;
-}
-
-.act-nav button:hover .act-nav-label,
-.act-nav button:focus-visible .act-nav-label {
-  opacity: 1;
-  transform: none;
-}
-
-.act-nav-index {
-  color: var(--accent);
-  letter-spacing: 0.04em;
-}
-
-.act-rail {
-  position: absolute;
-  right: -0.7rem;
-  top: 0.4rem;
-  bottom: 0.4rem;
-  width: 1px;
-  background: var(--rule);
-}
-
-.act-rail-fill {
-  position: absolute;
-  inset: 0;
-  background: var(--accent);
-  transform: scaleY(0);
-  transform-origin: top center;
-  will-change: transform;
-}
-
-/* ── Thanh tiến độ dưới cùng ──────────────────────────────────────────────── */
-
-.space-bar {
-  position: fixed;
-  inset: auto 0 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  height: 4.25rem;
-  padding: 0 4.5%;
-  background: color-mix(in oklab, var(--paper) 90%, transparent);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--rule);
-  transition: opacity 0.35s var(--ease-out-soft), visibility 0.35s;
-}
-
-.space-bar-progress {
-  position: absolute;
-  inset: -1px 0 auto;
-  height: 2px;
-  background: var(--rule);
-}
-
-.space-bar-fill {
-  display: block;
-  height: 100%;
-  background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left center;
-  will-change: transform;
-}
-
-.space-bar-now {
-  display: flex;
-  align-items: center;
-  gap: 1.1rem;
-  min-width: 0;
-  font-size: 0.8125rem;
-}
-
-.space-bar-count {
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-}
-
-.space-bar-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.space-bar-cta {
-  padding: 0.55rem 1rem;
-  font-size: 0.8125rem;
-  color: var(--paper);
-  background: var(--accent);
-  transition: background 0.2s;
-}
-
-.space-bar-cta:hover {
-  background: var(--accent-soft);
-}
-
-.space-bar-panel-button {
-  padding: 0.5rem 0.9rem;
-  font: inherit;
-  font-size: 0.75rem;
-  color: var(--ink-2);
-  background: none;
-  border: 1px solid var(--rule-strong);
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.space-bar-panel-button[aria-expanded="true"],
-.space-bar-panel-button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.space-settings {
-  position: absolute;
-  right: 4.5%;
-  bottom: calc(100% + 0.9rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  width: min(21rem, 88vw);
-  padding: 1.3rem 1.4rem 1.5rem;
-  background: var(--paper);
-  border: 1px solid var(--rule-strong);
-}
-
-.space-settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  font-size: 0.8125rem;
-  color: var(--ink-2);
-}
-
-.space-settings-row.check {
-  justify-content: flex-start;
-  gap: 0.7rem;
-  cursor: pointer;
-}
-
-.space-settings-row input[type="checkbox"] {
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
-  accent-color: var(--accent);
-}
-
-.space-settings-toggle {
-  padding: 0.4rem 0.8rem;
-  font: inherit;
-  font-size: 0.75rem;
-  color: var(--ink);
-  background: none;
-  border: 1px solid var(--rule-strong);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.space-settings-toggle:hover {
-  border-color: var(--accent);
-}
-
-/* ── Màn mở đầu và các đường dự phòng ─────────────────────────────────────── */
-
-/*
-  Tấm màn chỉ được phép tồn tại khi JavaScript thật sự chạy. Nó là một lớp phủ
-  kín khung hình và chỉ có mã mới gỡ được, nên nếu nó hiện mặc định thì trình
-  duyệt chặn JavaScript sẽ thấy đúng một ô vuông giữa màn hình vĩnh viễn — trong
-  khi toàn bộ nội dung vẫn nằm sẵn trong HTML ngay phía dưới.
-
-  Lớp `js` do đoạn script ở đầu <body> đặt, và cũng chính đoạn đó gỡ lớp này ra
-  sau bốn giây nếu gói mã của trang tải hỏng. Treo tấm màn vào đó là nhận luôn cả
-  hai đường thoát: không có JavaScript thì không có tấm màn, và có JavaScript mà
-  gói mã hỏng thì tấm màn vẫn tự mở.
-*/
-#space-curtain {
-  display: none;
-}
-
-html.js #space-curtain {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 1.5rem;
-  background: var(--paper);
-  transition: opacity 0.8s var(--ease-out-soft), visibility 0.8s;
-}
-
-.space-curtain-mark {
-  display: grid;
-  place-items: center;
-  width: 4rem;
-  height: 4rem;
-  font-family: var(--font-serif);
-  font-size: 2rem;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-}
-
-.space-curtain-bar {
-  display: block;
-  width: min(13rem, 44vw);
-  height: 1px;
-  overflow: clip;
-  background: var(--rule);
-}
-
-.space-curtain-bar i {
-  display: block;
-  height: 100%;
-  background: var(--accent);
-  transform-origin: left center;
-  animation: space-curtain-bar 2.4s var(--ease-out-soft) infinite;
-}
-
-.space-curtain-note {
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-
-@keyframes space-curtain-bar {
-  0% {
-    transform: scaleX(0);
-  }
-  70% {
-    transform: scaleX(1);
-  }
-  100% {
-    transform: scaleX(1);
-    opacity: 0;
-  }
-}
-
-html[data-space-ready] #space-curtain {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.space-skip {
-  position: fixed;
-  left: 1rem;
-  top: -5rem;
-  z-index: 50;
-  padding: 0.75rem 1rem;
-  color: var(--paper);
-  background: var(--accent);
-}
-
-.space-skip:focus {
-  top: 0.75rem;
-}
-
-.space-note {
-  position: absolute;
-  left: 50%;
-  top: 42%;
-  width: min(26rem, 80vw);
-  transform: translateX(-50%);
-  text-align: center;
-  font-size: 0.8125rem;
-  line-height: 1.8;
-  color: var(--ink-3);
-}
-
-/* Không dựng được WebGL thì vẫn còn một hình: một vành mảnh quay rất chậm, vẽ
-   bằng CSS. Nó giữ đúng nhịp của trang thay vì để lại một khoảng trống. */
-.space-fallback {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-}
-
-.space-fallback-form {
-  width: min(24vw, 18rem);
-  aspect-ratio: 1;
-  border: 1px solid color-mix(in oklab, var(--brass) 55%, transparent);
-  border-radius: 50%;
-  box-shadow:
-    inset 0 0 0 1px color-mix(in oklab, var(--rule) 70%, transparent),
-    0 0 6rem color-mix(in oklab, var(--brass) 14%, transparent);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .space-fallback-form {
-    animation: space-fallback-turn 26s linear infinite;
-  }
-}
-
-@keyframes space-fallback-turn {
-  to {
-    transform: rotate(1turn);
-  }
-}
-
-/* ── Lối ra ───────────────────────────────────────────────────────────────── */
-
-/*
-  Phần kết không còn cao đúng một màn hình. Từ đợt này nó mang cả khối lối vào,
-  nên chiều cao do nội dung quyết định; ép `min-height: 100dvh` ở đây chỉ chèn
-  thêm một khoảng trống giữa đoạn giới thiệu và lưới thẻ. Nền phẳng và đường kẻ
-  trên vẫn giữ nguyên: đó là chỗ cảnh ba chiều kết thúc và trang trở lại thành
-  một ấn phẩm để đọc.
-*/
-.prologue-outro {
-  position: relative;
-  z-index: 1;
-  background: var(--paper);
-  border-top: 1px solid var(--rule);
-}
-
-.prologue-outro-inner {
-  width: 100%;
-  max-width: 76rem;
-  margin: 0 auto;
-  padding: 4.5rem 1.25rem 0;
-}
-
-@media (min-width: 640px) {
-  .prologue-outro-inner {
-    padding: 5.5rem 2rem 0;
-  }
-}
-
 /* ── Khối lối vào ở trang chủ ─────────────────────────────────────────────── */
 
 .hub {
@@ -1694,222 +1039,10 @@ html[data-space-ready] #space-curtain {
   stroke-width: 0.9;
 }
 
-/* ── Hình thu nhỏ của các bố cục ──────────────────────────────────────────── */
-
-/*
-  Hình nằm đè lên khung chứ không đẩy khung cao lên. Một SVG có `viewBox` mang
-  sẵn tỷ lệ nội tại 8:5; để nó nằm trong dòng chảy thì tỷ lệ ấy trở thành chiều
-  cao tối thiểu của khung, và `aspect-ratio` đặt trên khung không còn tác dụng —
-  đúng cái bẫy đã làm thẻ nhỏ cao bằng thẻ lớn. Cho hình ra khỏi dòng chảy thì
-  khung tự quyết chiều cao, còn `preserveAspectRatio` lo phần thừa hai bên.
-*/
-.thumb {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.thumb-edge {
-  stroke: var(--rule-strong);
-  stroke-width: 0.7;
-  stroke-linecap: round;
-  fill: none;
-}
-
-/* Ba loại quan hệ, ba cách vẽ — cùng quy ước với bản đồ hai chiều: quy định
-   chi tiết vẽ liền mảnh, sửa đổi vẽ nét đứt, thay thế vẽ đậm bằng mực nhấn. */
-.thumb-edge-1 {
-  stroke-dasharray: 2.4 2.2;
-}
-
-.thumb-edge-2 {
-  stroke: var(--accent);
-  stroke-width: 0.9;
-}
-
-/*
-  Một nhịp trôi rất chậm của cả nhóm, và chỉ của cả nhóm. Hình nằm trong thẻ
-  tĩnh nên chuyển động ở đây chỉ để thẻ không chết cứng; nó dừng hẳn khi hệ điều
-  hành báo đã giảm chuyển động.
-*/
-.thumb-drift {
-  transform-origin: 50% 50%;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .thumb-drift {
-    animation: thumb-drift 18s ease-in-out infinite;
-  }
-  .hub-card:hover .thumb-drift,
-  .hub-card:focus-visible .thumb-drift {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes thumb-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(0, -1.6%, 0) scale(1.035);
-  }
-}
-
-/* ── Mời xem lại phần mở đầu ──────────────────────────────────────────────── */
-
-.hub-replay {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.5rem;
-  margin-top: 2.25rem;
-  border: 1px solid var(--rule);
-  background: var(--paper-2);
-  padding: 1.5rem 1.4rem;
-}
-
-.hub-replay-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-}
-
 .hub-verified {
   margin-top: 1.5rem;
   font-size: 0.875rem;
   color: var(--ink-3);
-}
-
-/* ── Màn hẹp ──────────────────────────────────────────────────────────────── */
-
-@media (max-width: 900px) {
-  .act-inner {
-    padding-left: 6%;
-    padding-right: 6%;
-  }
-  .act-copy {
-    width: 46%;
-  }
-  .act-right .act-copy {
-    margin-left: 52%;
-  }
-  .act-note {
-    display: none;
-  }
-}
-
-@media (max-width: 760px) {
-  /* Trên màn dọc, khối ba chiều và khối chữ dùng chung khoảng giữa màn hình.
-     Cảnh đã được nâng lên phía trên trong `LegalSpace`; ở đây khối chữ xuống đáy
-     và lớp mờ chạy từ đáy lên quá đầu khối chữ, che đúng phần cảnh chồng vào chữ
-     mà vẫn để hở phần trên của tác phẩm. */
-  .act {
-    height: 112dvh;
-    min-height: 44rem;
-  }
-  .act-inner,
-  .act-wide .act-inner,
-  .act-close .act-inner {
-    align-items: flex-end;
-    min-height: 38rem;
-    padding: 0 7% 7.5rem;
-  }
-  .act-copy,
-  .act-right .act-copy,
-  .act-wide .act-copy,
-  .act-close .act-copy {
-    width: 100%;
-    max-width: 100%;
-    margin-left: 0;
-  }
-  .act-copy::before,
-  .act-right .act-copy::before,
-  .act-wide .act-copy::before,
-  .act-close .act-copy::before {
-    inset: -3.5rem -10% -14rem -10%;
-    background: linear-gradient(
-      transparent,
-      color-mix(in oklab, var(--paper) 93%, transparent) 26%,
-      color-mix(in oklab, var(--paper) 93%, transparent)
-    );
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  .act-title {
-    font-size: clamp(1.9rem, 8vw, 2.6rem);
-  }
-  .act-ordinal,
-  .act-right .act-ordinal,
-  .act-wide .act-ordinal,
-  .act-close .act-ordinal {
-    top: 20dvh;
-    right: auto;
-    left: 0;
-    font-size: 30vw;
-  }
-  .act-stats {
-    gap: 0 1.6rem;
-  }
-  .act-stats dd {
-    font-size: 1.35rem;
-  }
-  /* Cảm ứng không có hover, nên tên chương trong thanh bên không bao giờ hiện.
-     Thanh dưới cùng đã nói tên chương; ở đây chỉ cần số của chương đang mở. */
-  .act-nav {
-    right: 0.8%;
-    top: 44%;
-  }
-  .act-nav button {
-    height: 2.75rem;
-    min-width: 2.75rem;
-  }
-  .act-nav-label {
-    font-size: 0;
-    border: 0;
-    background: none;
-    padding: 0;
-    right: 1.7rem;
-  }
-  .act-nav [aria-current] .act-nav-label {
-    opacity: 1;
-    transform: none;
-  }
-  .act-nav-index {
-    font-size: 0.625rem;
-  }
-  .space-bar {
-    height: 4.25rem;
-    padding: 0 6%;
-  }
-  .space-bar-now {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
-    font-size: 0.75rem;
-  }
-  .space-bar-cta {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.75rem;
-  }
-  .space-settings {
-    right: 6%;
-    left: 6%;
-    width: auto;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .space-curtain-bar i {
-    animation: none;
-    transform: scaleX(1);
-  }
-  .act-ordinal {
-    opacity: 0.55;
-  }
 }
 
 /*
@@ -1943,4 +1076,1348 @@ html[data-space-ready] #space-curtain {
 
 .nav-strip::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Văn bản nối xích ─────────────────────────────────────────────────────────
+   Trang chủ vẽ tập dữ liệu thành những dải thẻ văn bản nối nhau bằng mắt xích.
+   Ba bộ màu kim loại, mỗi bộ một loại quan hệ: đồng cho quy định chi tiết, thép
+   cho sửa đổi bổ sung, son đỏ cho thay thế. Màu chỉ là một trong ba cách nói
+   loại quan hệ — nhãn chữ và câu trong `title` là hai cách còn lại — nên người
+   không phân biệt được màu vẫn đọc đúng. */
+
+:root {
+  --chain-g-hi: #f6e3a8;
+  --chain-g-mid: #b48c3a;
+  --chain-g-lo: #6b511d;
+  --chain-a-hi: #f1f3f6;
+  --chain-a-mid: #8b94a1;
+  --chain-a-lo: #474e59;
+  --chain-r-hi: #f4b8a8;
+  --chain-r-mid: #a3402b;
+  --chain-r-lo: #5a1a0f;
+  --chain-glint: rgba(255, 255, 255, 0.75);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --chain-g-lo: #8a6a2c;
+    --chain-a-lo: #5f6773;
+    --chain-r-mid: #c2553d;
+    --chain-r-lo: #7c2a1b;
+    --chain-glint: rgba(255, 255, 255, 0.4);
+  }
+}
+
+:root[data-theme="dark"] {
+  --chain-g-lo: #8a6a2c;
+  --chain-a-lo: #5f6773;
+  --chain-r-mid: #c2553d;
+  --chain-r-lo: #7c2a1b;
+  --chain-glint: rgba(255, 255, 255, 0.4);
+}
+
+.chain-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.chain-guides {
+  --chain-paint: url(#chain-metal-guides);
+  --chain-ink: var(--brass);
+}
+.chain-amends {
+  --chain-paint: url(#chain-metal-amends);
+  --chain-ink: var(--ink-3);
+}
+.chain-replaces {
+  --chain-paint: url(#chain-metal-replaces);
+  --chain-ink: var(--accent);
+}
+
+.chain-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  stroke: var(--chain-paint, var(--brass));
+}
+.chain-body {
+  fill: none;
+  stroke-width: 3.6;
+}
+.chain-glint {
+  fill: none;
+  stroke: var(--chain-glint);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+/* Mắt xích giữa hai thẻ. Hai mép âm nhẹ để vòng đầu và vòng cuối chạm vào thẻ,
+   như sợi xích được móc thật vào tờ giấy. */
+.chain-link {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  width: 6.75rem;
+  margin: 0 -0.55rem;
+}
+.chain-wire {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+.chain-label {
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--chain-ink);
+}
+.arrow-v {
+  display: none;
+}
+
+/* Chấm sáng chạy dọc xích, từ văn bản tác động sang văn bản bị tác động. Chỉ
+   dịch `transform` của một lớp phủ rộng bằng sợi xích, nên trình duyệt tổng hợp
+   được mà không vẽ lại. */
+.chain-pulse {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.chain-pulse::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  margin-top: -4px;
+  background: radial-gradient(
+      circle 4px at 4px 50%,
+      #fff 0,
+      var(--chain-ink) 55%,
+      transparent 75%
+    )
+    no-repeat;
+  opacity: 0;
+  animation: chain-pulse 3.4s var(--ease-out-soft) infinite;
+}
+.acts-back .chain-pulse::before {
+  animation-name: chain-pulse-back;
+}
+.chain-strand:nth-child(3n + 1) .chain-pulse::before {
+  animation-delay: -1.1s;
+}
+.chain-strand:nth-child(3n + 2) .chain-pulse::before {
+  animation-delay: -2.3s;
+}
+
+@keyframes chain-pulse {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  15%,
+  70% {
+    opacity: 0.95;
+  }
+  85%,
+  100% {
+    opacity: 0;
+    transform: translateX(calc(100% - 8px));
+  }
+}
+@keyframes chain-pulse-back {
+  0% {
+    opacity: 0;
+    transform: translateX(calc(100% - 8px));
+  }
+  15%,
+  70% {
+    opacity: 0.95;
+  }
+  85%,
+  100% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+/* Thẻ văn bản: một tờ giấy thu nhỏ, có tờ thứ hai lấp ló phía sau, góc trên gấp
+   lại, mép trái mang màu lĩnh vực. */
+.doc-card {
+  --hue: 40;
+  --domain: hsl(var(--hue) var(--node-chroma) var(--node-lightness));
+  position: relative;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0.28rem;
+  width: 14.5rem;
+  height: 8.75rem;
+  padding: 0.7rem 0.9rem 0.75rem 1.05rem;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  box-shadow:
+    4px 4px 0 -1px var(--paper),
+    4px 4px 0 0 var(--rule);
+  color: var(--ink);
+  transition:
+    transform 0.35s var(--ease-out-soft),
+    border-color 0.25s var(--ease-out-soft);
+}
+.doc-card::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  width: 3px;
+  background: var(--domain);
+}
+.doc-card::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 1rem;
+  height: 1rem;
+  background: linear-gradient(
+    to bottom left,
+    var(--paper-2) 50%,
+    var(--paper-3) 50%
+  );
+  border-bottom: 1px solid var(--rule-strong);
+  border-left: 1px solid var(--rule-strong);
+}
+.doc-card:hover,
+.doc-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+.doc-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-right: 1.1rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: var(--domain);
+}
+.doc-card-year {
+  color: var(--ink-3);
+}
+.doc-card-number {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.doc-card-title {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  font-size: 0.78rem;
+  line-height: 1.42;
+  color: var(--ink-2);
+}
+.doc-card.is-expired {
+  background: var(--paper-2);
+}
+.doc-card.is-expired .doc-card-number,
+.doc-card.is-expired .doc-card-title {
+  color: var(--ink-3);
+}
+
+/* Con dấu tình trạng hiệu lực, nghiêng như dấu đóng tay. */
+.doc-card-stamp {
+  position: absolute;
+  right: 0.55rem;
+  bottom: 0.45rem;
+  padding: 0.05rem 0.4rem;
+  border: 1.5px solid currentColor;
+  background: color-mix(in oklab, var(--paper) 78%, transparent);
+  color: var(--accent);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  transform: rotate(-6deg);
+  opacity: 0.88;
+}
+.doc-card.is-amended .doc-card-stamp {
+  color: var(--brass);
+}
+.doc-card.is-pending .doc-card-stamp {
+  color: var(--ink-2);
+  border-style: dashed;
+}
+
+/* ── Phần đầu trang chủ ───────────────────────────────────────────────────── */
+
+.chain-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 3.25rem 0 2.25rem;
+  border-bottom: 3px double var(--rule-strong);
+  background:
+    radial-gradient(48rem 26rem at 8% 0%, var(--lux-1), transparent 70%),
+    radial-gradient(40rem 22rem at 96% 100%, var(--lux-2), transparent 72%);
+}
+/* Nền kẻ dòng như giấy viết hồ sơ, mờ dần về hai đầu. */
+.chain-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 31px,
+    color-mix(in oklab, var(--rule) 55%, transparent) 31px 32px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 80%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 80%, transparent);
+}
+
+.chain-hero-copy,
+.chain-foot {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+@media (min-width: 640px) {
+  .chain-hero-copy,
+  .chain-foot {
+    padding: 0 2rem;
+  }
+}
+
+.chain-hero-title {
+  margin-top: 0.9rem;
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 1.1rem + 4.6vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+}
+.chain-hero-title span {
+  display: block;
+}
+.chain-hero-title span:last-child {
+  color: var(--accent);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.chain-hero-row {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.4rem;
+}
+@media (min-width: 960px) {
+  .chain-hero-row {
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 3rem;
+  }
+}
+.chain-hero-lede {
+  max-width: 64ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.chain-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: 0.9rem 2rem;
+}
+@media (min-width: 520px) {
+  .chain-hero-stats {
+    grid-template-columns: repeat(4, minmax(0, max-content));
+  }
+}
+.chain-hero-stats dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.chain-hero-stats dd {
+  margin-top: 0.15rem;
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+.chain-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1.6rem;
+}
+
+/* Ba làn chạy. Hai mép mờ dần để thẻ đi vào và đi ra chứ không bị cắt cụt. */
+.chain-field {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 2.5rem;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+.chain-lane {
+  overflow: hidden;
+  padding: 0.55rem 0 0.8rem;
+}
+.chain-lane-1 {
+  margin-left: -9rem;
+}
+.chain-track {
+  display: flex;
+  width: max-content;
+  animation: chain-run var(--lane-dur, 120s) linear infinite;
+  will-change: transform;
+}
+.chain-lane-1 .chain-track {
+  animation-direction: reverse;
+}
+/* Rê chuột vào một làn là làn đó đứng lại, đủ lâu để đọc số hiệu hay bấm vào thẻ. */
+.chain-lane:hover .chain-track,
+.chain-lane:hover .chain-pulse::before {
+  animation-play-state: paused;
+}
+.chain-run {
+  display: flex;
+  align-items: center;
+}
+.chain-strand {
+  display: flex;
+  align-items: center;
+  padding-right: 1.4rem;
+}
+.chain-end {
+  margin-left: 1.4rem;
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--brass);
+  opacity: 0.6;
+}
+
+@keyframes chain-run {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.chain-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin-top: 1.5rem;
+}
+.chain-legend ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  margin-top: 0.55rem;
+}
+.chain-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.chain-legend-item .chain-svg {
+  width: 3.4rem;
+}
+.chain-legend-hint {
+  max-width: 72ch;
+  margin-top: 0.55rem;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.motion-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid var(--rule-strong);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  transition: border-color 0.2s, color 0.2s;
+}
+.motion-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+/* Biểu tượng tạm dừng là hai vạch; khi đã dừng thì thành tam giác phát. */
+.motion-toggle-icon {
+  position: relative;
+  width: 0.7rem;
+  height: 0.75rem;
+  border-left: 3px solid currentColor;
+  border-right: 3px solid currentColor;
+}
+.motion-toggle-icon[data-off] {
+  width: 0;
+  height: 0;
+  border-top: 0.375rem solid transparent;
+  border-bottom: 0.375rem solid transparent;
+  border-left: 0.6rem solid currentColor;
+  border-right: 0;
+}
+
+/* Nút dừng và lựa chọn giảm chuyển động của hệ điều hành cùng dừng mọi thứ tự chạy. */
+:root[data-motion="off"] .chain-track,
+:root[data-motion="off"] .chain-pulse::before,
+:root[data-motion="off"] .art *,
+:root[data-motion="off"] .lux-field::before,
+:root[data-motion="off"] .lux-field::after,
+:root[data-motion="off"] .header-lux::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chain-track {
+    animation: none;
+  }
+  .chain-lane {
+    overflow-x: auto;
+  }
+  .chain-pulse::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .doc-card {
+    width: 12.5rem;
+    height: 8.25rem;
+  }
+  .chain-lane-1 {
+    margin-left: -5rem;
+  }
+}
+
+/* ── Ba khối giải thích ───────────────────────────────────────────────────── */
+
+.home-blocks {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 0.5rem 1.25rem 0;
+}
+@media (min-width: 640px) {
+  .home-blocks {
+    padding: 0.5rem 2rem 0;
+  }
+}
+.home-block {
+  display: grid;
+  gap: 2rem;
+  padding: 4rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+@media (min-width: 1000px) {
+  .home-block {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+    align-items: start;
+    gap: 3.5rem;
+  }
+}
+.home-block-text {
+  max-width: 54ch;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.home-block-note {
+  max-width: 54ch;
+  margin-top: 1rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--brass);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+
+/* Thứ bậc: bốn bậc thang lùi dần sang phải. */
+.hier-figure {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+}
+.hier-axis {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 4.4rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.hier-axis span:first-child {
+  color: var(--accent);
+}
+.hier-axis i {
+  position: relative;
+  flex: 1;
+  width: 1px;
+  margin: 0.55rem 0 0.7rem;
+  background: linear-gradient(var(--accent), var(--rule-strong));
+}
+.hier-axis i::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: -4px;
+  border-top: 6px solid var(--rule-strong);
+  border-right: 4.5px solid transparent;
+  border-left: 4.5px solid transparent;
+}
+.hier-steps {
+  display: grid;
+  gap: 0.5rem;
+}
+.hier-step {
+  position: relative;
+  margin-left: calc(var(--step) * 7%);
+  border: 1px solid var(--rule);
+  border-left-width: calc(4px - var(--step) * 1px);
+  border-left-color: var(--accent);
+  background: var(--paper);
+  padding: 0.75rem 0.95rem 0.85rem;
+}
+.hier-step-0 {
+  --step: 0;
+}
+.hier-step-1 {
+  --step: 1;
+}
+.hier-step-2 {
+  --step: 2;
+}
+.hier-step-3 {
+  --step: 3;
+}
+.hier-step-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.7rem;
+}
+.hier-step-index {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.hier-step-name {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+}
+.hier-step-count {
+  margin-left: auto;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  line-height: 1;
+}
+.hier-step-docs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 0.65rem;
+}
+/* Mỗi ô là một tờ văn bản nhỏ có góc gấp. */
+.hier-doc {
+  width: 11px;
+  height: 14px;
+  background: hsl(var(--hue) var(--node-chroma) var(--node-lightness));
+  clip-path: polygon(0 0, 62% 0, 100% 30%, 100% 100%, 0 100%);
+}
+.hier-doc.is-amended {
+  opacity: 0.7;
+}
+.hier-doc.is-expired {
+  opacity: 0.28;
+}
+.reveal.is-in .hier-doc {
+  animation: tile-in 0.5s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i) * 12ms + 150ms);
+}
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.6);
+  }
+}
+
+/* Quan hệ: ba hàng, mỗi hàng một ví dụ thật. */
+.rel-rows {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--rule);
+  background: var(--rule);
+}
+.rel-row {
+  display: grid;
+  gap: 1.1rem;
+  background: var(--paper);
+  padding: 1.4rem 1.35rem 1.5rem;
+}
+.rel-row-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.1rem;
+}
+.rel-row-title::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 3px;
+  background: var(--chain-ink);
+}
+.rel-row-text {
+  max-width: 62ch;
+  margin-top: 0.4rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+.rel-row-count {
+  margin-top: 0.55rem;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.rel-row-count strong {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.rel-row-example {
+  display: flex;
+  align-items: center;
+}
+.rel-row-example .doc-card {
+  width: 14rem;
+  height: 8.5rem;
+}
+/* Xích kéo ra từ trái sang khi khối lọt vào màn hình. */
+.reveal.is-in .rel-row-example .chain-wire {
+  animation: chain-draw 0.9s var(--ease-out-soft) both;
+  animation-delay: 0.35s;
+}
+@keyframes chain-draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Màn hẹp: hai thẻ xếp dọc, xích dựng đứng, mũi tên đổi sang chiều dọc. */
+@media (max-width: 560px) {
+  .rel-row-example {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rel-row-example .doc-card {
+    width: 100%;
+  }
+  .rel-row-example .chain-link {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    height: 4.6rem;
+    margin: -0.3rem 0;
+  }
+  .rel-row-example .chain-wire {
+    width: 4.6rem;
+    margin: 0 -1.6rem;
+    transform: rotate(90deg);
+  }
+  .rel-row-example .chain-label {
+    margin-top: 0;
+    margin-left: 0.4rem;
+  }
+  .rel-row-example .arrow-h {
+    display: none;
+  }
+  .rel-row-example .arrow-v {
+    display: inline;
+  }
+}
+
+/* Trục thời gian. */
+.tl-figure {
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 1rem 1rem 0.9rem;
+}
+.tl-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.tl-grid {
+  stroke: var(--rule);
+  stroke-dasharray: 2 4;
+}
+.tl-axis {
+  stroke: var(--rule-strong);
+}
+.tl-tick,
+.tl-year,
+.tl-count,
+.tl-now-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.tl-count {
+  font-size: 10.5px;
+  fill: var(--ink-2);
+}
+.tl-live {
+  fill: var(--brass);
+}
+.tl-pending {
+  fill: url(#tl-hatch);
+  stroke: var(--accent);
+}
+.tl-hatch-line {
+  stroke: var(--accent);
+  stroke-width: 1.4;
+}
+.tl-expired {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.5;
+}
+.tl-now line {
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+.tl-now circle {
+  fill: var(--accent);
+}
+.tl-now-label {
+  font-weight: 600;
+  fill: var(--accent);
+}
+.tl-bars {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.reveal.is-in .tl-bars {
+  animation: bar-grow 0.8s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i) * 45ms + 150ms);
+}
+@keyframes bar-grow {
+  from {
+    transform: scaleY(0);
+  }
+}
+.tl-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin-top: 0.8rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.tl-key i {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin-right: 0.3rem;
+  vertical-align: -0.1rem;
+}
+.tl-key-live {
+  background: var(--brass);
+}
+.tl-key-pending {
+  border: 1px solid var(--accent);
+  background: repeating-linear-gradient(45deg, var(--accent) 0 1.5px, transparent 1.5px 4px);
+}
+.tl-key-expired {
+  border: 1.5px solid var(--ink-3);
+}
+.tl-axis-note {
+  flex-basis: 100%;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+
+/* ── Hình minh họa ở đầu trang và trên thẻ lối vào ────────────────────────── */
+
+/*
+  Hình nằm đè lên khung chứ không đẩy khung cao lên: một SVG có `viewBox` mang
+  sẵn tỷ lệ nội tại, và để nó trong dòng chảy thì tỷ lệ ấy thành chiều cao tối
+  thiểu của khung, khiến `aspect-ratio` đặt trên khung mất tác dụng.
+*/
+.art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  font-family: var(--font-sans);
+}
+.art-label {
+  font-size: 10.5px;
+  fill: var(--ink-2);
+}
+.art-label-strong {
+  font-weight: 600;
+  fill: var(--ink);
+}
+.art-dim {
+  font-style: italic;
+  fill: var(--ink-3);
+}
+.art-count {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.art-heading {
+  font-family: var(--font-serif);
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+
+/* Ba loại quan hệ, cùng quy ước nét với bản đồ: liền, đứt, chấm. */
+.art-edge line {
+  stroke: var(--ink-3);
+  stroke-width: 1.4;
+}
+.art-edge polygon {
+  fill: var(--ink-3);
+}
+.art-edge-amends line {
+  stroke-dasharray: 5 3.5;
+}
+.art-edge-replaces line {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 4;
+}
+.art-edge-replaces polygon {
+  fill: var(--accent);
+}
+.art-law {
+  fill: var(--ink-2);
+}
+.art-focus {
+  fill: var(--accent);
+}
+.art-expired {
+  fill: var(--paper);
+  stroke: var(--ink-3);
+  stroke-width: 1.5;
+}
+.art-decree {
+  fill: var(--brass);
+}
+.art-circular {
+  fill: var(--paper);
+  stroke: var(--brass);
+  stroke-width: 1.6;
+}
+.art-pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: art-pulse 3.2s var(--ease-out-soft) infinite;
+}
+@keyframes art-pulse {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.art-tier {
+  fill: color-mix(in oklab, var(--brass) 16%, var(--paper));
+  stroke: var(--brass);
+  stroke-width: 1;
+}
+.art-tier-0 {
+  fill: color-mix(in oklab, var(--accent) 22%, var(--paper));
+  stroke: var(--accent);
+}
+.art-tier-1 {
+  fill: color-mix(in oklab, var(--accent) 10%, var(--paper));
+}
+.art-tier-apex {
+  fill: var(--paper-3);
+  stroke: var(--rule-strong);
+  stroke-dasharray: 3 3;
+}
+.art-leader {
+  stroke: var(--rule-strong);
+  stroke-dasharray: 2 3;
+}
+.is-in .art-tier-row,
+.hero-art .art-tier-row {
+  animation: art-rise 0.6s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i) * 90ms + 150ms);
+}
+@keyframes art-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.art-page > path:first-child {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 1.2;
+}
+.art-fold {
+  fill: var(--paper-3);
+  stroke: var(--rule-strong);
+}
+.art-text {
+  fill: var(--rule-strong);
+  opacity: 0.8;
+}
+.art-del {
+  fill: color-mix(in oklab, var(--accent) 40%, var(--rule-strong));
+}
+.art-strike {
+  stroke: var(--accent);
+  stroke-width: 1.6;
+}
+.art-insert {
+  fill: color-mix(in oklab, var(--brass) 24%, transparent);
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: art-sweep 6s var(--ease-out-soft) infinite;
+}
+@keyframes art-sweep {
+  0%,
+  10% {
+    transform: scaleX(0);
+  }
+  36%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+.art-ins {
+  fill: var(--brass);
+  opacity: 1;
+}
+
+.art-lens {
+  animation: art-lens 8s ease-in-out infinite alternate;
+}
+@keyframes art-lens {
+  from {
+    transform: translate(-4px, -3px);
+  }
+  to {
+    transform: translate(5px, 4px);
+  }
+}
+.art-lens-glass {
+  fill: color-mix(in oklab, var(--paper) 90%, transparent);
+  stroke: var(--ink-2);
+  stroke-width: 3;
+}
+.art-lens-text {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--accent);
+}
+.art-lens-handle {
+  stroke: var(--ink-2);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.art-box {
+  fill: var(--paper);
+  stroke: var(--ink-3);
+  stroke-width: 1.2;
+}
+.art-tick {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16;
+}
+.is-in .art-tick,
+.hero-art .art-tick {
+  animation: art-tick 0.5s ease-out both;
+  animation-delay: calc(var(--i) * 260ms + 300ms);
+}
+@keyframes art-tick {
+  from {
+    stroke-dashoffset: 16;
+  }
+}
+.art-stamp {
+  opacity: 0.85;
+}
+.art-stamp circle {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.art-stamp .art-stamp-inner {
+  stroke-width: 0.8;
+}
+.art-stamp-text {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  fill: var(--accent);
+}
+.art-stamp-date {
+  font-size: 8px;
+  fill: var(--accent);
+}
+.art-domain-label {
+  font-size: 10px;
+}
+.is-in .art-domain,
+.hero-art .art-domain {
+  animation: art-rise 0.55s var(--ease-out-soft) both;
+  animation-delay: calc(var(--i) * 60ms + 120ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .art * {
+    animation: none !important;
+  }
+}
+
+/* ── Trang lĩnh vực: biểu tượng và cây văn bản ────────────────────────────── */
+
+.domain-card-glyph {
+  display: inline-flex;
+  flex: 0 0 auto;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.35rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+.domain-card-glyph .glyph {
+  width: 100%;
+  height: 100%;
+}
+
+.domain-plate {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  padding: 1rem;
+}
+.domain-plate-glyph {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+.domain-plate-tiers {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+  color: var(--ink-2);
+}
+.domain-plate-tiers div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-bottom: 1px dotted var(--rule);
+  padding-bottom: 0.15rem;
+}
+.domain-plate-tiers dd {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.tree-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.tree {
+  display: block;
+  max-width: none;
+  font-family: var(--font-sans);
+}
+.tree-col {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ink-3);
+}
+.tree-edge path {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.3;
+  opacity: 0.8;
+}
+.tree-edge polygon {
+  fill: var(--ink-3);
+}
+.tree-edge-amends path {
+  stroke-dasharray: 5 3.5;
+}
+.tree-edge-replaces path {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 4;
+  opacity: 1;
+}
+.tree-edge-replaces polygon {
+  fill: var(--accent);
+}
+.tree-box {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  transition: stroke 0.2s, fill 0.2s;
+}
+.tree-bar {
+  fill: var(--brass);
+}
+.tree-node.is-expired .tree-box {
+  fill: var(--paper-2);
+  stroke-dasharray: 3 2;
+}
+.tree-node.is-expired .tree-bar {
+  fill: var(--ink-3);
+}
+.tree-node.is-amended .tree-bar {
+  fill: var(--accent-soft);
+}
+.tree-node:hover .tree-box,
+.tree-node:focus-visible .tree-box {
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  fill: var(--paper-2);
+}
+.tree-node:focus {
+  outline: none;
+}
+.tree-number {
+  font-family: var(--font-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.tree-title {
+  font-size: 10.5px;
+  fill: var(--ink-2);
+}
+.tree-node.is-expired .tree-number,
+.tree-node.is-expired .tree-title {
+  fill: var(--ink-3);
+}
+
+/* ── Diễn biến hiệu lực trên trang văn bản ─────────────────────────────────── */
+
+/*
+  Cột mốc dọc: một đường kẻ mảnh bên trái, mỗi sự kiện một nút tròn đặc. Sự
+  kiện làm văn bản hết hiệu lực dùng nút rỗng, cùng quy ước với bản đồ và cây
+  lĩnh vực, nên người đọc không phải học thêm ký hiệu nào.
+*/
+.vt {
+  position: relative;
+  margin-left: 0.3rem;
+  border-left: 1px solid var(--rule-strong);
+}
+.vt-item {
+  position: relative;
+  display: grid;
+  gap: 0.1rem 1rem;
+  padding: 0 0 0.9rem 1.1rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+@media (min-width: 40rem) {
+  .vt-item {
+    grid-template-columns: 7.5rem 1fr;
+  }
+}
+.vt-item::before {
+  content: "";
+  position: absolute;
+  left: -0.3rem;
+  top: 0.45rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+}
+.vt-item.vt-end::before {
+  background: var(--paper);
+  border: 1.5px solid var(--ink-3);
+}
+.vt-item:last-child {
+  padding-bottom: 0;
+}
+.vt-date {
+  color: var(--ink-3);
+  font-size: 0.875rem;
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { DomainId, Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
+import { TIER } from "@/lib/corpus";
 import { buildLayout, type NodeLayout, WORLD } from "@/lib/layout";
 
 /**
@@ -31,6 +32,36 @@ const MAX_SCALE = 3.2;
 const LABEL_SCALE_GATE = 0.72;
 /** Dưới ngưỡng này thì không vẽ nhãn nào, trừ điểm đang chọn hoặc đang trỏ tới. */
 const LABEL_HARD_GATE = 0.3;
+
+/**
+ * Vạch hình của một điểm theo tầng hiệu lực: luật là hình vuông, nghị quyết và
+ * văn bản hợp nhất là hình thoi, nghị định là hình tròn, thông tư là tam giác.
+ * Màu đã dành cho lĩnh vực, nên tầng phải nói bằng hình; người đọc thấy ngay
+ * một cụm là "một luật và các nghị định của nó" mà không phải bấm vào từng điểm.
+ * Diện tích bốn hình xấp xỉ nhau để không hình nào trông nặng hơn chỉ vì góc cạnh.
+ */
+function tracePath(ctx: CanvasRenderingContext2D, tier: number, x: number, y: number, r: number) {
+  ctx.beginPath();
+  if (tier === 0) {
+    const s = r * 0.9;
+    ctx.rect(x - s, y - s, s * 2, s * 2);
+  } else if (tier === 1) {
+    const s = r * 1.22;
+    ctx.moveTo(x, y - s);
+    ctx.lineTo(x + s, y);
+    ctx.lineTo(x, y + s);
+    ctx.lineTo(x - s, y);
+    ctx.closePath();
+  } else if (tier === 3) {
+    const s = r * 1.3;
+    ctx.moveTo(x, y - s);
+    ctx.lineTo(x + s * 0.866, y + s * 0.5);
+    ctx.lineTo(x - s * 0.866, y + s * 0.5);
+    ctx.closePath();
+  } else {
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+  }
+}
 
 interface Palette {
   ink: string;
@@ -296,21 +327,19 @@ export function LegalMap({
 
       // Viền màu giấy lót dưới điểm: khi một đường nối chạy ngang qua, điểm vẫn
       // tách khỏi đường thay vì dính thành một vệt.
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r + 1.8, 0, Math.PI * 2);
+      const tier = TIER[n.doc.type] ?? 2;
+      tracePath(ctx, tier, p.x, p.y, r + 1.8);
       ctx.fillStyle = P.paper;
       ctx.fill();
 
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      tracePath(ctx, tier, p.x, p.y, r);
       ctx.fillStyle = `hsl(${n.hue} ${P.nodeC}% ${P.nodeL}%)`;
       ctx.fill();
 
       // Văn bản hết hiệu lực vẽ rỗng ruột, để trạng thái đọc được ngay trên bản
       // đồ mà không cần mở bảng chi tiết.
       if (n.doc.status === "expired") {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, Math.max(1, r - 3.2), 0, Math.PI * 2);
+        tracePath(ctx, tier, p.x, p.y, Math.max(1, r - 3.2));
         ctx.fillStyle = P.paper;
         ctx.fill();
       }

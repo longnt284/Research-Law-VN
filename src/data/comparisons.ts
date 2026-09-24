@@ -379,7 +379,7 @@ export const comparisons: ComparisonEntry[] = [
         },
         observation: {
           vi: "Quy định áp dụng cho giai đoạn trước ngày 01/01/2026 gồm luật 2013 cùng phần đã được sửa đổi tại Luật số 41/2024/QH15, tức là hai văn bản chứ không phải một.",
-          en: "The law applying before 1 January 2026 consists of the 2013 Law together with the amendments in Law 41/2024/QH15 — two instruments, not one.",
+          en: "The law applying before 1 January 2026 consists of the 2013 Law together with the amendments in Law 41/2024/QH15: two instruments, not one.",
         },
         basis: { before: ["luat-viec-lam-2013", "luat-bhxh-2024"], after: ["luat-viec-lam-2025"] },
         confidence: "verified",
@@ -490,10 +490,13 @@ export const comparisons: ComparisonEntry[] = [
           en: "It details the 2014 Construction Law and served as the implementing instrument in the final period before the 2025 Law took effect.",
         },
         observation: {
-          vi: "Hai nghị định cùng có luật gốc là Luật Xây dựng 2014, và luật gốc này hết hiệu lực từ 01/7/2026. Phạm vi còn áp dụng của nghị định sau sau mốc đó chưa đối chiếu được với nguồn chính thống.",
-          en: "Both decrees share the 2014 Construction Law as their parent, and that statute ceased to have effect on 1 July 2026. How far the later decree continues to apply after that date could not be confirmed against an official source.",
+          vi: "Hai nghị định cùng có luật gốc là Luật Xây dựng 2014, và luật gốc này hết hiệu lực từ 01/7/2026. Nghị định sau hết hiệu lực cùng ngày theo khoản 2 Điều 75 Nghị định 217/2026/NĐ-CP.",
+          en: "Both decrees share the 2014 Construction Law as their parent, and that statute ceased to have effect on 1 July 2026. The later decree lapsed on the same day under Article 75(2) of Decree 217/2026/NĐ-CP.",
         },
-        basis: { before: ["nd-15-2021", "luat-xay-dung-2014"], after: ["nd-175-2024", "luat-xay-dung-2014"] },
+        basis: {
+          before: ["nd-15-2021", "luat-xay-dung-2014"],
+          after: ["nd-175-2024", "luat-xay-dung-2014", "nd-217-2026#dieu:75.khoan:2"],
+        },
         confidence: "cross-check",
       },
     ],
@@ -698,6 +701,284 @@ export const comparisons: ComparisonEntry[] = [
           en: "The later record states that the rule applies across all project groups. The earlier record is silent on the point, and that silence cannot be read as a rule either way.",
         },
         basis: { before: ["luat-dau-tu-cong-2019"], after: ["luat-dau-tu-cong-2024"] },
+        confidence: "cross-check",
+      },
+    ],
+  },  {
+    newId: "nd-217-2026",
+    oldId: "nd-175-2024",
+    scope: {
+      vi: "Đối chiếu ở mức điều khoản thi hành: Điều 75 về hiệu lực và Điều 76 về chuyển tiếp của Nghị định 217/2026/NĐ-CP, đọc trên toàn văn. Các điều về nội dung thủ tục của hai nghị định chưa đối chiếu với nhau.",
+      en: "Compared at the level of the final provisions: Article 75 on commencement and Article 76 on transition of Decree 217/2026/NĐ-CP, read in the full text. The procedural articles of the two decrees have not been compared with each other.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Có hiệu lực từ 30/12/2024. Hết hiệu lực từ 01/7/2026 theo khoản 2 Điều 75 Nghị định 217/2026/NĐ-CP.",
+          en: "In force from 30 December 2024. Ceased to have effect on 1 July 2026 under Article 75(2) of Decree 217/2026/NĐ-CP.",
+        },
+        after: {
+          vi: "Có hiệu lực thi hành từ 01/7/2026 theo khoản 1 Điều 75.",
+          en: "In force from 1 July 2026 under Article 75(1).",
+        },
+        observation: {
+          vi: "Ngày nghị định trước hết hiệu lực trùng ngày nghị định sau có hiệu lực, và cũng là ngày Luật Xây dựng 2025 có hiệu lực chung.",
+          en: "The earlier decree lapses on the day the later one takes effect, which is also the general commencement date of the 2025 Construction Law.",
+        },
+        basis: {
+          before: ["nd-175-2024", "nd-217-2026#dieu:75.khoan:2"],
+          after: ["nd-217-2026#dieu:75.khoan:1", "luat-xay-dung-2025"],
+        },
+        confidence: "cross-check",
+      },
+      {
+        id: "da-co-ket-qua-tham-dinh",
+        topic: { vi: "Dự án đã có kết quả thẩm định", en: "Projects already appraised" },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Thiết kế cơ sở và báo cáo nghiên cứu khả thi được thẩm định theo Nghị định 175/2024/NĐ-CP.",
+          en: "Basic designs and feasibility studies were appraised under Decree 175/2024/NĐ-CP.",
+        },
+        after: {
+          vi: "Dự án, công trình đã được thông báo kết quả thẩm định thiết kế cơ sở, báo cáo nghiên cứu khả thi, kể cả thẩm định một phần theo giai đoạn, trước ngày 01/7/2026 thì không phải thẩm định lại. Việc thẩm định các giai đoạn còn lại và việc điều chỉnh dự án thực hiện theo nghị định mới.",
+          en: "A project or work notified of the appraisal result for its basic design or feasibility study, including a partial appraisal by phase, before 1 July 2026 is not appraised again. Appraisal of the remaining phases and of project adjustments follows the new decree.",
+        },
+        observation: {
+          vi: "Kết quả thẩm định đã có theo nghị định trước được giữ nguyên. Nghị định sau áp dụng cho phần việc làm sau mốc hiệu lực: các giai đoạn còn lại và các lần điều chỉnh dự án.",
+          en: "Appraisal results obtained under the earlier decree stand. The later decree applies to work done after commencement: the remaining phases and any project adjustment.",
+        },
+        basis: { before: ["nd-175-2024"], after: ["nd-217-2026#dieu:76.khoan:1"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "ho-so-dang-tham-dinh",
+        topic: {
+          vi: "Hồ sơ dự án đang chờ kết quả thẩm định",
+          en: "Project files awaiting an appraisal result",
+        },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Hồ sơ đã trình cơ quan chuyên môn về xây dựng thẩm định theo Nghị định 175/2024/NĐ-CP và chưa có thông báo kết quả tại ngày 01/7/2026.",
+          en: "A file submitted to the specialised construction agency for appraisal under Decree 175/2024/NĐ-CP with no result notified by 1 July 2026.",
+        },
+        after: {
+          vi: "Hồ sơ đủ điều kiện thẩm định thì cơ quan chuyên môn tiếp tục thẩm định theo Nghị định 175/2024/NĐ-CP. Hồ sơ không đủ điều kiện thẩm định, hoặc có kết quả là chưa đủ điều kiện để tổng hợp, trình phê duyệt, thì thẩm định theo nghị định mới.",
+          en: "An eligible file continues to be appraised under Decree 175/2024/NĐ-CP. A file that is not eligible, or whose result is that it cannot yet be consolidated and submitted for approval, is appraised under the new decree.",
+        },
+        observation: {
+          vi: "Văn bản áp dụng cho hồ sơ dở dang được xác định theo điều kiện thẩm định của chính hồ sơ, không theo ngày nộp.",
+          en: "Which decree governs a pending file turns on whether the file is eligible for appraisal, not on the date it was submitted.",
+        },
+        basis: { before: ["nd-175-2024"], after: ["nd-217-2026#dieu:76.khoan:2"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "thiet-ke-trien-khai",
+        topic: {
+          vi: "Thiết kế triển khai sau thiết kế cơ sở đang chờ thẩm định",
+          en: "Post-basic designs awaiting appraisal",
+        },
+        kind: "thay-tham-quyen",
+        before: {
+          vi: "Hồ sơ thiết kế xây dựng triển khai sau thiết kế cơ sở, hoặc thiết kế điều chỉnh, được trình cơ quan chuyên môn về xây dựng thẩm định.",
+          en: "Designs developed after the basic design, or adjusted designs, were submitted to the specialised construction agency for appraisal.",
+        },
+        after: {
+          vi: "Hồ sơ đã trình mà đến ngày 01/7/2026 chưa có thông báo kết quả thì cơ quan chuyên môn dừng thẩm định và gửi văn bản để chủ đầu tư nhận lại hồ sơ. Chủ đầu tư thực hiện thẩm định thiết kế và các bước tiếp theo theo Luật Xây dựng 2025 và nghị định mới.",
+          en: "Where no result has been notified by 1 July 2026, the agency stops the appraisal and writes to the employer to collect the file. The employer then appraises the design and carries out the next steps under the 2025 Construction Law and the new decree.",
+        },
+        observation: {
+          vi: "Với hồ sơ thiết kế dở dang, chủ thể thẩm định chuyển từ cơ quan chuyên môn về xây dựng sang chủ đầu tư. Cách xử lý này khác với hồ sơ dự án đang chờ thẩm định ở khoản 2, vốn được thẩm định tiếp theo điều kiện của hồ sơ.",
+          en: "For pending design files, the appraising party shifts from the specialised agency to the employer. This differs from pending project files under paragraph 2, which continue according to their eligibility.",
+        },
+        basis: {
+          before: ["nd-175-2024", "nd-217-2026#dieu:76.khoan:5"],
+          after: ["nd-217-2026#dieu:76.khoan:5", "luat-xay-dung-2025"],
+        },
+        confidence: "cross-check",
+      },
+      {
+        id: "du-an-cap-huyen",
+        topic: {
+          vi: "Dự án do Ủy ban nhân dân cấp huyện quản lý",
+          en: "Projects managed by district people's committees",
+        },
+        kind: "thay-tham-quyen",
+        before: {
+          vi: "Ủy ban nhân dân cấp huyện thực hiện các nhiệm vụ quản lý đầu tư xây dựng đối với dự án trước ngày 01/7/2026.",
+          en: "The district people's committee performed the construction investment management tasks for the project before 1 July 2026.",
+        },
+        after: {
+          vi: "Thẩm quyền chuyển về Ủy ban nhân dân cấp xã và cơ quan chuyên môn về xây dựng thuộc Ủy ban nhân dân cấp xã tại khu vực thực hiện dự án.",
+          en: "The powers pass to the commune people's committee and its specialised construction agency in the area where the project is carried out.",
+        },
+        observation: {
+          vi: "Thẩm quyền đối với nhóm dự án này đổi từ cấp huyện sang cấp xã nơi có dự án.",
+          en: "Authority over these projects moves from the district level to the commune where the project sits.",
+        },
+        basis: {
+          before: ["nd-175-2024", "nd-217-2026#dieu:76.khoan:9"],
+          after: ["nd-217-2026#dieu:76.khoan:9"],
+        },
+        confidence: "cross-check",
+      },
+    ],
+  },
+  {
+    newId: "nd-207-2026",
+    oldId: "nd-06-2021",
+    scope: {
+      vi: "Đối chiếu ở mức điều khoản thi hành: Điều 52 về hiệu lực và Điều 53 về chuyển tiếp của Nghị định 207/2026/NĐ-CP, đọc trên toàn văn. Các quy định về quản lý chất lượng, thi công và bảo trì của hai nghị định chưa đối chiếu với nhau.",
+      en: "Compared at the level of the final provisions: Article 52 on commencement and Article 53 on transition of Decree 207/2026/NĐ-CP, read in the full text. The quality, execution and maintenance rules of the two decrees have not been compared with each other.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Có hiệu lực từ 26/01/2021, được sửa đổi, bổ sung bởi các Nghị định 35/2023/NĐ-CP, 175/2024/NĐ-CP, 14/2026/NĐ-CP và 67/2026/NĐ-CP. Hết hiệu lực từ 01/7/2026 theo khoản 2 Điều 52 Nghị định 207/2026/NĐ-CP.",
+          en: "In force from 26 January 2021, as amended by Decrees 35/2023/NĐ-CP, 175/2024/NĐ-CP, 14/2026/NĐ-CP and 67/2026/NĐ-CP. Ceased to have effect on 1 July 2026 under Article 52(2) of Decree 207/2026/NĐ-CP.",
+        },
+        after: {
+          vi: "Có hiệu lực thi hành từ 01/7/2026 theo khoản 1 Điều 52.",
+          en: "In force from 1 July 2026 under Article 52(1).",
+        },
+        observation: {
+          vi: "Nghị định trước hết hiệu lực cùng với các phần đã được sửa đổi, bổ sung, vào đúng ngày nghị định sau có hiệu lực.",
+          en: "The earlier decree lapses together with its amended parts on the day the later decree takes effect.",
+        },
+        basis: {
+          before: ["nd-06-2021", "nd-207-2026#dieu:52.khoan:2"],
+          after: ["nd-207-2026#dieu:52.khoan:1"],
+        },
+        confidence: "cross-check",
+      },
+      {
+        id: "loai-cap-cong-trinh",
+        topic: { vi: "Loại và cấp công trình", en: "Class and grade of works" },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Bản ghi của Nghị định 06/2021/NĐ-CP không nêu riêng cách xác định loại và cấp công trình.",
+          en: "The record of Decree 06/2021/NĐ-CP does not state separately how the class and grade of works are determined.",
+        },
+        after: {
+          vi: "Công trình thuộc dự án đã được quyết định đầu tư trước ngày 01/7/2026 thì loại và cấp công trình xác định theo pháp luật tại thời điểm quyết định đầu tư.",
+          en: "For works in a project whose investment decision predates 1 July 2026, class and grade are determined under the law in force when the investment decision was made.",
+        },
+        observation: {
+          vi: "Mốc để chọn quy định về loại và cấp công trình là ngày quyết định đầu tư, không phải ngày khởi công hay ngày nghiệm thu.",
+          en: "The date that selects the rules on class and grade is the investment decision, not commencement of works or acceptance.",
+        },
+        basis: { before: ["nd-06-2021"], after: ["nd-207-2026#dieu:53.khoan:1"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "ho-so-da-tiep-nhan",
+        topic: {
+          vi: "Hồ sơ thủ tục hành chính đã được tiếp nhận",
+          en: "Administrative files already received",
+        },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Hồ sơ thủ tục hành chính nộp theo Nghị định 06/2021/NĐ-CP và được tiếp nhận trước ngày 01/7/2026.",
+          en: "Administrative files lodged under Decree 06/2021/NĐ-CP and received before 1 July 2026.",
+        },
+        after: {
+          vi: "Cơ quan đã tiếp nhận hồ sơ tiếp tục giải quyết theo văn bản quy phạm pháp luật tại thời điểm tiếp nhận.",
+          en: "The receiving authority continues to process the file under the legislation in force when it was received.",
+        },
+        observation: {
+          vi: "Văn bản áp dụng cho hồ sơ là văn bản có hiệu lực tại ngày tiếp nhận, không phải văn bản có hiệu lực tại ngày giải quyết.",
+          en: "The governing text is the one in force on the day of receipt, not the one in force on the day of decision.",
+        },
+        basis: { before: ["nd-06-2021"], after: ["nd-207-2026#dieu:53.khoan:2"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "kiem-tra-nghiem-thu",
+        topic: { vi: "Kiểm tra công tác nghiệm thu", en: "Inspection of acceptance" },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Công trình khởi công trước ngày 01/7/2026 thuộc đối tượng kiểm tra công tác nghiệm thu theo Nghị định 06/2021/NĐ-CP đã được sửa đổi, bổ sung.",
+          en: "Works started before 1 July 2026 that were subject to inspection of acceptance under Decree 06/2021/NĐ-CP as amended.",
+        },
+        after: {
+          vi: "Công trình không còn thuộc đối tượng kiểm tra theo nghị định mới thì không tiếp tục kiểm tra; chủ đầu tư tổ chức nghiệm thu hoàn thành theo nghị định mới và chịu trách nhiệm về kết quả nghiệm thu. Công trình đã được cơ quan chuyên môn thuộc bộ quản lý công trình chuyên ngành kiểm tra trước ngày đó thì cơ quan này tiếp tục kiểm tra nghiệm thu hoàn thành.",
+          en: "Works no longer within the scope of inspection under the new decree are not inspected further; the employer organises completion acceptance under the new decree and answers for the result. Works already inspected before that date by the specialised agency of the line ministry continue to be inspected by that agency through completion.",
+        },
+        observation: {
+          vi: "Đối tượng kiểm tra công tác nghiệm thu được xác định lại theo nghị định sau. Với công trình ra khỏi đối tượng kiểm tra, trách nhiệm về kết quả nghiệm thu thuộc về chủ đầu tư.",
+          en: "The scope of acceptance inspection is reset by the later decree. For works that fall outside it, responsibility for the acceptance result rests with the employer.",
+        },
+        basis: {
+          before: ["nd-06-2021", "nd-207-2026#dieu:53.khoan:3"],
+          after: ["nd-207-2026#dieu:53.khoan:3", "nd-207-2026#dieu:53.khoan:4"],
+        },
+        confidence: "cross-check",
+      },
+    ],
+  },
+  {
+    newId: "nd-210-2026",
+    oldId: "nd-37-2015",
+    scope: {
+      vi: "Đối chiếu ở mức điều khoản hiệu lực: Điều 32 của Nghị định 210/2026/NĐ-CP, đọc trên toàn văn. Nội dung về hợp đồng xây dựng của hai nghị định chưa đối chiếu với nhau.",
+      en: "Compared at the level of the commencement article: Article 32 of Decree 210/2026/NĐ-CP, read in the full text. The contract rules of the two decrees have not been compared with each other.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Có hiệu lực từ 15/6/2015, được sửa đổi, bổ sung bởi Nghị định 50/2021/NĐ-CP. Cả hai văn bản hết hiệu lực từ 01/7/2026 theo điểm a khoản 2 Điều 32 Nghị định 210/2026/NĐ-CP.",
+          en: "In force from 15 June 2015, as amended by Decree 50/2021/NĐ-CP. Both instruments ceased to have effect on 1 July 2026 under Article 32(2)(a) of Decree 210/2026/NĐ-CP.",
+        },
+        after: {
+          vi: "Có hiệu lực thi hành từ 01/7/2026 theo khoản 1 Điều 32. Điểm b khoản 2 cùng điều chấm dứt hiệu lực của Điều 9 Nghị định 35/2023/NĐ-CP.",
+          en: "In force from 1 July 2026 under Article 32(1). Point (b) of paragraph 2 of the same article also ends Article 9 of Decree 35/2023/NĐ-CP.",
+        },
+        observation: {
+          vi: "Nghị định gốc và nghị định sửa đổi của nó cùng hết hiệu lực vào ngày nghị định sau có hiệu lực, nên không có khoảng thời gian hai chế độ hợp đồng cùng áp dụng cho hợp đồng ký mới.",
+          en: "The parent decree and its amending decree lapse together on the day the later decree takes effect, so no period exists in which both regimes govern newly signed contracts.",
+        },
+        basis: {
+          before: ["nd-37-2015", "nd-50-2021", "nd-210-2026#dieu:32.khoan:2.diem:a"],
+          after: ["nd-210-2026#dieu:32.khoan:1", "nd-210-2026#dieu:32.khoan:2.diem:b"],
+        },
+        confidence: "cross-check",
+      },
+    ],
+  },
+  {
+    newId: "nd-206-2026",
+    oldId: "nd-10-2021",
+    scope: {
+      vi: "Đối chiếu ở mức điều khoản hiệu lực của Nghị định 206/2026/NĐ-CP, đọc trên toàn văn. Phương pháp xác định chi phí của hai nghị định chưa đối chiếu với nhau.",
+      en: "Compared at the level of the commencement article of Decree 206/2026/NĐ-CP, read in the full text. The costing methods of the two decrees have not been compared with each other.",
+    },
+    points: [
+      {
+        id: "moc-hieu-luc",
+        topic: { vi: "Mốc hiệu lực", en: "Dates of effect" },
+        kind: "thay-thoi-han",
+        before: {
+          vi: "Có hiệu lực từ 09/02/2021. Hết hiệu lực từ 01/7/2026 theo khoản 3 điều khoản hiệu lực thi hành của Nghị định 206/2026/NĐ-CP.",
+          en: "In force from 9 February 2021. Ceased to have effect on 1 July 2026 under paragraph 3 of the commencement article of Decree 206/2026/NĐ-CP.",
+        },
+        after: {
+          vi: "Có hiệu lực thi hành từ 01/7/2026.",
+          en: "In force from 1 July 2026.",
+        },
+        observation: {
+          vi: "Ngày nghị định trước hết hiệu lực trùng ngày nghị định sau có hiệu lực, nên giữa hai văn bản không có khoảng trống về thời gian.",
+          en: "The earlier decree lapses on the day the later one takes effect, so no gap in time separates them.",
+        },
+        basis: { before: ["nd-10-2021", "nd-206-2026"], after: ["nd-206-2026"] },
         confidence: "cross-check",
       },
     ],
