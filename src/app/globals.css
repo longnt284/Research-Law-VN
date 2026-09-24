@@ -2374,3 +2374,50 @@ a {
 .tree-node.is-expired .tree-title {
   fill: var(--ink-3);
 }
+
+/* ── Diễn biến hiệu lực trên trang văn bản ─────────────────────────────────── */
+
+/*
+  Cột mốc dọc: một đường kẻ mảnh bên trái, mỗi sự kiện một nút tròn đặc. Sự
+  kiện làm văn bản hết hiệu lực dùng nút rỗng, cùng quy ước với bản đồ và cây
+  lĩnh vực, nên người đọc không phải học thêm ký hiệu nào.
+*/
+.vt {
+  position: relative;
+  margin-left: 0.3rem;
+  border-left: 1px solid var(--rule-strong);
+}
+.vt-item {
+  position: relative;
+  display: grid;
+  gap: 0.1rem 1rem;
+  padding: 0 0 0.9rem 1.1rem;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+@media (min-width: 40rem) {
+  .vt-item {
+    grid-template-columns: 7.5rem 1fr;
+  }
+}
+.vt-item::before {
+  content: "";
+  position: absolute;
+  left: -0.3rem;
+  top: 0.45rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--accent);
+}
+.vt-item.vt-end::before {
+  background: var(--paper);
+  border: 1.5px solid var(--ink-3);
+}
+.vt-item:last-child {
+  padding-bottom: 0;
+}
+.vt-date {
+  color: var(--ink-3);
+  font-size: 0.875rem;
+}

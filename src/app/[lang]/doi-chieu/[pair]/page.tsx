@@ -235,7 +235,8 @@ export default async function ComparePairPage({
                 {pair.entry.points.map((point) => (
                   <section
                     key={point.id}
-                    className="border-t border-[var(--rule-strong)] pt-5"
+                    id={point.id}
+                    className="scroll-mt-24 border-t border-[var(--rule-strong)] pt-5"
                   >
                     <div className="flex flex-wrap items-center gap-3">
                       <h3 className="text-[1.15rem]">{point.topic[lang]}</h3>

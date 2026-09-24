@@ -6,6 +6,7 @@ import { DocumentIndex } from "@/components/DocumentIndex";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { documents, domains } from "@/data/documents";
 import { getDict, isLang } from "@/i18n/dictionary";
+import { articleEntries } from "@/lib/articles";
 import { alternatesFor } from "@/lib/site";
 
 export async function generateMetadata({
@@ -55,7 +56,7 @@ export default async function DocumentsPage({
           </div>
         </div>
       </section>
-      <DocumentIndex lang={lang} />
+      <DocumentIndex lang={lang} articles={articleEntries(lang)} />
     </>
   );
 }
