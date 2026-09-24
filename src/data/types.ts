@@ -117,6 +117,8 @@ export interface Relation {
 export interface Domain {
   id: DomainId;
   label: Bilingual;
+  /** Tên ngắn cho chỗ chật như ô minh họa; bỏ trống thì dùng `label`. */
+  short?: Bilingual;
   blurb: Bilingual;
   /** Màu nhận diện, dùng chung cho node trên bản đồ và nhãn lĩnh vực. */
   hue: number;

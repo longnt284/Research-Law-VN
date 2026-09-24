@@ -93,12 +93,13 @@ export function MapExplorer({ lang }: { lang: Lang }) {
 
       <EffectTicker lang={lang} />
 
-      {/* Thanh công cụ. Danh sách lĩnh vực cuộn ngang được, nhưng nút đưa khung
+      {/* Thanh công cụ. Trên điện thoại danh sách lĩnh vực cuộn ngang; từ màn hình
+          rộng trở lên nó xuống dòng để cả mười lĩnh vực cùng hiện. Nút đưa khung
           nhìn về mặc định nằm ngoài vùng cuộn nên không bao giờ bị đẩy khuất. */}
       <div className="rule-b shrink-0 bg-[var(--paper-2)]">
         <div className="mx-auto flex w-full max-w-[76rem] items-center gap-3 px-5 py-2.5 sm:px-8">
           <div className="scroll-x thin-scroll min-w-0 flex-1">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 lg:flex-wrap">
               {/* Nhãn "lọc theo lĩnh vực" chỉ hiện khi thật sự còn chỗ. Ở màn
                   hình vừa, nó chiếm đúng phần bề ngang khiến lĩnh vực cuối cùng
                   bị đẩy khuất sau nút bên phải. */}

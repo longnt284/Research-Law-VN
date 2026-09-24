@@ -254,15 +254,20 @@ export function MethodArt({ lang }: { lang: Lang }) {
   );
 }
 
-/** Rút tên lĩnh vực về vài chữ đầu cho vừa ô: "Hợp đồng thương mại" thành "Hợp đồng". */
-function shortLabel(label: string, max = 12): string {
-  const words = label.split(" ");
-  let out = words[0];
+/**
+ * Ngắt tên lĩnh vực thành tối đa hai dòng cho vừa ô. Chỉ ngắt giữa hai từ, không
+ * cắt cụt: cắt "Đối tác công tư" thành "Đối tác công" thì sai nghĩa, còn hai dòng
+ * "Đối tác / công tư" thì đọc được. Tên có dấu "&" chỉ lấy vế đầu.
+ */
+function labelLines(label: string, max = 10): string[] {
+  const words = label.split(/\s*[&,]\s*/)[0].split(" ");
+  const lines: string[] = [words[0]];
   for (const w of words.slice(1)) {
-    if ((out + " " + w).length > max) break;
-    out += " " + w;
+    const last = lines[lines.length - 1];
+    if ((last + " " + w).length <= max) lines[lines.length - 1] = last + " " + w;
+    else lines.push(w);
   }
-  return out;
+  return lines.slice(0, 2);
 }
 
 /** Thẻ lĩnh vực: biểu tượng của từng lĩnh vực, tô theo sắc lĩnh vực dùng chung với bản đồ. */
@@ -291,7 +296,11 @@ export function DomainsArt({ lang }: { lang: Lang }) {
               <DomainGlyph id={d.id} />
             </svg>
             <text x={x} y={y + 62} className="art-label art-domain-label" textAnchor="middle">
-              {shortLabel(d.label[lang].split(/\s*[&,]\s*/)[0])}
+              {labelLines(d.short?.[lang] ?? d.label[lang]).map((line, k) => (
+                <tspan key={k} x={x} dy={k === 0 ? 0 : 12}>
+                  {line}
+                </tspan>
+              ))}
             </text>
           </g>
         );
