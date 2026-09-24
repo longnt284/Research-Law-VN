@@ -1,5 +1,5 @@
 import type { DomainId } from "@/data/types";
-import { buildDomainSpark, SPARK_H, SPARK_W, sparkRowY } from "@/lib/preview";
+import { buildDomainSpark, SPARK_H, SPARK_W, sparkRowY } from "@/lib/spark";
 
 /**
  * Vệt thứ bậc của một lĩnh vực, vẽ bằng SVG.
@@ -8,9 +8,8 @@ import { buildDomainSpark, SPARK_H, SPARK_W, sparkRowY } from "@/lib/preview";
  * hợp nhất kế đó, nghị định ở giữa, thông tư dưới cùng. Nhìn vào vệt là thấy
  * ngay lĩnh vực nặng về luật hay nặng về văn bản hướng dẫn.
  *
- * Thành phần máy chủ, không WebGL: tám thẻ lĩnh vực trên một trang là tám ngữ
- * cảnh WebGL nếu dùng vật thể ba chiều, và giới hạn đó đã đặt ra từ đợt trước.
- * Vệt này giữ đúng giới hạn ấy mà thẻ vẫn có hình.
+ * Thành phần máy chủ, SVG tĩnh nặng vài trăm byte: thẻ có hình mà trang danh
+ * sách không phải tải thêm gì.
  */
 export function DomainSpark({ id, hue }: { id: DomainId; hue: number }) {
   const { dots, edges } = buildDomainSpark(id);

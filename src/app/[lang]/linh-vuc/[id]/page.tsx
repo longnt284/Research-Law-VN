@@ -3,12 +3,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DocMetaRow } from "@/components/DomainDocRow";
-import { DomainEmblem } from "@/components/DomainEmblem";
-import { DomainGraph3D } from "@/components/DomainGraph3D";
+import { DomainGlyph } from "@/components/art/DomainGlyph";
+import { DomainTree } from "@/components/DomainTree";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { Reveal } from "@/components/Reveal";
 import { documents, domains, relations } from "@/data/documents";
 import type { DomainId, Lang } from "@/data/types";
+import { getHome } from "@/i18n/home";
+import { tierOf } from "@/lib/corpus";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { alternatesFor } from "@/lib/site";
 
@@ -48,8 +50,10 @@ export default async function DomainPage({
   const docs = documents.filter((d) => d.domains.includes(domainId));
   const ids = new Set(docs.map((d) => d.id));
   // Chỉ giữ quan hệ mà cả hai đầu đều nằm trong lĩnh vực này: một cạnh chỉ có
-  // một đầu thì trên khối ba chiều nó thành đường đi vào chỗ trống.
+  // một đầu thì trên cây nó thành đường đi vào chỗ trống.
   const inner = relations.filter((r) => ids.has(r.from) && ids.has(r.to));
+  const h = getHome(lang).hierarchy;
+  const tiers = [0, 1, 2, 3].map((tier) => docs.filter((d) => tierOf(d) === tier).length);
 
   return (
     <>
@@ -68,7 +72,7 @@ export default async function DomainPage({
             ← {t.domainPage.backToDomains}
           </Link>
 
-          <header className="mt-5 grid gap-6 sm:grid-cols-[1fr_13rem] sm:items-center">
+          <header className="mt-5 grid gap-6 sm:grid-cols-[1fr_15rem] sm:items-center">
             <div>
               <p className="eyebrow eyebrow-tick rise tnum">
                 {docs.length} {t.domainPage.countDocs}
@@ -78,11 +82,22 @@ export default async function DomainPage({
                 {domain.blurb[lang]}
               </p>
             </div>
-            <DomainEmblem
-              id={domainId}
-              hue={domain.hue}
-              className="h-40 w-full sm:h-52"
-            />
+            {/* Biểu tượng lĩnh vực cỡ lớn, kèm số văn bản ở từng tầng hiệu lực:
+                một tấm bảng hiệu nói được cả "lĩnh vực gì" lẫn "nặng về tầng nào". */}
+            <div
+              className="domain-plate rise rise-2"
+              style={{ color: `hsl(${domain.hue} var(--node-chroma) var(--node-lightness))` }}
+            >
+              <DomainGlyph id={domainId} className="domain-plate-glyph" />
+              <dl className="domain-plate-tiers">
+                {tiers.map((n, i) => (
+                  <div key={i}>
+                    <dt>{h.tierShort[i]}</dt>
+                    <dd className="tnum">{n}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </header>
         </div>
       </section>
@@ -98,13 +113,11 @@ export default async function DomainPage({
             ) : (
               <>
                 <div className="mt-3 border border-[var(--rule)] bg-[var(--paper-2)]">
-                  <DomainGraph3D
+                  <DomainTree
                     lang={lang}
-                    domain={domainId}
-                    hue={domain.hue}
                     docs={docs}
                     relations={inner}
-                    className="h-[24rem] w-full sm:h-[30rem]"
+                    label={`${t.domainPage.graphTitle}: ${domain.label[lang]}`}
                   />
                 </div>
                 <p className="mt-2 text-[0.8125rem] text-[var(--ink-3)]">

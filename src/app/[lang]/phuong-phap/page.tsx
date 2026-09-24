@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { MethodArt } from "@/components/art/PageArt";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
-import { SpaceThumb } from "@/components/SpaceThumb";
 import { Reveal } from "@/components/Reveal";
 import { LATEST_VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang } from "@/data/types";
@@ -187,7 +187,7 @@ export default async function AboutPage({
             </p>
           </div>
           <div className="hero-art rise rise-2">
-            <SpaceThumb act={5} turn={0.9} tilt={0.36} maxDots={52} maxEdges={8} />
+            <MethodArt lang={lang} />
           </div>
         </div>
       </section>

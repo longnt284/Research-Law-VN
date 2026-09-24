@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CompareArt } from "@/components/art/PageArt";
 import { ObjectiveNotice } from "@/components/CompareMeta";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { PairFilter, type PairRow } from "@/components/PairFilter";
-import { SpaceThumb } from "@/components/SpaceThumb";
 import { Reveal } from "@/components/Reveal";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
@@ -88,10 +88,10 @@ export default async function ComparePage({
               {t.compare.lede}
             </p>
           </div>
-          {/* Trục thời gian: đối chiếu luôn là chuyện một văn bản đến sau một
-              văn bản khác, nên hình đầu trang lấy đúng bố cục theo năm. */}
+          {/* Hai trang cùng một điều: trang cũ có dòng bị bỏ, trang mới có dòng
+              được chèn. Đúng việc mà trang này làm với từng cặp văn bản. */}
           <div className="hero-art rise rise-2">
-            <SpaceThumb act={4} turn={0.35} tilt={0.3} maxDots={84} maxEdges={26} />
+            <CompareArt lang={lang} />
           </div>
         </div>
       </section>

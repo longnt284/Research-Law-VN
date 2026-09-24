@@ -97,11 +97,15 @@ export default async function LangLayout({
           nằm trên thẻ <html> mà không ai bật nội dung lên. Hẹn giờ bốn giây gỡ
           lớp đó ra nếu tới lúc ấy chưa có khối `Reveal` nào báo là đã chạy. Cả
           trang là HTML tĩnh, nên gỡ xong người đọc vẫn có đủ nội dung.
+
+          Lựa chọn dừng chuyển động (nút ở trang chủ) cũng được đọc ở đây, cùng
+          lý do với nền sáng tối: người đã dừng không phải thấy dải xích chạy
+          một nhịp rồi mới đứng lại.
         */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "var e=document.documentElement;e.classList.add('js');setTimeout(function(){if(e.dataset.reveal!=='on')e.classList.remove('js')},4000);try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')e.dataset.theme=t}catch(err){}",
+              "var e=document.documentElement;e.classList.add('js');setTimeout(function(){if(e.dataset.reveal!=='on')e.classList.remove('js')},4000);try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')e.dataset.theme=t;if(localStorage.getItem('motion')==='off')e.dataset.motion='off'}catch(err){}",
           }}
         />
 

@@ -50,7 +50,9 @@ export type DomainId =
   | "doanh-nghiep"
   | "dau-tu"
   | "lao-dong"
-  | "thue";
+  | "thue"
+  | "dat-dai"
+  | "ppp";
 
 /**
  * Mức độ xác minh của bản ghi.

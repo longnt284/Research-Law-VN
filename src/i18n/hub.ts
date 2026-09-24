@@ -3,7 +3,7 @@ import type { Lang } from "@/data/types";
 /**
  * Lời của khối lối vào ở trang chủ.
  *
- * Cùng lý do với `prologue.ts`: từ điển chính đóng bằng `as const`, nên một
+ * Cùng lý do với `home.ts`: từ điển chính đóng bằng `as const`, nên một
  * mảng năm thẻ ở đó sẽ thành năm kiểu chữ nguyên văn khác nhau cho mỗi thứ
  * tiếng và không duyệt được bằng `map`. Khai báo `Record<Lang, HubCopy>` cho ra
  * đúng một kiểu, mà thiếu một câu ở bản tiếng Anh thì `tsc` vẫn dừng lại.
@@ -31,10 +31,6 @@ export interface HubCopy {
   statDomains: string;
   statPairs: string;
   spanLabel: string;
-  /** Khối mời xem lại phần mở đầu, đặt ngay dưới lưới thẻ. */
-  replayTitle: string;
-  replayText: string;
-  replay: string;
   verifiedPrefix: string;
 }
 
@@ -42,7 +38,7 @@ export const hub: Record<Lang, HubCopy> = {
   vi: {
     eyebrow: "LỐI VÀO",
     title: "Năm cách đi vào cùng một tập dữ liệu",
-    lede: "Phần mở đầu ở trên là một cách nhìn toàn cảnh. Bên dưới là năm công cụ đọc cùng tập văn bản ấy, mỗi công cụ trả lời một câu hỏi khác nhau. Mọi con số trên các thẻ đếm thẳng từ tập dữ liệu, không nhập tay.",
+    lede: "Ba khối ở trên cho thấy tập văn bản được sắp xếp thế nào. Bên dưới là năm công cụ cùng đọc tập văn bản ấy, mỗi công cụ trả lời một câu hỏi khác nhau. Mọi con số trên các thẻ được đếm thẳng từ tập dữ liệu, không nhập tay.",
     cards: [
       {
         key: "ban-do",
@@ -53,8 +49,8 @@ export const hub: Record<Lang, HubCopy> = {
       },
       {
         key: "linh-vuc",
-        title: "Khối lĩnh vực ba chiều",
-        text: "Mỗi lĩnh vực có một khối quan hệ riêng, xoay và phóng to được: trục đứng là thứ bậc hiệu lực, luật trên cùng, thông tư dưới cùng.",
+        title: "Cây văn bản theo lĩnh vực",
+        text: "Mỗi lĩnh vực có một cây văn bản riêng: luật ở tầng trên, nghị định ở giữa, thông tư dưới cùng, và từng mắt xích quan hệ nối chúng với nhau. Bấm vào một văn bản để mở trang chi tiết.",
         meta: "lĩnh vực",
         cta: "Xem các lĩnh vực",
       },
@@ -85,15 +81,12 @@ export const hub: Record<Lang, HubCopy> = {
     statDomains: "lĩnh vực",
     statPairs: "cặp đối chiếu",
     spanLabel: "Mốc hiệu lực",
-    replayTitle: "Xem lại phần mở đầu",
-    replayText: "Sáu màn ba chiều ở trên chạy theo cuộn. Quay về màn đầu để đi lại từ khối văn bản tới ngưỡng mở bản đồ.",
-    replay: "Về màn đầu",
     verifiedPrefix: "Dữ liệu tra cứu ngày",
   },
   en: {
     eyebrow: "WAYS IN",
     title: "Five ways into the same body of instruments",
-    lede: "The prologue above is one view of the whole. Below are five tools that read the same instruments, each answering a different question. Every figure on these cards is counted straight from the dataset, never typed in by hand.",
+    lede: "The three blocks above show how the instruments are arranged. Below are five tools that read the same instruments, each answering a different question. Every figure on these cards is counted straight from the dataset, never typed in by hand.",
     cards: [
       {
         key: "ban-do",
@@ -104,8 +97,8 @@ export const hub: Record<Lang, HubCopy> = {
       },
       {
         key: "linh-vuc",
-        title: "Three-dimensional domain bodies",
-        text: "Each domain carries its own body of relations, free to rotate and zoom: the vertical axis is legal force, laws at the top, circulars at the base.",
+        title: "Instrument trees by domain",
+        text: "Each domain has its own tree of instruments: laws on the top tier, decrees in the middle, circulars at the base, and every relation drawn as a link between them. Select an instrument to open its detail page.",
         meta: "domains",
         cta: "See the domains",
       },
@@ -136,9 +129,6 @@ export const hub: Record<Lang, HubCopy> = {
     statDomains: "domains",
     statPairs: "pairs",
     spanLabel: "Force from",
-    replayTitle: "Watch the prologue again",
-    replayText: "The six three-dimensional acts above run on scroll. Return to the first act to travel once more from the body of instruments to the threshold of the map.",
-    replay: "Back to act one",
     verifiedPrefix: "Dataset searched on",
   },
 };

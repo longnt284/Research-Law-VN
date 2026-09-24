@@ -24,7 +24,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
 
   const links = [
     // Trang chủ phải có mặt trong thanh điều hướng, không chỉ nằm sau dấu ấn ở
-    // góc trái: phần mở đầu ba chiều và khối lối vào là một mục thật của trang
+    // góc trái: dải văn bản nối xích và khối lối vào là một mục thật của trang
     // chứ không phải một tấm bìa để lướt qua một lần. So khớp đúng bằng địa chỉ
     // gốc, nếu không mục này sáng lên ở mọi trang con.
     { href: `/${lang}`, label: t.nav.home, exact: true },
