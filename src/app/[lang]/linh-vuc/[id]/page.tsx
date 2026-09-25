@@ -140,8 +140,8 @@ export default async function DomainPage({
           </section>
         </Reveal>
 
-        <Link href={`/${lang}/ban-do`} className="btn btn-quiet mt-10">
-          {t.domainPage.viewOnMap}
+        <Link href={`/${lang}/linh-vuc`} className="btn btn-quiet mt-10">
+          {t.domainPage.backToDomains}
         </Link>
       </article>
     </>

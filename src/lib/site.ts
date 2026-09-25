@@ -48,13 +48,13 @@ export function alternatesFor(lang: Lang, sub = "") {
  * Twitter.
  *
  * Layout chỉ biết tên trang, nên nếu trang con không đặt thẻ này thì mọi đường
- * dẫn gửi đi đều hiện cùng một dòng "Bản đồ Không gian Pháp luật", kể cả khi
+ * dẫn gửi đi đều hiện cùng một dòng "Lex & Lineage", kể cả khi
  * người gửi đang chia sẻ đúng một nghị định.
  *
  * Trang không có tệp `opengraph-image` riêng nhận ảnh mặc định, dựng bởi
  * `app/[lang]/opengraph-image.tsx`: Next không truyền ảnh của đoạn cha xuống
  * trang con đã tự đặt `openGraph`, nên phải trỏ tới nó một cách tường minh.
- * Trang có tệp riêng (trang chủ, văn bản, cặp đối chiếu, soát căn cứ) truyền
+ * Trang có tệp riêng (trang chủ, văn bản, cặp đối chiếu) truyền
  * `ownImage`, vì ảnh khai báo trong mã sẽ đè lên ảnh của tệp.
  */
 export function shareMeta(

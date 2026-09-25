@@ -107,8 +107,7 @@ export function DocumentIndex({
         Thanh lọc dính ngay dưới thanh điều hướng. Danh mục dài hơn một màn hình,
         và người đang cuộn giữa danh sách thường muốn đổi từ khóa ngay tại chỗ
         chứ không phải cuộn ngược lên đầu trang.
-        Khoảng 3.3rem là chiều cao thanh điều hướng, cùng con số mà trang bản đồ
-        dùng để tính chiều cao vùng vẽ.
+        Khoảng 3.3rem là chiều cao thanh điều hướng.
       */}
       {/*
         Chỉ dính từ màn hình vừa trở lên. Trên điện thoại thanh điều hướng xuống

@@ -8,7 +8,7 @@ import { buildTree, TREE } from "@/lib/tree";
  *
  * Thay cho khối quan hệ ba chiều trước đây. Cùng dữ liệu, nhưng đọc được ngay
  * mà không phải xoay: luật ở cột trái, văn bản hướng dẫn ở các cột bên phải,
- * mũi tên chỉ vào văn bản bị tác động. Ba kiểu nét dùng đúng quy ước của bản đồ
+ * mũi tên chỉ vào văn bản bị tác động. Ba kiểu nét dùng đúng quy ước của gia phả
  * — liền cho quy định chi tiết, đứt cho sửa đổi, chấm đỏ cho thay thế — nên
  * người đọc không phải học hai bộ ký hiệu.
  *

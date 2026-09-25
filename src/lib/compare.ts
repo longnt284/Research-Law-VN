@@ -15,7 +15,7 @@ import { formatDate, getDict } from "@/i18n/dictionary";
  * Cặp đối chiếu không do người biên soạn chọn mà lấy thẳng từ quan hệ `replaces`
  * và `amends` trong tập dữ liệu: văn bản nào thay thế hoặc sửa đổi một văn bản
  * khác thì có trang đối chiếu, không có ngoại lệ và không có cặp nào được thêm
- * vào bằng tay. Nhờ vậy danh sách cặp luôn khớp với bản đồ quan hệ, và không có
+ * vào bằng tay. Nhờ vậy danh sách cặp luôn khớp với gia phả văn bản, và không có
  * chỗ cho một cặp "được chọn" vì nó minh họa đẹp cho một luận điểm nào đó.
  */
 

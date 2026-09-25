@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { ChainDefs } from "@/components/home/ChainParts";
-import { ChainHero } from "@/components/home/ChainHero";
+import { BrandHero } from "@/components/home/BrandHero";
+import { FeaturedFamily } from "@/components/home/FeaturedFamily";
 import { HierarchyBlock } from "@/components/home/HierarchyBlock";
 import { RelationBlock } from "@/components/home/RelationBlock";
 import { TimelineBlock } from "@/components/home/TimelineBlock";
@@ -14,14 +14,15 @@ import { alternatesFor, shareMeta } from "@/lib/site";
 /**
  * Trang chủ.
  *
- * Bốn phần, đi từ nhìn thấy tới đọc được. Đầu trang là ba dải văn bản nối xích
- * chạy không dứt: hình ảnh của cả hệ thống. Ba khối tiếp theo gỡ hình ảnh đó ra
- * thành ba câu hỏi mà người làm hồ sơ vẫn hỏi — văn bản nào đứng trên văn bản
- * nào, chúng nối nhau bằng quan hệ gì, và quy định nào đang có hiệu lực vào ngày
- * nào. Cuối trang là năm lối vào các công cụ.
+ * Năm phần, đi từ nhìn thấy tới đọc được. Đầu trang là huy hiệu và câu khẩu
+ * hiệu: mỗi văn bản pháp luật đều có một gia phả. Ngay sau đó là một gia phả
+ * thật, lớn nhất trong tập dữ liệu, để ý tưởng có hình hài trước khi được giải
+ * thích. Ba khối tiếp theo gỡ gia phả ấy ra thành ba câu hỏi mà người làm hồ sơ
+ * vẫn hỏi — văn bản nào đứng trên văn bản nào, chúng nối nhau bằng quan hệ gì,
+ * và quy định nào đang có hiệu lực vào ngày nào. Cuối trang là các lối vào.
  *
- * Toàn bộ trang là HTML và SVG dựng ở máy chủ. Không có cảnh WebGL nào, không
- * có thư viện đồ họa nào phải tải; chuyển động nằm trong CSS và dừng được.
+ * Toàn bộ trang là HTML và SVG dựng ở máy chủ. Không có thư viện đồ họa nào
+ * phải tải; chuyển động nằm trong CSS và dừng được.
  *
  * Tiêu đề và mô tả kế thừa từ layout; ở đây khai báo bản dịch và thẻ chia sẻ,
  * hai thứ mà layout không tự biết được.
@@ -49,8 +50,8 @@ export default async function HomePage({
   if (!isLang(lang)) notFound();
   return (
     <>
-      <ChainDefs />
-      <ChainHero lang={lang} />
+      <BrandHero lang={lang} />
+      <FeaturedFamily lang={lang} />
       <div className="home-blocks">
         <Reveal>
           <HierarchyBlock lang={lang} />

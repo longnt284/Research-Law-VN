@@ -1,13 +1,6 @@
 import Link from "next/link";
 
-import {
-  CheckArt,
-  CompareArt,
-  DomainsArt,
-  HierarchyArt,
-  MapArt,
-  MethodArt,
-} from "@/components/art/PageArt";
+import { CompareArt, DomainsArt, HierarchyArt, MethodArt } from "@/components/art/PageArt";
 import { Reveal } from "@/components/Reveal";
 import { documents, domains, LATEST_VERIFIED_ON, relations } from "@/data/documents";
 import type { Lang } from "@/data/types";
@@ -32,25 +25,20 @@ import { corpusSpan } from "@/lib/corpus";
  * trang đích, nên người đọc bấm một hình rồi gặp lại chính hình ấy ở trang mới.
  */
 const CARDS: Record<HubCardKey, { path: string; Art: (p: { lang: Lang }) => React.ReactNode }> = {
-  "ban-do": { path: "/ban-do", Art: MapArt },
   "linh-vuc": { path: "/linh-vuc", Art: DomainsArt },
   "van-ban": { path: "/van-ban", Art: HierarchyArt },
   "doi-chieu": { path: "/doi-chieu", Art: CompareArt },
-  "soat-can-cu": { path: "/soat-can-cu", Art: CheckArt },
   "phuong-phap": { path: "/phuong-phap", Art: MethodArt },
 };
 
 export function HomeHub({ lang }: { lang: Lang }) {
   const h = getHub(lang);
 
-  // Số đếm của từng thẻ. `relations` chỉ giữ quan hệ có đủ hai đầu trong tập dữ
-  // liệu, nên thẻ không hứa một con số mà bản đồ không vẽ ra.
+  // Số đếm của từng thẻ, đếm thẳng từ tập dữ liệu.
   const counts: Record<HubCardKey, string> = {
-    "ban-do": String(relations.length),
     "linh-vuc": String(domains.length),
     "van-ban": String(documents.length),
     "doi-chieu": String(pairs.length),
-    "soat-can-cu": String(documents.length),
     "phuong-phap": formatDate(LATEST_VERIFIED_ON, lang, LATEST_VERIFIED_ON),
   };
 
@@ -90,8 +78,9 @@ export function HomeHub({ lang }: { lang: Lang }) {
       <div className="hub-grid">
         {h.cards.map((card, i) => {
           const { path, Art } = CARDS[card.key];
-          // Thẻ đầu chiếm trọn bề ngang: bản đồ là lối vào chính, và một thẻ lớn
-          // nói điều đó rõ hơn bất kỳ chữ "nổi bật" nào. Các thẻ còn lại xếp
+          // Thẻ đầu chiếm trọn bề ngang: cây văn bản theo lĩnh vực là lối vào
+          // rộng nhất, và một thẻ lớn nói điều đó rõ hơn bất kỳ chữ "nổi bật"
+          // nào. Các thẻ còn lại xếp
           // hai cột; khi số thẻ đó lẻ, thẻ cuối cũng trải hết bề ngang thay vì
           // để trống nửa hàng.
           const wide = i === 0 || (i === h.cards.length - 1 && (h.cards.length - 1) % 2 === 1);

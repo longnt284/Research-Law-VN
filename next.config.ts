@@ -63,7 +63,17 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   async redirects() {
-    return [{ source: "/", destination: "/vi", permanent: false }];
+    return [
+      { source: "/", destination: "/vi", permanent: false },
+      /*
+        Hai trang đã gỡ khi trang đổi sang ý tưởng gia phả văn bản. Đường dẫn cũ
+        có thể đã được chia sẻ hoặc lưu lại, nên đưa người đọc tới trang đang làm
+        đúng việc gần nhất thay vì để họ gặp trang 404: bản đồ tới cây văn bản
+        theo lĩnh vực, soát căn cứ tới danh mục có ô chọn ngày hiệu lực.
+      */
+      { source: "/:lang(vi|en)/ban-do", destination: "/:lang/linh-vuc", permanent: true },
+      { source: "/:lang(vi|en)/soat-can-cu", destination: "/:lang/van-ban", permanent: true },
+    ];
   },
   async headers() {
     return [

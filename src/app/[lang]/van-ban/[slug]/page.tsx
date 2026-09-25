@@ -4,21 +4,19 @@ import { notFound } from "next/navigation";
 
 import { CopyCitation } from "@/components/Citation";
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
+import { FamilyChart, FamilyList } from "@/components/FamilyTree";
 import { JsonLd } from "@/components/JsonLd";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { ShareLinks } from "@/components/ShareLinks";
 import { ValidityProbe } from "@/components/validity/ValidityProbe";
 import { ValidityTimeline } from "@/components/validity/ValidityTimeline";
-import {
-  documents,
-  documentsById,
-  relations,
-  verifiedOnOf,
-} from "@/data/documents";
-import type { Lang, RelationKind } from "@/data/types";
+import { documents, documentsById, verifiedOnOf } from "@/data/documents";
+import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { getFamilyCopy } from "@/i18n/family";
 import { citeDocument } from "@/lib/citation";
 import { pairsFor } from "@/lib/compare";
+import { familyOf } from "@/lib/family";
 import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor, clip, pathFor, shareMeta, SITE_URL } from "@/lib/site";
 import { breadcrumbLd, legislationLd } from "@/lib/structured-data";
@@ -50,33 +48,6 @@ export async function generateMetadata({
   };
 }
 
-/** Gom quan hệ hai chiều của một văn bản, đã nhóm sẵn theo nhãn hiển thị. */
-function collectRelations(id: string, lang: Lang) {
-  const t = getDict(lang);
-  const labelFor = (kind: RelationKind, outgoing: boolean) => {
-    if (kind === "guides") return outgoing ? t.doc.relGuidesOut : t.doc.relGuidesIn;
-    if (kind === "amends") return outgoing ? t.doc.relAmendsOut : t.doc.relAmendsIn;
-    return outgoing ? t.doc.relReplacesOut : t.doc.relReplacesIn;
-  };
-
-  const groups = new Map<string, string[]>();
-  for (const r of relations) {
-    let other: string | null = null;
-    let label: string | null = null;
-    if (r.from === id) {
-      other = r.to;
-      label = labelFor(r.kind, true);
-    } else if (r.to === id) {
-      other = r.from;
-      label = labelFor(r.kind, false);
-    }
-    if (!other || !label || !documentsById.has(other)) continue;
-    if (!groups.has(label)) groups.set(label, []);
-    groups.get(label)!.push(other);
-  }
-  return [...groups.entries()];
-}
-
 export default async function DocumentPage({
   params,
 }: {
@@ -89,7 +60,8 @@ export default async function DocumentPage({
   if (!doc) notFound();
 
   const t = getDict(lang);
-  const grouped = collectRelations(doc.id, lang);
+  const fc = getFamilyCopy(lang);
+  const fam = familyOf(doc.id);
   const comparePairs = pairsFor(doc.id);
   const docLineages = lineagesFor(doc.id);
   const citation = citeDocument(doc, lang);
@@ -170,47 +142,23 @@ export default async function DocumentPage({
               người mở một văn bản là nó còn dùng được không, và từ khi nào. */}
           <ValidityTimeline doc={doc} lang={lang} />
 
-          <section className="mt-9">
-            <h2 className="eyebrow eyebrow-tick">{t.doc.relations}</h2>
-            {grouped.length === 0 ? (
-              <p className="mt-2 text-sm text-[var(--ink-3)]">{t.doc.noRelations}</p>
+          {/* Gia phả thay cho danh sách quan hệ phẳng trước đây. Hình chỉ hiện
+              từ cỡ máy tính bảng; phả ký bên dưới nói lại đúng nội dung ấy bằng
+              chữ, tên văn bản đầy đủ, và là bản duy nhất trên điện thoại. */}
+          <section className="mt-9" aria-labelledby="family-title">
+            <h2 id="family-title" className="eyebrow eyebrow-tick">
+              {fc.chartLabel}
+            </h2>
+            {fam && fam.size > 0 ? (
+              <>
+                <div className="family-wide mt-4">
+                  <FamilyChart fam={fam} lang={lang} />
+                  <p className="mt-2 text-[0.8125rem] text-[var(--ink-3)]">{fc.hint}</p>
+                </div>
+                <FamilyList fam={fam} lang={lang} className="mt-5" />
+              </>
             ) : (
-              <dl className="mt-3 space-y-5">
-                {grouped.map(([label, ids]) => (
-                  <div key={label}>
-                    <dt className="text-sm font-medium text-[var(--ink-2)]">{label}</dt>
-                    <dd className="mt-1.5">
-                      <ul className="space-y-1.5">
-                        {ids.map((id) => {
-                          const other = documentsById.get(id);
-                          if (!other) return null;
-                          return (
-                            <li key={id}>
-                              {/* Lưới hai cột thay cho `flex-wrap`. Khi tên văn
-                                  bản dài hơn một dòng, cách cũ đẩy cả tên xuống
-                                  dòng dưới và số hiệu nằm trơ lại một mình; ở
-                                  đây số hiệu giữ cột trái còn tên xuống dòng
-                                  trong cột phải, nên cặp số hiệu và tên vẫn đọc
-                                  được như một khối. */}
-                              <Link
-                                href={`/${lang}/van-ban/${id}`}
-                                className="group grid gap-x-3 sm:grid-cols-[8.5rem_1fr]"
-                              >
-                                <span className="tnum text-sm font-semibold text-[var(--accent)]">
-                                  {other.number}
-                                </span>
-                                <span className="text-sm text-[var(--ink-2)] underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors group-hover:decoration-[var(--accent)]">
-                                  {other.title[lang]}
-                                </span>
-                              </Link>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <p className="mt-2 text-sm text-[var(--ink-3)]">{fc.empty}</p>
             )}
           </section>
 
@@ -361,10 +309,6 @@ export default async function DocumentPage({
               ))}
             </ul>
           </div>
-
-          <Link href={`/${lang}/ban-do`} className="btn btn-quiet mt-6">
-            {t.doc.viewOnMap}
-          </Link>
         </aside>
       </div>
     </article>

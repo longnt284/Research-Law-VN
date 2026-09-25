@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { BrandMark, Wordmark } from "@/components/brand/BrandMark";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
@@ -28,11 +29,9 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     // chứ không phải một tấm bìa để lướt qua một lần. So khớp đúng bằng địa chỉ
     // gốc, nếu không mục này sáng lên ở mọi trang con.
     { href: `/${lang}`, label: t.nav.home, exact: true },
-    { href: `/${lang}/ban-do`, label: t.nav.map, exact: false },
     { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
     { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },
     { href: `/${lang}/doi-chieu`, label: t.nav.compare, exact: false },
-    { href: `/${lang}/soat-can-cu`, label: t.nav.check, exact: false },
     { href: `/${lang}/phuong-phap`, label: t.nav.about, exact: false },
   ];
 
@@ -46,24 +45,13 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
         cuộn ngang khi thiếu chỗ — chữ vẫn đủ, thân trang không bị đẩy lệch.
       */}
       <div className="mx-auto flex w-full max-w-[76rem] flex-col gap-y-1 px-5 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:px-8 sm:py-3">
-        <Link href={`/${lang}`} className="group flex items-center gap-2.5">
+        <Link href={`/${lang}`} className="brand-link group flex items-center gap-2.5" aria-label={t.siteName}>
           {/*
-            Dấu ấn là chữ § đặt trong khung vuông mực đỏ — một chi tiết đặc trưng
-            của ngành thay vì một ô màu trung tính. Khung tô đầy khi rê chuột.
+            Dấu nhỏ của trang: cán cân mọc rễ trên nền mực, viền vàng. Tên đi
+            kèm viết hoa giãn chữ như trên một tấm danh thiếp in nổi.
           */}
-          <span
-            aria-hidden="true"
-            className="inline-flex h-6 w-6 shrink-0 items-center justify-center border border-[var(--accent)] text-[0.8125rem] leading-none text-[var(--accent)] transition-colors group-hover:bg-[var(--accent)] group-hover:text-[var(--paper)]"
-            style={{ fontFamily: "var(--font-serif)" }}
-          >
-            §
-          </span>
-          <span
-            className="text-[1.0625rem] font-semibold tracking-tight"
-            style={{ fontFamily: "var(--font-serif)" }}
-          >
-            {t.siteName}
-          </span>
+          <BrandMark variant="badge" id="hdr" className="brand-badge h-8 w-8 shrink-0" />
+          <Wordmark />
         </Link>
 
         {/*
