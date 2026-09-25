@@ -1,53 +1,88 @@
-# Research-Law-VN — Bản đồ Không gian Pháp luật
+# Lex & Lineage — Gia phả văn bản pháp luật Việt Nam
 
-Công cụ tra cứu quan hệ giữa các văn bản quy phạm pháp luật Việt Nam. Mỗi điểm
-trên bản đồ là một văn bản, mỗi đường nối là một quan hệ có thật: quy định chi
+Công cụ tra cứu dòng dõi của các văn bản quy phạm pháp luật Việt Nam. Mỗi văn
+bản được trình bày như một người trong cuốn gia phả: đời trước (văn bản nó thay
+thế), đời sau (văn bản thay thế nó), các nhánh hướng dẫn (nghị định, thông tư
+quy định chi tiết nó), văn bản cấp trên mà nó hướng dẫn, và những lần được sửa
+đổi, bổ sung. Mỗi vai ứng đúng một quan hệ có thật trong bản ghi: quy định chi
 tiết, sửa đổi bổ sung, hoặc thay thế.
 
 Trang có hai phiên bản đầy đủ, tiếng Việt tại `/vi` và tiếng Anh tại `/en`.
 
-Trang chủ `/vi` là dải văn bản nối xích; bản đồ tương tác nằm ở `/vi/ban-do`.
+## Tên và dấu hiệu
 
-## Trang chủ: văn bản nối xích
+Tên trang là **Lex & Lineage**: *lex* là luật trong tiếng La-tinh, *lineage* là
+dòng dõi. Hai chữ nối bằng dấu "&" như tên một văn phòng luật, và dòng định
+danh đi kèm là "Gia phả văn bản pháp luật Việt Nam" / "The genealogy of
+Vietnamese law".
 
-Trang chủ mở bằng ba dải thẻ văn bản chạy không dứt, nối nhau bằng mắt xích.
-Hình không phải trang trí: mỗi thẻ là một văn bản có thật trong tập dữ liệu, mỗi
-mắt xích là một quan hệ có thật, và thứ tự thẻ do `src/lib/strands.ts` quyết
-định. Thư viện đó chia toàn bộ quan hệ thành các sợi — đường đơn đi qua mỗi quan
-hệ đúng một lần — nên sợi dài nhất xuất hiện đúng ở chỗ một luật sửa đổi nhiều
-luật cùng lúc bắc cầu giữa hai hệ văn bản. Thêm một nghị định hướng dẫn vào tập
-dữ liệu là một sợi dài thêm một mắt, không phải sửa mã.
+Dấu hiệu (`src/components/brand/BrandMark.tsx`) là một cán cân mà trụ đỡ mọc
+thành rễ cây: nửa trên là luật, nửa dưới là gia phả, ba rễ kết thúc bằng ba nút
+tròn như ba đời văn bản đứng trước. Có hai dạng cùng một hình học:
 
-Mắt xích nói loại quan hệ bằng ba cách cùng lúc: kim loại đồng cho quy định chi
-tiết, thép cho sửa đổi bổ sung, son đỏ cho thay thế; một nhãn chữ có mũi tên chỉ
-vào văn bản bị tác động; và một câu đầy đủ trong `title`. Chấm sáng chạy dọc xích
-đi từ văn bản tác động sang văn bản bị tác động. Thẻ văn bản hết hiệu lực, đã sửa
-đổi hoặc chưa có hiệu lực mang một con dấu tình trạng.
+- `seal`: huy hiệu lớn ở đầu trang chủ. Nền tròn màu mực, viền đôi có vành hạt,
+  tên trang chạy theo vòng cung, hai nhánh nguyệt quế, nét vàng lá có ánh kim.
+  Nét được vẽ dần một lần khi trang mở; một vệt sáng lướt chậm qua mặt dấu.
+- `badge`: dấu nhỏ ở thanh điều hướng và chân trang, bỏ chữ và nguyệt quế, nét
+  dày gấp đôi để còn đọc được ở cỡ ba mươi điểm ảnh.
 
-Dưới dải là ba khối, mỗi khối trả lời một câu hỏi người làm hồ sơ vẫn hỏi:
+`src/app/icon.svg` là dạng `badge` xuất ra tệp tĩnh, và ảnh chia sẻ đọc đúng
+tệp đó, nên biểu tượng tab, ảnh chia sẻ và dấu trên trang là một hình.
+
+## Trang chủ
+
+Trang chủ mở bằng huy hiệu, tên chữ hoa giãn cách và câu khẩu hiệu "Mỗi văn bản
+pháp luật đều có một gia phả." Ngay sau đó là một gia phả thật: gia phả lớn
+nhất trong tập dữ liệu mà văn bản đứng giữa còn hiệu lực, chọn bằng phép đếm
+(`featuredFamily` trong `src/lib/family.ts`), không chọn tay. Dưới đó là ba
+khối, mỗi khối trả lời một câu hỏi người làm hồ sơ vẫn hỏi:
 
 1. **Thứ bậc hiệu lực** — bốn bậc thang, mỗi ô nhỏ là một văn bản tô theo màu
    lĩnh vực.
-2. **Quan hệ** — ba loại mắt xích, mỗi loại một ví dụ thật do `exampleOf` chọn
-   từ tập dữ liệu, ưu tiên cặp đã xác minh.
+2. **Ba mối quan hệ trong gia phả** — nhánh hướng dẫn, ghi chú sửa đổi, đời
+   trước và đời sau; mỗi loại một ví dụ thật do `exampleOf` chọn từ tập dữ liệu.
 3. **Trục thời gian** — số văn bản có hiệu lực theo năm, chia theo tình trạng,
    kèm vạch ngày tra cứu; bảng số đi kèm cho trình đọc màn hình.
 
-Toàn bộ là HTML và SVG dựng ở máy chủ. Không có WebGL, không có thư viện đồ họa
-phải tải: `three` và `@react-three/fiber` đã rời khỏi `dependencies`. Chuyển động
-nằm trong CSS và chỉ dịch `transform`, nên trình duyệt đẩy xuống bộ tổng hợp.
-Chuyển động dừng khi rê chuột vào một làn, khi bấm nút "Dừng chuyển động" (lựa
-chọn được nhớ và áp cho cả lớp nền đầu trang), và khi hệ điều hành báo giảm
-chuyển động — lúc đó dải thành một hàng cuộn ngang bằng tay. Dải được ẩn khỏi
-cây trợ năng và thẻ trong dải không nhận tiêu điểm bàn phím; một câu tóm tắt thay
-chỗ, và cùng nội dung nằm ở danh mục và bản đồ dưới dạng đọc được.
+Toàn bộ là HTML và SVG dựng ở máy chủ. Chuyển động nằm trong CSS: nét huy hiệu
+vẽ dần một lần, vệt sáng trên mặt dấu và lớp nền đầu trang chạy chậm. Nút "Dừng
+chuyển động" dừng chúng (lựa chọn được nhớ), và khi hệ điều hành báo giảm
+chuyển động thì huy hiệu hiện sẵn, không có gì chạy.
+
+## Gia phả của một văn bản
+
+`src/lib/family.ts` dựng gia phả của một văn bản từ chính trường quan hệ của các
+bản ghi, không vai nào được suy đoán:
+
+| Vai trong gia phả | Quan hệ trong bản ghi |
+| --- | --- |
+| Đời trước | văn bản này `replaces` văn bản kia |
+| Đời sau | văn bản kia `replaces` văn bản này |
+| Văn bản cấp trên | văn bản này `guides` văn bản kia |
+| Nhánh hướng dẫn | văn bản kia `guides` văn bản này |
+| Được sửa đổi bởi | văn bản kia `amends` văn bản này |
+| Văn bản này sửa đổi | văn bản này `amends` văn bản kia |
+
+Đời trước và đời sau đi tiếp tối đa ba đời; nhánh hướng dẫn đi thêm một bậc
+(thông tư hướng dẫn nghị định hướng dẫn luật).
+
+Trang của mỗi văn bản có hai cách đọc cùng gia phả (`src/components/FamilyTree.tsx`):
+
+- **Hình**: dòng kế tục nằm ngang ở giữa, đời trước bên trái, đời sau bên phải;
+  văn bản cấp trên và các quan hệ sửa đổi ở trên; nhánh hướng dẫn ở dưới, tối đa
+  bốn nhánh một hàng, nối về văn bản đang xem bằng một thân dọc. Bố cục tính sẵn,
+  tất định. Mỗi văn bản là một liên kết thật dùng được bằng bàn phím. Hình chỉ
+  hiện từ cỡ máy tính bảng.
+- **Phả ký**: cùng gia phả viết thành danh sách có tiêu đề cho từng vai, tên văn
+  bản đầy đủ không cắt. Đây là bản đọc trên điện thoại và bằng trình đọc màn hình.
+
+Ba kiểu nét dùng chung ở mọi hình: nét liền cho quy định chi tiết, nét đứt cho
+sửa đổi bổ sung, chấm đỏ cho thay thế; mũi tên luôn chỉ vào văn bản bị tác động.
 
 ## Hình minh họa ở các trang
 
 Hình ở đầu mỗi trang và trên thẻ lối vào trang chủ vẽ đúng vật mà trang đó làm
-việc cùng (`src/components/art/PageArt.tsx`): bản đồ là một luật cùng văn bản cũ
-nó thay thế, luật sửa đổi nó và các nghị định, thông tư hướng dẫn; danh mục là
-tháp thứ bậc với số văn bản thật mỗi tầng; đối chiếu là hai trang cùng một điều
+việc cùng (`src/components/art/PageArt.tsx`): danh mục là tháp thứ bậc với số văn bản thật mỗi tầng; đối chiếu là hai trang cùng một điều
 có dòng bị gạch và dòng được chèn; phương pháp là kính lúp trên số hiệu cùng danh
 sách những gì đã kiểm và con dấu ngày tra. Mỗi lĩnh vực có một biểu tượng nét
 (`src/components/art/DomainGlyph.tsx`): cần cẩu, cột điện, trang hợp đồng có chữ
@@ -59,11 +94,6 @@ Trang của từng lĩnh vực thay khối quan hệ ba chiều bằng cây văn
 thứ tự trong cột theo phép trọng tâm để đường nối ít cắt nhau, quan hệ giữa hai
 văn bản cùng cột vẽ thành cung bên trái cột. Mỗi văn bản trên cây là một liên kết
 thật dùng được bằng bàn phím.
-
-Bản đồ hai chiều giữ nguyên cơ chế, thêm ký hiệu theo tầng hiệu lực: luật là
-hình vuông, nghị quyết và văn bản hợp nhất là hình thoi, nghị định là hình tròn,
-thông tư là tam giác, văn bản hết hiệu lực rỗng ruột. Chú giải liệt kê đủ bốn
-hình và ba kiểu nét.
 
 Ba kiểu nét quan hệ dùng chung ở mọi hình: nét liền cho quy định chi tiết, nét
 đứt cho sửa đổi bổ sung, nét chấm đỏ cho thay thế. Thang bốn tầng hiệu lực và
@@ -146,39 +176,6 @@ số hiệu. Chỉ mục (`src/lib/articles.ts`) dựng từ các căn cứ có 
 khoản trong `src/data/comparisons.ts`, tức chỉ những điều đã thực sự được đọc và
 dẫn; kết quả dẫn thẳng tới điểm đối chiếu qua neo `#<mã điểm>`.
 
-## Soát căn cứ pháp lý
-
-Trang `/vi/soat-can-cu` nhận khối "Căn cứ…" của một hợp đồng, công văn hay đơn
-do người đọc dán vào, cùng một ngày (mặc định là hôm nay). Mỗi số hiệu đọc được
-trong đoạn văn được tra vào tập dữ liệu và nhận một trong sáu kết quả: đang có
-hiệu lực, có hiệu lực nhưng đã sửa đổi (kèm văn bản sửa đổi đã có hiệu lực tại
-ngày đó), chưa có hiệu lực, đã hết hiệu lực (kèm chuỗi thay thế tới văn bản
-đang có hiệu lực), chưa xác định được, hoặc chưa có trong tập dữ liệu.
-
-- Bộ đọc số hiệu (`src/lib/basis-check.ts`) nhận dạng số/năm/cơ quan
-  (`91/2015/QH13`, `15/2021/NĐ-CP`) và số hiệu không có năm (`768/QĐ-TTg`),
-  bất kể chữ Đ gõ bằng ký tự nào, gạch nối hay gạch ngang, có số 0 đứng đầu
-  hay không. Số của chính hợp đồng (`…/HĐ…`) bị bỏ qua. Số hiệu không theo
-  khuôn đó (`CISG 1980`, `Quy tắc VIAC 2026`) được so nguyên văn. Cổng chặn của
-  kho văn bản so số hiệu sau khi chuẩn hóa, nên hai bản ghi không thể mang hai
-  cách viết của cùng một số hiệu.
-- Dòng nêu tên văn bản mà không có số hiệu không được đoán ra văn bản nào, vì
-  tên lặp lại qua các đời luật; trang liệt kê riêng các dòng đó.
-- Số hiệu không có trong tập dữ liệu được ghi là chưa có dữ liệu, không phải là
-  sai. Khi tập dữ liệu có số hiệu cùng số, cùng năm và cùng nhóm cơ quan, trang
-  gợi ý số hiệu đó.
-- Bản ghi cần đối chiếu thêm, hoặc mang lưu ý về hiệu lực (hiệu lực từng
-  phần, chuyển tiếp, hai nguồn nhà nước ghi khác nhau), được đánh dấu ngay trên
-  dòng kết quả kèm liên kết tới trang văn bản: phép soát không tự đọc lưu ý đó.
-- Tình trạng tại ngày dùng đúng phép tính của `src/lib/validity.ts`. Máy chủ
-  dựng sẵn các đoạn hiệu lực cho từng văn bản (`src/lib/basis-rows.ts`); trình
-  duyệt chỉ tìm đoạn chứa ngày được chọn.
-- Đoạn văn người đọc dán vào chỉ được xử lý trong trình duyệt: không lưu vào bộ
-  nhớ trình duyệt, không gửi đi. Chính sách `connect-src 'self'` và việc không
-  có mã theo dõi nào là lý do lời hứa đó giữ được.
-- Nút "Sao chép kết quả" cho ra một bản chữ thường, dán được vào bản ghi nhớ.
-  Đoạn mẫu trên trang dựng từ tên và số hiệu trong tập dữ liệu, không viết tay.
-
 ## Chia sẻ và công cụ tìm kiếm
 
 Trang văn bản mang một khối JSON-LD kiểu `Legislation` của schema.org: số hiệu,
@@ -190,10 +187,11 @@ xạ, vì nó gộp hai trường hợp mà schema.org tách riêng. Trang văn 
 đối chiếu còn mang dòng vị trí `BreadcrumbList`. Xem `src/lib/structured-data.ts`.
 
 Mỗi trang đặt thẻ Open Graph và Twitter của riêng nó (`shareMeta` trong
-`src/lib/site.ts`). Mỗi văn bản, mỗi cặp đối chiếu và trang soát căn cứ có ảnh
-chia sẻ riêng, dựng lúc `next build` bằng `next/og`: số hiệu, tên, tình trạng
-hiệu lực và ngày tra cứu lấy thẳng từ bản ghi. Trang khác dùng ảnh mặc định mang
-tên trang và các con số của tập dữ liệu. Ảnh dùng Lora và Be Vietnam Pro ở dạng
+`src/lib/site.ts`). Mỗi văn bản và mỗi cặp đối chiếu có ảnh chia sẻ riêng, dựng
+lúc `next build` bằng `next/og`: số hiệu, tên, tình trạng hiệu lực và ngày tra
+cứu lấy thẳng từ bản ghi. Trang khác dùng ảnh mặc định mang dòng định danh, câu
+khẩu hiệu và các con số của tập dữ liệu. Mọi ảnh mang dấu hiệu ở góc trên, đọc
+thẳng từ `src/app/icon.svg`. Ảnh dùng Lora và Be Vietnam Pro ở dạng
 TTF tĩnh trong `src/og/fonts`, kèm giấy phép SIL Open Font License của từng
 phông.
 
@@ -209,7 +207,7 @@ Cơ chế gồm năm lớp, tách bạch để biết mỗi dòng chữ đến t
 
 1. **Cặp văn bản** suy ra từ quan hệ `replaces` và `amends` trong
    `src/data/documents.ts`. Không cặp nào được thêm bằng tay, nên danh sách cặp
-   luôn khớp với bản đồ quan hệ.
+   luôn khớp với gia phả văn bản.
 2. **Bảng dữ kiện và nhận định suy ra** (`src/lib/compare.ts`): loại văn bản,
    tình trạng hiệu lực, ngày ban hành, ngày hiệu lực, khoảng cách giữa hai mốc,
    lĩnh vực thêm hoặc bớt. Toàn bộ là phép so sánh và phép trừ ngày.
@@ -315,15 +313,10 @@ gây ra). Xem `.claude/skills/README.md` để biết nguồn, giấy phép, cá
 
 ## Ghi chú kỹ thuật
 
-Bản đồ vẽ trên canvas 2D với bố cục tính sẵn một lần, tất định, không dùng mô
-phỏng lực chạy theo thời gian thực. Thao tác kéo và phóng to không kích hoạt
-render lại của React mà chỉ đánh dấu khung hình cần vẽ; khi không còn gì thay
-đổi, vòng lặp vẽ dừng hẳn. Nhãn trên bản đồ có kiểm tra chồng lấn nên chữ không
-đè lên nhau ở bất kỳ mức phóng nào.
-
-Nhãn trên bản đồ hai chiều được đo một lần rồi mới dùng cho phép chống chồng;
-phép đo chạy lại đúng một lần nữa khi phông chữ thật đã thay phông dự phòng, vì
-lúc đó bề rộng chữ mới đổi.
+Bản đồ tương tác (`/ban-do`) và trang soát căn cứ pháp lý (`/soat-can-cu`) đã
+được gỡ khi trang đổi sang ý tưởng gia phả. Đường dẫn cũ chuyển hướng vĩnh viễn
+tới trang đang làm đúng việc gần nhất: bản đồ tới cây văn bản theo lĩnh vực,
+soát căn cứ tới danh mục có ô chọn ngày hiệu lực. Xem `next.config.ts`.
 
 `sitemap.xml` và `robots.txt` sinh từ chính tập dữ liệu, dùng cùng nguồn với
 `generateStaticParams` của từng trang, nên không có trang nào lên được mà thiếu
@@ -341,14 +334,15 @@ Cấu trúc chính:
 ```
 src/
   app/[lang]/               # định tuyến song ngữ, sinh tĩnh toàn bộ
-  app/[lang]/page.tsx       # trang chủ: dải văn bản nối xích và ba khối
-  app/[lang]/ban-do/        # bản đồ tương tác
-  app/[lang]/soat-can-cu/   # soát căn cứ pháp lý
+  app/[lang]/page.tsx       # trang chủ: huy hiệu, gia phả tiêu biểu và ba khối
+  app/icon.svg              # dấu hiệu dạng nhỏ, dùng cho tab và ảnh chia sẻ
   app/[lang]/**/opengraph-image.tsx # ảnh chia sẻ dựng lúc build
   app/sitemap.ts            # sitemap sinh từ tập dữ liệu
   app/robots.ts             # robots.txt
-  components/               # bản đồ, danh mục, các mảnh giao diện dùng lại
-  components/home/          # dải xích, thẻ văn bản, ba khối của trang chủ
+  components/               # danh mục, các mảnh giao diện dùng lại
+  components/brand/         # dấu hiệu Lex & Lineage và tên dạng chữ
+  components/FamilyTree.tsx # hình gia phả và phả ký của một văn bản
+  components/home/          # phần đầu, gia phả tiêu biểu, ba khối của trang chủ
   components/art/           # hình minh họa đầu trang và biểu tượng lĩnh vực
   components/DomainTree.tsx # cây văn bản của một lĩnh vực
   components/HomeHub.tsx    # khối lối vào ở trang chủ
@@ -356,13 +350,11 @@ src/
   data/                     # tập dữ liệu văn bản và kiểu dữ liệu
   i18n/                     # từ điển giao diện hai thứ tiếng
   lib/corpus.ts             # thang thứ bậc và các con số dùng chung
-  lib/strands.ts            # chia quan hệ thành sợi cho dải xích
+  lib/family.ts             # gia phả của một văn bản và bố cục hình gia phả
   lib/tree.ts               # bố cục cây văn bản của một lĩnh vực
-  lib/layout.ts             # thuật toán bố cục bản đồ
   lib/compare.ts            # ghép cặp và tính dữ kiện đối chiếu
   lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
   lib/diff.ts               # so sánh cơ học hai đoạn văn bản
-  lib/basis-check.ts        # đọc số hiệu và chuỗi thay thế cho soát căn cứ
   lib/structured-data.ts    # JSON-LD Legislation và BreadcrumbList
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
@@ -376,43 +368,55 @@ cho một vụ việc cụ thể.
 
 ---
 
-# Research-Law-VN — Vietnamese Legal Space Map
+# Lex & Lineage — The genealogy of Vietnamese law
 
-A reference tool for tracing how Vietnam's legal instruments connect to one
-another. Each point on the map is an instrument; each line is a relation that
-actually exists — detailing, amending, or replacing. Fully available in
-Vietnamese at `/vi` and English at `/en`.
+A reference tool for tracing the line of descent of Vietnam's legal
+instruments. Each instrument is presented the way a family register presents a
+person: its predecessors (what it replaced), its successors (what replaced it),
+its implementing branches (the decrees and circulars that detail it), the parent
+instrument it implements, and the amendments written into it. Every role
+corresponds to exactly one relation recorded in the entry — detailing,
+amending, or replacing. Fully available in Vietnamese at `/vi` and English at
+`/en`.
 
-The home page opens with three strips of instrument cards running without end,
-joined by chain links. Each card is a real instrument and each link a real
-relation; `src/lib/strands.ts` splits every relation into single paths so that
-each relation appears in exactly one strand, and the longest strands form where
-one amending law bridges several bodies of legislation. A link states its kind
-three ways at once — brass for detailing, steel for amending, red for replacing;
-a label whose arrow points at the instrument acted upon; and a full sentence in
-its `title`. Below the strips, three blocks answer the questions a practitioner
-asks: which instrument ranks above which, how they are related (with a real
-example of each kind), and how many came into force in each year, with the
-search date marked.
+The name joins *lex*, Latin for law, and *lineage*. The mark
+(`src/components/brand/BrandMark.tsx`) is a pair of scales whose pillar grows
+into roots ending in three nodes, one for each earlier generation: law above,
+lineage below. It comes as a large seal for the home page — an ink field, a
+beaded double rim, the name set on an arc, laurel sprigs and gold-leaf lines
+that draw themselves once — and as a compact badge for the header, footer,
+favicon (`src/app/icon.svg`) and share images.
 
-Everything is server-rendered HTML and SVG. There is no WebGL and no graphics
-library to download — `three` and `@react-three/fiber` have left the
-dependencies. Motion lives in CSS, pauses on hover, stops with a remembered
-"Pause motion" button, and gives way to a hand-scrolled row when the system asks
-for reduced motion. The strip is hidden from assistive technology and its cards
-take no keyboard focus; a summary sentence stands in, and the same content is
-readable in the index and on the map.
+The home page opens with the seal and the motto "Every law has a lineage",
+followed by one real lineage: the largest in the dataset around an instrument
+still in force, chosen by count in `src/lib/family.ts`. Three blocks follow:
+which instrument ranks above which, the three ties of a lineage with a real
+example of each, and how many instruments came into force in each year.
 
-The other pages carry explicit illustrations instead of point clouds: a law with
-its predecessor, amending law and implementing decrees for the map; a hierarchy
-pyramid with real counts for the index; two pages of the same article, one line
-struck and one inserted, for the comparison pages; a magnifier over a document
-number with a checklist and a dated stamp for the method page. Each domain has a
-line glyph, and each domain page replaces the old three-dimensional block with a
-flat tree of instruments, one column per stratum of legal force, every node a
-real keyboard-reachable link. The two-dimensional map keeps its mechanics and
-now draws each stratum with its own shape: square for laws, diamond for
-resolutions and consolidated texts, circle for decrees, triangle for circulars.
+Every instrument page draws its own lineage (`src/components/FamilyTree.tsx`):
+predecessors to the left, successors to the right, parent and amending
+instruments above, implementing branches below, from a deterministic
+server-side layout in which every instrument is a keyboard-reachable link. A
+written register says the same thing in words with full titles; it is the only
+version on phones, where the drawing would be wider than the screen. A solid
+line details, a dashed line amends, red dots replace, and the arrow always
+points at the instrument acted upon.
+
+The interactive map (`/ban-do`) and the legal basis check (`/soat-can-cu`) were
+removed with the move to the lineage concept. Their old addresses redirect
+permanently to the domain trees and to the document index with its date
+picker.
+
+Everything is server-rendered HTML and SVG with no graphics library to
+download. Motion lives in CSS, stops with a remembered "Pause motion" button,
+and is skipped when the system asks for reduced motion.
+
+The other pages carry explicit illustrations: a hierarchy pyramid with real
+counts for the index; two pages of the same article, one line struck and one
+inserted, for the comparison pages; a magnifier over a document number with a
+checklist and a dated stamp for the method page. Each domain has a line glyph,
+and each domain page carries a flat tree of instruments, one column per stratum
+of legal force, every node a real keyboard-reachable link.
 
 Data rule: no document number appears unless it was actually looked up. Every
 record carries its sources and a confidence flag, and records with an unconfirmed
@@ -460,23 +464,12 @@ hide what was not in force. The index search also takes article numbers
 ("Article 53", "Điều 76") and lists every comparison point that cites that
 article, from an index built only of provisions actually read.
 
-The legal basis check at `/en/soat-can-cu` takes the "Pursuant to…" recitals
-of a contract, letter or application and a date. It reads every document number
-out of the pasted text — however the letter Đ was typed, with a hyphen or a
-dash, with or without a leading zero — and reports each instrument's status on
-that date by the same rule as the date picker: in force, amended (with the
-amending instruments already in force), not yet in force, or no longer in force
-with the replacement chain up to the instrument in force. A number outside the
-dataset is reported as having no data, never as wrong, and a line that names an
-instrument without a number is listed rather than guessed. The pasted text is
-processed in the browser only and is neither stored nor sent.
-
 Each document page carries schema.org `Legislation` JSON-LD (number, type, date
 of issue, legal force as at the review date, amendment and replacement
 relations, and the vbpl.vn page as `sameAs`). Every page sets its own Open Graph
-and Twitter tags, and every instrument, comparison pair and the basis-check page
-has its own preview image rendered at build time with `next/og` from the record
-itself. Document and pair pages have share controls: the operating system's
+and Twitter tags, and every instrument and comparison pair has its own preview
+image rendered at build time with `next/og` from the record itself, with the
+mark read from `src/app/icon.svg`. Document and pair pages have share controls: the operating system's
 share sheet on phones, copy-link on desktops, and plain links to Facebook and
 LinkedIn; no third-party script is loaded.
 

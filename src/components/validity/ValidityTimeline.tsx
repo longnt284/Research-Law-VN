@@ -9,8 +9,7 @@ import { validityEvents } from "@/lib/validity";
  * Diễn biến hiệu lực của một văn bản, dựng thành một cột mốc dọc.
  *
  * Mỗi dòng là một sự kiện đọc được từ tập dữ liệu. Sự kiện làm văn bản hết hiệu
- * lực vẽ bằng nút rỗng, cùng quy ước với bản đồ, để mắt bắt được ngay đâu là
- * điểm kết thúc.
+ * lực vẽ bằng nút rỗng, để mắt bắt được ngay đâu là điểm kết thúc.
  */
 export function ValidityTimeline({ doc, lang }: { doc: LegalDoc; lang: Lang }) {
   const c = getValidityCopy(lang);

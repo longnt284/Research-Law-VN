@@ -495,22 +495,6 @@ a {
   animation-delay: 210ms;
 }
 
-/*
-  Canvas bản đồ: tắt hoàn toàn hành vi cuộn mặc định của trình duyệt trên vùng
-  vẽ, nếu không thì thao tác kéo trên thiết bị cảm ứng sẽ vừa kéo bản đồ vừa
-  cuộn trang, và cảm giác giật đến từ đúng chỗ này.
-*/
-.map-surface {
-  touch-action: none;
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: grab;
-  display: block;
-}
-.map-surface[data-dragging="true"] {
-  cursor: grabbing;
-}
-
 /* Thanh cuộn mảnh, hợp với nền giấy. */
 @supports (scrollbar-width: thin) {
   .thin-scroll {
@@ -1078,180 +1062,6 @@ a {
   display: none;
 }
 
-/* ── Văn bản nối xích ─────────────────────────────────────────────────────────
-   Trang chủ vẽ tập dữ liệu thành những dải thẻ văn bản nối nhau bằng mắt xích.
-   Ba bộ màu kim loại, mỗi bộ một loại quan hệ: đồng cho quy định chi tiết, thép
-   cho sửa đổi bổ sung, son đỏ cho thay thế. Màu chỉ là một trong ba cách nói
-   loại quan hệ — nhãn chữ và câu trong `title` là hai cách còn lại — nên người
-   không phân biệt được màu vẫn đọc đúng. */
-
-:root {
-  --chain-g-hi: #f6e3a8;
-  --chain-g-mid: #b48c3a;
-  --chain-g-lo: #6b511d;
-  --chain-a-hi: #f1f3f6;
-  --chain-a-mid: #8b94a1;
-  --chain-a-lo: #474e59;
-  --chain-r-hi: #f4b8a8;
-  --chain-r-mid: #a3402b;
-  --chain-r-lo: #5a1a0f;
-  --chain-glint: rgba(255, 255, 255, 0.75);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --chain-g-lo: #8a6a2c;
-    --chain-a-lo: #5f6773;
-    --chain-r-mid: #c2553d;
-    --chain-r-lo: #7c2a1b;
-    --chain-glint: rgba(255, 255, 255, 0.4);
-  }
-}
-
-:root[data-theme="dark"] {
-  --chain-g-lo: #8a6a2c;
-  --chain-a-lo: #5f6773;
-  --chain-r-mid: #c2553d;
-  --chain-r-lo: #7c2a1b;
-  --chain-glint: rgba(255, 255, 255, 0.4);
-}
-
-.chain-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
-.chain-guides {
-  --chain-paint: url(#chain-metal-guides);
-  --chain-ink: var(--brass);
-}
-.chain-amends {
-  --chain-paint: url(#chain-metal-amends);
-  --chain-ink: var(--ink-3);
-}
-.chain-replaces {
-  --chain-paint: url(#chain-metal-replaces);
-  --chain-ink: var(--accent);
-}
-
-.chain-svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-  stroke: var(--chain-paint, var(--brass));
-}
-.chain-body {
-  fill: none;
-  stroke-width: 3.6;
-}
-.chain-glint {
-  fill: none;
-  stroke: var(--chain-glint);
-  stroke-width: 1;
-  stroke-linecap: round;
-}
-
-/* Mắt xích giữa hai thẻ. Hai mép âm nhẹ để vòng đầu và vòng cuối chạm vào thẻ,
-   như sợi xích được móc thật vào tờ giấy. */
-.chain-link {
-  position: relative;
-  z-index: 2;
-  display: inline-flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  align-items: center;
-  width: 6.75rem;
-  margin: 0 -0.55rem;
-}
-.chain-wire {
-  position: relative;
-  display: block;
-  width: 100%;
-}
-.chain-label {
-  margin-top: 0.2rem;
-  white-space: nowrap;
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--chain-ink);
-}
-.arrow-v {
-  display: none;
-}
-
-/* Chấm sáng chạy dọc xích, từ văn bản tác động sang văn bản bị tác động. Chỉ
-   dịch `transform` của một lớp phủ rộng bằng sợi xích, nên trình duyệt tổng hợp
-   được mà không vẽ lại. */
-.chain-pulse {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-.chain-pulse::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 8px;
-  margin-top: -4px;
-  background: radial-gradient(
-      circle 4px at 4px 50%,
-      #fff 0,
-      var(--chain-ink) 55%,
-      transparent 75%
-    )
-    no-repeat;
-  opacity: 0;
-  animation: chain-pulse 3.4s var(--ease-out-soft) infinite;
-}
-.acts-back .chain-pulse::before {
-  animation-name: chain-pulse-back;
-}
-.chain-strand:nth-child(3n + 1) .chain-pulse::before {
-  animation-delay: -1.1s;
-}
-.chain-strand:nth-child(3n + 2) .chain-pulse::before {
-  animation-delay: -2.3s;
-}
-
-@keyframes chain-pulse {
-  0% {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-  15%,
-  70% {
-    opacity: 0.95;
-  }
-  85%,
-  100% {
-    opacity: 0;
-    transform: translateX(calc(100% - 8px));
-  }
-}
-@keyframes chain-pulse-back {
-  0% {
-    opacity: 0;
-    transform: translateX(calc(100% - 8px));
-  }
-  15%,
-  70% {
-    opacity: 0.95;
-  }
-  85%,
-  100% {
-    opacity: 0;
-    transform: translateX(-8px);
-  }
-}
-
 /* Thẻ văn bản: một tờ giấy thu nhỏ, có tờ thứ hai lấp ló phía sau, góc trên gấp
    lại, mép trái mang màu lĩnh vực. */
 .doc-card {
@@ -1370,198 +1180,6 @@ a {
   border-style: dashed;
 }
 
-/* ── Phần đầu trang chủ ───────────────────────────────────────────────────── */
-
-.chain-hero {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  padding: 3.25rem 0 2.25rem;
-  border-bottom: 3px double var(--rule-strong);
-  background:
-    radial-gradient(48rem 26rem at 8% 0%, var(--lux-1), transparent 70%),
-    radial-gradient(40rem 22rem at 96% 100%, var(--lux-2), transparent 72%);
-}
-/* Nền kẻ dòng như giấy viết hồ sơ, mờ dần về hai đầu. */
-.chain-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0 31px,
-    color-mix(in oklab, var(--rule) 55%, transparent) 31px 32px
-  );
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 80%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 80%, transparent);
-}
-
-.chain-hero-copy,
-.chain-foot {
-  width: 100%;
-  max-width: 76rem;
-  margin: 0 auto;
-  padding: 0 1.25rem;
-}
-@media (min-width: 640px) {
-  .chain-hero-copy,
-  .chain-foot {
-    padding: 0 2rem;
-  }
-}
-
-.chain-hero-title {
-  margin-top: 0.9rem;
-  font-family: var(--font-serif);
-  font-size: clamp(2.25rem, 1.1rem + 4.6vw, 4.5rem);
-  font-weight: 600;
-  line-height: 1.04;
-  letter-spacing: -0.025em;
-}
-.chain-hero-title span {
-  display: block;
-}
-.chain-hero-title span:last-child {
-  color: var(--accent);
-  font-style: italic;
-  font-weight: 500;
-}
-
-.chain-hero-row {
-  display: grid;
-  gap: 1.5rem;
-  margin-top: 1.4rem;
-}
-@media (min-width: 960px) {
-  .chain-hero-row {
-    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
-    align-items: end;
-    gap: 3rem;
-  }
-}
-.chain-hero-lede {
-  max-width: 64ch;
-  font-size: 1.0625rem;
-  line-height: 1.7;
-  color: var(--ink-2);
-}
-.chain-hero-stats {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, max-content));
-  gap: 0.9rem 2rem;
-}
-@media (min-width: 520px) {
-  .chain-hero-stats {
-    grid-template-columns: repeat(4, minmax(0, max-content));
-  }
-}
-.chain-hero-stats dt {
-  font-size: 0.6875rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.chain-hero-stats dd {
-  margin-top: 0.15rem;
-  font-family: var(--font-serif);
-  font-size: 1.6rem;
-  line-height: 1.1;
-}
-.chain-hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  margin-top: 1.6rem;
-}
-
-/* Ba làn chạy. Hai mép mờ dần để thẻ đi vào và đi ra chứ không bị cắt cụt. */
-.chain-field {
-  display: grid;
-  gap: 0.4rem;
-  margin-top: 2.5rem;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
-}
-.chain-lane {
-  overflow: hidden;
-  padding: 0.55rem 0 0.8rem;
-}
-.chain-lane-1 {
-  margin-left: -9rem;
-}
-.chain-track {
-  display: flex;
-  width: max-content;
-  animation: chain-run var(--lane-dur, 120s) linear infinite;
-  will-change: transform;
-}
-.chain-lane-1 .chain-track {
-  animation-direction: reverse;
-}
-/* Rê chuột vào một làn là làn đó đứng lại, đủ lâu để đọc số hiệu hay bấm vào thẻ. */
-.chain-lane:hover .chain-track,
-.chain-lane:hover .chain-pulse::before {
-  animation-play-state: paused;
-}
-.chain-run {
-  display: flex;
-  align-items: center;
-}
-.chain-strand {
-  display: flex;
-  align-items: center;
-  padding-right: 1.4rem;
-}
-.chain-end {
-  margin-left: 1.4rem;
-  font-family: var(--font-serif);
-  font-size: 1.5rem;
-  color: var(--brass);
-  opacity: 0.6;
-}
-
-@keyframes chain-run {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-.chain-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem 2rem;
-  margin-top: 1.5rem;
-}
-.chain-legend ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.6rem;
-  margin-top: 0.55rem;
-}
-.chain-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.8125rem;
-  color: var(--ink-2);
-}
-.chain-legend-item .chain-svg {
-  width: 3.4rem;
-}
-.chain-legend-hint {
-  max-width: 72ch;
-  margin-top: 0.55rem;
-  font-size: 0.8125rem;
-  color: var(--ink-3);
-}
-
 .motion-toggle {
   display: inline-flex;
   align-items: center;
@@ -1594,8 +1212,7 @@ a {
 }
 
 /* Nút dừng và lựa chọn giảm chuyển động của hệ điều hành cùng dừng mọi thứ tự chạy. */
-:root[data-motion="off"] .chain-track,
-:root[data-motion="off"] .chain-pulse::before,
+:root[data-motion="off"] .seal-sheen,
 :root[data-motion="off"] .art *,
 :root[data-motion="off"] .lux-field::before,
 :root[data-motion="off"] .lux-field::after,
@@ -1603,25 +1220,317 @@ a {
   animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .chain-track {
-    animation: none;
-  }
-  .chain-lane {
-    overflow-x: auto;
-  }
-  .chain-pulse::before {
-    animation: none;
-  }
-}
-
 @media (max-width: 640px) {
   .doc-card {
     width: 12.5rem;
     height: 8.25rem;
   }
-  .chain-lane-1 {
-    margin-left: -5rem;
+}
+
+/* ── Dấu hiệu Lex & Lineage ─────────────────────────────────────────────────
+   Huy hiệu là một cán cân mọc rễ trên nền mực, nét vàng lá. Bóng đổ và quầng
+   sáng quanh dấu là ngoại lệ duy nhất của quy tắc "đường kẻ thay cho bóng đổ":
+   một con dấu kim loại không có bóng thì trông như một hình in phẳng. */
+
+:root {
+  --seal-shadow: rgba(22, 24, 29, 0.26);
+  --seal-halo: color-mix(in oklab, var(--brass) 18%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --seal-shadow: rgba(0, 0, 0, 0.7);
+    --seal-halo: color-mix(in oklab, var(--brass) 26%, transparent);
+  }
+}
+:root[data-theme="dark"] {
+  --seal-shadow: rgba(0, 0, 0, 0.7);
+  --seal-halo: color-mix(in oklab, var(--brass) 26%, transparent);
+}
+
+/* Tên dạng chữ: chữ hoa có chân, giãn cách như chữ khắc trên một tấm biển đồng. */
+.wordmark {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.wordmark em {
+  margin: 0 0.1em;
+  font-size: 1.12em;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--brass);
+}
+.wordmark-lg {
+  font-size: 1.35rem;
+  letter-spacing: 0.18em;
+}
+.brand-badge {
+  transition: transform 0.6s var(--ease-out-soft);
+}
+.brand-link:hover .brand-badge,
+.brand-link:focus-visible .brand-badge {
+  transform: rotate(-10deg);
+}
+
+/* Phần đầu trang chủ: đối xứng quanh một trục dọc, như bìa một cuốn gia phả. */
+.brand-hero {
+  border-bottom: 3px double var(--rule-strong);
+}
+.brand-hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2.75rem 1.25rem 2.25rem;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .brand-hero-inner {
+    padding: 3.5rem 2rem 2.5rem;
+  }
+}
+.brand-hero-seal {
+  position: relative;
+  width: clamp(10.5rem, 7.5rem + 12vw, 16rem);
+  aspect-ratio: 1;
+  filter: drop-shadow(0 16px 30px var(--seal-shadow));
+}
+/* Quầng sáng sau dấu: một vòng sáng đồng rất nhạt, không phải một mảng màu. */
+.brand-hero-seal::before {
+  content: "";
+  position: absolute;
+  inset: -22%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--seal-halo), transparent);
+}
+.brand-seal {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.seal-text {
+  font-family: var(--font-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3.4px;
+}
+
+/* Nét dấu được vẽ dần khi trang mở, rồi các mảng đặc hiện lên. Chỉ một lần. */
+.seal-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: seal-draw 1.3s var(--ease-out-soft) forwards;
+  animation-delay: calc(0.25s + var(--i) * 0.22s);
+}
+.seal-fill {
+  opacity: 0;
+  animation: seal-fade 0.8s ease-out forwards;
+  animation-delay: calc(0.75s + var(--i) * 0.18s);
+}
+@keyframes seal-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes seal-fade {
+  to {
+    opacity: 1;
+  }
+}
+/* Người đã dừng chuyển động thấy dấu vẽ sẵn, không phải dấu dừng giữa chừng. */
+:root[data-motion="off"] .seal-draw,
+:root[data-motion="off"] .seal-fill {
+  animation: none;
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+/* Vệt sáng lướt chéo qua mặt dấu, mỗi vòng bảy giây, phần lớn thời gian nằm ngoài dấu. */
+.seal-sheen {
+  animation: seal-sheen 7s ease-in-out 2.4s infinite;
+}
+@keyframes seal-sheen {
+  0% {
+    transform: translateX(0);
+  }
+  38%,
+  100% {
+    transform: translateX(330px);
+  }
+}
+
+.brand-hero-name {
+  margin-top: 1.5rem;
+  padding-left: 0.22em;
+  font-family: var(--font-serif);
+  font-size: clamp(1.75rem, 1.1rem + 2.7vw, 3rem);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+.brand-hero-name em {
+  margin: 0 0.08em;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--brass);
+}
+.brand-hero-eyebrow {
+  margin-top: 0.85rem;
+  padding-left: 0.28em;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+@media (min-width: 640px) {
+  .brand-hero-eyebrow {
+    font-size: 0.75rem;
+  }
+}
+
+/* Đường kẻ có hình thoi ở giữa: hai sợi đồng mảnh dần ra hai đầu. */
+.brand-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: min(20rem, 70%);
+  margin-top: 1.5rem;
+}
+.brand-rule span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brass));
+}
+.brand-rule span:last-child {
+  background: linear-gradient(90deg, var(--brass), transparent);
+}
+.brand-rule i {
+  width: 0.45rem;
+  height: 0.45rem;
+  background: var(--brass);
+  transform: rotate(45deg);
+}
+
+.brand-hero-motto {
+  max-width: 22ch;
+  margin-top: 1.3rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 1rem + 2.5vw, 2.6rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+}
+.brand-hero-lede {
+  max-width: 62ch;
+  margin-top: 1.1rem;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--ink-2);
+}
+.brand-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+  margin-top: 1.6rem;
+}
+
+/* Bốn con số, kẻ ô bằng nền của lưới lộ qua khe một điểm ảnh như khối lối vào. */
+.brand-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  width: min(40rem, 100%);
+  margin-top: 2.25rem;
+  border: 1px solid var(--rule);
+  background: var(--rule);
+}
+@media (min-width: 520px) {
+  .brand-hero-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.brand-hero-stats > div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.85rem 0.5rem 0.8rem;
+  background: color-mix(in oklab, var(--paper) 88%, transparent);
+}
+.brand-hero-stats dt {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.brand-hero-stats dd {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.brand-hero-foot {
+  margin-top: 1.5rem;
+}
+
+/* Gia phả tiêu biểu. */
+.featured-family {
+  width: 100%;
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 3.75rem 1.25rem 0.5rem;
+}
+@media (min-width: 640px) {
+  .featured-family {
+    padding: 4.5rem 2rem 0.5rem;
+  }
+}
+.featured-head {
+  display: grid;
+  gap: 1.25rem;
+}
+@media (min-width: 1000px) {
+  .featured-head {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+    align-items: end;
+    gap: 3.5rem;
+  }
+}
+.featured-copy p {
+  max-width: 62ch;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+/* Khung kẻ đôi như viền một tờ chứng thư: một nét đậm ngoài, một nét mảnh trong. */
+.featured-frame {
+  margin-top: 2rem;
+  padding: 1.5rem 1rem;
+  border: 1px solid var(--rule-strong);
+  box-shadow:
+    inset 0 0 0 4px var(--paper),
+    inset 0 0 0 5px var(--rule);
+  background: var(--paper);
+}
+@media (min-width: 48rem) {
+  .featured-frame {
+    padding: 2rem 1.25rem;
   }
 }
 
@@ -1808,7 +1717,14 @@ a {
   flex: 0 0 auto;
   width: 1.1rem;
   height: 3px;
-  background: var(--chain-ink);
+  background: var(--tie-ink);
+}
+.rel-row-kin {
+  margin-bottom: 0.35rem;
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--brass);
 }
 .rel-row-text {
   max-width: 62ch;
@@ -1836,21 +1752,79 @@ a {
   width: 14rem;
   height: 8.5rem;
 }
-/* Xích kéo ra từ trái sang khi khối lọt vào màn hình. */
-.reveal.is-in .rel-row-example .chain-wire {
-  animation: chain-draw 0.9s var(--ease-out-soft) both;
+/*
+  Đường nối giữa hai thẻ: cùng ba kiểu nét với hình gia phả. Màu là một trong
+  ba cách nói loại quan hệ — kiểu nét và nhãn chữ là hai cách còn lại.
+*/
+.tie-guides {
+  --tie-ink: var(--brass);
+}
+.tie-amends {
+  --tie-ink: var(--ink-3);
+}
+.tie-replaces {
+  --tie-ink: var(--accent);
+}
+.tie {
+  display: inline-flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  width: 6.5rem;
+  margin: 0 0.35rem;
+}
+.tie-line {
+  display: block;
+  width: 100%;
+  height: 12px;
+  overflow: visible;
+}
+.tie-line path {
+  fill: none;
+  stroke: var(--tie-ink);
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+.tie-amends .tie-line path {
+  stroke-dasharray: 6 4;
+}
+.tie-replaces .tie-line path {
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 6;
+}
+.tie-line polygon {
+  fill: var(--tie-ink);
+}
+.tie-label {
+  margin-top: 0.3rem;
+  white-space: nowrap;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tie-ink);
+}
+.arrow-v {
+  display: none;
+}
+
+/* Đường nối kéo ra từ văn bản tác động sang văn bản bị tác động khi khối lọt
+   vào màn hình. */
+.reveal.is-in .rel-row-example .tie-line {
+  animation: tie-draw 0.9s var(--ease-out-soft) both;
   animation-delay: 0.35s;
 }
-@keyframes chain-draw {
+@keyframes tie-draw {
   from {
-    clip-path: inset(0 100% 0 0);
+    clip-path: inset(0 0 0 100%);
   }
   to {
     clip-path: inset(0 0 0 0);
   }
 }
 
-/* Màn hẹp: hai thẻ xếp dọc, xích dựng đứng, mũi tên đổi sang chiều dọc. */
+/* Màn hẹp: hai thẻ xếp dọc, đường nối dựng đứng, mũi tên đổi sang chiều dọc. */
 @media (max-width: 560px) {
   .rel-row-example {
     flex-direction: column;
@@ -1859,19 +1833,19 @@ a {
   .rel-row-example .doc-card {
     width: 100%;
   }
-  .rel-row-example .chain-link {
+  .rel-row-example .tie {
     flex-direction: row;
     justify-content: center;
     width: 100%;
-    height: 4.6rem;
-    margin: -0.3rem 0;
+    height: 3.6rem;
+    margin: 0;
   }
-  .rel-row-example .chain-wire {
-    width: 4.6rem;
-    margin: 0 -1.6rem;
+  .rel-row-example .tie-line {
+    width: 3rem;
+    margin: 0 -0.6rem;
     transform: rotate(90deg);
   }
-  .rel-row-example .chain-label {
+  .rel-row-example .tie-label {
     margin-top: 0;
     margin-left: 0.4rem;
   }
@@ -2048,44 +2022,6 @@ a {
 .art-edge-replaces polygon {
   fill: var(--accent);
 }
-.art-law {
-  fill: var(--ink-2);
-}
-.art-focus {
-  fill: var(--accent);
-}
-.art-expired {
-  fill: var(--paper);
-  stroke: var(--ink-3);
-  stroke-width: 1.5;
-}
-.art-decree {
-  fill: var(--brass);
-}
-.art-circular {
-  fill: var(--paper);
-  stroke: var(--brass);
-  stroke-width: 1.6;
-}
-.art-pulse {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 1.2;
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: art-pulse 3.2s var(--ease-out-soft) infinite;
-}
-@keyframes art-pulse {
-  0% {
-    opacity: 0.7;
-    transform: scale(0.7);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1.5);
-  }
-}
-
 .art-tier {
   fill: color-mix(in oklab, var(--brass) 16%, var(--paper));
   stroke: var(--brass);
@@ -2373,6 +2309,260 @@ a {
 .tree-node.is-expired .tree-number,
 .tree-node.is-expired .tree-title {
   fill: var(--ink-3);
+}
+
+/* ── Gia phả của một văn bản ─────────────────────────────────────────────────
+   Hình và phả ký. Hình chỉ hiện từ cỡ máy tính bảng; dưới cỡ đó phả ký đọc lại
+   cùng nội dung bằng chữ. Ba kiểu nét như cây lĩnh vực, riêng nét hướng dẫn
+   mang màu đồng: đó là nét của dòng dõi. */
+
+.family-wide {
+  display: none;
+}
+/* Hai lớp chữ để thắng `display` của chính khối được ẩn, khai ở phía dưới. */
+@media (min-width: 48rem) {
+  .family-wide.family-wide {
+    display: block;
+  }
+  .family-narrow.family-narrow {
+    display: none;
+  }
+}
+.family-scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.family {
+  display: block;
+  height: auto;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+}
+.family-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  fill: var(--brass);
+}
+.family-edge path {
+  fill: none;
+  stroke: var(--ink-3);
+  stroke-width: 1.3;
+}
+.family-edge polygon {
+  fill: var(--ink-3);
+}
+.family-edge-guides path {
+  stroke: var(--brass);
+  stroke-width: 1.5;
+}
+.family-edge-guides polygon {
+  fill: var(--brass);
+}
+.family-edge-amends path {
+  stroke-dasharray: 5 3.5;
+}
+.family-edge-replaces path {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 5;
+}
+.family-edge-replaces polygon {
+  fill: var(--accent);
+}
+.family-box {
+  fill: var(--paper);
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  transition: stroke 0.2s, fill 0.2s;
+}
+.family-bar {
+  fill: var(--brass);
+}
+.family-node.is-amended .family-bar {
+  fill: var(--accent-soft);
+}
+.family-node.is-expired .family-box {
+  fill: var(--paper-2);
+  stroke-dasharray: 3 2;
+}
+.family-node.is-expired .family-bar {
+  fill: var(--ink-3);
+}
+.family-node.is-pending .family-box {
+  stroke-dasharray: 6 3;
+}
+.family-node.role-focus .family-box {
+  fill: color-mix(in oklab, var(--brass) 9%, var(--paper));
+  stroke: var(--brass);
+  stroke-width: 1.4;
+}
+.family-node.role-focus .family-bar {
+  fill: var(--brass);
+}
+a.family-node:hover .family-box,
+a.family-node:focus-visible .family-box {
+  stroke: var(--accent);
+  stroke-width: 1.8;
+}
+a.family-node:hover:not(.role-focus) .family-box,
+a.family-node:focus-visible:not(.role-focus) .family-box {
+  fill: var(--paper-2);
+}
+.family-node:focus {
+  outline: none;
+}
+.family-tag {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  fill: var(--brass);
+}
+.family-year {
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  fill: var(--ink-3);
+}
+.family-number {
+  font-family: var(--font-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.role-focus .family-number {
+  font-size: 15px;
+  fill: var(--accent);
+}
+.family-title {
+  font-size: 10.5px;
+  fill: var(--ink-2);
+}
+.role-focus .family-title {
+  font-size: 11px;
+}
+.family-node.is-expired .family-number,
+.family-node.is-expired .family-title {
+  fill: var(--ink-3);
+}
+
+.family-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1rem;
+}
+.family-legend ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.4rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+.family-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.family-legend svg {
+  width: 2.1rem;
+  height: 0.7rem;
+  overflow: visible;
+}
+.family-legend-box rect {
+  fill: var(--paper-2);
+  stroke: var(--ink-3);
+  stroke-dasharray: 3 2;
+}
+.family-legend-hint {
+  flex-basis: 100%;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+/* Phả ký: mỗi nhóm một đường dọc, mỗi văn bản một nhánh ngang nối vào đó. */
+.family-list {
+  display: grid;
+  gap: 1.3rem;
+}
+.family-list-focus {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--brass);
+  background: color-mix(in oklab, var(--brass) 8%, var(--paper));
+}
+.family-list-focus .family-item-number {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+}
+.family-group-title {
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--brass);
+}
+.family-group ul {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--rule-strong);
+}
+.family-item {
+  position: relative;
+}
+.family-item::before {
+  content: "";
+  position: absolute;
+  top: 0.72rem;
+  left: -1rem;
+  width: 0.65rem;
+  height: 1px;
+  background: var(--rule-strong);
+}
+.family-item-link {
+  display: grid;
+  gap: 0.05rem 0.75rem;
+}
+@media (min-width: 40rem) {
+  .family-item-link {
+    grid-template-columns: 8.5rem 1fr;
+  }
+}
+.family-item-number {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.family-item-title {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--rule-strong);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.2s;
+}
+.family-item-link:hover .family-item-title,
+.family-item-link:focus-visible .family-item-title {
+  text-decoration-color: var(--accent);
+}
+.family-list-focus .family-item-title {
+  text-decoration: none;
+}
+.family-item-status {
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.family-item.is-expired > .family-item-link .family-item-number {
+  color: var(--ink-3);
+}
+.family-sublist {
+  margin-top: 0.55rem;
 }
 
 /* ── Diễn biến hiệu lực trên trang văn bản ─────────────────────────────────── */

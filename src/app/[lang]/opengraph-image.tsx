@@ -2,13 +2,14 @@ import { notFound } from "next/navigation";
 
 import { documents, domains, relations } from "@/data/documents";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { getHome } from "@/i18n/home";
 import { getHub } from "@/i18n/hub";
 import { pairs } from "@/lib/compare";
 import { C, OG_SIZE, renderCard, SERIF } from "@/og/card";
 
 export const size = OG_SIZE;
 export const contentType = "image/png";
-export const alt = "Bản đồ Không gian Pháp luật · Vietnamese Legal Space Map";
+export const alt = "Lex & Lineage · Gia phả văn bản pháp luật Việt Nam · The genealogy of Vietnamese law";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -16,8 +17,9 @@ export function generateStaticParams() {
 }
 
 /**
- * Ảnh chia sẻ mặc định: tên trang, dòng giới thiệu và bốn con số đếm từ tập dữ
- * liệu. Trang nào không có ảnh riêng thì dùng ảnh này.
+ * Ảnh chia sẻ mặc định: dòng định danh của trang, câu khẩu hiệu và bốn con số
+ * đếm từ tập dữ liệu. Tên trang đã nằm ở đầu khung chung. Trang nào không có
+ * ảnh riêng thì dùng ảnh này.
  */
 export default async function Image({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -35,11 +37,11 @@ export default async function Image({ params }: { params: Promise<{ lang: string
     lang,
     lang === "vi" ? "Việt Nam" : "Vietnam",
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "flex", fontFamily: SERIF, fontSize: 64, lineHeight: 1.1, maxWidth: 1000 }}>
-        {t.siteName}
+      <div style={{ display: "flex", fontFamily: SERIF, fontSize: 56, lineHeight: 1.1, maxWidth: 1040 }}>
+        {t.brandLine}
       </div>
       <div style={{ display: "flex", marginTop: 22, fontSize: 30, color: C.ink2, maxWidth: 940 }}>
-        {t.siteTagline}
+        {getHome(lang).hero.motto}
       </div>
       <div style={{ display: "flex", gap: 48, marginTop: 44 }}>
         {stats.map(([n, label]) => (

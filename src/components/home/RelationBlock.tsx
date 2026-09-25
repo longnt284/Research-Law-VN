@@ -1,19 +1,19 @@
-import { ChainLink, DocCard, relationSentence } from "@/components/home/ChainParts";
+import { DocCard, RelationTie, relationSentence } from "@/components/home/DocCard";
 import type { Lang, RelationKind } from "@/data/types";
 import { getHome } from "@/i18n/home";
-import { relationCounts } from "@/lib/corpus";
-import { exampleOf } from "@/lib/strands";
+import { exampleOf, relationCounts } from "@/lib/corpus";
 
 /**
- * Khối "Quan hệ" của trang chủ: ba loại mắt xích, mỗi loại một ví dụ thật.
+ * Khối "Ba mối quan hệ" của trang chủ: mỗi vai trong gia phả ứng với một loại
+ * quan hệ pháp lý, mỗi loại một ví dụ thật.
  *
  * Ví dụ do `exampleOf` chọn từ tập dữ liệu, ưu tiên cặp mà cả hai văn bản đều
  * đã xác minh. Không có ví dụ nào viết tay: đổi dữ liệu là ví dụ đổi theo, và
  * một loại quan hệ không còn cặp nào thì hàng của nó tự biến mất thay vì hiện
  * một ví dụ bịa.
  *
- * Khác với dải ở đầu trang, thẻ ở đây là liên kết thật nhận được tiêu điểm: chỉ
- * có sáu thẻ, và chúng là lối đi thẳng tới văn bản mà người đọc vừa thấy ví dụ.
+ * Thẻ ở đây là liên kết thật nhận được tiêu điểm: chỉ có sáu thẻ, và chúng là
+ * lối đi thẳng tới văn bản mà người đọc vừa thấy ví dụ.
  */
 export function RelationBlock({ lang }: { lang: Lang }) {
   const r = getHome(lang).relations;
@@ -36,8 +36,9 @@ export function RelationBlock({ lang }: { lang: Lang }) {
           const ex = exampleOf(kind);
           if (!ex) return null;
           return (
-            <li key={kind} className={`rel-row chain-${kind}`}>
+            <li key={kind} className={`rel-row tie-${kind}`}>
               <div className="rel-row-copy">
+                <p className="rel-row-kin">{r.kinds[kind].kin}</p>
                 <h3 className="rel-row-title">{r.kinds[kind].title}</h3>
                 <p className="rel-row-text">{r.kinds[kind].text}</p>
                 <p className="rel-row-count tnum">
@@ -46,9 +47,8 @@ export function RelationBlock({ lang }: { lang: Lang }) {
               </div>
               <div className="rel-row-example">
                 <DocCard doc={ex.target} lang={lang} />
-                <ChainLink
+                <RelationTie
                   kind={kind}
-                  acts="back"
                   lang={lang}
                   sentence={relationSentence(ex.actor, ex.target, kind, lang)}
                 />

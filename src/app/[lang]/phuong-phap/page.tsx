@@ -33,10 +33,11 @@ export async function generateMetadata({
 const body: Record<Lang, { h: string; p: string[] }[]> = {
   vi: [
     {
-      h: "Vì sao lại là một bản đồ",
+      h: "Vì sao lại là một gia phả",
       p: [
         "Người mới đọc pháp luật Việt Nam thường vấp cùng một chỗ: tìm được đúng điều luật nhưng không biết điều đó còn hiệu lực hay không, và không biết có nghị định nào đã nói khác đi. Một luật đặt nguyên tắc, nghị định quy định chi tiết, thông tư hướng dẫn thi hành, rồi vài năm sau một luật sửa đổi đến và thay đổi cả ba tầng cùng lúc. Đọc từng văn bản riêng lẻ thì không thấy được chuyện đó.",
-        "Trang này chọn cách trình bày theo quan hệ thay vì theo danh mục. Mỗi điểm trên bản đồ là một văn bản, mỗi đường nối là một quan hệ có thật: quy định chi tiết, sửa đổi bổ sung, hoặc thay thế. Khi bấm vào một văn bản, các đường nối tới nó sáng lên, và người đọc thấy ngay văn bản đó đứng ở đâu.",
+        "Trang này trình bày mỗi văn bản như một người trong cuốn gia phả thay vì như một dòng trong danh mục. Một văn bản có đời trước là văn bản nó thay thế, đời sau là văn bản thay thế nó, các nhánh hướng dẫn là nghị định, thông tư quy định chi tiết nó, và những lần được sửa đổi, bổ sung. Mỗi vai ứng đúng một quan hệ có thật trong bản ghi: quy định chi tiết, sửa đổi bổ sung, hoặc thay thế.",
+        "Phép so sánh với gia phả chỉ là cách sắp xếp cho dễ nhớ, không thay cho tên gọi pháp lý. Nhãn pháp lý luôn đi kèm vai trong gia phả, và trang của mỗi văn bản vẽ gia phả của chính nó, kèm phả ký nói lại cùng nội dung bằng chữ.",
       ],
     },
     {
@@ -61,7 +62,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       h: "Đối chiếu điểm cũ và điểm mới",
       p: [
         "Phần lớn câu hỏi thực tế không dừng ở chỗ một văn bản quy định gì, mà ở chỗ nó đã đổi những gì so với văn bản trước. Trang đối chiếu dựng đúng cho việc đó, theo năm lớp tách bạch để người đọc biết mỗi dòng chữ mình đang đọc đến từ đâu.",
-        "Lớp thứ nhất là cặp văn bản, lấy thẳng từ quan hệ thay thế và sửa đổi đã có trong tập dữ liệu. Không cặp nào được thêm vào bằng tay, nên danh sách cặp luôn khớp với bản đồ quan hệ và không có chỗ cho một cặp được chọn vì nó minh họa đẹp cho một luận điểm. Lớp thứ hai là bảng dữ kiện và mấy câu suy ra từ hai bản ghi: loại văn bản, tình trạng hiệu lực, ngày ban hành, ngày có hiệu lực, khoảng cách giữa hai mốc. Toàn bộ lớp này là phép so sánh và phép trừ ngày, cùng dữ liệu thì ai chạy cũng ra đúng như vậy.",
+        "Lớp thứ nhất là cặp văn bản, lấy thẳng từ quan hệ thay thế và sửa đổi đã có trong tập dữ liệu. Không cặp nào được thêm vào bằng tay, nên danh sách cặp luôn khớp với gia phả văn bản và không có chỗ cho một cặp được chọn vì nó minh họa đẹp cho một luận điểm. Lớp thứ hai là bảng dữ kiện và mấy câu suy ra từ hai bản ghi: loại văn bản, tình trạng hiệu lực, ngày ban hành, ngày có hiệu lực, khoảng cách giữa hai mốc. Toàn bộ lớp này là phép so sánh và phép trừ ngày, cùng dữ liệu thì ai chạy cũng ra đúng như vậy.",
         "Lớp thứ ba là điểm đối chiếu nội dung do người biên soạn viết, và đây là lớp duy nhất có bàn tay con người. Mỗi điểm gồm nội dung đọc được ở văn bản cũ, nội dung đọc được ở văn bản mới, một nhãn phân loại thay đổi lấy từ danh sách đóng chín loại, và một câu nhận định. Mỗi vế phải dẫn được bản ghi hoặc điều khoản mà nó đọc ra; chỗ nào bản ghi không nói thì viết thẳng là bản ghi không nói, thay vì suy ra từ sự im lặng.",
         "Lớp thứ tư là phép kiểm. Toàn bộ chữ trong phần đối chiếu được soi qua một danh sách từ ngữ mang nghĩa khuyên nhủ, xếp hạng hơn kém hoặc suy đoán hệ quả, cùng với yêu cầu mỗi điểm phải dẫn đủ căn cứ ở cả hai vế. Dính một lỗi là quá trình dựng trang dừng lại. Tính khách quan của phần này vì vậy không dựa vào lời hứa sẽ viết cẩn thận, mà dựa vào một điều kiện phải thỏa mãn thì trang mới lên được.",
         "Lớp thứ năm là chuỗi văn bản. Một cặp chỉ thấy hai mắt xích, trong khi một hợp đồng thường sống qua cả đời văn bản: luật gốc, vài lần sửa đổi, rồi một luật thay thế. Chuỗi dựng từ cùng dữ liệu quan hệ ấy, với các lần thay thế nối nhau thành trục và các lần sửa đổi treo vào đúng mắt xích mà chúng chạm tới, rồi đặt tất cả lên một dòng thời gian và một bảng dữ kiện nhiều cột, mỗi cột một đời văn bản.",
@@ -89,24 +90,25 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       h: "Giới hạn phải nói rõ",
       p: [
         "Kết quả tra cứu văn bản pháp luật chỉ có giá trị tại thời điểm tra. Pháp luật Việt Nam trong các lĩnh vực đầu tư, thuế, đất đai và xây dựng thay đổi nhanh; một văn bản đúng hôm nay có thể đã bị sửa sau vài tháng. Trước khi dùng bất kỳ nội dung nào ở đây vào hồ sơ chính thức, cần đối chiếu lại với Công báo, Cơ sở dữ liệu quốc gia về pháp luật hoặc cơ quan ban hành.",
-        "Tập dữ liệu này không đầy đủ và không cố tỏ ra đầy đủ. Nó tập trung vào mười lĩnh vực và chỉ chọn những văn bản trụ cột cùng quan hệ giữa chúng. Rất nhiều thông tư chuyên ngành, quyết định của Thủ tướng và văn bản địa phương không có mặt ở đây. Bản đồ giúp định vị, không thay thế việc tra cứu đầy đủ.",
+        "Tập dữ liệu này không đầy đủ và không cố tỏ ra đầy đủ. Nó tập trung vào mười lĩnh vực và chỉ chọn những văn bản trụ cột cùng quan hệ giữa chúng. Rất nhiều thông tư chuyên ngành, quyết định của Thủ tướng và văn bản địa phương không có mặt ở đây. Gia phả giúp định vị, không thay thế việc tra cứu đầy đủ.",
         "Cuối cùng, trang này là công cụ tra cứu, không phải ý kiến pháp lý. Một điều luật đọc đúng vẫn có thể áp dụng sai nếu tách khỏi tình tiết cụ thể của vụ việc. Với vấn đề có rủi ro thật, cần làm việc với luật sư.",
       ],
     },
     {
       h: "Ghi chú kỹ thuật",
       p: [
-        "Bản đồ vẽ trên canvas hai chiều với bố cục tính sẵn một lần, tất định, không dùng mô phỏng lực chạy theo thời gian thực. Kéo và phóng to chỉ đánh dấu khung hình là cần vẽ lại; khi không còn gì thay đổi, vòng lặp vẽ dừng hẳn. Nhãn có kiểm tra chồng lấn nên chữ không đè lên nhau, và bản đồ dùng được hoàn toàn bằng bàn phím: phím mũi tên để di chuyển, cộng và trừ để phóng to thu nhỏ, Home để về khung nhìn mặc định.",
-        "Hình động ở trang chủ và các hình minh họa đều là SVG dựng từ dữ liệu, không dùng mô hình ba chiều. Mỗi mắt xích trên trang chủ là một quan hệ có thật giữa hai văn bản. Chuyển động có nút tạm dừng, và tự dừng khi thiết bị của người đọc đã đặt chế độ giảm chuyển động.",
+        "Hình gia phả của mỗi văn bản là SVG dựng ở máy chủ từ một bố cục tính sẵn và tất định: cùng dữ liệu thì luôn cho cùng hình. Đời trước nằm bên trái, đời sau bên phải, văn bản cấp trên và văn bản sửa đổi ở trên, nhánh hướng dẫn ở dưới. Mỗi văn bản trên hình là một liên kết thật, dùng được bằng bàn phím. Trên màn hình hẹp, hình được thay bằng phả ký, vì hình rộng hơn màn hình điện thoại.",
+        "Gia phả tiêu biểu ở trang chủ không chọn tay: đó là gia phả lớn nhất trong tập dữ liệu mà văn bản đứng giữa còn hiệu lực. Huy hiệu và các hình minh họa đều là SVG, không dùng mô hình ba chiều hay ảnh tải về. Nét huy hiệu được vẽ dần một lần khi trang mở; vệt sáng trên mặt dấu và lớp nền có nút tạm dừng, và tự dừng khi thiết bị của người đọc đã đặt chế độ giảm chuyển động.",
       ],
     },
   ],
   en: [
     {
-      h: "Why a map",
+      h: "Why a lineage",
       p: [
         "Newcomers to Vietnamese law tend to stumble at the same point: they find the right article but cannot tell whether it is still in force, or whether some decree has since said otherwise. A law states the principle, a decree fills in the detail, a circular explains the practice, and a few years later an amending law arrives and changes all three tiers at once. Reading each instrument in isolation hides that entirely.",
-        "This site presents the material by relation rather than by list. Each point on the map is an instrument, and each line is a relation that actually exists: detailing, amending or replacing. Selecting an instrument lights up the lines that touch it, and its place in the system becomes visible at a glance.",
+        "This site presents each instrument the way a family register presents a person, rather than as a line in a list. An instrument has predecessors, the instruments it replaced; successors, the instruments that replaced it; implementing branches, the decrees and circulars that detail it; and the amendments written into it. Each role corresponds to exactly one relation recorded in the entry: detailing, amending or replacing.",
+        "The genealogy is an arrangement that is easier to remember, not a substitute for the legal terms. The legal label always travels with the role, and every instrument's page draws its own lineage, together with a written register that says the same thing in words.",
       ],
     },
     {
@@ -131,7 +133,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       h: "Comparing the old position with the new",
       p: [
         "Most practical questions do not stop at what an instrument says; they turn on what it changed relative to the instrument before it. The comparison pages are built for that, in five separate layers, so that a reader can tell where each line on the page came from.",
-        "The first layer is the pair itself, taken directly from the replacement and amendment relations already in the dataset. No pair is added by hand, so the list of pairs always matches the relation map and there is no room for a pair chosen because it illustrates a point nicely. The second layer is the table of facts and the notes computed from the two records: instrument type, status, date of issue, date of effect, and the interval between them. That whole layer is comparison and date arithmetic, so on the same data anyone gets the same output.",
+        "The first layer is the pair itself, taken directly from the replacement and amendment relations already in the dataset. No pair is added by hand, so the list of pairs always matches the lineages and there is no room for a pair chosen because it illustrates a point nicely. The second layer is the table of facts and the notes computed from the two records: instrument type, status, date of issue, date of effect, and the interval between them. That whole layer is comparison and date arithmetic, so on the same data anyone gets the same output.",
         "The third layer is the content comparison written by an editor, and it is the only layer touched by a human hand. Each point sets out what the earlier instrument records, what the later one records, a label drawn from a closed list of nine kinds of change, and one sentence of observation. Each side must cite the record or provision it was read from, and where a record is silent the page says so rather than inferring anything from that silence.",
         "The fourth layer is the check. Every string in the comparison layer is scanned against a list of advisory, evaluative and speculative terms, and each point must cite a basis on both sides. A single failure stops the build. The objectivity of this material therefore rests not on a promise to write carefully but on a condition that must be met before the page can exist at all.",
         "The fifth layer is the lineage. A pair shows two links of the chain, while a contract commonly lives through a whole line of instruments: a parent statute, a few amendments, then a replacement. The lineage is built from the same relations, with replacements strung into a spine and amendments hanging from the link they touch, and set out on one timeline and one many-column table of facts, a column to each generation.",
@@ -159,15 +161,15 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       h: "Limits worth stating plainly",
       p: [
         "A search of legislation is only good as at the date it was run. Vietnamese law on investment, tax, land and construction moves quickly; an instrument that is current today may be amended within months. Before relying on anything here in a formal filing, check it against the Official Gazette, the National Legal Database or the issuing authority.",
-        "This dataset is not comprehensive and does not pretend to be. It covers ten domains and selects the load-bearing instruments together with the relations between them. A great many sector circulars, Prime Ministerial decisions and provincial instruments are absent. The map helps with orientation; it does not replace a full search.",
+        "This dataset is not comprehensive and does not pretend to be. It covers ten domains and selects the load-bearing instruments together with the relations between them. A great many sector circulars, Prime Ministerial decisions and provincial instruments are absent. A lineage helps with orientation; it does not replace a full search.",
         "Finally, this is a reference tool, not legal advice. An article read correctly can still be applied wrongly when detached from the facts of a matter. Where real risk is involved, work with a lawyer.",
       ],
     },
     {
       h: "A technical note",
       p: [
-        "The map is drawn on a 2D canvas from a layout computed once and deterministically, with no real-time force simulation. Panning and zooming merely mark the frame as needing a redraw; when nothing is changing, the render loop stops. Labels are collision-tested so text never sits on top of itself, and the map is fully operable from the keyboard: arrow keys pan, plus and minus zoom, and Home returns to the default view.",
-        "The homepage animation and the illustrations are SVG built from the data, with no 3D models. Each link in the homepage chain is a real relation between two instruments. The motion has a pause button and stops by itself when the reader's device asks for reduced motion.",
+        "Each instrument's lineage is SVG rendered on the server from a layout computed once and deterministically: the same data always gives the same drawing. Predecessors sit to the left, successors to the right, parent and amending instruments above, implementing branches below. Every instrument in the drawing is a real link, reachable from the keyboard. On narrow screens the drawing gives way to the written register, because it is wider than a phone.",
+        "The lineage on the home page is not chosen by hand: it is the largest lineage in the dataset around an instrument still in force. The crest and the illustrations are SVG, with no 3D models and no downloaded images. The lines of the crest draw themselves once when the page opens; the sheen across the seal and the background have a pause button, and stop by themselves when the reader's device asks for reduced motion.",
       ],
     },
   ],

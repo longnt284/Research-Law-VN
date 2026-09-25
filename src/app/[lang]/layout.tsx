@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import "../globals.css";
+import { BrandMark, Wordmark } from "@/components/brand/BrandMark";
 import { SiteHeader } from "@/components/SiteHeader";
 import { LATEST_VERIFIED_ON } from "@/data/documents";
 import type { Lang } from "@/data/types";
@@ -99,7 +100,7 @@ export default async function LangLayout({
           trang là HTML tĩnh, nên gỡ xong người đọc vẫn có đủ nội dung.
 
           Lựa chọn dừng chuyển động (nút ở trang chủ) cũng được đọc ở đây, cùng
-          lý do với nền sáng tối: người đã dừng không phải thấy dải xích chạy
+          lý do với nền sáng tối: người đã dừng không phải thấy huy hiệu vẽ dần
           một nhịp rồi mới đứng lại.
         */}
         <script
@@ -122,14 +123,16 @@ export default async function LangLayout({
 
         <footer className="rule-t mt-20 bg-[var(--paper-2)]">
           <div className="mx-auto w-full max-w-[76rem] px-5 py-12 sm:px-8 sm:py-14">
-            {/* Tên trang đặt lớn ở đầu chân trang, đóng lại bằng đường kẻ đôi
-                giống cách một ấn phẩm in kết thúc trang cuối. */}
+            {/* Dấu và tên trang đặt lớn ở đầu chân trang, đóng lại bằng đường kẻ
+                đôi giống cách một ấn phẩm in kết thúc trang cuối. */}
             <div className="rule-double-b flex flex-wrap items-end justify-between gap-x-8 gap-y-3 pb-6">
-              <p
-                className="text-[1.6rem] leading-tight"
-                style={{ fontFamily: "var(--font-serif)" }}
-              >
-                {t.siteName}
+              <p className="flex items-center gap-3.5">
+                <BrandMark variant="badge" id="ftr" className="h-12 w-12 shrink-0" />
+                <span className="flex flex-col">
+                  <Wordmark className="wordmark-lg" />
+                  <span className="sr-only">{t.siteName}</span>
+                  <span className="mt-1 text-[0.8125rem] text-[var(--ink-3)]">{t.brandLine}</span>
+                </span>
               </p>
               <p className="tnum text-sm text-[var(--ink-3)]">
                 {t.footer.verifiedPrefix} {formatDate(LATEST_VERIFIED_ON, lang, LATEST_VERIFIED_ON)}
@@ -152,11 +155,6 @@ export default async function LangLayout({
                     </Link>
                   </li>
                   <li>
-                    <Link href={`/${lang}/ban-do`} className="link-sweep">
-                      {t.nav.map}
-                    </Link>
-                  </li>
-                  <li>
                     <Link href={`/${lang}/van-ban`} className="link-sweep">
                       {t.nav.documents}
                     </Link>
@@ -169,11 +167,6 @@ export default async function LangLayout({
                   <li>
                     <Link href={`/${lang}/doi-chieu`} className="link-sweep">
                       {t.nav.compare}
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href={`/${lang}/soat-can-cu`} className="link-sweep">
-                      {t.nav.check}
                     </Link>
                   </li>
                   <li>

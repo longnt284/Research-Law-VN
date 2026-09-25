@@ -9,9 +9,9 @@ import { tierCounts } from "@/lib/corpus";
  *
  * Trước đây chỗ này là hình chiếu của một khối điểm ba chiều. Người làm luật
  * nhìn vào đó không đọc ra được gì. Mỗi hình ở đây vẽ đúng cái vật mà trang dẫn
- * tới làm việc với: bản đồ là một luật cùng các nghị định, thông tư quanh nó;
- * danh mục là tháp thứ bậc; đối chiếu là hai trang văn bản có chỗ gạch, chỗ
- * chèn; phương pháp là kính lúp trên số hiệu và danh sách những gì đã kiểm.
+ * tới làm việc với: danh mục là tháp thứ bậc; lĩnh vực là bộ biểu tượng của
+ * từng ngành; đối chiếu là hai trang văn bản có chỗ gạch, chỗ chèn; phương pháp
+ * là kính lúp trên số hiệu và danh sách những gì đã kiểm.
  *
  * Tất cả là SVG dựng ở máy chủ: có mặt khi JavaScript bị chặn, không tải thêm
  * tài nguyên nào nên chính sách `default-src 'self'` không phải nới. Số liệu
@@ -25,36 +25,20 @@ const H = 200;
 
 const L = {
   vi: {
-    law: "Luật",
-    oldLaw: "Luật cũ",
-    amending: "Luật sửa đổi",
-    decree: "Nghị định",
-    circular: "Thông tư",
     constitution: "Hiến pháp",
     oldText: "Văn bản cũ",
     newText: "Văn bản mới",
     article: "Điều 38",
     checks: ["Số hiệu", "Ngày hiệu lực", "Nguồn đã mở"],
     stamp: "ĐÃ TRA",
-    basis: "Căn cứ",
-    inForce: "Đang có hiệu lực",
-    replaced: "Đã bị thay thế",
   },
   en: {
-    law: "Law",
-    oldLaw: "Former law",
-    amending: "Amending law",
-    decree: "Decree",
-    circular: "Circular",
     constitution: "Constitution",
     oldText: "Earlier text",
     newText: "Later text",
     article: "Article 38",
     checks: ["Number", "Date of force", "Source opened"],
     stamp: "CHECKED",
-    basis: "Pursuant to",
-    inForce: "In force",
-    replaced: "Replaced",
   },
 } as const;
 
@@ -98,35 +82,6 @@ function Arrow({
       <line x1={x1} y1={y1} x2={x2} y2={y2} />
       <polygon points={head(x1, y1, x2, y2)} />
     </g>
-  );
-}
-
-/** Thẻ bản đồ: một luật ở giữa, văn bản cũ nó thay thế, luật sửa đổi nó, và các văn bản hướng dẫn. */
-export function MapArt({ lang }: { lang: Lang }) {
-  const l = L[lang];
-  return (
-    <Frame className="art-map">
-      <Arrow x1={144} y1={58} x2={78} y2={58} kind="replaces" />
-      <Arrow x1={246} y1={58} x2={177} y2={58} kind="amends" />
-      <Arrow x1={116} y1={127} x2={150} y2={75} kind="guides" />
-      <Arrow x1={204} y1={127} x2={170} y2={75} kind="guides" />
-      <Arrow x1={252} y1={154} x2={221} y2={142} kind="guides" />
-
-      <rect x={49} y={45} width={26} height={26} className="art-law art-expired" />
-      <circle cx={160} cy={58} r={24} className="art-pulse" />
-      <rect x={145} y={43} width={30} height={30} className="art-law art-focus" />
-      <rect x={249} y={46} width={24} height={24} className="art-law" />
-      <circle cx={112} cy={138} r={11} className="art-decree" />
-      <circle cx={208} cy={138} r={11} className="art-decree" />
-      <polygon points="264,142 276,164 252,164" className="art-circular" />
-
-      <text x={62} y={90} className="art-label" textAnchor="middle">{l.oldLaw}</text>
-      <text x={160} y={92} className="art-label art-label-strong" textAnchor="middle">{l.law}</text>
-      <text x={261} y={88} className="art-label" textAnchor="middle">{l.amending}</text>
-      <text x={112} y={166} className="art-label" textAnchor="middle">{l.decree}</text>
-      <text x={196} y={170} className="art-label" textAnchor="middle">{l.decree}</text>
-      <text x={264} y={180} className="art-label" textAnchor="middle">{l.circular}</text>
-    </Frame>
   );
 }
 
@@ -261,45 +216,6 @@ export function MethodArt({ lang }: { lang: Lang }) {
 }
 
 /**
- * Thẻ soát căn cứ: trang có khối căn cứ, mỗi dòng một số hiệu; dòng đầu được
- * đánh dấu còn hiệu lực, dòng thứ hai bị gạch và mũi tên thay thế trỏ sang văn
- * bản mới. Hai số hiệu là cặp thay thế có thật trong tập dữ liệu.
- */
-export function CheckArt({ lang }: { lang: Lang }) {
-  const l = L[lang];
-  return (
-    <Frame className="art-check-basis">
-      <Page x={24} y={20} w={150} h={160} />
-      <text x={38} y={42} className="art-heading">{l.basis}</text>
-
-      <g className="art-check" style={{ "--i": 0 } as React.CSSProperties}>
-        <text x={38} y={66} className="art-label art-label-strong">91/2015/QH13</text>
-        <rect x={38} y={72} width={104} height={4} rx={2} className="art-text" />
-        <rect x={150} y={56} width={14} height={14} className="art-box" />
-        <path d="M153 63l3 4 6-8" className="art-tick" />
-      </g>
-
-      <g className="art-check" style={{ "--i": 1 } as React.CSSProperties}>
-        <text x={38} y={100} className="art-label">50/2014/QH13</text>
-        <line x1={35} y1={96} x2={112} y2={96} className="art-strike" />
-        <rect x={38} y={106} width={96} height={4} rx={2} className="art-text art-del" />
-      </g>
-
-      <text x={38} y={126} className="art-label art-dim">{l.replaced}</text>
-      <Lines x={38} ys={[140, 150, 160]} widths={[112, 90, 104]} />
-
-      <Arrow x1={120} y1={98} x2={196} y2={98} kind="replaces" />
-
-      <g>
-        <rect x={200} y={78} width={100} height={40} className="art-insert" />
-        <text x={208} y={96} className="art-label art-label-strong">135/2025/QH15</text>
-        <text x={208} y={110} className="art-label art-dim">{l.inForce}</text>
-      </g>
-    </Frame>
-  );
-}
-
-/**
  * Ngắt tên lĩnh vực thành tối đa hai dòng cho vừa ô. Chỉ ngắt giữa hai từ, không
  * cắt cụt: cắt "Đối tác công tư" thành "Đối tác công" thì sai nghĩa, còn hai dòng
  * "Đối tác / công tư" thì đọc được. Tên có dấu "&" chỉ lấy vế đầu.
@@ -315,7 +231,7 @@ function labelLines(label: string, max = 10): string[] {
   return lines.slice(0, 2);
 }
 
-/** Thẻ lĩnh vực: biểu tượng của từng lĩnh vực, tô theo sắc lĩnh vực dùng chung với bản đồ. */
+/** Thẻ lĩnh vực: biểu tượng của từng lĩnh vực, tô theo sắc lĩnh vực dùng chung với cây văn bản. */
 export function DomainsArt({ lang }: { lang: Lang }) {
   const cols = Math.ceil(domains.length / 2);
   const cw = W / cols;

@@ -1,5 +1,5 @@
 /**
- * Kiểu dữ liệu cho bản đồ văn bản quy phạm pháp luật.
+ * Kiểu dữ liệu cho gia phả văn bản quy phạm pháp luật.
  *
  * Nguyên tắc: mỗi văn bản trong tập dữ liệu phải kèm nguồn đã tra cứu và ngày
  * tra cứu. Không có văn bản nào được đưa vào chỉ vì "nhớ là có".
@@ -105,7 +105,7 @@ export interface LegalDoc {
   verifiedOn?: string;
 }
 
-/** Loại quan hệ giữa hai văn bản, dùng để vẽ cạnh trên bản đồ. */
+/** Loại quan hệ giữa hai văn bản, mỗi loại là một vai trong gia phả. */
 export type RelationKind = "guides" | "amends" | "replaces";
 
 export interface Relation {
@@ -120,7 +120,7 @@ export interface Domain {
   /** Tên ngắn cho chỗ chật như ô minh họa; bỏ trống thì dùng `label`. */
   short?: Bilingual;
   blurb: Bilingual;
-  /** Màu nhận diện, dùng chung cho node trên bản đồ và nhãn lĩnh vực. */
+  /** Màu nhận diện, dùng chung cho thẻ văn bản, biểu tượng và nhãn lĩnh vực. */
   hue: number;
 }
 

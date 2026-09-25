@@ -3,8 +3,8 @@ import Link from "next/link";
 /**
  * Trang 404.
  *
- * Không để người đọc rơi vào ngõ cụt: luôn có hai lối ra rõ ràng, về bản đồ hoặc
- * về danh mục văn bản.
+ * Không để người đọc rơi vào ngõ cụt: luôn có hai lối ra rõ ràng, về trang chủ
+ * hoặc về danh mục văn bản.
  */
 export default function NotFound() {
   return (
@@ -21,7 +21,7 @@ export default function NotFound() {
       </p>
       <div className="rise rise-3 mt-7 flex flex-wrap gap-3">
         <Link href="/vi" className="btn btn-outline">
-          Về bản đồ
+          Về trang chủ
         </Link>
         <Link href="/vi/van-ban" className="btn btn-quiet">
           Danh mục văn bản

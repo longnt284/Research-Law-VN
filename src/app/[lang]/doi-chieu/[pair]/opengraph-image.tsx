@@ -8,7 +8,7 @@ import { Arrow, C, OG_SIZE, renderCard, SERIF, StatusPill } from "@/og/card";
 
 export const size = OG_SIZE;
 export const contentType = "image/png";
-export const alt = "Bản đồ Không gian Pháp luật · Vietnamese Legal Space Map";
+export const alt = "Lex & Lineage · Gia phả văn bản pháp luật Việt Nam · The genealogy of Vietnamese law";
 export const dynamicParams = false;
 
 export function generateStaticParams() {

@@ -44,7 +44,7 @@ export function StatusBadge({
   );
 }
 
-/** Chip lĩnh vực, lấy màu từ sắc độ đã gán cho lĩnh vực đó trên bản đồ. */
+/** Chip lĩnh vực, lấy màu từ sắc độ đã gán cho lĩnh vực đó trong tập dữ liệu. */
 export function DomainChip({ id, lang }: { id: DomainId; lang: Lang }) {
   const d = domainById.get(id);
   if (!d) return null;

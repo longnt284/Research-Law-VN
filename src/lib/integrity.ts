@@ -1,5 +1,4 @@
 import type { Domain, LegalDoc } from "@/data/types";
-import { numberKey } from "@/lib/basis-check";
 
 /**
  * Phép kiểm tính chỉnh của kho văn bản.
@@ -23,6 +22,28 @@ export interface IntegrityFinding {
 }
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
+
+/** Cách viết khác nhau của cùng một dấu gạch trong số hiệu. */
+const DASHES = /[\u2010-\u2015\u2212]/g;
+
+/**
+ * Khoá so khớp của một số hiệu.
+ *
+ * Văn bản chép từ nhiều nguồn mang nhiều cách viết cho cùng một số hiệu: chữ Đ
+ * gõ thành chữ Ð của tiếng Iceland (hai ký tự trông y hệt nhau), gạch nối thành
+ * gạch ngang, "06/2021" thành "6/2021", chữ viết thường, khoảng trắng quanh dấu
+ * gạch chéo. Khoá bỏ hết các khác biệt đó, nên cổng chặn bắt được hai bản ghi
+ * mang hai cách viết của cùng một số hiệu.
+ */
+export function numberKey(raw: string): string {
+  const s = raw
+    .normalize("NFC")
+    .replace(DASHES, "-")
+    .replace(/[ĐđÐð]/g, "D")
+    .replace(/\s+/g, "")
+    .toUpperCase();
+  return s.replace(/^0+(?=\d)/, "");
+}
 
 /**
  * Quy ước đánh số theo loại văn bản.
@@ -81,8 +102,7 @@ export function auditDocuments(
     if (seenId.has(doc.id)) add(at, "trùng mã", `Mã "${doc.id}" xuất hiện nhiều lần.`);
     seenId.add(doc.id);
 
-    // So sau khi chuẩn hóa: "6/2021/TT-BXD" và "06/2021/TT-BXD" là một văn bản,
-    // và trang soát căn cứ tra số hiệu theo đúng khóa chuẩn hóa này.
+    // So sau khi chuẩn hóa: "6/2021/TT-BXD" và "06/2021/TT-BXD" là một văn bản.
     const key = numberKey(doc.number);
     const owner = seenNumber.get(key);
     if (owner) {

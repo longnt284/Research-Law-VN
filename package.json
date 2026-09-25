@@ -2,7 +2,7 @@
   "name": "research-law-vn",
   "version": "1.0.0",
   "private": true,
-  "description": "Bản đồ Không gian Pháp luật — Vietnamese Legal Space Map",
+  "description": "Lex & Lineage — Gia phả văn bản pháp luật Việt Nam · The genealogy of Vietnamese law",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

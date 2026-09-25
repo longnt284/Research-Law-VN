@@ -20,6 +20,9 @@ import { formatDate, getDict } from "@/i18n/dictionary";
  * ở dạng TTF tĩnh vì bộ dựng ảnh không đọc được WOFF2 mà `next/font` tải về, và
  * không đọc được phông biến thiên. Giấy phép OFL của hai phông nằm cùng thư mục.
  * Không phông nào có mũi tên, nên mũi tên trong ảnh là hình SVG.
+ *
+ * Dấu ở góc trên là chính tệp `src/app/icon.svg`, đọc từ đĩa và nhúng dạng
+ * data URI: ảnh chia sẻ, biểu tượng tab và dấu trên trang dùng đúng một hình.
  */
 
 export const OG_SIZE = { width: 1200, height: 630 };
@@ -47,6 +50,17 @@ const STATUS_TONE: Record<DocStatus, { fg: string; dot: string; hollow?: boolean
 };
 
 const FONT_DIR = join(process.cwd(), "src/og/fonts");
+const MARK_FILE = join(process.cwd(), "src/app/icon.svg");
+
+let mark: Promise<string> | null = null;
+
+/** Dấu của trang dạng data URI, đọc một lần cho cả lượt dựng. */
+function loadMark() {
+  mark ??= readFile(MARK_FILE).then(
+    (svg) => `data:image/svg+xml;base64,${svg.toString("base64")}`,
+  );
+  return mark;
+}
 
 let fonts: Promise<{ name: string; data: Buffer; weight: 400 | 600 }[]> | null = null;
 
@@ -75,7 +89,7 @@ function loadFonts() {
 export const SERIF = "Lora";
 export const SANS = "Be Vietnam Pro";
 
-/** Khung chung: đầu ảnh mang dấu § và tên trang, chân ảnh mang ngày tra cứu. */
+/** Khung chung: đầu ảnh mang dấu và tên trang, chân ảnh mang ngày tra cứu. */
 export async function renderCard(
   lang: Lang,
   eyebrow: string,
@@ -83,6 +97,7 @@ export async function renderCard(
   footer?: React.ReactNode,
 ): Promise<ImageResponse> {
   const t = getDict(lang);
+  const markSrc = await loadMark();
   return new ImageResponse(
     (
       <div
@@ -95,28 +110,27 @@ export async function renderCard(
           padding: "56px 72px 48px",
           fontFamily: SANS,
           color: C.ink,
-          // Một vệt đồng mảnh bên trái, gợi gáy của một tập hồ sơ.
-          borderLeft: `14px solid ${C.accent}`,
+          // Một vệt vàng lá bên trái, gợi gáy mạ vàng của một cuốn gia phả.
+          borderLeft: `14px solid ${C.brass}`,
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- ảnh dựng bằng next/og, không phải trang */}
+            <img src={markSrc} width={60} height={60} alt="" />
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 44,
-                height: 44,
-                border: `2px solid ${C.accent}`,
-                color: C.accent,
                 fontFamily: SERIF,
-                fontSize: 28,
+                fontSize: 27,
+                letterSpacing: 5,
+                textTransform: "uppercase",
               }}
             >
-              §
+              Lex
+              <span style={{ color: C.brass, margin: "0 12px", textTransform: "none" }}>&amp;</span>
+              Lineage
             </div>
-            <div style={{ display: "flex", fontFamily: SERIF, fontSize: 28 }}>{t.siteName}</div>
           </div>
           <div
             style={{

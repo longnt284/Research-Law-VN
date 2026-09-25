@@ -1,4 +1,4 @@
-import { documents, relations } from "@/data/documents";
+import { documents, documentsById, relations } from "@/data/documents";
 import type { DocType, LegalDoc, RelationKind } from "@/data/types";
 
 /**
@@ -84,3 +84,23 @@ export const corpusSpan: { from: number; to: number } = (() => {
 
 /** Số văn bản không có cả ngày hiệu lực lẫn ngày ban hành. Hình thời gian phải nói ra con số này. */
 export const undatedCount = documents.filter((d) => yearOf(d) === 0).length;
+
+/**
+ * Ví dụ tiêu biểu cho một loại quan hệ: cặp đầu tiên của loại đó mà cả hai văn
+ * bản đều đã xác minh, ưu tiên văn bản cấp luật ở vế bị tác động.
+ */
+export function exampleOf(kind: RelationKind): { target: LegalDoc; actor: LegalDoc } | null {
+  const candidates = relations
+    .filter((r) => r.kind === kind)
+    .map((r) => ({ target: documentsById.get(r.to), actor: documentsById.get(r.from) }))
+    .filter((x): x is { target: LegalDoc; actor: LegalDoc } => !!x.target && !!x.actor);
+  if (candidates.length === 0) return null;
+  const score = (x: { target: LegalDoc; actor: LegalDoc }) =>
+    (x.target.confidence === "verified" ? 0 : 2) +
+    (x.actor.confidence === "verified" ? 0 : 2) +
+    tierOf(x.target) +
+    (x.actor.status === "expired" ? 1 : 0);
+  return [...candidates].sort(
+    (a, b) => score(a) - score(b) || whenOf(b.actor).localeCompare(whenOf(a.actor)),
+  )[0];
+}

@@ -4,19 +4,13 @@ import type { Lang } from "@/data/types";
  * Lời của khối lối vào ở trang chủ.
  *
  * Cùng lý do với `home.ts`: từ điển chính đóng bằng `as const`, nên một
- * mảng sáu thẻ ở đó sẽ thành sáu kiểu chữ nguyên văn khác nhau cho mỗi thứ
+ * mảng thẻ ở đó sẽ thành sáu kiểu chữ nguyên văn khác nhau cho mỗi thứ
  * tiếng và không duyệt được bằng `map`. Khai báo `Record<Lang, HubCopy>` cho ra
  * đúng một kiểu, mà thiếu một câu ở bản tiếng Anh thì `tsc` vẫn dừng lại.
  */
 
 /** Khoá thẻ. Trang chủ tra đường dẫn, số đếm và hình thu nhỏ theo khoá này. */
-export type HubCardKey =
-  | "ban-do"
-  | "linh-vuc"
-  | "van-ban"
-  | "doi-chieu"
-  | "soat-can-cu"
-  | "phuong-phap";
+export type HubCardKey = "linh-vuc" | "van-ban" | "doi-chieu" | "phuong-phap";
 
 export interface HubCard {
   key: HubCardKey;
@@ -43,27 +37,20 @@ export interface HubCopy {
 export const hub: Record<Lang, HubCopy> = {
   vi: {
     eyebrow: "LỐI VÀO",
-    title: "Sáu cách đi vào cùng một tập dữ liệu",
-    lede: "Ba khối ở trên cho thấy tập văn bản được sắp xếp thế nào. Bên dưới là sáu công cụ cùng đọc tập văn bản ấy, mỗi công cụ trả lời một câu hỏi khác nhau. Mọi con số trên các thẻ được đếm thẳng từ tập dữ liệu, không nhập tay.",
+    title: "Bốn cách mở cùng một cuốn gia phả",
+    lede: "Các khối ở trên cho thấy gia phả được ghi theo nguyên tắc nào. Bên dưới là bốn cách đọc cùng tập văn bản ấy, mỗi cách trả lời một câu hỏi khác nhau. Mọi con số trên các thẻ được đếm thẳng từ tập dữ liệu, không nhập tay.",
     cards: [
-      {
-        key: "ban-do",
-        title: "Bản đồ tương tác",
-        text: "Toàn bộ văn bản và quan hệ trên một mặt phẳng kéo thả được. Lọc theo lĩnh vực, bấm vào một điểm để đọc tóm tắt rồi mở trang chi tiết.",
-        meta: "quan hệ đã vẽ",
-        cta: "Mở bản đồ",
-      },
       {
         key: "linh-vuc",
         title: "Cây văn bản theo lĩnh vực",
-        text: "Mỗi lĩnh vực có một cây văn bản riêng: luật ở tầng trên, nghị định ở giữa, thông tư dưới cùng, và từng mắt xích quan hệ nối chúng với nhau. Bấm vào một văn bản để mở trang chi tiết.",
+        text: "Mỗi lĩnh vực có một cây văn bản riêng: luật ở tầng trên, nghị định ở giữa, thông tư dưới cùng, và từng quan hệ nối chúng với nhau. Bấm vào một văn bản để mở gia phả của nó.",
         meta: "lĩnh vực",
         cta: "Xem các lĩnh vực",
       },
       {
         key: "van-ban",
         title: "Danh mục văn bản",
-        text: "Danh sách đầy đủ, tìm được bằng số hiệu, từ khóa trong tên hoặc số điều. Chọn một ngày để xem văn bản nào đang có hiệu lực tại ngày đó; mỗi bản ghi mở ra trang chi tiết kèm nguồn đã tra và ngày tra.",
+        text: "Danh sách đầy đủ, tìm được bằng số hiệu, từ khóa trong tên hoặc số điều. Chọn một ngày để xem văn bản nào đang có hiệu lực tại ngày đó; mỗi bản ghi mở ra gia phả của văn bản, kèm nguồn đã tra và ngày tra.",
         meta: "văn bản",
         cta: "Mở danh mục",
       },
@@ -73,13 +60,6 @@ export const hub: Record<Lang, HubCopy> = {
         text: "Hai văn bản của một cặp thay thế hoặc sửa đổi đặt cạnh nhau: bảng dữ kiện, các câu suy ra từ dữ liệu, và phép so sánh câu chữ ngay trên trình duyệt.",
         meta: "cặp đối chiếu",
         cta: "Mở trang đối chiếu",
-      },
-      {
-        key: "soat-can-cu",
-        title: "Soát căn cứ pháp lý",
-        text: "Dán khối căn cứ của một hợp đồng hay công văn, chọn ngày ký. Mỗi số hiệu được tra vào tập dữ liệu: còn hiệu lực, đã sửa đổi, hay đã bị thay thế và bởi văn bản nào. Đoạn văn không rời trình duyệt.",
-        meta: "văn bản để đối chiếu",
-        cta: "Soát một khối căn cứ",
       },
       {
         key: "phuong-phap",
@@ -98,27 +78,20 @@ export const hub: Record<Lang, HubCopy> = {
   },
   en: {
     eyebrow: "WAYS IN",
-    title: "Six ways into the same body of instruments",
-    lede: "The three blocks above show how the instruments are arranged. Below are six tools that read the same instruments, each answering a different question. Every figure on these cards is counted straight from the dataset, never typed in by hand.",
+    title: "Four ways to open the same register",
+    lede: "The blocks above show the rules by which the register is kept. Below are four ways to read the same instruments, each answering a different question. Every figure on these cards is counted straight from the dataset, never typed in by hand.",
     cards: [
-      {
-        key: "ban-do",
-        title: "Interactive map",
-        text: "Every instrument and relation on one pannable plane. Filter by domain, open a summary on any point, then go through to its detail page.",
-        meta: "relations drawn",
-        cta: "Open the map",
-      },
       {
         key: "linh-vuc",
         title: "Instrument trees by domain",
-        text: "Each domain has its own tree of instruments: laws on the top tier, decrees in the middle, circulars at the base, and every relation drawn as a link between them. Select an instrument to open its detail page.",
+        text: "Each domain has its own tree of instruments: laws on the top tier, decrees in the middle, circulars at the base, and every relation drawn as a link between them. Select an instrument to open its lineage.",
         meta: "domains",
         cta: "See the domains",
       },
       {
         key: "van-ban",
         title: "Index of instruments",
-        text: "The full list, searchable by number, by words in the title or by article. Pick a date to see which instruments were in force that day; every record opens a detail page carrying the sources consulted and the date of the search.",
+        text: "The full list, searchable by number, by words in the title or by article. Pick a date to see which instruments were in force that day; every record opens the instrument's lineage, with the sources consulted and the date of the search.",
         meta: "instruments",
         cta: "Open the index",
       },
@@ -128,13 +101,6 @@ export const hub: Record<Lang, HubCopy> = {
         text: "The two instruments of a replacing or amending pair, side by side: a table of facts, the notes derived from them, and a word-level comparison that runs in the browser.",
         meta: "pairs",
         cta: "Open the comparison",
-      },
-      {
-        key: "soat-can-cu",
-        title: "Legal basis check",
-        text: "Paste the recitals of a contract or letter and pick the signing date. Each document number is looked up in the dataset: in force, amended, or replaced and by what. The text never leaves the browser.",
-        meta: "instruments to check against",
-        cta: "Check a set of recitals",
       },
       {
         key: "phuong-phap",
