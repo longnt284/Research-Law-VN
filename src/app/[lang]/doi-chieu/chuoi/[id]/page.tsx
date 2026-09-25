@@ -9,7 +9,7 @@ import { LuxBackdrop } from "@/components/LuxBackdrop";
 import type { Lang } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { lineageById, lineageMatrix, lineageNotes, lineages } from "@/lib/lineage";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, shareMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => lineages.map((l) => ({ lang, id: l.id })));
@@ -25,12 +25,15 @@ export async function generateMetadata({
   const lineage = lineageById.get(id);
   if (!lineage) return {};
   const t = getDict(lang);
+  const title = `${t.compare.lineageTitle}: ${lineage.current.title[lang]}`;
+  const description = `${lineage.docs.length} ${t.compare.lineageDocs} — ${lineage.docs
+    .map((d) => d.number)
+    .join(", ")}.`;
   return {
-    title: `${t.compare.lineageTitle}: ${lineage.current.title[lang]}`,
-    description: `${lineage.docs.length} ${t.compare.lineageDocs} — ${lineage.docs
-      .map((d) => d.number)
-      .join(", ")}.`,
+    title,
+    description,
     alternates: alternatesFor(lang, `/doi-chieu/chuoi/${lineage.id}`),
+    ...shareMeta(lang, `/doi-chieu/chuoi/${lineage.id}`, title, description),
   };
 }
 

@@ -12,7 +12,7 @@ import type { DomainId, Lang } from "@/data/types";
 import { getHome } from "@/i18n/home";
 import { tierOf } from "@/lib/corpus";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, shareMeta } from "@/lib/site";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => domains.map((d) => ({ lang, id: d.id })));
@@ -31,6 +31,7 @@ export async function generateMetadata({
     title: domain.label[lang],
     description: domain.blurb[lang],
     alternates: alternatesFor(lang, `/linh-vuc/${domain.id}`),
+    ...shareMeta(lang, `/linh-vuc/${domain.id}`, domain.label[lang], domain.blurb[lang]),
   };
 }
 

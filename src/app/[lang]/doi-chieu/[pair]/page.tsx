@@ -5,14 +5,17 @@ import { notFound } from "next/navigation";
 import { BasisSide } from "@/components/Citation";
 import { ChangeKindTag, ObjectiveNotice } from "@/components/CompareMeta";
 import { CrossCheckNotice, StatusBadge } from "@/components/DocMeta";
+import { JsonLd } from "@/components/JsonLd";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { PointDiff } from "@/components/PointDiff";
+import { ShareLinks } from "@/components/ShareLinks";
 import { TextDiff } from "@/components/TextDiff";
 import type { Lang, LegalDoc } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { derivedNotes, factDeltas, pairById, pairs } from "@/lib/compare";
 import { lineagesFor } from "@/lib/lineage";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, pathFor, shareMeta, SITE_URL } from "@/lib/site";
+import { breadcrumbLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return LANGS.flatMap((lang) => pairs.map((p) => ({ lang, pair: p.id })));
@@ -28,10 +31,16 @@ export async function generateMetadata({
   const p = pairById.get(pair);
   if (!p) return {};
   const t = getDict(lang);
+  const title = `${p.newDoc.number} ${t.compare.versus} ${p.oldDoc.number}`;
+  const description = `${t.compare.title}: ${p.newDoc.title[lang]} — ${p.oldDoc.title[lang]}.`;
   return {
-    title: `${p.newDoc.number} ${t.compare.versus} ${p.oldDoc.number}`,
-    description: `${t.compare.title}: ${p.newDoc.title[lang]} — ${p.oldDoc.title[lang]}.`,
+    title,
+    description,
     alternates: alternatesFor(lang, `/doi-chieu/${p.id}`),
+    ...shareMeta(lang, `/doi-chieu/${p.id}`, title, description, {
+      type: "article",
+      ownImage: true,
+    }),
   };
 }
 
@@ -103,6 +112,16 @@ export default async function ComparePairPage({
 
   return (
     <article>
+      <JsonLd
+        data={breadcrumbLd([
+          { name: t.nav.home, path: pathFor(lang) },
+          { name: t.nav.compare, path: pathFor(lang, "/doi-chieu") },
+          {
+            name: `${pair.newDoc.number} ${t.compare.versus} ${pair.oldDoc.number}`,
+            path: pathFor(lang, `/doi-chieu/${pair.id}`),
+          },
+        ])}
+      />
       <section className="rule-double-b hero-lux">
         <LuxBackdrop />
         <div className="mx-auto w-full max-w-[76rem] px-5 py-8 sm:px-8">
@@ -125,6 +144,15 @@ export default async function ComparePairPage({
               <div className="md:pl-10">
                 <Side doc={pair.newDoc} label={t.compare.newSide} lang={lang} tone="new" />
               </div>
+            </div>
+            <div className="rise rise-2 mt-6 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span className="eyebrow">{t.share.title}</span>
+              <ShareLinks
+                lang={lang}
+                path={pathFor(lang, `/doi-chieu/${pair.id}`)}
+                canonical={`${SITE_URL}${pathFor(lang, `/doi-chieu/${pair.id}`)}`}
+                title={`${pair.newDoc.number} ${t.compare.versus} ${pair.oldDoc.number}`}
+              />
             </div>
           </header>
         </div>

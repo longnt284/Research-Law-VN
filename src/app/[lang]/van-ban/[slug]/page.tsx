@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 
 import { CopyCitation } from "@/components/Citation";
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
+import { JsonLd } from "@/components/JsonLd";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { ShareLinks } from "@/components/ShareLinks";
 import { ValidityProbe } from "@/components/validity/ValidityProbe";
 import { ValidityTimeline } from "@/components/validity/ValidityTimeline";
 import {
@@ -18,7 +20,8 @@ import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { citeDocument } from "@/lib/citation";
 import { pairsFor } from "@/lib/compare";
 import { lineagesFor } from "@/lib/lineage";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, clip, pathFor, shareMeta, SITE_URL } from "@/lib/site";
+import { breadcrumbLd, legislationLd } from "@/lib/structured-data";
 import { validitySegments } from "@/lib/validity";
 
 export function generateStaticParams() {
@@ -34,10 +37,16 @@ export async function generateMetadata({
   if (!isLang(lang)) return {};
   const doc = documentsById.get(slug);
   if (!doc) return {};
+  const title = `${doc.number} — ${doc.title[lang]}`;
+  const description = clip(doc.summary[lang], 175);
   return {
-    title: `${doc.number} — ${doc.title[lang]}`,
-    description: doc.summary[lang].slice(0, 175),
+    title,
+    description,
     alternates: alternatesFor(lang, `/van-ban/${doc.id}`),
+    ...shareMeta(lang, `/van-ban/${doc.id}`, title, description, {
+      type: "article",
+      ownImage: true,
+    }),
   };
 }
 
@@ -84,9 +93,18 @@ export default async function DocumentPage({
   const comparePairs = pairsFor(doc.id);
   const docLineages = lineagesFor(doc.id);
   const citation = citeDocument(doc, lang);
+  const legislation = legislationLd(doc, lang, documentsById);
 
   return (
     <article>
+      {legislation && <JsonLd data={legislation} />}
+      <JsonLd
+        data={breadcrumbLd([
+          { name: t.nav.home, path: pathFor(lang) },
+          { name: t.nav.documents, path: pathFor(lang, "/van-ban") },
+          { name: doc.number, path: pathFor(lang, `/van-ban/${doc.id}`) },
+        ])}
+      />
       <section className="rule-double-b hero-lux">
         <LuxBackdrop />
         <div className="mx-auto w-full max-w-[76rem] px-5 py-8 sm:px-8">
@@ -308,6 +326,21 @@ export default async function DocumentPage({
             <p className="mt-2 text-xs leading-relaxed text-[var(--ink-3)]">
               {t.doc.citationHint}
             </p>
+          </div>
+
+          {/* Chia sẻ đặt ngay sau trích dẫn: cùng một nhịp việc, chép căn cứ vào
+              hồ sơ rồi gửi đường dẫn cho đồng nghiệp đang cùng xử lý vụ việc. */}
+          <div className="mt-6 border-t border-[var(--rule)] pt-5">
+            <p className="eyebrow">{t.share.title}</p>
+            <div className="mt-2.5">
+              <ShareLinks
+                lang={lang}
+                path={pathFor(lang, `/van-ban/${doc.id}`)}
+                canonical={`${SITE_URL}${pathFor(lang, `/van-ban/${doc.id}`)}`}
+                title={`${doc.number} — ${doc.title[lang]}`}
+              />
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-[var(--ink-3)]">{t.share.hint}</p>
           </div>
 
           <div className="mt-6 border-t border-[var(--rule)] pt-5">

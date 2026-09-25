@@ -8,8 +8,8 @@ import { RelationBlock } from "@/components/home/RelationBlock";
 import { TimelineBlock } from "@/components/home/TimelineBlock";
 import { HomeHub } from "@/components/HomeHub";
 import { Reveal } from "@/components/Reveal";
-import { isLang } from "@/i18n/dictionary";
-import { alternatesFor } from "@/lib/site";
+import { getDict, isLang } from "@/i18n/dictionary";
+import { alternatesFor, shareMeta } from "@/lib/site";
 
 /**
  * Trang chủ.
@@ -23,8 +23,8 @@ import { alternatesFor } from "@/lib/site";
  * Toàn bộ trang là HTML và SVG dựng ở máy chủ. Không có cảnh WebGL nào, không
  * có thư viện đồ họa nào phải tải; chuyển động nằm trong CSS và dừng được.
  *
- * Tiêu đề và mô tả kế thừa từ layout; ở đây chỉ khai báo bản dịch, thứ mà layout
- * không tự biết được.
+ * Tiêu đề và mô tả kế thừa từ layout; ở đây khai báo bản dịch và thẻ chia sẻ,
+ * hai thứ mà layout không tự biết được.
  */
 export async function generateMetadata({
   params,
@@ -33,7 +33,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   if (!isLang(lang)) return {};
-  return { alternates: alternatesFor(lang) };
+  const t = getDict(lang);
+  return {
+    alternates: alternatesFor(lang),
+    ...shareMeta(lang, "", t.siteName, t.siteTagline, { ownImage: true }),
+  };
 }
 
 export default async function HomePage({

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { MapExplorer } from "@/components/MapExplorer";
 import { getDict, isLang } from "@/i18n/dictionary";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, shareMeta } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -17,6 +17,7 @@ export async function generateMetadata({
     title: t.nav.map,
     description: t.siteTagline,
     alternates: alternatesFor(lang, "/ban-do"),
+    ...shareMeta(lang, "/ban-do", t.nav.map, t.siteTagline),
   };
 }
 

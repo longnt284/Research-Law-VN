@@ -7,7 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { LATEST_VERIFIED_ON, documents } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang } from "@/i18n/dictionary";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, shareMeta } from "@/lib/site";
 
 export async function generateMetadata({
   params,
@@ -21,6 +21,7 @@ export async function generateMetadata({
     title: t.about.title,
     description: t.about.lede,
     alternates: alternatesFor(lang, "/phuong-phap"),
+    ...shareMeta(lang, "/phuong-phap", t.about.title, t.about.lede),
   };
 }
 

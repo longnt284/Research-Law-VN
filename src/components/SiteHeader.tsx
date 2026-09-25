@@ -32,6 +32,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
     { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },
     { href: `/${lang}/doi-chieu`, label: t.nav.compare, exact: false },
+    { href: `/${lang}/soat-can-cu`, label: t.nav.check, exact: false },
     { href: `/${lang}/phuong-phap`, label: t.nav.about, exact: false },
   ];
 

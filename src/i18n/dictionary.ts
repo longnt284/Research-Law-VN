@@ -20,6 +20,7 @@ export const dict = {
       documents: "Văn bản",
       domains: "Lĩnh vực",
       compare: "Đối chiếu",
+      check: "Soát căn cứ",
       about: "Phương pháp",
     },
     home: {
@@ -240,6 +241,13 @@ export const dict = {
       switchLang: "English",
       switchLangFull: "Chuyển sang tiếng Anh",
     },
+    share: {
+      title: "Chia sẻ",
+      native: "Chia sẻ…",
+      copy: "Sao chép liên kết",
+      copied: "Đã sao chép liên kết",
+      hint: "Đường dẫn gửi đi kèm ảnh riêng của trang: số hiệu, tên và tình trạng hiệu lực.",
+    },
     a11y: {
       skipToContent: "Bỏ qua, tới nội dung chính",
       mapLabel: "Bản đồ quan hệ văn bản pháp luật, có thể dùng phím mũi tên để di chuyển",
@@ -256,6 +264,7 @@ export const dict = {
       documents: "Documents",
       domains: "Domains",
       compare: "Comparison",
+      check: "Basis check",
       about: "Method",
     },
     home: {
@@ -475,6 +484,13 @@ export const dict = {
       verifiedPrefix: "Data consulted on",
       switchLang: "Tiếng Việt",
       switchLangFull: "Switch to Vietnamese",
+    },
+    share: {
+      title: "Share",
+      native: "Share…",
+      copy: "Copy link",
+      copied: "Link copied",
+      hint: "The link travels with this page's own preview image: number, title and status.",
     },
     a11y: {
       skipToContent: "Skip to main content",

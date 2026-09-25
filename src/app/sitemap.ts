@@ -22,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/van-ban",
     "/linh-vuc",
     "/doi-chieu",
+    "/soat-can-cu",
     "/phuong-phap",
     ...domains.map((d) => `/linh-vuc/${d.id}`),
     ...documents.map((d) => `/van-ban/${d.id}`),

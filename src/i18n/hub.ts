@@ -4,13 +4,19 @@ import type { Lang } from "@/data/types";
  * Lời của khối lối vào ở trang chủ.
  *
  * Cùng lý do với `home.ts`: từ điển chính đóng bằng `as const`, nên một
- * mảng năm thẻ ở đó sẽ thành năm kiểu chữ nguyên văn khác nhau cho mỗi thứ
+ * mảng sáu thẻ ở đó sẽ thành sáu kiểu chữ nguyên văn khác nhau cho mỗi thứ
  * tiếng và không duyệt được bằng `map`. Khai báo `Record<Lang, HubCopy>` cho ra
  * đúng một kiểu, mà thiếu một câu ở bản tiếng Anh thì `tsc` vẫn dừng lại.
  */
 
 /** Khoá thẻ. Trang chủ tra đường dẫn, số đếm và hình thu nhỏ theo khoá này. */
-export type HubCardKey = "ban-do" | "linh-vuc" | "van-ban" | "doi-chieu" | "phuong-phap";
+export type HubCardKey =
+  | "ban-do"
+  | "linh-vuc"
+  | "van-ban"
+  | "doi-chieu"
+  | "soat-can-cu"
+  | "phuong-phap";
 
 export interface HubCard {
   key: HubCardKey;
@@ -37,8 +43,8 @@ export interface HubCopy {
 export const hub: Record<Lang, HubCopy> = {
   vi: {
     eyebrow: "LỐI VÀO",
-    title: "Năm cách đi vào cùng một tập dữ liệu",
-    lede: "Ba khối ở trên cho thấy tập văn bản được sắp xếp thế nào. Bên dưới là năm công cụ cùng đọc tập văn bản ấy, mỗi công cụ trả lời một câu hỏi khác nhau. Mọi con số trên các thẻ được đếm thẳng từ tập dữ liệu, không nhập tay.",
+    title: "Sáu cách đi vào cùng một tập dữ liệu",
+    lede: "Ba khối ở trên cho thấy tập văn bản được sắp xếp thế nào. Bên dưới là sáu công cụ cùng đọc tập văn bản ấy, mỗi công cụ trả lời một câu hỏi khác nhau. Mọi con số trên các thẻ được đếm thẳng từ tập dữ liệu, không nhập tay.",
     cards: [
       {
         key: "ban-do",
@@ -69,6 +75,13 @@ export const hub: Record<Lang, HubCopy> = {
         cta: "Mở trang đối chiếu",
       },
       {
+        key: "soat-can-cu",
+        title: "Soát căn cứ pháp lý",
+        text: "Dán khối căn cứ của một hợp đồng hay công văn, chọn ngày ký. Mỗi số hiệu được tra vào tập dữ liệu: còn hiệu lực, đã sửa đổi, hay đã bị thay thế và bởi văn bản nào. Đoạn văn không rời trình duyệt.",
+        meta: "văn bản để đối chiếu",
+        cta: "Soát một khối căn cứ",
+      },
+      {
         key: "phuong-phap",
         title: "Phương pháp và giới hạn",
         text: "Cách tập dữ liệu được lập, điều gì đã được xác minh, điều gì chưa, và những gì trang này cố ý không làm.",
@@ -85,8 +98,8 @@ export const hub: Record<Lang, HubCopy> = {
   },
   en: {
     eyebrow: "WAYS IN",
-    title: "Five ways into the same body of instruments",
-    lede: "The three blocks above show how the instruments are arranged. Below are five tools that read the same instruments, each answering a different question. Every figure on these cards is counted straight from the dataset, never typed in by hand.",
+    title: "Six ways into the same body of instruments",
+    lede: "The three blocks above show how the instruments are arranged. Below are six tools that read the same instruments, each answering a different question. Every figure on these cards is counted straight from the dataset, never typed in by hand.",
     cards: [
       {
         key: "ban-do",
@@ -115,6 +128,13 @@ export const hub: Record<Lang, HubCopy> = {
         text: "The two instruments of a replacing or amending pair, side by side: a table of facts, the notes derived from them, and a word-level comparison that runs in the browser.",
         meta: "pairs",
         cta: "Open the comparison",
+      },
+      {
+        key: "soat-can-cu",
+        title: "Legal basis check",
+        text: "Paste the recitals of a contract or letter and pick the signing date. Each document number is looked up in the dataset: in force, amended, or replaced and by what. The text never leaves the browser.",
+        meta: "instruments to check against",
+        cta: "Check a set of recitals",
       },
       {
         key: "phuong-phap",

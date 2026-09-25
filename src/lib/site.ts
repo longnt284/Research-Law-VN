@@ -1,5 +1,5 @@
 import type { Lang } from "@/data/types";
-import { LANGS } from "@/i18n/dictionary";
+import { getDict, LANGS } from "@/i18n/dictionary";
 
 /**
  * Địa chỉ gốc của trang, dùng cho metadata tuyệt đối.
@@ -41,4 +41,62 @@ export function alternatesFor(lang: Lang, sub = "") {
   // toàn bộ nội dung.
   languages["x-default"] = pathFor("vi", sub);
   return { canonical: pathFor(lang, sub), languages };
+}
+
+/**
+ * Thẻ chia sẻ của một trang: Open Graph cho Facebook, Zalo, LinkedIn và thẻ
+ * Twitter.
+ *
+ * Layout chỉ biết tên trang, nên nếu trang con không đặt thẻ này thì mọi đường
+ * dẫn gửi đi đều hiện cùng một dòng "Bản đồ Không gian Pháp luật", kể cả khi
+ * người gửi đang chia sẻ đúng một nghị định.
+ *
+ * Trang không có tệp `opengraph-image` riêng nhận ảnh mặc định, dựng bởi
+ * `app/[lang]/opengraph-image.tsx`: Next không truyền ảnh của đoạn cha xuống
+ * trang con đã tự đặt `openGraph`, nên phải trỏ tới nó một cách tường minh.
+ * Trang có tệp riêng (trang chủ, văn bản, cặp đối chiếu, soát căn cứ) truyền
+ * `ownImage`, vì ảnh khai báo trong mã sẽ đè lên ảnh của tệp.
+ */
+export function shareMeta(
+  lang: Lang,
+  sub: string,
+  title: string,
+  description: string,
+  { type = "website", ownImage = false }: { type?: "website" | "article"; ownImage?: boolean } = {},
+) {
+  const other = LANGS.filter((l) => l !== lang);
+  const image = pathFor(lang, "/opengraph-image");
+  return {
+    openGraph: {
+      title,
+      description,
+      url: pathFor(lang, sub),
+      siteName: getDict(lang).siteName,
+      locale: OG_LOCALE[lang],
+      alternateLocale: other.map((l) => OG_LOCALE[l]),
+      type,
+      ...(ownImage ? {} : { images: [{ url: image, width: 1200, height: 630 }] }),
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title,
+      description,
+      ...(ownImage ? {} : { images: [image] }),
+    },
+  };
+}
+
+const OG_LOCALE: Record<Lang, string> = { vi: "vi_VN", en: "en_GB" };
+
+/**
+ * Cắt một đoạn văn cho vừa thẻ mô tả, dừng ở ranh giới từ.
+ *
+ * Cắt đúng ký tự thứ n thì hay đứt giữa một từ tiếng Việt ("hợp đ"), và đoạn cắt
+ * đó hiện nguyên văn dưới đường dẫn trên trang kết quả tìm kiếm.
+ */
+export function clip(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > max * 0.6 ? cut.slice(0, space) : cut).replace(/[\s,;:.—-]+$/, "")}…`;
 }
