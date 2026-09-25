@@ -1,6 +1,13 @@
 import Link from "next/link";
 
-import { CompareArt, DomainsArt, HierarchyArt, MapArt, MethodArt } from "@/components/art/PageArt";
+import {
+  CheckArt,
+  CompareArt,
+  DomainsArt,
+  HierarchyArt,
+  MapArt,
+  MethodArt,
+} from "@/components/art/PageArt";
 import { Reveal } from "@/components/Reveal";
 import { documents, domains, LATEST_VERIFIED_ON, relations } from "@/data/documents";
 import type { Lang } from "@/data/types";
@@ -29,6 +36,7 @@ const CARDS: Record<HubCardKey, { path: string; Art: (p: { lang: Lang }) => Reac
   "linh-vuc": { path: "/linh-vuc", Art: DomainsArt },
   "van-ban": { path: "/van-ban", Art: HierarchyArt },
   "doi-chieu": { path: "/doi-chieu", Art: CompareArt },
+  "soat-can-cu": { path: "/soat-can-cu", Art: CheckArt },
   "phuong-phap": { path: "/phuong-phap", Art: MethodArt },
 };
 
@@ -42,6 +50,7 @@ export function HomeHub({ lang }: { lang: Lang }) {
     "linh-vuc": String(domains.length),
     "van-ban": String(documents.length),
     "doi-chieu": String(pairs.length),
+    "soat-can-cu": String(documents.length),
     "phuong-phap": formatDate(LATEST_VERIFIED_ON, lang, LATEST_VERIFIED_ON),
   };
 
@@ -81,16 +90,19 @@ export function HomeHub({ lang }: { lang: Lang }) {
       <div className="hub-grid">
         {h.cards.map((card, i) => {
           const { path, Art } = CARDS[card.key];
+          // Thẻ đầu chiếm trọn bề ngang: bản đồ là lối vào chính, và một thẻ lớn
+          // nói điều đó rõ hơn bất kỳ chữ "nổi bật" nào. Các thẻ còn lại xếp
+          // hai cột; khi số thẻ đó lẻ, thẻ cuối cũng trải hết bề ngang thay vì
+          // để trống nửa hàng.
+          const wide = i === 0 || (i === h.cards.length - 1 && (h.cards.length - 1) % 2 === 1);
           return (
-            // Thẻ đầu chiếm trọn bề ngang: bản đồ là lối vào chính, và một thẻ
-            // lớn nói điều đó rõ hơn bất kỳ chữ "nổi bật" nào.
             <Reveal
               key={card.key}
-              className={i === 0 ? "hub-cell hub-cell-wide" : "hub-cell"}
+              className={wide ? "hub-cell hub-cell-wide" : "hub-cell"}
               delay={Math.min(i, 4) * 60}
             >
               {/* Tên thẻ là một tiêu đề thật, không phải chữ to: danh sách tiêu
-                  đề mà trình đọc màn hình dựng ra phải liệt kê được năm lối vào
+                  đề mà trình đọc màn hình dựng ra phải liệt kê được các lối vào
                   này. Vì vậy các khối bên trong liên kết là `div`, không phải
                   `span` — `span` chỉ chứa được nội dung nội dòng. */}
               <Link href={`/${lang}${path}`} className="hub-card card-lux row-mark">

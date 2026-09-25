@@ -36,6 +36,9 @@ const L = {
     article: "Điều 38",
     checks: ["Số hiệu", "Ngày hiệu lực", "Nguồn đã mở"],
     stamp: "ĐÃ TRA",
+    basis: "Căn cứ",
+    inForce: "Đang có hiệu lực",
+    replaced: "Đã bị thay thế",
   },
   en: {
     law: "Law",
@@ -49,6 +52,9 @@ const L = {
     article: "Article 38",
     checks: ["Number", "Date of force", "Source opened"],
     stamp: "CHECKED",
+    basis: "Pursuant to",
+    inForce: "In force",
+    replaced: "Replaced",
   },
 } as const;
 
@@ -249,6 +255,45 @@ export function MethodArt({ lang }: { lang: Lang }) {
         <circle cx={252} cy={156} r={25} className="art-stamp-inner" />
         <text x={252} y={153} textAnchor="middle" className="art-stamp-text">{l.stamp}</text>
         <text x={252} y={166} textAnchor="middle" className="art-stamp-date">{date}</text>
+      </g>
+    </Frame>
+  );
+}
+
+/**
+ * Thẻ soát căn cứ: trang có khối căn cứ, mỗi dòng một số hiệu; dòng đầu được
+ * đánh dấu còn hiệu lực, dòng thứ hai bị gạch và mũi tên thay thế trỏ sang văn
+ * bản mới. Hai số hiệu là cặp thay thế có thật trong tập dữ liệu.
+ */
+export function CheckArt({ lang }: { lang: Lang }) {
+  const l = L[lang];
+  return (
+    <Frame className="art-check-basis">
+      <Page x={24} y={20} w={150} h={160} />
+      <text x={38} y={42} className="art-heading">{l.basis}</text>
+
+      <g className="art-check" style={{ "--i": 0 } as React.CSSProperties}>
+        <text x={38} y={66} className="art-label art-label-strong">91/2015/QH13</text>
+        <rect x={38} y={72} width={104} height={4} rx={2} className="art-text" />
+        <rect x={150} y={56} width={14} height={14} className="art-box" />
+        <path d="M153 63l3 4 6-8" className="art-tick" />
+      </g>
+
+      <g className="art-check" style={{ "--i": 1 } as React.CSSProperties}>
+        <text x={38} y={100} className="art-label">50/2014/QH13</text>
+        <line x1={35} y1={96} x2={112} y2={96} className="art-strike" />
+        <rect x={38} y={106} width={96} height={4} rx={2} className="art-text art-del" />
+      </g>
+
+      <text x={38} y={126} className="art-label art-dim">{l.replaced}</text>
+      <Lines x={38} ys={[140, 150, 160]} widths={[112, 90, 104]} />
+
+      <Arrow x1={120} y1={98} x2={196} y2={98} kind="replaces" />
+
+      <g>
+        <rect x={200} y={78} width={100} height={40} className="art-insert" />
+        <text x={208} y={96} className="art-label art-label-strong">135/2025/QH15</text>
+        <text x={208} y={110} className="art-label art-dim">{l.inForce}</text>
       </g>
     </Frame>
   );

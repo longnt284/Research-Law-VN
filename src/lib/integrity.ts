@@ -1,4 +1,5 @@
 import type { Domain, LegalDoc } from "@/data/types";
+import { numberKey } from "@/lib/basis-check";
 
 /**
  * Phép kiểm tính chỉnh của kho văn bản.
@@ -80,11 +81,14 @@ export function auditDocuments(
     if (seenId.has(doc.id)) add(at, "trùng mã", `Mã "${doc.id}" xuất hiện nhiều lần.`);
     seenId.add(doc.id);
 
-    const owner = seenNumber.get(doc.number);
+    // So sau khi chuẩn hóa: "6/2021/TT-BXD" và "06/2021/TT-BXD" là một văn bản,
+    // và trang soát căn cứ tra số hiệu theo đúng khóa chuẩn hóa này.
+    const key = numberKey(doc.number);
+    const owner = seenNumber.get(key);
     if (owner) {
       add(at, "trùng số hiệu", `Số hiệu "${doc.number}" đã dùng cho bản ghi "${owner}".`);
     } else {
-      seenNumber.set(doc.number, doc.id);
+      seenNumber.set(key, doc.id);
     }
 
     const shape = NUMBER_SHAPE[doc.type];

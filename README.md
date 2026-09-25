@@ -146,6 +146,62 @@ số hiệu. Chỉ mục (`src/lib/articles.ts`) dựng từ các căn cứ có 
 khoản trong `src/data/comparisons.ts`, tức chỉ những điều đã thực sự được đọc và
 dẫn; kết quả dẫn thẳng tới điểm đối chiếu qua neo `#<mã điểm>`.
 
+## Soát căn cứ pháp lý
+
+Trang `/vi/soat-can-cu` nhận khối "Căn cứ…" của một hợp đồng, công văn hay đơn
+do người đọc dán vào, cùng một ngày (mặc định là hôm nay). Mỗi số hiệu đọc được
+trong đoạn văn được tra vào tập dữ liệu và nhận một trong sáu kết quả: đang có
+hiệu lực, có hiệu lực nhưng đã sửa đổi (kèm văn bản sửa đổi đã có hiệu lực tại
+ngày đó), chưa có hiệu lực, đã hết hiệu lực (kèm chuỗi thay thế tới văn bản
+đang có hiệu lực), chưa xác định được, hoặc chưa có trong tập dữ liệu.
+
+- Bộ đọc số hiệu (`src/lib/basis-check.ts`) nhận dạng số/năm/cơ quan
+  (`91/2015/QH13`, `15/2021/NĐ-CP`) và số hiệu không có năm (`768/QĐ-TTg`),
+  bất kể chữ Đ gõ bằng ký tự nào, gạch nối hay gạch ngang, có số 0 đứng đầu
+  hay không. Số của chính hợp đồng (`…/HĐ…`) bị bỏ qua. Số hiệu không theo
+  khuôn đó (`CISG 1980`, `Quy tắc VIAC 2026`) được so nguyên văn. Cổng chặn của
+  kho văn bản so số hiệu sau khi chuẩn hóa, nên hai bản ghi không thể mang hai
+  cách viết của cùng một số hiệu.
+- Dòng nêu tên văn bản mà không có số hiệu không được đoán ra văn bản nào, vì
+  tên lặp lại qua các đời luật; trang liệt kê riêng các dòng đó.
+- Số hiệu không có trong tập dữ liệu được ghi là chưa có dữ liệu, không phải là
+  sai. Khi tập dữ liệu có số hiệu cùng số, cùng năm và cùng nhóm cơ quan, trang
+  gợi ý số hiệu đó.
+- Bản ghi cần đối chiếu thêm, hoặc mang lưu ý về hiệu lực (hiệu lực từng
+  phần, chuyển tiếp, hai nguồn nhà nước ghi khác nhau), được đánh dấu ngay trên
+  dòng kết quả kèm liên kết tới trang văn bản: phép soát không tự đọc lưu ý đó.
+- Tình trạng tại ngày dùng đúng phép tính của `src/lib/validity.ts`. Máy chủ
+  dựng sẵn các đoạn hiệu lực cho từng văn bản (`src/lib/basis-rows.ts`); trình
+  duyệt chỉ tìm đoạn chứa ngày được chọn.
+- Đoạn văn người đọc dán vào chỉ được xử lý trong trình duyệt: không lưu vào bộ
+  nhớ trình duyệt, không gửi đi. Chính sách `connect-src 'self'` và việc không
+  có mã theo dõi nào là lý do lời hứa đó giữ được.
+- Nút "Sao chép kết quả" cho ra một bản chữ thường, dán được vào bản ghi nhớ.
+  Đoạn mẫu trên trang dựng từ tên và số hiệu trong tập dữ liệu, không viết tay.
+
+## Chia sẻ và công cụ tìm kiếm
+
+Trang văn bản mang một khối JSON-LD kiểu `Legislation` của schema.org: số hiệu,
+loại, ngày ban hành, tình trạng hiệu lực kèm ngày tra cứu
+(`legislationLegalForce`, `legislationDateVersion`), quan hệ sửa đổi
+(`legislationAmends`) và thay thế (`legislationChanges`), cùng đường dẫn tới
+trang của văn bản trên vbpl.vn (`sameAs`). Trạng thái `amended` không được ánh
+xạ, vì nó gộp hai trường hợp mà schema.org tách riêng. Trang văn bản và trang
+đối chiếu còn mang dòng vị trí `BreadcrumbList`. Xem `src/lib/structured-data.ts`.
+
+Mỗi trang đặt thẻ Open Graph và Twitter của riêng nó (`shareMeta` trong
+`src/lib/site.ts`). Mỗi văn bản, mỗi cặp đối chiếu và trang soát căn cứ có ảnh
+chia sẻ riêng, dựng lúc `next build` bằng `next/og`: số hiệu, tên, tình trạng
+hiệu lực và ngày tra cứu lấy thẳng từ bản ghi. Trang khác dùng ảnh mặc định mang
+tên trang và các con số của tập dữ liệu. Ảnh dùng Lora và Be Vietnam Pro ở dạng
+TTF tĩnh trong `src/og/fonts`, kèm giấy phép SIL Open Font License của từng
+phông.
+
+Trang văn bản và trang đối chiếu có nút chia sẻ: trên điện thoại là bảng chia sẻ
+của hệ điều hành (gửi thẳng sang Zalo, Messenger, email), trên máy tính là nút
+sao chép đường dẫn, kèm hai liên kết thường tới Facebook và LinkedIn. Không có
+đoạn mã nào của bên thứ ba được nạp.
+
 ## Cơ chế đối chiếu văn bản
 
 Trang `/vi/doi-chieu` đặt điểm cũ và điểm mới của từng cặp văn bản cạnh nhau.
@@ -287,6 +343,8 @@ src/
   app/[lang]/               # định tuyến song ngữ, sinh tĩnh toàn bộ
   app/[lang]/page.tsx       # trang chủ: dải văn bản nối xích và ba khối
   app/[lang]/ban-do/        # bản đồ tương tác
+  app/[lang]/soat-can-cu/   # soát căn cứ pháp lý
+  app/[lang]/**/opengraph-image.tsx # ảnh chia sẻ dựng lúc build
   app/sitemap.ts            # sitemap sinh từ tập dữ liệu
   app/robots.ts             # robots.txt
   components/               # bản đồ, danh mục, các mảnh giao diện dùng lại
@@ -304,6 +362,9 @@ src/
   lib/compare.ts            # ghép cặp và tính dữ kiện đối chiếu
   lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
   lib/diff.ts               # so sánh cơ học hai đoạn văn bản
+  lib/basis-check.ts        # đọc số hiệu và chuỗi thay thế cho soát căn cứ
+  lib/structured-data.ts    # JSON-LD Legislation và BreadcrumbList
+  og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
 references/                 # thư viện đã khảo sát, và lý do dùng hay loại
 ```
@@ -398,6 +459,26 @@ date picker; the document index re-labels every record for a chosen date and can
 hide what was not in force. The index search also takes article numbers
 ("Article 53", "Điều 76") and lists every comparison point that cites that
 article, from an index built only of provisions actually read.
+
+The legal basis check at `/en/soat-can-cu` takes the "Pursuant to…" recitals
+of a contract, letter or application and a date. It reads every document number
+out of the pasted text — however the letter Đ was typed, with a hyphen or a
+dash, with or without a leading zero — and reports each instrument's status on
+that date by the same rule as the date picker: in force, amended (with the
+amending instruments already in force), not yet in force, or no longer in force
+with the replacement chain up to the instrument in force. A number outside the
+dataset is reported as having no data, never as wrong, and a line that names an
+instrument without a number is listed rather than guessed. The pasted text is
+processed in the browser only and is neither stored nor sent.
+
+Each document page carries schema.org `Legislation` JSON-LD (number, type, date
+of issue, legal force as at the review date, amendment and replacement
+relations, and the vbpl.vn page as `sameAs`). Every page sets its own Open Graph
+and Twitter tags, and every instrument, comparison pair and the basis-check page
+has its own preview image rendered at build time with `next/og` from the record
+itself. Document and pair pages have share controls: the operating system's
+share sheet on phones, copy-link on desktops, and plain links to Facebook and
+LinkedIn; no third-party script is loaded.
 
 To deploy, set `NEXT_PUBLIC_SITE_URL` to the site's origin. Canonical tags,
 hreflang tags and `sitemap.xml` all need absolute addresses, and that address

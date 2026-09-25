@@ -11,7 +11,7 @@ import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { curatedPairCount, pairs } from "@/lib/compare";
 import { lineageStats, lineages } from "@/lib/lineage";
-import { alternatesFor } from "@/lib/site";
+import { alternatesFor, shareMeta } from "@/lib/site";
 import { lexiconStats } from "@/lib/objectivity";
 
 /** Bỏ dấu, dựng sẵn ở máy chủ để ô tìm kiếm phía trình duyệt khỏi làm lại. */
@@ -40,6 +40,7 @@ export async function generateMetadata({
     title: t.compare.title,
     description: t.compare.lede,
     alternates: alternatesFor(lang, "/doi-chieu"),
+    ...shareMeta(lang, "/doi-chieu", t.compare.title, t.compare.lede),
   };
 }
 
