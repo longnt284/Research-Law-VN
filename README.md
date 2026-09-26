@@ -79,6 +79,22 @@ Trang của mỗi văn bản có hai cách đọc cùng gia phả (`src/componen
 Ba kiểu nét dùng chung ở mọi hình: nét liền cho quy định chi tiết, nét đứt cho
 sửa đổi bổ sung, chấm đỏ cho thay thế; mũi tên luôn chỉ vào văn bản bị tác động.
 
+## Toàn văn và nguồn tra cứu
+
+Người đọc chính của trang là pháp chế doanh nghiệp và luật sư, nên câu hỏi về một
+đường dẫn nguồn là "có viện dẫn được không". `src/lib/sources.ts` xếp mỗi nguồn
+vào một trong bốn loại, suy ra từ chính địa chỉ chứ không ghi tay trong bản ghi:
+nguồn chính thống (cổng của cơ quan nhà nước, vbpl.vn, Công báo), tổ chức ban
+hành (VIAC, ICC cho quy tắc của chính họ), cơ sở dữ liệu pháp luật (trang văn bản
+trên Thư Viện Pháp Luật, LuatVietnam…) và bài viết tham khảo.
+
+Dưới tên văn bản có nút "Đọc toàn văn", trỏ tới trang toàn văn có thứ hạng cao
+nhất: vbpl.vn, rồi Công báo, rồi Cổng Thông tin điện tử Chính phủ. Bản ghi không
+có trang nào chứa toàn văn thì không có nút, thay vì dẫn tới một bài tin. Ngay
+sau phần tóm tắt là danh sách đầy đủ các nguồn, mỗi nguồn một ô ghi tên trang,
+tên miền và loại nguồn, nguồn chính thống xếp trước. Bản ghi không có nguồn
+chính thống nào hiện lời nhắc đối chiếu số hiệu trước khi viện dẫn.
+
 ## Hình minh họa ở các trang
 
 Hình ở đầu mỗi trang và trên thẻ lối vào trang chủ vẽ đúng vật mà trang đó làm
@@ -363,8 +379,16 @@ references/                 # thư viện đã khảo sát, và lý do dùng hay
 
 ## Miễn trừ trách nhiệm
 
-Nội dung phục vụ mục đích tra cứu và tham khảo, không thay thế ý kiến pháp lý
-cho một vụ việc cụ thể.
+Lex & Lineage là công cụ tra cứu dành cho pháp chế doanh nghiệp và luật sư. Nội
+dung chỉ để tham khảo: không phải ý kiến pháp lý, không thay thế tư vấn cho một
+vụ việc cụ thể và không tạo lập quan hệ luật sư với khách hàng. Trước khi viện
+dẫn trong hợp đồng, ý kiến pháp lý hay hồ sơ gửi cơ quan nhà nước, hãy đối chiếu
+nguyên văn trên Công báo, Cơ sở dữ liệu quốc gia về pháp luật hoặc với cơ quan
+ban hành.
+
+## Liên hệ
+
+Điện thoại: 0941 563 789 · Email: longnt284.lawyer@gmail.com
 
 ---
 
@@ -401,6 +425,20 @@ written register says the same thing in words with full titles; it is the only
 version on phones, where the drawing would be wider than the screen. A solid
 line details, a dashed line amends, red dots replace, and the arrow always
 points at the instrument acted upon.
+
+The site is written for in-house legal teams and practising lawyers, for whom
+the question about a source link is whether it can be cited.
+`src/lib/sources.ts` sorts every source into one of four kinds, derived from
+the address itself rather than typed into the record: official source (state
+portals, vbpl.vn, the Official Gazette), issuing body (VIAC and ICC for their
+own rules), legal database (document pages on Thu Vien Phap Luat, LuatVietnam
+and similar) and commentary or news. Under the title of each instrument a
+"Read the full text" button opens the highest-ranked full-text page: vbpl.vn,
+then the Gazette, then the Government portal. A record with no full-text page
+gets no button rather than a link to a news item. The complete list follows the
+summary, one card per source with site name, domain and kind, official sources
+first; a record with no official source carries a reminder to check the number
+before citing it.
 
 The interactive map (`/ban-do`) and the legal basis check (`/soat-can-cu`) were
 removed with the move to the lineage concept. Their old addresses redirect

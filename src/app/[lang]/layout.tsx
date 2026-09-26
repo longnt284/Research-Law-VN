@@ -9,7 +9,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { LATEST_VERIFIED_ON } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
-import { SITE_URL } from "@/lib/site";
+import { CONTACT, SITE_URL } from "@/lib/site";
 
 /*
   Hai họ chữ, mỗi họ một nhiệm vụ. Lora có chân, dùng cho tiêu đề và trích dẫn
@@ -139,13 +139,41 @@ export default async function LangLayout({
               </p>
             </div>
 
-            <div className="mt-8 grid gap-8 md:grid-cols-[1.5fr_1fr]">
+            <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_auto] md:gap-10">
               <div>
                 <p className="eyebrow eyebrow-tick">{t.footer.disclaimerTitle}</p>
-                <p className="measure mt-2.5 text-[0.9375rem] leading-relaxed text-[var(--ink-2)]">
-                  {t.footer.disclaimer}
-                </p>
+                <div className="measure mt-2.5 space-y-2.5 text-[0.9375rem] leading-relaxed text-[var(--ink-2)]">
+                  {t.footer.disclaimer.map((para) => (
+                    <p key={para}>{para}</p>
+                  ))}
+                </div>
               </div>
+              {/* Liên hệ đặt giữa miễn trừ trách nhiệm và điều hướng: đọc xong giới
+                  hạn của dữ liệu thì chỗ góp ý hoặc hỏi thêm nằm ngay bên cạnh. */}
+              <address className="not-italic">
+                <p className="eyebrow eyebrow-tick">{t.footer.contactTitle}</p>
+                <p className="mt-2.5 text-sm leading-relaxed text-[var(--ink-3)]">
+                  {t.footer.contactLede}
+                </p>
+                <dl className="mt-3 space-y-2 text-[0.9375rem]">
+                  <div>
+                    <dt className="text-xs text-[var(--ink-3)]">{t.footer.phoneLabel}</dt>
+                    <dd>
+                      <a href={CONTACT.phoneHref} className="link-sweep tnum font-medium">
+                        {CONTACT.phone}
+                      </a>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs text-[var(--ink-3)]">{t.footer.emailLabel}</dt>
+                    <dd className="break-all">
+                      <a href={`mailto:${CONTACT.email}`} className="link-sweep font-medium">
+                        {CONTACT.email}
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
+              </address>
               <nav className="md:justify-self-end" aria-label={t.siteName}>
                 <p className="eyebrow eyebrow-tick">{t.footer.navTitle}</p>
                 <ul className="mt-2.5 space-y-1.5 text-[0.9375rem]">

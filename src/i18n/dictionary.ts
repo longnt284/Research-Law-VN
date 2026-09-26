@@ -160,7 +160,22 @@ export const dict = {
       type: "Loại văn bản",
       summary: "Nội dung chính",
       note: "Lưu ý về hiệu lực",
-      sources: "Nguồn đã tra cứu",
+      sources: "Toàn văn và nguồn tra cứu",
+      sourcesLede:
+        "Phần tóm tắt giúp định hướng nhanh, không thay cho nguyên văn. Trước khi viện dẫn văn bản này trong hợp đồng, ý kiến pháp lý hay hồ sơ gửi cơ quan nhà nước, hãy đọc toàn văn tại nguồn chính thống dưới đây.",
+      sourcesNoOfficial:
+        "Bản ghi này chưa có liên kết tới nguồn chính thống. Hãy đối chiếu số hiệu trên Công báo, Cơ sở dữ liệu quốc gia về pháp luật hoặc trang của cơ quan, tổ chức ban hành trước khi viện dẫn.",
+      readFullText: "Đọc toàn văn",
+      fullTextAt: "Mở tại",
+      fullTextTag: "Có toàn văn",
+      allSources: "Tất cả nguồn",
+      newTab: "(mở trong thẻ mới)",
+      sourceKind: {
+        official: "Nguồn chính thống",
+        issuer: "Tổ chức ban hành",
+        database: "Cơ sở dữ liệu pháp luật",
+        reference: "Bài viết tham khảo",
+      },
       verifiedOn: "Ngày tra cứu",
       unknownDate: "Chưa xác minh được",
       backToList: "Về danh mục",
@@ -208,8 +223,15 @@ export const dict = {
     },
     footer: {
       disclaimerTitle: "Miễn trừ trách nhiệm",
-      disclaimer:
-        "Nội dung trên trang phục vụ mục đích tra cứu và tham khảo, không thay thế ý kiến pháp lý cho một vụ việc cụ thể. Trước khi sử dụng trong hồ sơ chính thức, hãy đối chiếu lại với Công báo hoặc cơ quan ban hành.",
+      disclaimer: [
+        "Lex & Lineage là công cụ tra cứu dành cho pháp chế doanh nghiệp và luật sư. Nội dung trên trang chỉ để tham khảo: không phải ý kiến pháp lý, không thay thế tư vấn cho một vụ việc cụ thể và không tạo lập quan hệ luật sư với khách hàng.",
+        "Tóm tắt, quan hệ giữa các văn bản và phần đối chiếu do người biên soạn lập từ các nguồn ghi trên từng trang, và phản ánh tình trạng tại ngày tra cứu. Trước khi viện dẫn trong hợp đồng, ý kiến pháp lý hay hồ sơ gửi cơ quan nhà nước, hãy đối chiếu nguyên văn trên Công báo, Cơ sở dữ liệu quốc gia về pháp luật hoặc với cơ quan ban hành.",
+        "Lex & Lineage không chịu trách nhiệm về thiệt hại phát sinh từ việc dựa vào nội dung trên trang mà không đối chiếu như trên. Nội dung của các trang bên ngoài được dẫn liên kết thuộc trách nhiệm của đơn vị quản lý trang đó.",
+      ],
+      contactTitle: "Liên hệ",
+      contactLede: "Góp ý về dữ liệu, báo văn bản cần cập nhật hoặc trao đổi chuyên môn.",
+      phoneLabel: "Điện thoại",
+      emailLabel: "Email",
       navTitle: "Điều hướng",
       verifiedPrefix: "Dữ liệu tra cứu ngày",
       switchLang: "English",
@@ -376,7 +398,22 @@ export const dict = {
       type: "Instrument type",
       summary: "Substance",
       note: "Note on effect",
-      sources: "Sources consulted",
+      sources: "Full text and sources",
+      sourcesLede:
+        "The summary is for quick orientation and does not replace the text itself. Before citing this instrument in a contract, a legal opinion or a filing with an authority, read the full text at the official source below.",
+      sourcesNoOfficial:
+        "This record has no link to an official source yet. Check the number against the Official Gazette, the National Legal Database or the issuing body's own site before citing it.",
+      readFullText: "Read the full text",
+      fullTextAt: "Opens at",
+      fullTextTag: "Full text",
+      allSources: "All sources",
+      newTab: "(opens in a new tab)",
+      sourceKind: {
+        official: "Official source",
+        issuer: "Issuing body",
+        database: "Legal database",
+        reference: "Commentary or news",
+      },
       verifiedOn: "Date consulted",
       unknownDate: "Not verified",
       backToList: "Back to index",
@@ -424,8 +461,15 @@ export const dict = {
     },
     footer: {
       disclaimerTitle: "Disclaimer",
-      disclaimer:
-        "This material is for reference only and does not substitute for legal advice on a specific matter. Before relying on it in a formal filing, check the text against the Official Gazette or the issuing authority.",
+      disclaimer: [
+        "Lex & Lineage is a research tool for in-house legal teams and practising lawyers. Its content is for reference only: it is not legal advice, does not replace advice on a specific matter, and does not create a lawyer–client relationship.",
+        "Summaries, relations between instruments and comparisons are prepared by the editor from the sources listed on each page, and reflect the position on the date consulted. Before citing an instrument in a contract, a legal opinion or a filing with an authority, check the text against the Official Gazette, the National Legal Database or the issuing authority.",
+        "Lex & Lineage accepts no liability for loss arising from reliance on this content without that check. External sites linked from these pages are the responsibility of their operators.",
+      ],
+      contactTitle: "Contact",
+      contactLede: "Corrections, records that need updating, or professional enquiries.",
+      phoneLabel: "Phone",
+      emailLabel: "Email",
       navTitle: "Navigate",
       verifiedPrefix: "Data consulted on",
       switchLang: "Tiếng Việt",
