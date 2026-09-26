@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 
 import { DomainChip, StatusBadge } from "@/components/DocMeta";
 import { ValidityBadge } from "@/components/validity/ValidityBadge";
@@ -10,6 +10,7 @@ import type { DocType, DomainId, Lang } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
 import { getValidityCopy } from "@/i18n/validity";
 import { articleQuery, type ArticleEntry } from "@/lib/article-query";
+import { setAsOf, useAsOf } from "@/lib/client-store";
 import { validityAt } from "@/lib/validity";
 
 const RANK: Record<DocType, number> = {
@@ -45,8 +46,15 @@ export function DocumentIndex({
   const t = getDict(lang);
   const v = getValidityCopy(lang);
   const [query, setQuery] = useState("");
-  // Ngày người đọc hỏi. Rỗng nghĩa là giữ tình trạng tại ngày tra cứu.
-  const [asOf, setAsOf] = useState("");
+  // Ngày người đọc hỏi, dùng chung cho cả trang ("pháp luật tại ngày…"). Rỗng
+  // nghĩa là giữ tình trạng tại ngày tra cứu.
+  const asOf = useAsOf();
+
+  // Ô tìm ở trang chủ và bảng lệnh mở danh mục bằng `?q=`: điền sẵn câu tìm.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setQuery(q);
+  }, []);
   const [onlyInForce, setOnlyInForce] = useState(false);
   const [domain, setDomain] = useState<DomainId | "all">("all");
   const [sort, setSort] = useState<"rank" | "recent">("rank");
@@ -114,7 +122,7 @@ export function DocumentIndex({
         hai hàng nên mốc 3.3rem không còn đúng, và một thanh lọc dính sai chỗ ăn
         mất một phần tư màn hình vốn đã hẹp.
       */}
-      <div className="rule-b z-20 bg-[color-mix(in_oklab,var(--paper-2)_92%,transparent)] backdrop-blur-md sm:sticky sm:top-[3.3rem]">
+      <div className="rule-b z-20 bg-[color-mix(in_oklab,var(--paper-2)_92%,transparent)] backdrop-blur-md sm:sticky sm:top-[var(--hdr-h,3.3rem)]">
         <div className="mx-auto w-full max-w-[76rem] px-5 py-4 sm:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
             <div className="flex-1">

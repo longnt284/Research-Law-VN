@@ -7,6 +7,11 @@ quy định chi tiết nó), văn bản cấp trên mà nó hướng dẫn, và 
 đổi, bổ sung. Mỗi vai ứng đúng một quan hệ có thật trong bản ghi: quy định chi
 tiết, sửa đổi bổ sung, hoặc thay thế.
 
+Lời hứa của sản phẩm: **tra cứu hiệu lực, theo dấu sửa đổi, hiểu toàn bộ dòng
+đời của pháp luật Việt Nam.** Muốn đọc toàn văn thì có nhiều cơ sở dữ liệu pháp
+luật; muốn biết một văn bản đứng ở đâu trong hệ thống, đã thay đổi thế nào và áp
+dụng tại thời điểm nào thì mở Lex & Lineage.
+
 Trang có hai phiên bản đầy đủ, tiếng Việt tại `/vi` và tiếng Anh tại `/en`.
 
 ## Tên và dấu hiệu
@@ -29,25 +34,67 @@ tròn như ba đời văn bản đứng trước. Có hai dạng cùng một hì
 `src/app/icon.svg` là dạng `badge` xuất ra tệp tĩnh, và ảnh chia sẻ đọc đúng
 tệp đó, nên biểu tượng tab, ảnh chia sẻ và dấu trên trang là một hình.
 
-## Trang chủ
+## Trang chủ: dùng trước, giải thích sau
 
-Trang chủ mở bằng huy hiệu, tên chữ hoa giãn cách và câu khẩu hiệu "Mỗi văn bản
-pháp luật đều có một gia phả." Ngay sau đó là một gia phả thật: gia phả lớn
-nhất trong tập dữ liệu mà văn bản đứng giữa còn hiệu lực, chọn bằng phép đếm
-(`featuredFamily` trong `src/lib/family.ts`), không chọn tay. Dưới đó là ba
-khối, mỗi khối trả lời một câu hỏi người làm hồ sơ vẫn hỏi:
+Người quay lại trang phải tra được một văn bản trong vài giây, không phải đọc
+phần giới thiệu trước. Thứ tự trang chủ vì vậy là:
 
-1. **Thứ bậc hiệu lực** — bốn bậc thang, mỗi ô nhỏ là một văn bản tô theo màu
-   lĩnh vực.
-2. **Ba mối quan hệ trong gia phả** — nhánh hướng dẫn, ghi chú sửa đổi, đời
-   trước và đời sau; mỗi loại một ví dụ thật do `exampleOf` chọn từ tập dữ liệu.
-3. **Trục thời gian** — số văn bản có hiệu lực theo năm, chia theo tình trạng,
-   kèm vạch ngày tra cứu; bảng số đi kèm cho trình đọc màn hình.
+1. **Phần đầu**: câu khẩu hiệu "Mỗi văn bản pháp luật đều có một gia phả.", lời
+   hứa của sản phẩm và **ô tìm kiếm lớn** — thứ lớn nhất trên màn hình đầu tiên.
+   Dưới ô là bốn lối tắt: kiểm tra hiệu lực, xem gia phả, so sánh văn bản, luật
+   tại một thời điểm. Bên phải là một dòng đời văn bản có thật, dựng từ gia phả
+   tiêu biểu (`src/lib/hero-lineage.ts`): rê chuột vào một văn bản thì quan hệ
+   của nó sáng lên; khi đã đặt ngày tra cứu, văn bản không có hiệu lực vào ngày
+   đó nhạt đi.
+2. **Bạn muốn làm gì?** Bốn ô công cụ mang dữ liệu thật: ba văn bản ở ba tình
+   trạng khác nhau (chọn bằng phép lọc, không viết tay), dòng dõi của gia phả
+   tiêu biểu, bản đối chiếu mới nhất đã có điểm nội dung, và ô chọn ngày.
+3. **Thay đổi gần đây** (`src/lib/changes.ts`): mốc hiệu lực, sửa đổi, thay thế,
+   hướng dẫn đọc từ bản ghi, chia "sắp có hiệu lực" và "đã diễn ra" theo ngày
+   tra cứu gần nhất của kho.
+4. **Khám phá theo lĩnh vực**: mười lĩnh vực, thanh đếm số văn bản thật.
+5. **Gia phả tiêu biểu** và các chuỗi văn bản đang động.
+6. **Phạm vi dữ liệu**: số văn bản, quan hệ, cặp đối chiếu, lĩnh vực, và tỷ lệ
+   bản ghi đã đối chiếu nguồn chính thống.
+7. **Cách Lex & Lineage hoạt động**: ba khối giải thích cũ — thứ bậc hiệu lực, ba
+   mối quan hệ, trục thời gian — nay nằm dưới phần công cụ.
+8. **Độ tin cậy**: nguyên tắc dữ liệu, dẫn tới trang phương pháp và trang góp ý.
 
-Toàn bộ là HTML và SVG dựng ở máy chủ. Chuyển động nằm trong CSS: nét huy hiệu
-vẽ dần một lần, vệt sáng trên mặt dấu và lớp nền đầu trang chạy chậm. Nút "Dừng
-chuyển động" dừng chúng (lựa chọn được nhớ), và khi hệ điều hành báo giảm
-chuyển động thì huy hiệu hiện sẵn, không có gì chạy.
+Nút "Dừng chuyển động" chuyển xuống chân trang và áp cho cả trang.
+
+## Tra cứu, bảng lệnh và "pháp luật tại ngày"
+
+**Chỉ mục tìm kiếm** (`src/lib/search-index.ts`) dựng lúc build thành tệp tĩnh
+`/vi/search-index.json` và `/en/search-index.json`: số hiệu, tên hai thứ tiếng,
+tóm tắt, tình trạng, các mốc, đoạn hiệu lực tính sẵn, quan hệ, trang toàn văn.
+Tệp chỉ được tải khi người đọc chạm vào ô tìm (khoảng 30 kB sau nén), nên trang
+mở ra không mang theo nó.
+
+**Bộ máy tìm** (`src/lib/search-engine.ts`) chạy trên trình duyệt, đọc câu tìm
+theo năm lớp: ngày (`01/05/2024`), điều khoản (`Điều 76`), ý định (thay thế, sửa
+đổi, hướng dẫn, còn hiệu lực), số hiệu hoặc phần số hiệu (`58/2025`, `Nghị định
+58`), rồi chữ còn lại (bỏ dấu, mọi từ phải khớp). Câu tìm nhắm đúng một văn bản
+thì kết quả mở đầu bằng **khối trả lời có cấu trúc**: tình trạng tại ngày được
+hỏi, văn bản thay thế, văn bản sửa đổi, số văn bản hướng dẫn, kèm nút xem gia
+phả, so sánh, toàn văn. Không có câu văn nào được sinh ra; chỗ dữ liệu không ghi
+nhận thì nói là chưa ghi nhận. Câu tìm có ngày thì văn bản đang có hiệu lực vào
+ngày đó lên trước.
+
+**Bảng lệnh** mở bằng Ctrl K, ⌘ K hoặc phím `/` ở mọi trang
+(`src/components/search/CommandPalette.tsx`, chỉ tải khi mở lần đầu): văn bản,
+điều khoản, trang, lĩnh vực, văn bản vừa xem, văn bản đang theo dõi, và các thao
+tác đặt ngày tra cứu, đổi nền, đổi ngôn ngữ, báo lỗi dữ liệu.
+
+**Pháp luật tại ngày**: một ngày tra cứu dùng chung cho cả trang, giữ trong
+`sessionStorage` và trên địa chỉ trang (`?ngay=2024-05-01`, nên đường dẫn gửi đi
+mở ra đúng ngày). Khi đã đặt, dải dưới thanh điều hướng luôn nhắc ngày đó kèm
+nút bỏ; ô tìm, bảng lệnh, danh mục, phần đầu trang văn bản và hình gia phả đều
+tính tình trạng theo ngày ấy. Bấm vào một mốc trên dòng thời gian hiệu lực là
+xem pháp luật tại đúng mốc đó.
+
+**Trạng thái hiệu lực** có một hệ nhãn chung (`src/components/legal/LegalStatus.tsx`):
+mỗi tình trạng nói bằng chữ, hình biểu tượng (● ◐ ◌ ⊘ ?), kiểu viền và độ đậm
+của chữ; màu chỉ đi kèm. Rê chuột lên nhãn đọc được lời giải thích.
 
 ## Gia phả của một văn bản
 
@@ -78,6 +125,58 @@ Trang của mỗi văn bản có hai cách đọc cùng gia phả (`src/componen
 
 Ba kiểu nét dùng chung ở mọi hình: nét liền cho quy định chi tiết, nét đứt cho
 sửa đổi bổ sung, chấm đỏ cho thay thế; mũi tên luôn chỉ vào văn bản bị tác động.
+
+## Trang văn bản: bảng điều khiển
+
+Phần đầu trang văn bản trả lời ngay: văn bản nào, còn hiệu lực không, từ ngày
+nào (và bị văn bản nào thay nếu đã hết hiệu lực), ngày ban hành, ngày hiệu lực,
+ngày kiểm tra dữ liệu, mức xác minh. Dưới đó là **thanh thao tác dính** khi cuộn:
+theo dõi, lưu vào bộ hồ sơ, so sánh, sao chép trích dẫn, chia sẻ, xuất (in hoặc
+lưu PDF, sao chép bản tóm tắt, tải bản ghi JSON) và báo lỗi.
+
+Thân trang mở bằng **dải đời trước · đang xem · đời sau** để đi ngược xuôi qua
+các đời văn bản, cùng các quan hệ trực tiếp (được sửa đổi bởi, được hướng dẫn
+bởi, văn bản cấp trên). Ô nào không có dữ liệu thì nói "chưa ghi nhận" kèm nút
+báo thiếu văn bản. Cột bên có khối **nguồn và kiểm chứng**: nguồn chính, ngày
+kiểm tra lần cuối, số nguồn đã mở; dấu kiểm chỉ hiện khi bản ghi đã đối chiếu
+và có nguồn chính thống.
+
+Hình gia phả nằm trong **khung có điều khiển** (`src/components/lineage/GraphViewport.tsx`):
+phóng to, thu nhỏ, vừa khung, cỡ thật, kéo để di chuyển, Ctrl + con lăn để
+phóng, thu gọn nhánh hướng dẫn, và rê chuột vào một văn bản để tô các quan hệ
+của nó. Hình vẫn là SVG dựng ở máy chủ; khung chỉ đổi phép biến hình. Trên điện
+thoại phả ký bằng chữ là bản đọc mặc định, hình mở bằng một nút.
+
+Thẻ mô tả cho công cụ tìm kiếm (`src/lib/doc-brief.ts`) nói tình trạng kèm ngày
+tra cứu và dòng dõi trước, tóm tắt sau.
+
+## Đối chiếu có điều khiển
+
+Trang cặp đối chiếu có ba cách xem: **Tổng quan** (số điểm đối chiếu theo loại
+thay đổi, đếm từ các điểm đã viết, kèm mục lục các điểm), **Chỉ điểm thay đổi**
+(bỏ các điểm "nội dung tương đương") và **Toàn bộ** (điểm tương đương thu gọn,
+mở được). Có ô tìm trong bản đối chiếu, nút nổi đi tới điểm trước / sau (phím J
+/ K), chọn vế hiển thị trên điện thoại, sao chép cả bản đối chiếu và in. Số liệu
+tổng quan chỉ đếm điểm đối chiếu đã viết; trang không tính "số điều khoản thay
+đổi" vì tập dữ liệu không chứa toàn văn.
+
+## Thay đổi, Theo dõi, Góp ý dữ liệu
+
+- `/thay-doi`: mọi mốc đọc được từ tập dữ liệu, nhóm theo tháng, lọc theo loại
+  bằng HTML và CSS thuần.
+- `/theo-doi`: văn bản đang theo dõi (kèm các mốc đổi tình trạng kể từ ngày bắt
+  đầu theo dõi), bộ hồ sơ và văn bản vừa xem. Tất cả lưu trong trình duyệt
+  (`src/lib/client-store.ts`), không có tài khoản, không gửi đi đâu; khi có tài
+  khoản chỉ cần thay phần đọc ghi ở tệp đó.
+- `/gop-y`: báo thiếu / sai dữ liệu (sáu loại vấn đề) và yêu cầu bổ sung văn
+  bản. Không có máy chủ nhận thư, nên nút gửi soạn sẵn email tới địa chỉ liên
+  hệ đang dùng; có nút sao chép khi máy không có ứng dụng email.
+
+Trang phương pháp có thêm các mục **phạm vi dữ liệu** (lĩnh vực × tầng hiệu lực
+× mức xác minh), **nguồn dữ liệu**, **nhật ký dữ liệu** (các đợt tra cứu và số
+bản ghi mỗi đợt), **báo lỗi và sửa dữ liệu**, **quyền riêng tư** — mọi con số
+đếm thẳng từ tập dữ liệu. Chân trang chia bốn cột: sản phẩm, dữ liệu, pháp lý,
+liên hệ.
 
 ## Toàn văn và nguồn tra cứu
 
@@ -350,7 +449,12 @@ Cấu trúc chính:
 ```
 src/
   app/[lang]/               # định tuyến song ngữ, sinh tĩnh toàn bộ
-  app/[lang]/page.tsx       # trang chủ: huy hiệu, gia phả tiêu biểu và ba khối
+  app/[lang]/page.tsx       # trang chủ: ô tìm, công cụ, thay đổi, khám phá, giải thích
+  app/[lang]/search-index.json/ # chỉ mục tìm kiếm tĩnh của từng thứ tiếng
+  app/[lang]/thay-doi/      # dòng thay đổi của cả kho
+  app/[lang]/theo-doi/      # theo dõi, bộ hồ sơ, vừa xem (lưu trong trình duyệt)
+  app/[lang]/gop-y/         # báo lỗi dữ liệu, yêu cầu bổ sung văn bản
+  app/product.css           # kiểu dáng của lớp sản phẩm
   app/icon.svg              # dấu hiệu dạng nhỏ, dùng cho tab và ảnh chia sẻ
   app/[lang]/**/opengraph-image.tsx # ảnh chia sẻ dựng lúc build
   app/sitemap.ts            # sitemap sinh từ tập dữ liệu
@@ -358,10 +462,14 @@ src/
   components/               # danh mục, các mảnh giao diện dùng lại
   components/brand/         # dấu hiệu Lex & Lineage và tên dạng chữ
   components/FamilyTree.tsx # hình gia phả và phả ký của một văn bản
-  components/home/          # phần đầu, gia phả tiêu biểu, ba khối của trang chủ
+  components/home/          # phần đầu, công cụ, gia phả tiêu biểu, ba khối giải thích
+  components/search/        # ô tìm, bảng lệnh, hiển thị kết quả
+  components/legal/         # nhãn trạng thái, thanh thao tác văn bản
+  components/lineage/       # dải đời trước / đời sau, khung xem gia phả
+  components/compare/       # lớp điều khiển của bản đối chiếu
+  components/trust/         # khối nguồn và kiểm chứng, mẫu góp ý dữ liệu
   components/art/           # hình minh họa đầu trang và biểu tượng lĩnh vực
   components/DomainTree.tsx # cây văn bản của một lĩnh vực
-  components/HomeHub.tsx    # khối lối vào ở trang chủ
   components/DomainSpark.tsx # vệt bốn tầng của một lĩnh vực
   data/                     # tập dữ liệu văn bản và kiểu dữ liệu
   i18n/                     # từ điển giao diện hai thứ tiếng
@@ -372,6 +480,10 @@ src/
   lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
   lib/diff.ts               # so sánh cơ học hai đoạn văn bản
   lib/structured-data.ts    # JSON-LD Legislation và BreadcrumbList
+  lib/search-index.ts       # dựng chỉ mục tìm kiếm lúc build
+  lib/search-engine.ts      # bộ máy tìm chạy trên trình duyệt
+  lib/client-store.ts       # theo dõi, vừa xem, bộ hồ sơ, ngày tra cứu
+  lib/changes.ts            # dòng thay đổi của cả kho
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
 references/                 # thư viện đã khảo sát, và lý do dùng hay loại
@@ -403,6 +515,21 @@ corresponds to exactly one relation recorded in the entry — detailing,
 amending, or replacing. Fully available in Vietnamese at `/vi` and English at
 `/en`.
 
+The product promise: check validity, trace amendments, understand the whole
+life of Vietnamese law. The home page now puts a large search box first; search
+reads numbers, articles, dates and questions ("Which decree replaced Decree
+15/2021?") and answers a targeted query with a structured card built from the
+dataset alone. Ctrl K / ⌘ K opens a command palette on every page. A shared
+"law as of" date (`?ngay=`) recomputes every status in search, the index, the
+instrument header and the lineage drawing. Instrument pages open as a control
+panel with a sticky action bar (follow, save to a matter, compare, cite, share,
+export, report), a predecessor / successor strip and a source-and-verification
+panel; the lineage drawing sits in a zoomable, pannable frame. Comparison pages
+offer overview / changes-only / everything modes with next / previous
+navigation. New pages: `/thay-doi` (changes), `/theo-doi` (watchlist, stored in
+the browser) and `/gop-y` (data corrections and requests, sent via the reader's
+own email app).
+
 The name joins *lex*, Latin for law, and *lineage*. The mark
 (`src/components/brand/BrandMark.tsx`) is a pair of scales whose pillar grows
 into roots ending in three nodes, one for each earlier generation: law above,
@@ -411,11 +538,13 @@ beaded double rim, the name set on an arc, laurel sprigs and gold-leaf lines
 that draw themselves once — and as a compact badge for the header, footer,
 favicon (`src/app/icon.svg`) and share images.
 
-The home page opens with the seal and the motto "Every law has a lineage",
-followed by one real lineage: the largest in the dataset around an instrument
-still in force, chosen by count in `src/lib/family.ts`. Three blocks follow:
-which instrument ranks above which, the three ties of a lineage with a real
-example of each, and how many instruments came into force in each year.
+The home page opens with the motto "Every law has a lineage" and the search
+box, then four working tools, recent changes, domains, one real lineage (the
+largest in the dataset around an instrument still in force, chosen by count in
+`src/lib/family.ts`) and data coverage. The three explanatory blocks — which
+instrument ranks above which, the three ties of a lineage, and how many
+instruments came into force in each year — now sit below the tools, and the
+seal closes the page in the reliability section.
 
 Every instrument page draws its own lineage (`src/components/FamilyTree.tsx`):
 predecessors to the left, successors to the right, parent and amending

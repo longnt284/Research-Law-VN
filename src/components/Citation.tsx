@@ -1,11 +1,7 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
 
 import { documentsById } from "@/data/documents";
 import type { CitationRef, Lang } from "@/data/types";
-import { getDict } from "@/i18n/dictionary";
 import {
   citationHref,
   formatCitation,
@@ -117,40 +113,5 @@ export function BasisSide({
         );
       })}
     </p>
-  );
-}
-
-/**
- * Nút sao chép trích dẫn.
- *
- * Việc mà người tra cứu làm ngay sau khi tìm đúng văn bản là chép số hiệu và tên
- * vào một bản ghi nhớ hay một bản luận cứ, và chép tay thì hay rụng mất số khóa
- * hoặc sai một chữ trong tên. Nút này trả về đúng chuỗi trích dẫn đã chuẩn hóa
- * của trang đang xem.
- *
- * Không có `navigator.clipboard` thì nút tự ẩn đi thay vì báo lỗi: trình duyệt
- * cũ và ngữ cảnh không bảo mật vẫn đọc được trang, chỉ là không chép được.
- */
-export function CopyCitation({ text, lang }: { text: string; lang: Lang }) {
-  const t = getDict(lang);
-  const [done, setDone] = useState(false);
-
-  return (
-    <button
-      type="button"
-      onClick={async () => {
-        try {
-          await navigator.clipboard.writeText(text);
-          setDone(true);
-          window.setTimeout(() => setDone(false), 2000);
-        } catch {
-          setDone(false);
-        }
-      }}
-      aria-live="polite"
-      className="btn btn-quiet w-full justify-center"
-    >
-      {done ? t.doc.citationCopied : t.doc.citationCopy}
-    </button>
   );
 }

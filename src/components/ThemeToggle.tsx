@@ -53,7 +53,7 @@ export function ThemeToggle({ lang }: { lang: Lang }) {
       onClick={toggle}
       aria-label={t.a11y.toggleTheme}
       title={t.a11y.toggleTheme}
-      className="ml-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center border border-[var(--rule-strong)] text-[var(--ink-2)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+      className="hdr-icon-btn"
     >
       {mode === null ? null : mode === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>

@@ -134,7 +134,7 @@ export default async function ComparePage({
           </aside>
         </div>
 
-        <section className="mt-12">
+        <section id="chuoi" className="mt-12 scroll-mt-24">
           <h2 className="eyebrow eyebrow-tick">{t.compare.lineageTitle}</h2>
           <p className="measure mt-2 leading-relaxed text-[var(--ink-2)]">
             {t.compare.lineageLede}

@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { BrandHero } from "@/components/home/BrandHero";
 import { FeaturedFamily } from "@/components/home/FeaturedFamily";
 import { HierarchyBlock } from "@/components/home/HierarchyBlock";
+import { HomeHero } from "@/components/home/HomeHero";
+import {
+  Coverage,
+  ExploreDomains,
+  HowHead,
+  IntentTools,
+  RecentChanges,
+  Trust,
+} from "@/components/home/HomeSections";
 import { RelationBlock } from "@/components/home/RelationBlock";
 import { TimelineBlock } from "@/components/home/TimelineBlock";
-import { HomeHub } from "@/components/HomeHub";
 import { Reveal } from "@/components/Reveal";
 import { getDict, isLang } from "@/i18n/dictionary";
 import { alternatesFor, shareMeta } from "@/lib/site";
@@ -14,15 +21,15 @@ import { alternatesFor, shareMeta } from "@/lib/site";
 /**
  * Trang chủ.
  *
- * Năm phần, đi từ nhìn thấy tới đọc được. Đầu trang là huy hiệu và câu khẩu
- * hiệu: mỗi văn bản pháp luật đều có một gia phả. Ngay sau đó là một gia phả
- * thật, lớn nhất trong tập dữ liệu, để ý tưởng có hình hài trước khi được giải
- * thích. Ba khối tiếp theo gỡ gia phả ấy ra thành ba câu hỏi mà người làm hồ sơ
- * vẫn hỏi — văn bản nào đứng trên văn bản nào, chúng nối nhau bằng quan hệ gì,
- * và quy định nào đang có hiệu lực vào ngày nào. Cuối trang là các lối vào.
+ * Dùng trước, giải thích sau. Màn hình đầu tiên là ô tìm kiếm: người quay lại
+ * trang gõ số hiệu là thấy ngay tình trạng hiệu lực. Tiếp theo là bốn công cụ,
+ * những gì vừa thay đổi, lối khám phá theo lĩnh vực và một gia phả tiêu biểu.
+ * Phần giải thích — thứ bậc hiệu lực, ba loại quan hệ, trục thời gian — và phần
+ * phương pháp nằm cuối trang, cho người muốn hiểu vì sao kết quả đáng tin.
  *
- * Toàn bộ trang là HTML và SVG dựng ở máy chủ. Không có thư viện đồ họa nào
- * phải tải; chuyển động nằm trong CSS và dừng được.
+ * Toàn bộ trang là HTML và SVG dựng ở máy chủ. JavaScript chỉ có ở ô tìm kiếm,
+ * hình dòng đời ở đầu trang và ô chọn ngày; chỉ mục tìm kiếm chỉ được tải khi
+ * người đọc chạm vào ô tìm.
  *
  * Tiêu đề và mô tả kế thừa từ layout; ở đây khai báo bản dịch và thẻ chia sẻ,
  * hai thứ mà layout không tự biết được.
@@ -50,8 +57,25 @@ export default async function HomePage({
   if (!isLang(lang)) notFound();
   return (
     <>
-      <BrandHero lang={lang} />
+      <HomeHero lang={lang} />
+      <div className="home-flow">
+        <Reveal>
+          <IntentTools lang={lang} />
+        </Reveal>
+        <Reveal>
+          <RecentChanges lang={lang} />
+        </Reveal>
+        <Reveal>
+          <ExploreDomains lang={lang} />
+        </Reveal>
+      </div>
       <FeaturedFamily lang={lang} />
+      <div className="home-flow">
+        <Reveal>
+          <Coverage lang={lang} />
+        </Reveal>
+        <HowHead lang={lang} />
+      </div>
       <div className="home-blocks">
         <Reveal>
           <HierarchyBlock lang={lang} />
@@ -63,7 +87,11 @@ export default async function HomePage({
           <TimelineBlock lang={lang} />
         </Reveal>
       </div>
-      <HomeHub lang={lang} />
+      <div className="home-flow">
+        <Reveal>
+          <Trust lang={lang} />
+        </Reveal>
+      </div>
     </>
   );
 }

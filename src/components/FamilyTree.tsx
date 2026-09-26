@@ -83,17 +83,18 @@ function Node({ n, lang, linkFocus }: { n: PlacedNode; lang: Lang; linkFocus: bo
   );
 
   const cls = `family-node role-${n.role} is-${n.doc.status}`;
+  const data = { "data-id": n.doc.id };
   const label = `${focus ? c.role.focus.short : c.role[n.role === "grandchild" ? "child" : n.role].short}: ${n.doc.number}, ${n.doc.title[lang]}, ${t.status[n.doc.status]}`;
 
   if (focus && !linkFocus) {
     return (
-      <g className={cls} role="img" aria-label={label}>
+      <g className={cls} role="img" aria-label={label} {...data}>
         {body}
       </g>
     );
   }
   return (
-    <a href={`/${lang}/van-ban/${n.doc.id}`} className={cls} aria-label={label}>
+    <a href={`/${lang}/van-ban/${n.doc.id}`} className={cls} aria-label={label} {...data}>
       {body}
     </a>
   );
@@ -103,25 +104,33 @@ export function FamilyChart({
   fam,
   lang,
   linkFocus = false,
+  fixed = false,
   className,
 }: {
   fam: Family;
   lang: Lang;
   /** Trang chủ cho văn bản đang xem thành liên kết; trang văn bản thì không cần. */
   linkFocus?: boolean;
+  /**
+   * Vẽ đúng cỡ thật, không co theo khung: dùng khi hình nằm trong khung có
+   * phóng to, thu nhỏ (`GraphViewport`), nơi tỷ lệ do khung quyết định.
+   */
+  fixed?: boolean;
   className?: string;
 }) {
   const c = getFamilyCopy(lang);
   const layout = layoutFamily(fam);
 
   return (
-    <div className={`family-scroll thin-scroll ${className ?? ""}`}>
+    <div className={fixed ? className : `family-scroll thin-scroll ${className ?? ""}`}>
       <svg
         className="family"
         viewBox={`0 0 ${layout.width} ${layout.height}`}
         // Hình co theo khung tới bốn phần năm cỡ thật; hẹp hơn nữa thì chữ quá
         // nhỏ để đọc, nên khung cuộn ngang thay vì co tiếp.
-        style={{ width: "100%", maxWidth: layout.width, minWidth: Math.round(layout.width * 0.8) }}
+        {...(fixed
+          ? { width: layout.width, height: layout.height }
+          : { style: { width: "100%", maxWidth: layout.width, minWidth: Math.round(layout.width * 0.8) } })}
         role="group"
         aria-label={`${c.chartLabel} ${fam.focus.number}`}
       >
@@ -132,7 +141,7 @@ export function FamilyChart({
             </text>
           ))}
           {layout.edges.map((e, i) => (
-            <g key={i} className={`family-edge family-edge-${e.kind}`}>
+            <g key={i} className={`family-edge family-edge-${e.kind}`} data-from={e.from} data-to={e.to}>
               <path d={e.d} />
               {e.tip && <polygon points={head(e.tip.x, e.tip.y, e.tip.angle)} />}
             </g>
