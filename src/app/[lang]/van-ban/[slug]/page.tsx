@@ -4,21 +4,25 @@ import { notFound } from "next/navigation";
 
 import { CopyCitation } from "@/components/Citation";
 import { CrossCheckNotice, DomainChip, StatusBadge } from "@/components/DocMeta";
-import { FamilyChart, FamilyList } from "@/components/FamilyTree";
+import { FamilyChart, FamilyList, FamilyStack } from "@/components/FamilyTree";
 import { JsonLd } from "@/components/JsonLd";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { PinpointNotice } from "@/components/PinpointNotice";
 import { ShareLinks } from "@/components/ShareLinks";
 import { ValidityProbe } from "@/components/validity/ValidityProbe";
 import { ValidityTimeline } from "@/components/validity/ValidityTimeline";
 import { documents, documentsById, verifiedOnOf } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { getArticleCopy } from "@/i18n/article";
 import { getFamilyCopy } from "@/i18n/family";
-import { citeDocument } from "@/lib/citation";
+import { articlePath, articlesOf } from "@/lib/article-pages";
+import { citeDocument, formatPinpoint } from "@/lib/citation";
 import { pairsFor } from "@/lib/compare";
 import { familyOf } from "@/lib/family";
 import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor, clip, pathFor, shareMeta, SITE_URL } from "@/lib/site";
+import { sourceName, splitSources } from "@/lib/sources";
 import { breadcrumbLd, legislationLd } from "@/lib/structured-data";
 import { validitySegments } from "@/lib/validity";
 
@@ -66,6 +70,9 @@ export default async function DocumentPage({
   const docLineages = lineagesFor(doc.id);
   const citation = citeDocument(doc, lang);
   const legislation = legislationLd(doc, lang, documentsById);
+  const ac = getArticleCopy(lang);
+  const articles = articlesOf(doc.id);
+  const sources = splitSources(doc.sources);
 
   return (
     <article>
@@ -110,12 +117,38 @@ export default async function DocumentPage({
                 <DomainChip key={d} id={d} lang={lang} />
               ))}
             </div>
+            {/* Ngày tra cứu và nguồn chính thức đặt ngay dưới tên văn bản: một
+                tình trạng hiệu lực chỉ đúng tại ngày nó được đọc, và người dùng
+                cần biết đọc ở đâu trước khi tin vào nhãn phía trên. */}
+            <p className="tnum mt-4 text-sm text-[var(--ink-3)]">
+              {t.doc.verifiedOn}: {formatDate(verifiedOnOf(doc), lang, verifiedOnOf(doc))}
+              {sources.official.length > 0 && (
+                <>
+                  {" · "}
+                  {t.doc.officialSources}:{" "}
+                  {sources.official.map((s, i) => (
+                    <span key={s}>
+                      {i > 0 && ", "}
+                      <a
+                        href={s}
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        className="underline decoration-[var(--rule-strong)] underline-offset-2 hover:text-[var(--accent)]"
+                      >
+                        {sourceName(s, lang)}
+                      </a>
+                    </span>
+                  ))}
+                </>
+              )}
+            </p>
           </header>
         </div>
       </section>
 
       <div className="mx-auto grid w-full max-w-[76rem] gap-10 px-5 py-8 sm:px-8 md:grid-cols-[1fr_17rem]">
         <div className="min-w-0">
+          <PinpointNotice lang={lang} docId={doc.id} articles={articles.map((a) => a.dieu)} />
           {doc.confidence === "cross-check" && (
             <div className="mb-6">
               <CrossCheckNotice lang={lang} />
@@ -142,9 +175,9 @@ export default async function DocumentPage({
               người mở một văn bản là nó còn dùng được không, và từ khi nào. */}
           <ValidityTimeline doc={doc} lang={lang} />
 
-          {/* Gia phả thay cho danh sách quan hệ phẳng trước đây. Hình chỉ hiện
-              từ cỡ máy tính bảng; phả ký bên dưới nói lại đúng nội dung ấy bằng
-              chữ, tên văn bản đầy đủ, và là bản duy nhất trên điện thoại. */}
+          {/* Gia phả thay cho danh sách quan hệ phẳng trước đây. Từ cỡ máy tính
+              bảng: hình ngang, kèm phả ký nói lại đúng nội dung ấy bằng chữ.
+              Trên điện thoại: gia phả dựng dọc, vẫn là danh sách có tiêu đề. */}
           <section className="mt-9" aria-labelledby="family-title">
             <h2 id="family-title" className="eyebrow eyebrow-tick">
               {fc.chartLabel}
@@ -155,12 +188,32 @@ export default async function DocumentPage({
                   <FamilyChart fam={fam} lang={lang} />
                   <p className="mt-2 text-[0.8125rem] text-[var(--ink-3)]">{fc.hint}</p>
                 </div>
-                <FamilyList fam={fam} lang={lang} className="mt-5" />
+                <div className="family-wide mt-5">
+                  <FamilyList fam={fam} lang={lang} />
+                </div>
+                <FamilyStack fam={fam} lang={lang} className="family-narrow mt-4" />
               </>
             ) : (
               <p className="mt-2 text-sm text-[var(--ink-3)]">{fc.empty}</p>
             )}
           </section>
+
+          {articles.length > 0 && (
+            <section className="mt-9">
+              <h2 className="eyebrow eyebrow-tick">{ac.sectionTitle}</h2>
+              <p className="measure mt-2 text-sm text-[var(--ink-3)]">{ac.sectionHint}</p>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {articles.map((a) => (
+                  <li key={a.dieu}>
+                    <Link href={pathFor(lang, articlePath(a.docId, a.dieu))} className="chip">
+                      {formatPinpoint(a.cite, lang)}
+                      <span className="tnum text-[var(--ink-3)]">· {a.uses.length}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {/* Bản đối chiếu chỉ hiện khi văn bản này có mặt trong một cặp thay
             thế hoặc sửa đổi. Đặt ngay sau phần quan hệ vì đó là chỗ người đọc
@@ -291,23 +344,34 @@ export default async function DocumentPage({
             <p className="mt-2 text-xs leading-relaxed text-[var(--ink-3)]">{t.share.hint}</p>
           </div>
 
+          {/* Nguồn tách hai nhóm: nơi cơ quan nhà nước công bố văn bản, và
+              trang tham khảo dùng để đối chiếu chéo. Xem `src/lib/sources.ts`. */}
           <div className="mt-6 border-t border-[var(--rule)] pt-5">
             <p className="eyebrow">{t.doc.sources}</p>
-            <ul className="mt-2 space-y-2">
-              {doc.sources.map((s) => (
-                <li key={s} className="min-w-0">
-                  <a
-                    href={s}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    className="block truncate text-xs text-[var(--ink-3)] underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors hover:text-[var(--accent)]"
-                    title={s}
-                  >
-                    {new URL(s).hostname.replace(/^www\./, "")}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {(["official", "reference"] as const).map((kind) =>
+              sources[kind].length === 0 ? null : (
+                <div key={kind} className="mt-2.5">
+                  <p className="text-xs font-medium text-[var(--ink-2)]">
+                    {kind === "official" ? t.doc.officialSources : t.doc.referenceSources}
+                  </p>
+                  <ul className="mt-1 space-y-1.5">
+                    {sources[kind].map((s) => (
+                      <li key={s} className="min-w-0">
+                        <a
+                          href={s}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="block truncate text-xs text-[var(--ink-3)] underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors hover:text-[var(--accent)]"
+                          title={s}
+                        >
+                          {sourceName(s, lang)}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ),
+            )}
           </div>
         </aside>
       </div>

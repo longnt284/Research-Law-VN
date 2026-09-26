@@ -2,7 +2,7 @@ import { comparisons } from "@/data/comparisons";
 import { documentsById } from "@/data/documents";
 import type { Bilingual, Lang } from "@/data/types";
 import type { ArticleEntry } from "@/lib/article-query";
-import { formatShortCitation, parseCitation, type Citation } from "@/lib/citation";
+import { citationHref, formatShortCitation, parseCitation, type Citation } from "@/lib/citation";
 
 /**
  * Chỉ mục điều khoản: mỗi điều, khoản đã được dẫn ở đâu trong tập dữ liệu.
@@ -64,6 +64,7 @@ export function articleEntries(lang: Lang): ArticleEntry[] {
       docId: h.cite.docId,
       dieu: h.cite.parts.find((x) => x.part === "dieu")?.value.toLowerCase() ?? "",
       label: formatShortCitation(h.cite, lang),
+      page: citationHref(h.cite, lang),
       href: `/${lang}/doi-chieu/${h.pairId}#${h.pointId}`,
       pair: a && b ? `${a.number} ↔ ${b.number}` : h.pairId,
       topic: h.topic[lang],

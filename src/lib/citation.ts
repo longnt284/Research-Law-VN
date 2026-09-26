@@ -173,16 +173,37 @@ export function formatShortCitation(cite: Citation, lang: Lang): string {
 }
 
 /**
+ * Neo của một khoản, điểm trên trang của điều chứa nó: `khoan-3`, `khoan-2-diem-a`.
+ * Chuỗi rỗng khi trích dẫn dừng ở cấp điều hoặc không chỉ tới điều nào.
+ */
+export function pinAnchor(cite: Citation): string {
+  const get = (p: CitationPart) => cite.parts.find((x) => x.part === p)?.value.toLowerCase();
+  const khoan = get("khoan");
+  const diem = get("diem");
+  if (!get("dieu") || (!khoan && !diem)) return "";
+  return [khoan && `khoan-${khoan}`, diem && `diem-${diem}`].filter(Boolean).join("-");
+}
+
+/**
  * Đường dẫn tới chỗ được dẫn.
  *
- * Trang chi tiết văn bản chưa chứa toàn văn, nên neo `#dieu-38` chưa trỏ tới
- * một mục có thật. Đường dẫn vì vậy dừng ở trang văn bản, và phần chỉ chỗ được
- * mang theo trong chuỗi truy vấn để khi trang có toàn văn thì chỉ cần đọc nó ra
- * mà không phải sửa lại chỗ gọi.
+ * Trích dẫn có điều trỏ tới trang của chính điều đó, khoản và điểm là neo trên
+ * trang ấy: `/vi/van-ban/<mã>/dieu/38#khoan-3`. Trang điều khoản được dựng cho
+ * mọi điều mà phần đối chiếu dẫn tới (xem `src/lib/article-pages.ts`), và đó cũng
+ * là nơi duy nhất hàm này được gọi, nên đường dẫn luôn có trang đích.
+ *
+ * Trích dẫn không có điều (một phụ lục, một chương) dừng ở trang văn bản và mang
+ * phần chỉ chỗ trong tham số `tai`; trang văn bản đọc tham số đó và nói rõ người
+ * đọc đang được dẫn tới chỗ nào.
  */
 export function citationHref(cite: Citation, lang: Lang): string {
   const base = `/${lang}/van-ban/${cite.docId}`;
   if (cite.whole) return base;
+  const dieu = cite.parts.find((x) => x.part === "dieu")?.value;
+  if (dieu) {
+    const anchor = pinAnchor(cite);
+    return `${base}/dieu/${encodeURIComponent(dieu.toLowerCase())}${anchor ? `#${anchor}` : ""}`;
+  }
   const q = cite.parts.map(({ part, value }) => `${part}:${value}`).join(".");
   return `${base}?tai=${encodeURIComponent(q)}`;
 }

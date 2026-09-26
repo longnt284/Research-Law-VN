@@ -74,7 +74,15 @@ Trang của mỗi văn bản có hai cách đọc cùng gia phả (`src/componen
   tất định. Mỗi văn bản là một liên kết thật dùng được bằng bàn phím. Hình chỉ
   hiện từ cỡ máy tính bảng.
 - **Phả ký**: cùng gia phả viết thành danh sách có tiêu đề cho từng vai, tên văn
-  bản đầy đủ không cắt. Đây là bản đọc trên điện thoại và bằng trình đọc màn hình.
+  bản đầy đủ không cắt, đi kèm hình trên màn hình rộng.
+- **Gia phả dọc** (`FamilyStack`), bản dùng trên điện thoại: cùng bố cục với
+  hình, xoay dọc. Quan hệ ra ngoài dòng dõi ở trên; dòng kế tục ở giữa với thời
+  gian chảy từ trên xuống (đời xa nhất, văn bản đang xem, rồi các đời sau); nhánh
+  hướng dẫn ở dưới. Mỗi nhóm nối bằng một đường dọc đúng kiểu nét của hình. Toàn
+  bộ vẫn là danh sách HTML có tiêu đề, đọc được bằng trình đọc màn hình.
+
+Trang chuỗi văn bản có dải thời gian tỷ lệ trên màn hình rộng; trên điện thoại,
+danh sách các bước tự thành dòng thời gian dọc với dấu cùng kiểu.
 
 Ba kiểu nét dùng chung ở mọi hình: nét liền cho quy định chi tiết, nét đứt cho
 sửa đổi bổ sung, chấm đỏ cho thay thế; mũi tên luôn chỉ vào văn bản bị tác động.
@@ -174,9 +182,57 @@ Danh mục văn bản nhận một ngày, gắn lại nhãn cho mọi bản ghi 
 Ô tìm kiếm của danh mục nhận số điều ("Điều 76", "Article 53"), có hoặc không kèm
 số hiệu. Chỉ mục (`src/lib/articles.ts`) dựng từ các căn cứ có chỉ điểm tới điều
 khoản trong `src/data/comparisons.ts`, tức chỉ những điều đã thực sự được đọc và
-dẫn; kết quả dẫn thẳng tới điểm đối chiếu qua neo `#<mã điểm>`.
+dẫn; kết quả dẫn tới trang của điều và tới điểm đối chiếu qua neo `#<mã điểm>`.
+
+Danh mục lọc được theo lĩnh vực, loại văn bản, tình trạng tại ngày tra cứu và
+tình trạng tại một ngày tùy chọn. Mọi bộ lọc nằm trên đường dẫn
+(`?q=…&loai=…&tinh-trang=…&linh-vuc=…&ngay=…&hieu-luc=1&sap-xep=moi`), nên một
+lượt tìm gửi được cho người khác, và hộp tìm toàn trang mở thẳng danh mục với
+câu tìm đã điền.
+
+## Tìm kiếm toàn trang
+
+Thanh điều hướng có hộp tìm mở bằng nút "Tìm", phím `/` hoặc Ctrl+K (⌘K).
+Chỉ mục (`src/lib/search-index.ts`) dựng lúc build thành tệp tĩnh
+`/<lang>/tim-kiem.json`, tải khi hộp được mở lần đầu, gồm văn bản, điều khoản đã có
+trang, cặp đối chiếu, lĩnh vực và trang công cụ. Phép tìm (`src/lib/search.ts`)
+bỏ dấu, yêu cầu mọi từ của câu tìm có mặt trong mục, rồi xếp theo điểm: khớp số
+hiệu nặng nhất, sau đó tới tiêu đề, rồi phần còn lại. Hộp gợi ý khi gõ, lọc theo
+loại mục, điều khiển được bằng bàn phím theo mẫu combobox của ARIA, và có lối
+sang danh mục để lọc đầy đủ.
+
+## Trang của từng điều khoản
+
+Mỗi điều mà phần đối chiếu đã đọc tới có trang riêng ở
+`/vi/van-ban/<mã>/dieu/<số điều>` (`src/lib/article-pages.ts`); khoản và điểm là
+neo trên trang đó (`#khoan-3`, `#khoan-2-diem-a`). Trang gồm: trích dẫn của điều
+và của từng khoản, điểm đã dẫn, mỗi dòng có nút sao chép trích dẫn và sao chép
+liên kết; mọi điểm đối chiếu đã đọc tới điều đó với câu chữ của cả hai vế; dẫn
+chiếu chéo tới điều khoản ở vế bên kia của cùng những điểm ấy; và đường tới toàn
+văn ở nguồn chính thức. Tập dữ liệu chưa có toàn văn, và trang nói rõ điều đó:
+điều chưa ai đọc tới thì không có trang.
+
+`citationHref` trỏ trích dẫn có điều tới trang của điều. Trích dẫn không có điều
+(một phụ lục, một chương) dừng ở trang văn bản với tham số `?tai=…`; trang văn
+bản đọc tham số đó và báo rõ người đọc được dẫn tới chỗ nào, kèm nút sao chép.
+
+## So sánh hai văn bản tự chọn
+
+Trang `/vi/doi-chieu/tu-chon` đặt hai văn bản bất kỳ cạnh nhau: bảng dữ kiện với
+dòng khác nhau in đậm, tình trạng của mỗi văn bản tại một ngày, chuỗi quan hệ
+ngắn nhất nối hai văn bản (tìm theo chiều rộng qua các quan hệ đã ghi, mỗi bước
+giữ đúng chiều tác động) và ô so sánh câu chữ. Lựa chọn nằm trên đường dẫn
+(`?a=…&b=…&ngay=…`). Trang không viết nhận định: nhận định của người biên soạn chỉ
+có ở cặp thay thế hoặc sửa đổi nhau, và khi hai văn bản đúng là một cặp như vậy,
+trang dẫn sang bản đối chiếu có điểm tới từng điều, khoản.
 
 ## Chia sẻ và công cụ tìm kiếm
+
+Đầu trang văn bản ghi ngày tra cứu và nguồn chính thức. Khối nguồn tách hai nhóm
+(`src/lib/sources.ts`): nguồn chính thức là nơi cơ quan nhà nước công bố văn bản
+hoặc tình trạng hiệu lực (vbpl.vn, Công báo, hệ thống văn bản và cổng của Chính
+phủ, Quốc hội, tên miền `.gov.vn`, và tổ chức ban hành quy tắc trọng tài); còn
+lại là nguồn tham khảo. Phân loại chỉ dựa trên tên miền.
 
 Trang văn bản mang một khối JSON-LD kiểu `Legislation` của schema.org: số hiệu,
 loại, ngày ban hành, tình trạng hiệu lực kèm ngày tra cứu
@@ -356,6 +412,12 @@ src/
   lib/objectivity.ts        # phép kiểm tính khách quan, chạy khi dựng trang
   lib/diff.ts               # so sánh cơ học hai đoạn văn bản
   lib/structured-data.ts    # JSON-LD Legislation và BreadcrumbList
+  lib/search.ts             # phép tìm toàn trang, chạy trên trình duyệt
+  lib/search-index.ts       # chỉ mục tìm kiếm, dựng lúc build
+  lib/article-pages.ts      # trang của từng điều khoản đã được đọc
+  lib/sources.ts            # phân loại nguồn chính thức và tham khảo
+  components/GlobalSearch.tsx # hộp tìm toàn trang trên thanh điều hướng
+  components/FreeCompare.tsx  # so sánh hai văn bản tự chọn
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
 references/                 # thư viện đã khảo sát, và lý do dùng hay loại
@@ -397,8 +459,11 @@ Every instrument page draws its own lineage (`src/components/FamilyTree.tsx`):
 predecessors to the left, successors to the right, parent and amending
 instruments above, implementing branches below, from a deterministic
 server-side layout in which every instrument is a keyboard-reachable link. A
-written register says the same thing in words with full titles; it is the only
-version on phones, where the drawing would be wider than the screen. A solid
+written register beside the drawing says the same thing in words with full
+titles. On phones the same lineage is
+stacked vertically (`FamilyStack`): outside relations on top, the line of
+succession in the middle with time flowing downwards, implementing branches
+below, each group joined by a rail in the drawing's own line style. A solid
 line details, a dashed line amends, red dots replace, and the arrow always
 points at the instrument acted upon.
 
@@ -463,6 +528,32 @@ date picker; the document index re-labels every record for a chosen date and can
 hide what was not in force. The index search also takes article numbers
 ("Article 53", "Điều 76") and lists every comparison point that cites that
 article, from an index built only of provisions actually read.
+
+A search box in the header opens with the "Search" button, `/` or Ctrl+K (⌘K).
+Its index is built at build time as a static `/<lang>/tim-kiem.json` and loaded
+on first open; it covers instruments, provisions with their own page,
+comparison pairs, domains and tool pages. Every word of the query must appear in
+an item after diacritics are folded; number matches rank highest. The document
+index filters by domain, instrument type, status and a chosen date, and keeps
+every filter in the URL.
+
+Every article that the comparisons have read has its own page at
+`/en/van-ban/<id>/dieu/<article>`, with clauses and points as anchors on it. The
+page lists the citations with copy buttons, every comparison point that read the
+article, cross-references to the provisions on the other side of those points,
+and a link to the full text at the official source; the dataset does not yet
+hold full texts and the page says so. Citations without an article (an
+appendix, a chapter) open the instrument page with a `?tai=` parameter, which
+the page now reads and states.
+
+`/en/doi-chieu/tu-chon` compares any two instruments: a fact table with the
+differing rows in bold, each instrument's status on a chosen date, the shortest
+chain of recorded relations between them, and a wording diff. It writes no
+observations; when the two form a replacing or amending pair it links to that
+pair's curated comparison. Instrument pages now state the review date and the
+official sources in the header and split sources into official (state
+databases, portals and `.gov.vn` sites, or the issuer of arbitration rules) and
+reference.
 
 Each document page carries schema.org `Legislation` JSON-LD (number, type, date
 of issue, legal force as at the review date, amendment and replacement

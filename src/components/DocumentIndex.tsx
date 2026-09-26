@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 
 import { DomainChip, StatusBadge } from "@/components/DocMeta";
 import { ValidityBadge } from "@/components/validity/ValidityBadge";
 import { documents, domains } from "@/data/documents";
-import type { DocType, DomainId, Lang } from "@/data/types";
+import type { DocStatus, DocType, DomainId, Lang } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
 import { getValidityCopy } from "@/i18n/validity";
 import { articleQuery, type ArticleEntry } from "@/lib/article-query";
+import { fold } from "@/lib/search";
 import { validityAt } from "@/lib/validity";
 
 const RANK: Record<DocType, number> = {
@@ -24,15 +25,29 @@ const RANK: Record<DocType, number> = {
   "quy-tac": 4,
 };
 
-/** Bỏ dấu để "dien luc" tìm được "điện lực". */
-function fold(s: string): string {
-  return s
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D")
-    .toLowerCase();
-}
+/** Loại văn bản có mặt trong tập dữ liệu, theo thứ bậc, cho ô lọc loại. */
+const TYPES = (Object.keys(RANK) as DocType[])
+  .filter((k) => documents.some((d) => d.type === k))
+  .sort((a, b) => RANK[a] - RANK[b]);
+
+const STATUSES: DocStatus[] = ["active", "amended", "pending", "expired"];
+
+const ISO = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Tên tham số trên đường dẫn. Bộ lọc nằm trên đường dẫn để một lượt tìm gửi
+ * được cho đồng nghiệp, và để hộp tìm toàn trang mở thẳng danh mục với câu tìm
+ * đã điền sẵn.
+ */
+const PARAM = {
+  q: "q",
+  date: "ngay",
+  inForce: "hieu-luc",
+  domain: "linh-vuc",
+  type: "loai",
+  status: "tinh-trang",
+  sort: "sap-xep",
+} as const;
 
 export function DocumentIndex({
   lang,
@@ -49,14 +64,53 @@ export function DocumentIndex({
   const [asOf, setAsOf] = useState("");
   const [onlyInForce, setOnlyInForce] = useState(false);
   const [domain, setDomain] = useState<DomainId | "all">("all");
+  const [type, setType] = useState<DocType | "all">("all");
+  const [status, setStatus] = useState<DocStatus | "all">("all");
   const [sort, setSort] = useState<"rank" | "recent">("rank");
+
+  // Đọc bộ lọc từ đường dẫn một lần sau khi gắn. Trang dựng sẵn ở máy chủ nên
+  // không biết tham số; đọc trong hiệu ứng thì HTML ban đầu và lần vẽ đầu trên
+  // trình duyệt vẫn khớp nhau. Giá trị lạ bị bỏ qua thay vì làm hỏng bộ lọc.
+  const ready = useRef(false);
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const q = sp.get(PARAM.q);
+    if (q) setQuery(q);
+    const d = sp.get(PARAM.date);
+    if (d && ISO.test(d)) setAsOf(d);
+    if (sp.get(PARAM.inForce) === "1") setOnlyInForce(true);
+    const dom = sp.get(PARAM.domain);
+    if (dom && domains.some((x) => x.id === dom)) setDomain(dom as DomainId);
+    const ty = sp.get(PARAM.type);
+    if (ty && (TYPES as string[]).includes(ty)) setType(ty as DocType);
+    const st = sp.get(PARAM.status);
+    if (st && (STATUSES as string[]).includes(st)) setStatus(st as DocStatus);
+    if (sp.get(PARAM.sort) === "moi") setSort("recent");
+    ready.current = true;
+  }, []);
+
+  // Ghi bộ lọc ngược lên đường dẫn, không thêm mục vào lịch sử duyệt: bấm quay
+  // lại vẫn về trang trước chứ không lùi từng ký tự đã gõ.
+  useEffect(() => {
+    if (!ready.current) return;
+    const sp = new URLSearchParams();
+    if (query.trim()) sp.set(PARAM.q, query.trim());
+    if (asOf) sp.set(PARAM.date, asOf);
+    if (asOf && onlyInForce) sp.set(PARAM.inForce, "1");
+    if (domain !== "all") sp.set(PARAM.domain, domain);
+    if (type !== "all") sp.set(PARAM.type, type);
+    if (status !== "all") sp.set(PARAM.status, status);
+    if (sort === "recent") sp.set(PARAM.sort, "moi");
+    const qs = sp.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${qs ? `?${qs}` : ""}`);
+  }, [query, asOf, onlyInForce, domain, type, status, sort]);
 
   // Giữ ô nhập phản hồi tức thì kể cả khi danh sách bên dưới đang dựng lại.
   const deferred = useDeferredValue(query);
 
   // Câu tìm có nhắc "Điều N" thì tách phần đó ra để tra chỉ mục điều khoản;
   // phần còn lại (thường là số hiệu) vẫn lọc danh sách văn bản như cũ.
-  const folded = fold(deferred.trim());
+  const folded = fold(deferred);
   const art = articleQuery(folded);
   const q = art ? art.rest : folded;
 
@@ -69,11 +123,16 @@ export function DocumentIndex({
   const results = useMemo(() => {
     let list = documents;
     if (domain !== "all") list = list.filter((d) => d.domains.includes(domain));
+    if (type !== "all") list = list.filter((d) => d.type === type);
+    if (status !== "all") list = list.filter((d) => d.status === status);
     if (states && onlyInForce) list = list.filter((d) => states.get(d.id)?.state === "in-force");
     if (q) {
+      // Mọi từ của câu tìm phải có mặt, không cần đúng thứ tự: "xay dung luat"
+      // vẫn ra Luật Xây dựng.
+      const words = q.split(" ");
       list = list.filter((d) => {
         const hay = fold(`${d.number} ${d.title.vi} ${d.title.en} ${d.summary[lang]}`);
-        return hay.includes(q);
+        return words.every((w) => hay.includes(w));
       });
     }
     return [...list].sort((a, b) => {
@@ -86,7 +145,7 @@ export function DocumentIndex({
       if (r !== 0) return r;
       return (b.effectiveOn || "").localeCompare(a.effectiveOn || "");
     });
-  }, [q, domain, sort, lang, states, onlyInForce]);
+  }, [q, domain, type, status, sort, lang, states, onlyInForce]);
 
   const articleHits = useMemo(() => {
     if (!art) return null;
@@ -116,8 +175,8 @@ export function DocumentIndex({
       */}
       <div className="rule-b z-20 bg-[color-mix(in_oklab,var(--paper-2)_92%,transparent)] backdrop-blur-md sm:sticky sm:top-[3.3rem]">
         <div className="mx-auto w-full max-w-[76rem] px-5 py-4 sm:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <div className="flex-1">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <div className="flex-1 sm:min-w-[16rem]">
               <label htmlFor="doc-search" className="eyebrow block">
                 {t.list.searchLabel}
               </label>
@@ -130,6 +189,42 @@ export function DocumentIndex({
                 autoComplete="off"
                 className="mt-1.5 w-full border border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2 text-[0.9375rem] outline-none transition-colors placeholder:text-[var(--ink-3)] focus:border-[var(--accent)]"
               />
+            </div>
+            <div>
+              <label htmlFor="doc-type" className="eyebrow block">
+                {t.list.filterType}
+              </label>
+              <select
+                id="doc-type"
+                value={type}
+                onChange={(e) => setType(e.target.value as DocType | "all")}
+                className="mt-1.5 w-full border border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2 text-[0.9375rem] outline-none focus:border-[var(--accent)] sm:w-auto"
+              >
+                <option value="all">{t.list.any}</option>
+                {TYPES.map((k) => (
+                  <option key={k} value={k}>
+                    {t.type[k]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="doc-status" className="eyebrow block">
+                {t.list.filterStatus}
+              </label>
+              <select
+                id="doc-status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value as DocStatus | "all")}
+                className="mt-1.5 w-full border border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2 text-[0.9375rem] outline-none focus:border-[var(--accent)] sm:w-auto sm:max-w-[13rem]"
+              >
+                <option value="all">{t.list.any}</option>
+                {STATUSES.map((k) => (
+                  <option key={k} value={k}>
+                    {t.status[k]}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="doc-sort" className="eyebrow block">
@@ -240,14 +335,18 @@ export function DocumentIndex({
                 {articleHits.map((a, i) => (
                   <li key={i} className="text-sm leading-relaxed">
                     <Link
-                      href={a.href}
+                      href={a.page}
                       className="font-medium text-[var(--accent)] underline decoration-[var(--rule-strong)] underline-offset-2 hover:decoration-[var(--accent)]"
                     >
                       {a.label}
                     </Link>
                     <span className="text-[var(--ink-3)]">
                       {" "}
-                      — {a.topic} · <span className="tnum">{a.pair}</span> ({v.articleSide[a.side]})
+                      — {a.topic} ·{" "}
+                      <Link href={a.href} className="tnum underline decoration-[var(--rule-strong)] underline-offset-2 hover:text-[var(--accent)]">
+                        {a.pair}
+                      </Link>{" "}
+                      ({v.articleSide[a.side]})
                     </span>
                   </li>
                 ))}

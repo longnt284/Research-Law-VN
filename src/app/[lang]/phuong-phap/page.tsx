@@ -97,7 +97,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
     {
       h: "Ghi chú kỹ thuật",
       p: [
-        "Hình gia phả của mỗi văn bản là SVG dựng ở máy chủ từ một bố cục tính sẵn và tất định: cùng dữ liệu thì luôn cho cùng hình. Đời trước nằm bên trái, đời sau bên phải, văn bản cấp trên và văn bản sửa đổi ở trên, nhánh hướng dẫn ở dưới. Mỗi văn bản trên hình là một liên kết thật, dùng được bằng bàn phím. Trên màn hình hẹp, hình được thay bằng phả ký, vì hình rộng hơn màn hình điện thoại.",
+        "Hình gia phả của mỗi văn bản là SVG dựng ở máy chủ từ một bố cục tính sẵn và tất định: cùng dữ liệu thì luôn cho cùng hình. Đời trước nằm bên trái, đời sau bên phải, văn bản cấp trên và văn bản sửa đổi ở trên, nhánh hướng dẫn ở dưới. Mỗi văn bản trên hình là một liên kết thật, dùng được bằng bàn phím. Trên màn hình hẹp, hình ngang rộng hơn màn hình điện thoại nên được dựng lại theo chiều dọc: quan hệ ra ngoài dòng dõi ở trên, dòng kế tục ở giữa với thời gian chảy từ trên xuống, nhánh hướng dẫn ở dưới, cùng kiểu nét.",
         "Gia phả tiêu biểu ở trang chủ không chọn tay: đó là gia phả lớn nhất trong tập dữ liệu mà văn bản đứng giữa còn hiệu lực. Huy hiệu và các hình minh họa đều là SVG, không dùng mô hình ba chiều hay ảnh tải về. Nét huy hiệu được vẽ dần một lần khi trang mở; vệt sáng trên mặt dấu và lớp nền có nút tạm dừng, và tự dừng khi thiết bị của người đọc đã đặt chế độ giảm chuyển động.",
       ],
     },
@@ -168,7 +168,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
     {
       h: "A technical note",
       p: [
-        "Each instrument's lineage is SVG rendered on the server from a layout computed once and deterministically: the same data always gives the same drawing. Predecessors sit to the left, successors to the right, parent and amending instruments above, implementing branches below. Every instrument in the drawing is a real link, reachable from the keyboard. On narrow screens the drawing gives way to the written register, because it is wider than a phone.",
+        "Each instrument's lineage is SVG rendered on the server from a layout computed once and deterministically: the same data always gives the same drawing. Predecessors sit to the left, successors to the right, parent and amending instruments above, implementing branches below. Every instrument in the drawing is a real link, reachable from the keyboard. On narrow screens, where the horizontal drawing is wider than a phone, the same lineage is stacked vertically: outside relations on top, the line of succession in the middle with time flowing downwards, implementing branches below, in the same line styles.",
         "The lineage on the home page is not chosen by hand: it is the largest lineage in the dataset around an instrument still in force. The crest and the illustrations are SVG, with no 3D models and no downloaded images. The lines of the crest draw themselves once when the page opens; the sheen across the seal and the background have a pause button, and stop by themselves when the reader's device asks for reduced motion.",
       ],
     },

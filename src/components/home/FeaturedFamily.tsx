@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { FamilyChart, FamilyLegend, FamilyList } from "@/components/FamilyTree";
+import { FamilyChart, FamilyLegend, FamilyStack } from "@/components/FamilyTree";
 import type { Lang } from "@/data/types";
 import { getHome } from "@/i18n/home";
 import { featuredFamily } from "@/lib/family";
@@ -9,8 +9,8 @@ import { featuredFamily } from "@/lib/family";
  * Gia phả tiêu biểu ở trang chủ.
  *
  * Văn bản đứng giữa do `featuredFamily` chọn bằng phép đếm, nên khối này không
- * có một số hiệu nào viết tay. Màn rộng thấy hình; màn hẹp đọc phả ký, cùng
- * nội dung viết thành danh sách, vì hình gia phả rộng hơn màn hình điện thoại.
+ * có một số hiệu nào viết tay. Màn rộng thấy hình; màn hẹp thấy cùng gia phả
+ * dựng dọc, vì hình ngang rộng hơn màn hình điện thoại.
  */
 export function FeaturedFamily({ lang }: { lang: Lang }) {
   const fam = featuredFamily;
@@ -37,7 +37,7 @@ export function FeaturedFamily({ lang }: { lang: Lang }) {
 
       <div className="featured-frame">
         <FamilyChart fam={fam} lang={lang} linkFocus className="family-wide" />
-        <FamilyList fam={fam} lang={lang} showFocus className="family-narrow" />
+        <FamilyStack fam={fam} lang={lang} linkFocus className="family-narrow" />
       </div>
       <div className="family-wide">
         <FamilyLegend lang={lang} />

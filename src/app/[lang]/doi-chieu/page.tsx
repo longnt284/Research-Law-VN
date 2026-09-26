@@ -9,6 +9,7 @@ import { PairFilter, type PairRow } from "@/components/PairFilter";
 import { Reveal } from "@/components/Reveal";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { getFreeCompareCopy } from "@/i18n/free-compare";
 import { curatedPairCount, pairs } from "@/lib/compare";
 import { lineageStats, lineages } from "@/lib/lineage";
 import { alternatesFor, shareMeta } from "@/lib/site";
@@ -53,6 +54,7 @@ export default async function ComparePage({
   if (!isLang(raw)) notFound();
   const lang: Lang = raw;
   const t = getDict(lang);
+  const fc = getFreeCompareCopy(lang);
 
   /*
     Dòng cho bộ lọc được rút gọn ngay ở máy chủ: trình duyệt chỉ nhận đúng những
@@ -87,6 +89,13 @@ export default async function ComparePage({
             <h1 className="display rise rise-1 mt-3">{t.compare.title}</h1>
             <p className="measure rise rise-2 mt-4 text-[1.0625rem] leading-relaxed text-[var(--ink-2)]">
               {t.compare.lede}
+            </p>
+            {/* Lối sang trang so sánh tự chọn: danh sách dưới đây chỉ gồm cặp có
+                quan hệ, còn người đọc đôi khi cần đặt hai văn bản bất kỳ cạnh nhau. */}
+            <p className="rise rise-2 mt-5">
+              <Link href={`/${lang}/doi-chieu/tu-chon`} className="btn btn-quiet">
+                {fc.title} →
+              </Link>
             </p>
           </div>
           {/* Hai trang cùng một điều: trang cũ có dòng bị bỏ, trang mới có dòng

@@ -154,3 +154,43 @@ export function CopyCitation({ text, lang }: { text: string; lang: Lang }) {
     </button>
   );
 }
+
+/**
+ * Nút sao chép gọn, dùng cho từng dòng trích dẫn và từng đường dẫn trên trang
+ * điều khoản. Nhãn đổi trong hai giây sau khi chép để người đọc biết đã xong.
+ */
+export function CopyChip({
+  text,
+  label,
+  done,
+  absolute = false,
+}: {
+  text: string;
+  label: string;
+  done: string;
+  /**
+   * `text` là một đường dẫn tương đối; lúc bấm ghép thêm tên miền đang chạy.
+   * Máy chủ dựng trang từ trước và không chắc tên miền nào sẽ phục vụ nó.
+   */
+  absolute?: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      type="button"
+      className="chip"
+      aria-live="polite"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(absolute ? `${window.location.origin}${text}` : text);
+          setCopied(true);
+          window.setTimeout(() => setCopied(false), 2000);
+        } catch {
+          setCopied(false);
+        }
+      }}
+    >
+      {copied ? done : label}
+    </button>
+  );
+}

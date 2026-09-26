@@ -57,7 +57,11 @@ export function LineageTrack({ lineage, lang }: { lineage: Lineage; lang: Lang }
         ))}
       </div>
 
-      <ol className="border-t border-[var(--rule)]">
+      {/* Trên điện thoại dải tỷ lệ ở trên bị ẩn vì quá hẹp để đọc được khoảng
+          cách; danh sách tự thành dòng thời gian dọc: một đường chạy dọc lề
+          trái, mỗi văn bản một dấu cùng kiểu với dải (đỏ đặc cho văn bản thay
+          thế, viền đồng cho văn bản sửa đổi), xếp theo thứ tự thời gian. */}
+      <ol className="lineage-list border-t border-[var(--rule)]">
         {lineage.steps.map((step) => {
           const pair = step.pairId ? pairById.get(step.pairId) : undefined;
           const target = step.targetId
@@ -73,7 +77,9 @@ export function LineageTrack({ lineage, lang }: { lineage: Lineage; lang: Lang }
           return (
             <li
               key={`${step.doc.id}-${step.role}`}
-              className="border-b border-[var(--rule)] py-5"
+              className={`lineage-item border-b border-[var(--rule)] py-5 ${
+                step.role === "amends" ? "is-amends" : ""
+              }`}
             >
               <div className="grid gap-x-6 gap-y-3 md:grid-cols-[9rem_1fr_11rem]">
                 <div className="min-w-0">

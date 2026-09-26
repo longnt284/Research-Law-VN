@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { BrandMark, Wordmark } from "@/components/brand/BrandMark";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
@@ -90,6 +91,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
               </Link>
             );
           })}
+          <GlobalSearch lang={lang} />
           <Link
             href={swapped}
             hrefLang={otherLang}

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 
 import { LATEST_VERIFIED_ON, documents, domains } from "@/data/documents";
 import { LANGS } from "@/i18n/dictionary";
+import { articlePages, articlePath } from "@/lib/article-pages";
 import { pairs } from "@/lib/compare";
 import { lineages } from "@/lib/lineage";
 import { SITE_URL, pathFor } from "@/lib/site";
@@ -24,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/phuong-phap",
     ...domains.map((d) => `/linh-vuc/${d.id}`),
     ...documents.map((d) => `/van-ban/${d.id}`),
+    ...articlePages.map((a) => articlePath(a.docId, a.dieu)),
     ...pairs.map((p) => `/doi-chieu/${p.id}`),
     ...lineages.map((l) => `/doi-chieu/chuoi/${l.id}`),
   ];

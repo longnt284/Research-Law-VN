@@ -16,10 +16,11 @@ import { type Family, type LineNode, layoutFamily, type PlacedNode } from "@/lib
  * kết thật, dùng được bằng bàn phím, mang tên đầy đủ trong `aria-label`.
  *
  * `FamilyList` là phả ký: cùng gia phả viết thành danh sách có tiêu đề, tên văn
- * bản đầy đủ không cắt. Đây là bản đọc được trên màn hình hẹp và bằng trình đọc
- * màn hình; hình rộng hơn màn hình điện thoại nên chỉ hiện từ cỡ máy tính bảng.
+ * bản đầy đủ không cắt, đi kèm hình trên màn hình rộng. Hình rộng hơn màn hình
+ * điện thoại nên chỉ hiện từ cỡ máy tính bảng; trên điện thoại, `FamilyStack`
+ * dựng cùng gia phả theo chiều dọc.
  *
- * Cả hai là thành phần máy chủ, không một byte JavaScript nào.
+ * Cả ba là thành phần máy chủ, không một byte JavaScript nào.
  */
 
 function head(x: number, y: number, angle: number, size = 7): string {
@@ -275,6 +276,126 @@ export function FamilyList({
             <ul>{g.body}</ul>
           </section>
         ))
+      )}
+    </div>
+  );
+}
+
+/** Các đời trên dòng kế tục, đời gần văn bản đang xem trước. */
+function generationsOf(nodes: LineNode[]): LegalDoc[][] {
+  const out: LegalDoc[][] = [];
+  let level = nodes;
+  while (level.length > 0) {
+    out.push(level.map((n) => n.doc));
+    level = level.flatMap((n) => n.next);
+  }
+  return out;
+}
+
+/**
+ * Gia phả dựng dọc cho màn hình hẹp.
+ *
+ * Cùng bố cục với hình rộng, xoay chín mươi độ: quan hệ ra ngoài dòng dõi ở
+ * trên, dòng kế tục ở giữa với thời gian chảy từ trên xuống — đời xa nhất trên
+ * cùng, văn bản đang xem, rồi các đời sau — và nhánh hướng dẫn ở dưới. Mỗi nhóm
+ * nối bằng một đường dọc theo đúng kiểu nét của hình rộng: chấm đỏ cho thay thế,
+ * nét đứt cho sửa đổi, nét liền màu đồng cho quy định chi tiết. Toàn bộ là danh
+ * sách HTML có tiêu đề, nên trình đọc màn hình đọc được như phả ký.
+ */
+export function FamilyStack({
+  fam,
+  lang,
+  linkFocus = false,
+  className,
+}: {
+  fam: Family;
+  lang: Lang;
+  linkFocus?: boolean;
+  className?: string;
+}) {
+  const c = getFamilyCopy(lang);
+  const older = generationsOf(fam.ancestors).reverse();
+  const newer = generationsOf(fam.successors);
+  const upper = (
+    [
+      ["parent", "guides", fam.parents],
+      ["amends", "amends", fam.amends],
+      ["amendedBy", "amends", fam.amendedBy],
+    ] as const
+  ).filter(([, , docs]) => docs.length > 0);
+
+  const focus = (
+    <>
+      <span className="eyebrow">{c.role.focus.short}</span>
+      <span className="family-item-number tnum">{fam.focus.number}</span>
+      <span className="family-item-title">{fam.focus.title[lang]}</span>
+    </>
+  );
+
+  return (
+    <div className={`family-stack ${className ?? ""}`}>
+      {upper.map(([role, kind, docs]) => (
+        <section key={role} className={`stack-group stack-${kind}`}>
+          <h3 className="family-group-title">{c.role[role].full}</h3>
+          <ul>
+            {docs.map((d) => (
+              <Item key={d.id} doc={d} lang={lang} />
+            ))}
+          </ul>
+        </section>
+      ))}
+
+      <section className="stack-group stack-replaces stack-spine">
+        {older.length > 0 && <h3 className="family-group-title">{c.role.ancestor.full}</h3>}
+        <ol>
+          {older.map((gen, i) => (
+            <li key={`o${i}`}>
+              <ul>
+                {gen.map((d) => (
+                  <Item key={d.id} doc={d} lang={lang} />
+                ))}
+              </ul>
+            </li>
+          ))}
+          <li className="stack-focus">
+            {linkFocus ? (
+              <Link href={`/${lang}/van-ban/${fam.focus.id}`} className="family-list-focus">
+                {focus}
+              </Link>
+            ) : (
+              <div className="family-list-focus">{focus}</div>
+            )}
+          </li>
+          {newer.map((gen, i) => (
+            <li key={`n${i}`}>
+              {i === 0 && <h3 className="family-group-title">{c.role.successor.full}</h3>}
+              <ul>
+                {gen.map((d) => (
+                  <Item key={d.id} doc={d} lang={lang} />
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {fam.children.length > 0 && (
+        <section className="stack-group stack-guides">
+          <h3 className="family-group-title">{c.role.child.full}</h3>
+          <ul>
+            {fam.children.map((b) => (
+              <Item key={b.doc.id} doc={b.doc} lang={lang}>
+                {b.children.length > 0 && (
+                  <ul className="stack-sub" aria-label={c.grandchild}>
+                    {b.children.map((g) => (
+                      <Item key={g.id} doc={g} lang={lang} />
+                    ))}
+                  </ul>
+                )}
+              </Item>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );

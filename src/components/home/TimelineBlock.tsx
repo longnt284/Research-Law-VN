@@ -174,30 +174,35 @@ export function TimelineBlock({ lang }: { lang: Lang }) {
           <span className="tl-axis-note">{c.axis}</span>
         </figcaption>
 
-        {/* Bảng số cho trình đọc màn hình: hình cột không đọc được, bảng thì đọc được. */}
-        <table className="sr-only">
-          <caption>{c.eyebrow}</caption>
-          <thead>
-            <tr>
-              <th scope="col">{c.axis}</th>
-              <th scope="col">{c.active}</th>
-              <th scope="col">{c.pending}</th>
-              <th scope="col">{c.expired}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {buckets
-              .filter((b) => b.live + b.pending + b.expired > 0)
-              .map((b) => (
-                <tr key={b.label}>
-                  <th scope="row">{b.label}</th>
-                  <td>{b.live}</td>
-                  <td>{b.pending}</td>
-                  <td>{b.expired}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        {/* Bảng số cho trình đọc màn hình: hình cột không đọc được, bảng thì đọc được.
+            Lớp ẩn đặt ở khung bọc chứ không ở chính bảng: bảng tự nới rộng theo
+            nội dung bất kể bề rộng một điểm ảnh, và trên điện thoại nó đẩy cả
+            trang trượt ngang. */}
+        <div className="sr-only">
+          <table>
+            <caption>{c.eyebrow}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{c.axis}</th>
+                <th scope="col">{c.active}</th>
+                <th scope="col">{c.pending}</th>
+                <th scope="col">{c.expired}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {buckets
+                .filter((b) => b.live + b.pending + b.expired > 0)
+                .map((b) => (
+                  <tr key={b.label}>
+                    <th scope="row">{b.label}</th>
+                    <td>{b.live}</td>
+                    <td>{b.pending}</td>
+                    <td>{b.expired}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </figure>
     </section>
   );

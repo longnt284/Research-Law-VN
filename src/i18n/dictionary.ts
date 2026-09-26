@@ -53,6 +53,9 @@ export const dict = {
       sortBy: "Sắp xếp",
       sortHierarchy: "Theo thứ bậc",
       sortNewest: "Mới hiệu lực trước",
+      filterType: "Loại văn bản",
+      filterStatus: "Tình trạng tại ngày tra cứu",
+      any: "Tất cả",
     },
     compare: {
       title: "Đối chiếu văn bản",
@@ -161,6 +164,8 @@ export const dict = {
       summary: "Nội dung chính",
       note: "Lưu ý về hiệu lực",
       sources: "Nguồn đã tra cứu",
+      officialSources: "Nguồn chính thức",
+      referenceSources: "Nguồn tham khảo",
       verifiedOn: "Ngày tra cứu",
       unknownDate: "Chưa xác minh được",
       backToList: "Về danh mục",
@@ -198,6 +203,7 @@ export const dict = {
       "quy-tac": "Quy tắc tố tụng",
     },
     confidence: {
+      verifiedLabel: "Đã đối chiếu",
       crossCheckLabel: "Cần đối chiếu thêm",
       crossCheckNote:
         "Số hiệu và nội dung chính của văn bản này đã tra được, nhưng còn ít nhất một chi tiết chưa đối chiếu được với nguồn chính thống. Hãy kiểm tra lại trước khi dùng vào hồ sơ chính thức.",
@@ -269,6 +275,9 @@ export const dict = {
       sortBy: "Order",
       sortHierarchy: "By legal rank",
       sortNewest: "Most recently in force",
+      filterType: "Instrument type",
+      filterStatus: "Status on the review date",
+      any: "All",
     },
     compare: {
       title: "Comparison",
@@ -377,6 +386,8 @@ export const dict = {
       summary: "Substance",
       note: "Note on effect",
       sources: "Sources consulted",
+      officialSources: "Official sources",
+      referenceSources: "Reference sources",
       verifiedOn: "Date consulted",
       unknownDate: "Not verified",
       backToList: "Back to index",
@@ -414,6 +425,7 @@ export const dict = {
       "quy-tac": "Institutional rules",
     },
     confidence: {
+      verifiedLabel: "Confirmed",
       crossCheckLabel: "Needs further checking",
       crossCheckNote:
         "The number and substance of this instrument were traced, but at least one detail could not be confirmed against an official source. Verify it before relying on this record in a formal filing.",

@@ -8,6 +8,9 @@ export interface ArticleEntry {
   dieu: string;
   /** Trích dẫn đã định dạng, ví dụ "khoản 2 Điều 76 Nghị định 217/2026/NĐ-CP". */
   label: string;
+  /** Trang của điều khoản, kèm neo tới khoản, điểm nếu có. */
+  page: string;
+  /** Điểm đối chiếu đã dẫn tới điều khoản. */
   href: string;
   /** Cặp đối chiếu, ví dụ "217/2026/NĐ-CP ↔ 175/2024/NĐ-CP". */
   pair: string;
