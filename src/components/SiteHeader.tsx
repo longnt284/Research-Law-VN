@@ -10,7 +10,10 @@ import { openPalette } from "@/components/search/PaletteHost";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
+import { getAccountCopy } from "@/i18n/account";
 import { getSearchCopy } from "@/i18n/search";
+import { ACCOUNTS_ENABLED } from "@/lib/account";
+import { useAccount } from "@/lib/client-store";
 
 /**
  * Thanh điều hướng.
@@ -31,6 +34,8 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
   const s = getSearchCopy(lang);
   const pathname = usePathname() ?? `/${lang}`;
   const [mac, setMac] = useState(false);
+  const account = useAccount();
+  const ac = getAccountCopy(lang);
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -117,6 +122,19 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
         <div className="hdr-tools">
           <span className="hdr-search-wide">{searchButton(false)}</span>
           <span className="hdr-search-narrow">{searchButton(true)}</span>
+          {ACCOUNTS_ENABLED && (
+            <Link
+              href={`/${lang}/tai-khoan`}
+              className={`hdr-icon-btn${account ? " is-on" : ""}`}
+              aria-label={account ? `${ac.navSignedIn}: ${account.email}` : ac.nav}
+              title={account ? account.email : ac.nav}
+            >
+              <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+                <circle cx="8" cy="5.6" r="2.7" fill={account ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.3" />
+                <path d="M2.8 13.6c.7-2.6 2.8-3.9 5.2-3.9s4.5 1.3 5.2 3.9" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+              </svg>
+            </Link>
+          )}
           <Link
             href={swapped}
             hrefLang={otherLang}

@@ -21,6 +21,17 @@ type Area = "local" | "session";
 
 const EVENT = "ll:store";
 
+/**
+ * Sự kiện báo rằng người dùng vừa đổi dữ liệu nên đồng bộ với tài khoản (theo
+ * dõi, bộ hồ sơ). `AccountSync` nghe sự kiện này; chưa đăng nhập thì không ai
+ * làm gì với nó.
+ */
+export const SYNC_EVENT = "ll:sync";
+
+function markDirty() {
+  window.dispatchEvent(new Event(SYNC_EVENT));
+}
+
 function storage(area: Area): Storage | null {
   try {
     return area === "local" ? window.localStorage : window.sessionStorage;
@@ -158,6 +169,7 @@ export function toggleFollow(id: string): boolean {
   const on = list.some((f) => f.id === id);
   const next = on ? list.filter((f) => f.id !== id) : [{ id, since: todayIso() }, ...list];
   writeRaw("local", FOLLOW, JSON.stringify(next));
+  markDirty();
   return !on;
 }
 
@@ -190,6 +202,7 @@ export function useMatters(): Matter[] {
 
 function saveMatters(list: Matter[]) {
   writeRaw("local", MATTERS, JSON.stringify(list));
+  markDirty();
 }
 
 export function createMatter(name: string, firstDoc?: string): Matter {
@@ -220,6 +233,53 @@ export function toggleMatterDoc(matterId: string, docId: string) {
 
 export function deleteMatter(matterId: string) {
   saveMatters(parseMatters(readRaw("local", MATTERS)).filter((m) => m.id !== matterId));
+}
+
+/**
+ * Đọc và thay toàn bộ danh sách theo dõi, bộ hồ sơ. Chỉ lớp đồng bộ tài khoản
+ * dùng: thay ở đây không phát sự kiện đồng bộ, vì dữ liệu vừa lấy từ máy chủ.
+ */
+export function readFollowed(): Followed[] {
+  return parseFollow(readRaw("local", FOLLOW));
+}
+export function readMatters(): Matter[] {
+  return parseMatters(readRaw("local", MATTERS));
+}
+export function replaceUserData(followed: Followed[] | null, matters: Matter[] | null) {
+  writeRaw("local", FOLLOW, followed && followed.length ? JSON.stringify(followed) : null);
+  writeRaw("local", MATTERS, matters && matters.length ? JSON.stringify(matters) : null);
+}
+
+/* ── Tài khoản đang đăng nhập ─────────────────────────────────────────────── */
+
+/**
+ * Tài khoản đang đăng nhập trên trình duyệt này: mã và email, để thanh điều
+ * hướng và trang theo dõi biết mà không phải nạp thư viện tài khoản. Phiên đăng
+ * nhập thật do thư viện Supabase giữ; đây chỉ là bản ghi hiển thị.
+ */
+export interface AccountInfo {
+  id: string;
+  email: string;
+}
+const ACCOUNT = "ll:account";
+const parseAccount = (raw: string | null): AccountInfo | null => {
+  if (!raw) return null;
+  try {
+    const v = JSON.parse(raw);
+    return v && typeof v.id === "string" && typeof v.email === "string" ? v : null;
+  } catch {
+    return null;
+  }
+};
+
+export function useAccount(): AccountInfo | null {
+  return useStored("local", ACCOUNT, parseAccount, null);
+}
+export function readAccount(): AccountInfo | null {
+  return parseAccount(readRaw("local", ACCOUNT));
+}
+export function setAccount(a: AccountInfo | null) {
+  writeRaw("local", ACCOUNT, a ? JSON.stringify(a) : null);
 }
 
 /* ── Câu tìm gần đây ──────────────────────────────────────────────────────── */

@@ -19,6 +19,13 @@ import type { NextConfig } from "next";
   nạp lại theo thay đổi, và `upgrade-insecure-requests` thì không hợp với
   localhost chạy trên http.
 */
+/*
+  Tài khoản người dùng gọi thẳng Supabase từ trình duyệt, nên địa chỉ của dự án
+  Supabase là nguồn duy nhất ngoài trang được phép nhận yêu cầu. Không đặt biến
+  thì không có nguồn ngoài nào.
+*/
+const SUPABASE = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(/\/+$/, "");
+
 const CSP = [
   "default-src 'self'",
   "base-uri 'self'",
@@ -29,7 +36,7 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  `connect-src 'self'${SUPABASE.startsWith("https://") ? ` ${SUPABASE}` : ""}`,
   "worker-src 'self' blob:",
   "manifest-src 'self'",
   "upgrade-insecure-requests",

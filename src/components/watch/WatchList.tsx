@@ -9,6 +9,8 @@ import type { Lang } from "@/data/types";
 import { formatDate, getDict } from "@/i18n/dictionary";
 import { getLanding } from "@/i18n/landing";
 import { getValidityCopy } from "@/i18n/validity";
+import { getAccountCopy } from "@/i18n/account";
+import { ACCOUNTS_ENABLED } from "@/lib/account";
 import {
   clearRecentDocs,
   createMatter,
@@ -19,6 +21,7 @@ import {
   useAsOf,
   useFollowed,
   useMatters,
+  useAccount,
   useRecentDocs,
   withAsOf,
 } from "@/lib/client-store";
@@ -203,9 +206,24 @@ export function WatchList({ lang }: { lang: Lang }) {
   const t = getDict(lang);
   const idx = useSearchIndex(lang, true);
   const data = idx.status === "ready" ? idx.data : null;
+  const account = useAccount();
+  const ac = getAccountCopy(lang);
   return (
     <div className="watch">
-      <p className="watch-local">{w.local}</p>
+      {account ? (
+        <p className="watch-local">
+          {ac.synced} <span className="tnum">({account.email})</span>
+        </p>
+      ) : (
+        <p className="watch-local">
+          {w.local}{" "}
+          {ACCOUNTS_ENABLED && (
+            <Link href={`/${lang}/tai-khoan`} className="ref-link">
+              {ac.nav} →
+            </Link>
+          )}
+        </p>
+      )}
       {!data ? (
         <p className="empty-note">{idx.status === "error" ? t.list.empty : w.loading}</p>
       ) : (

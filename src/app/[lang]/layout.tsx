@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import "../globals.css";
 import "../product.css";
+import { AccountSync } from "@/components/account/AccountSync";
 import { BrandMark, Wordmark } from "@/components/brand/BrandMark";
 import { MotionToggle } from "@/components/home/MotionToggle";
 import { PaletteHost } from "@/components/search/PaletteHost";
@@ -131,6 +132,7 @@ export default async function LangLayout({
         <main id="main">{children}</main>
 
         <PaletteHost lang={lang} />
+        <AccountSync />
 
         <footer className="rule-t mt-20 bg-[var(--paper-2)]">
           <div className="mx-auto w-full max-w-[76rem] px-5 py-12 sm:px-8 sm:py-14">
