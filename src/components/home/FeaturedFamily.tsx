@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { FamilyChart, FamilyLegend, FamilyList } from "@/components/FamilyTree";
+import { FeaturedChains } from "@/components/home/HomeSections";
 import type { Lang } from "@/data/types";
 import { getHome } from "@/i18n/home";
 import { featuredFamily } from "@/lib/family";
@@ -42,6 +43,7 @@ export function FeaturedFamily({ lang }: { lang: Lang }) {
       <div className="family-wide">
         <FamilyLegend lang={lang} />
       </div>
+      <FeaturedChains lang={lang} />
     </section>
   );
 }

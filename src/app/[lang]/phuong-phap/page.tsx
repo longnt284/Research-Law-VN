@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import Link from "next/link";
+
 import { MethodArt } from "@/components/art/PageArt";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { Reveal } from "@/components/Reveal";
-import { LATEST_VERIFIED_ON, documents } from "@/data/documents";
+import { LATEST_VERIFIED_ON, documents, domains, verifiedOnOf } from "@/data/documents";
 import type { Lang } from "@/data/types";
 import { formatDate, getDict, isLang } from "@/i18n/dictionary";
+import { tierOf } from "@/lib/corpus";
 import { alternatesFor, shareMeta } from "@/lib/site";
+import { describeSources, type SourceKind } from "@/lib/sources";
 
 export async function generateMetadata({
   params,
@@ -175,7 +179,114 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
   ],
 };
 
-const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII"];
+
+/** Neo của từng mục, để chân trang và các trang khác dẫn thẳng tới đúng mục. */
+const IDS = ["gia-pha", "xac-minh", "hieu-luc", "doi-chieu", "dan-trich", "cong-chan", "gioi-han", "ky-thuat"];
+
+/**
+ * Các mục minh bạch dữ liệu: phạm vi, nguồn, nhật ký các đợt tra cứu, cách báo
+ * lỗi và quyền riêng tư. Mọi con số trong các mục này đếm thẳng từ tập dữ liệu.
+ */
+const extra: Record<
+  Lang,
+  {
+    coverage: { h: string; p: string; domain: string; total: string; tiers: [string, string, string, string]; verified: string; cross: string };
+    sources: { h: string; p: string; kinds: Record<SourceKind, string>; none: string };
+    log: { h: string; p: string; date: string; count: string; verified: string };
+    report: { h: string; p: string[]; cta: string };
+    privacy: { h: string; p: string[] };
+  }
+> = {
+  vi: {
+    coverage: {
+      h: "Phạm vi dữ liệu",
+      p: "Số văn bản của từng lĩnh vực, chia theo tầng hiệu lực và mức xác minh. Một văn bản có thể thuộc nhiều lĩnh vực, nên tổng các hàng lớn hơn tổng số văn bản.",
+      domain: "Lĩnh vực",
+      total: "Tổng",
+      tiers: ["Luật", "Nghị quyết", "Nghị định", "Thông tư"],
+      verified: "Đã đối chiếu",
+      cross: "Cần kiểm thêm",
+    },
+    sources: {
+      h: "Nguồn dữ liệu",
+      p: "Mỗi nguồn được xếp loại theo chính địa chỉ của nó, không ghi tay. Bảng dưới đếm số bản ghi theo loại nguồn tốt nhất mà bản ghi có.",
+      kinds: {
+        official: "Nguồn chính thống (vbpl.vn, Công báo, cổng Chính phủ, Quốc hội)",
+        issuer: "Trang của tổ chức ban hành (VIAC, ICC)",
+        database: "Cơ sở dữ liệu pháp luật",
+        reference: "Chỉ có bài viết tham khảo",
+      },
+      none: "bản ghi",
+    },
+    log: {
+      h: "Nhật ký dữ liệu",
+      p: "Mỗi bản ghi mang ngày tra cứu của chính nó. Bảng dưới gom bản ghi theo ngày đó: đợt nào được tra, bao nhiêu văn bản, bao nhiêu đã đối chiếu được với nguồn chính thống.",
+      date: "Ngày tra cứu",
+      count: "Số bản ghi",
+      verified: "Đã đối chiếu",
+    },
+    report: {
+      h: "Báo lỗi và sửa dữ liệu",
+      p: [
+        "Thấy một tình trạng hiệu lực sai, một quan hệ còn thiếu hay một nguồn đã hỏng, hãy báo qua trang góp ý dữ liệu; trang văn bản nào cũng có nút báo lỗi điền sẵn số hiệu. Không cần tài khoản.",
+        "Mỗi báo cáo được đối chiếu lại với Công báo hoặc Cơ sở dữ liệu quốc gia về pháp luật trước khi sửa. Bản ghi được sửa mang ngày tra cứu mới, nên người đọc thấy ngay dữ liệu đã được kiểm lại khi nào.",
+      ],
+      cta: "Mở trang góp ý dữ liệu",
+    },
+    privacy: {
+      h: "Quyền riêng tư",
+      p: [
+        "Trang không dùng cookie theo dõi, không nạp mã của bên thứ ba và không có tài khoản. Không có dữ liệu cá nhân nào được gửi tới máy chủ của trang.",
+        "Văn bản đang theo dõi, văn bản vừa xem, bộ hồ sơ và câu tìm gần đây được lưu trong bộ nhớ của chính trình duyệt bạn đang dùng; ngày tra cứu đang đặt chỉ giữ trong phiên. Xóa dữ liệu trình duyệt là xóa hết. Góp ý dữ liệu được gửi bằng ứng dụng email của bạn, trang không lưu lại nội dung.",
+      ],
+    },
+  },
+  en: {
+    coverage: {
+      h: "Data coverage",
+      p: "The number of instruments in each domain, by stratum of force and by confidence. An instrument may belong to several domains, so the rows add up to more than the total.",
+      domain: "Domain",
+      total: "Total",
+      tiers: ["Laws", "Resolutions", "Decrees", "Circulars"],
+      verified: "Confirmed",
+      cross: "Needs checking",
+    },
+    sources: {
+      h: "Data sources",
+      p: "Every source is classified from its own address rather than by hand. The table counts records by the best kind of source each one has.",
+      kinds: {
+        official: "Official source (vbpl.vn, the Gazette, Government and National Assembly portals)",
+        issuer: "Issuing body (VIAC, ICC)",
+        database: "Legal database",
+        reference: "Commentary only",
+      },
+      none: "records",
+    },
+    log: {
+      h: "Data log",
+      p: "Every record carries the date it was looked up. The table groups records by that date: which review, how many instruments, and how many were confirmed against an official source.",
+      date: "Review date",
+      count: "Records",
+      verified: "Confirmed",
+    },
+    report: {
+      h: "Reporting and correcting data",
+      p: [
+        "If a status looks wrong, a relation is missing or a source is broken, report it through the data feedback page; every instrument page has a report button with the number filled in. No account is needed.",
+        "Each report is checked again against the Official Gazette or the National Legal Database before anything is changed. A corrected record carries a new review date, so readers can see when it was last checked.",
+      ],
+      cta: "Open the data feedback page",
+    },
+    privacy: {
+      h: "Privacy",
+      p: [
+        "The site uses no tracking cookies, loads no third-party code and has no accounts. No personal data is sent to the site's server.",
+        "Followed instruments, recently viewed instruments, matters and recent searches are stored in your own browser; the lookup date is kept for the session only. Clearing browser data removes all of it. Data feedback is sent with your own email app; the site keeps no copy.",
+      ],
+    },
+  },
+};
 
 export default async function AboutPage({
   params,
@@ -187,6 +298,34 @@ export default async function AboutPage({
   const lang: Lang = raw;
   const t = getDict(lang);
 
+  const x = extra[lang];
+  const rank: Record<SourceKind, number> = { official: 0, issuer: 1, database: 2, reference: 3 };
+  const bestSource = new Map<SourceKind, number>();
+  for (const d of documents) {
+    const best = describeSources(d.sources)
+      .map((s) => s.kind)
+      .sort((a, b) => rank[a] - rank[b])[0];
+    if (best) bestSource.set(best, (bestSource.get(best) ?? 0) + 1);
+  }
+  const batches = new Map<string, { n: number; v: number }>();
+  for (const d of documents) {
+    const b = batches.get(verifiedOnOf(d)) ?? { n: 0, v: 0 };
+    b.n++;
+    if (d.confidence === "verified") b.v++;
+    batches.set(verifiedOnOf(d), b);
+  }
+  const coverage = domains.map((dm) => {
+    const docs = documents.filter((d) => d.domains.includes(dm.id));
+    const tiers = [0, 0, 0, 0];
+    for (const d of docs) tiers[tierOf(d)]++;
+    return {
+      id: dm.id,
+      label: dm.label[lang],
+      total: docs.length,
+      tiers,
+      verified: docs.filter((d) => d.confidence === "verified").length,
+    };
+  });
   const counts = {
     total: documents.length,
     verified: documents.filter((d) => d.confidence === "verified").length,
@@ -240,7 +379,10 @@ export default async function AboutPage({
         <div className="mt-12 space-y-14">
           {body[lang].map((section, si) => (
             <Reveal key={section.h}>
-              <section className="lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6">
+              <section
+                id={IDS[si]}
+                className="scroll-mt-24 lg:grid lg:grid-cols-[4rem_1fr] lg:gap-x-6"
+              >
                 <p
                   aria-hidden="true"
                   className="tnum text-[var(--brass)] lg:pt-1.5 lg:text-right"
@@ -268,6 +410,138 @@ export default async function AboutPage({
               </section>
             </Reveal>
           ))}
+        </div>
+
+        {/* Các mục minh bạch dữ liệu. Đánh số tiếp theo các mục văn xuôi ở trên. */}
+        <div className="mt-14 space-y-14">
+          <section id="pham-vi" className="method-sec scroll-mt-24">
+            <p aria-hidden="true" className="method-n tnum">
+              {ROMAN[body[lang].length]}
+            </p>
+            <div className="min-w-0">
+              <h2 className="method-h">{x.coverage.h}</h2>
+              <p className="measure mt-3 leading-[1.75] text-[var(--ink-2)]">{x.coverage.p}</p>
+              <div className="scroll-x thin-scroll mt-5">
+                <table className="method-table tnum">
+                  <thead>
+                    <tr>
+                      <th scope="col">{x.coverage.domain}</th>
+                      <th scope="col">{x.coverage.total}</th>
+                      {x.coverage.tiers.map((tt) => (
+                        <th key={tt} scope="col">
+                          {tt}
+                        </th>
+                      ))}
+                      <th scope="col">{x.coverage.verified}</th>
+                      <th scope="col">{x.coverage.cross}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {coverage.map((r) => (
+                      <tr key={r.id}>
+                        <th scope="row">
+                          <Link href={`/${lang}/linh-vuc/${r.id}`} className="link-sweep">
+                            {r.label}
+                          </Link>
+                        </th>
+                        <td className="method-total">{r.total}</td>
+                        {r.tiers.map((n, i) => (
+                          <td key={i}>{n || "–"}</td>
+                        ))}
+                        <td>{r.verified}</td>
+                        <td>{r.total - r.verified || "–"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section id="nguon" className="method-sec scroll-mt-24">
+            <p aria-hidden="true" className="method-n tnum">
+              {ROMAN[body[lang].length + 1]}
+            </p>
+            <div className="min-w-0">
+              <h2 className="method-h">{x.sources.h}</h2>
+              <p className="measure mt-3 leading-[1.75] text-[var(--ink-2)]">{x.sources.p}</p>
+              <dl className="method-list tnum">
+                {(["official", "issuer", "database", "reference"] as const).map((k) => (
+                  <div key={k}>
+                    <dt>{x.sources.kinds[k]}</dt>
+                    <dd>
+                      {bestSource.get(k) ?? 0} {x.sources.none}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </section>
+
+          <section id="nhat-ky" className="method-sec scroll-mt-24">
+            <p aria-hidden="true" className="method-n tnum">
+              {ROMAN[body[lang].length + 2]}
+            </p>
+            <div className="min-w-0">
+              <h2 className="method-h">{x.log.h}</h2>
+              <p className="measure mt-3 leading-[1.75] text-[var(--ink-2)]">{x.log.p}</p>
+              <table className="method-table method-table--narrow tnum mt-5">
+                <thead>
+                  <tr>
+                    <th scope="col">{x.log.date}</th>
+                    <th scope="col">{x.log.count}</th>
+                    <th scope="col">{x.log.verified}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...batches.entries()]
+                    .sort((a, b) => b[0].localeCompare(a[0]))
+                    .map(([date, b]) => (
+                      <tr key={date}>
+                        <th scope="row">{formatDate(date, lang, date)}</th>
+                        <td>{b.n}</td>
+                        <td>{b.v}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="bao-loi" className="method-sec scroll-mt-24">
+            <p aria-hidden="true" className="method-n tnum">
+              {ROMAN[body[lang].length + 3]}
+            </p>
+            <div className="min-w-0">
+              <h2 className="method-h">{x.report.h}</h2>
+              <div className="measure mt-3 space-y-4">
+                {x.report.p.map((para) => (
+                  <p key={para} className="leading-[1.75] text-[var(--ink-2)]">
+                    {para}
+                  </p>
+                ))}
+              </div>
+              <Link href={`/${lang}/gop-y`} className="btn btn-quiet mt-5">
+                {x.report.cta} →
+              </Link>
+            </div>
+          </section>
+
+          <section id="rieng-tu" className="method-sec scroll-mt-24">
+            <p aria-hidden="true" className="method-n tnum">
+              {ROMAN[body[lang].length + 4]}
+            </p>
+            <div className="min-w-0">
+              <h2 className="method-h">{x.privacy.h}</h2>
+              <div className="measure mt-3 space-y-4">
+                {x.privacy.p.map((para) => (
+                  <p key={para} className="leading-[1.75] text-[var(--ink-2)]">
+                    {para}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
 
         <p className="tnum mt-14 border-t border-[var(--rule)] pt-5 text-sm text-[var(--ink-3)]">

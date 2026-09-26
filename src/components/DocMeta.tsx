@@ -1,14 +1,16 @@
+import { LegalStatus } from "@/components/legal/LegalStatus";
 import { domains } from "@/data/documents";
 import type { DocStatus, DocType, DomainId, Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
+import { getSearchCopy } from "@/i18n/search";
 
 const domainById = new Map(domains.map((d) => [d.id, d]));
 
 /**
- * Nhãn tình trạng hiệu lực.
+ * Nhãn tình trạng hiệu lực tại ngày tra cứu.
  *
- * Trạng thái được mã hoá bằng cả màu và hình dạng chấm dẫn: người không phân
- * biệt được màu vẫn đọc được chữ, và chữ mới là thứ mang nghĩa.
+ * Trạng thái được mã hoá bằng chữ, hình biểu tượng và kiểu viền, màu chỉ đi
+ * kèm: xem `LegalStatus`. Rê chuột lên nhãn đọc được lời giải thích đầy đủ.
  */
 export function StatusBadge({
   status,
@@ -17,30 +19,16 @@ export function StatusBadge({
 }: {
   status: DocStatus;
   lang: Lang;
-  size?: "sm" | "md";
+  size?: "sm" | "md" | "lg";
 }) {
   const t = getDict(lang);
-  const tone: Record<DocStatus, string> = {
-    active: "text-emerald-800 dark:text-emerald-300 border-emerald-700/35",
-    amended: "text-amber-800 dark:text-amber-300 border-amber-700/35",
-    pending: "text-sky-800 dark:text-sky-300 border-sky-700/35",
-    expired: "text-[var(--ink-3)] border-[var(--rule-strong)]",
-  };
-  const dot: Record<DocStatus, string> = {
-    active: "bg-emerald-600",
-    amended: "bg-amber-500",
-    pending: "bg-sky-500",
-    expired: "bg-transparent border border-[var(--ink-3)]",
-  };
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 border px-2 py-0.5 ${tone[status]} ${
-        size === "sm" ? "text-[0.6875rem]" : "text-xs"
-      } whitespace-nowrap font-medium`}
-    >
-      <span className={`inline-block h-1.5 w-1.5 rounded-full ${dot[status]}`} aria-hidden="true" />
-      {t.status[status]}
-    </span>
+    <LegalStatus
+      tone={status}
+      label={t.status[status]}
+      title={getSearchCopy(lang).statusExplain[status]}
+      size={size}
+    />
   );
 }
 

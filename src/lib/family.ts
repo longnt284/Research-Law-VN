@@ -173,6 +173,12 @@ export interface PlacedNode {
 
 export interface PlacedEdge {
   kind: RelationKind;
+  /**
+   * Hai đầu của quan hệ: văn bản tác động và văn bản bị tác động. Đoạn nối dùng
+   * chung của nhiều nhánh (thanh ngang, thân dọc) để trống `from`.
+   */
+  from: string;
+  to: string;
   d: string;
   /** Đầu mũi tên, đặt ở văn bản bị tác động. Đoạn nối giữa chừng thì không có. */
   tip: { x: number; y: number; angle: number } | null;
@@ -287,6 +293,8 @@ export function layoutFamily(fam: Family): FamilyLayout {
         const mx = r1((x0 + x1) / 2);
         edges.push({
           kind: "replaces",
+          from: newer.doc.id,
+          to: older.doc.id,
           d:
             Math.abs(y0 - y1) < 0.5
               ? `M${r1(x0)} ${r1(y0)}H${r1(x1)}`
@@ -330,10 +338,18 @@ export function layoutFamily(fam: Family): FamilyLayout {
           g.role === "amendedBy"
             ? {
                 kind,
+                from: doc.id,
+                to: fam.focus.id,
                 d: `M${cx} ${top}V${busY}H${port}V${spineTop}`,
                 tip: { x: port, y: spineTop, angle: Math.PI / 2 },
               }
-            : { kind, d: path, tip: { x: cx, y: top, angle: -Math.PI / 2 } },
+            : {
+                kind,
+                from: fam.focus.id,
+                to: doc.id,
+                d: path,
+                tip: { x: cx, y: top, angle: -Math.PI / 2 },
+              },
         );
       });
       gx += groupW(g) + F.genGap;
@@ -360,7 +376,13 @@ export function layoutFamily(fam: Family): FamilyLayout {
         const n = place(branch.doc, "child", -rowW / 2 + i * (F.nodeW + F.sibGap), top);
         const cx = r1(n.x + n.w / 2);
         centers.push(cx);
-        edges.push({ kind: "guides", d: `M${cx} ${top}V${busY}`, tip: null });
+        edges.push({
+          kind: "guides",
+          from: branch.doc.id,
+          to: fam.focus.id,
+          d: `M${cx} ${top}V${busY}`,
+          tip: null,
+        });
         // Nhánh bậc hai: một thanh dọc bên trái nhánh cha, mỗi văn bản treo
         // vào thanh bằng một gạch ngang ngắn.
         let gy = n.y + n.h + 14;
@@ -370,6 +392,8 @@ export function layoutFamily(fam: Family): FamilyLayout {
           const mid = r1(g.y + g.h / 2);
           edges.push({
             kind: "guides",
+            from: gc.id,
+            to: branch.doc.id,
             d: `M${r1(g.x)} ${mid}H${railX}V${r1(n.y + n.h)}`,
             tip: { x: railX, y: r1(n.y + n.h), angle: -Math.PI / 2 },
           });
@@ -379,13 +403,17 @@ export function layoutFamily(fam: Family): FamilyLayout {
       });
       const lo = Math.min(0, ...centers);
       const hi = Math.max(0, ...centers);
-      if (hi > lo) edges.push({ kind: "guides", d: `M${lo} ${busY}H${hi}`, tip: null });
+      if (hi > lo) {
+        edges.push({ kind: "guides", from: "", to: fam.focus.id, d: `M${lo} ${busY}H${hi}`, tip: null });
+      }
       top = rowBottom + F.rowGap;
     });
     // Thân dọc nối mọi hàng nhánh về văn bản đang xem; mũi tên ở mép dưới của
     // văn bản đang xem, vì mọi nhánh đều quy định chi tiết chính văn bản ấy.
     edges.push({
       kind: "guides",
+      from: "",
+      to: fam.focus.id,
       d: `M0 ${r1(trunkBottom)}V${r1(trunkTop)}`,
       tip: { x: 0, y: r1(trunkTop), angle: -Math.PI / 2 },
     });

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { BasisSide } from "@/components/Citation";
+import { LegalDiff, type PointMeta } from "@/components/compare/LegalDiff";
 import { ChangeKindTag, ObjectiveNotice } from "@/components/CompareMeta";
 import { CrossCheckNotice, StatusBadge } from "@/components/DocMeta";
 import { JsonLd } from "@/components/JsonLd";
@@ -10,11 +11,14 @@ import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { PointDiff } from "@/components/PointDiff";
 import { ShareLinks } from "@/components/ShareLinks";
 import { TextDiff } from "@/components/TextDiff";
-import type { Lang, LegalDoc } from "@/data/types";
+import type { ChangeKind, Lang, LegalDoc } from "@/data/types";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
+import { getDiffCopy } from "@/i18n/diff";
+import { formatCitation, parseCitation } from "@/lib/citation";
 import { derivedNotes, factDeltas, pairById, pairs } from "@/lib/compare";
 import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor, pathFor, shareMeta, SITE_URL } from "@/lib/site";
+import { fold } from "@/lib/search-engine";
 import { breadcrumbLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
@@ -101,6 +105,82 @@ export default async function ComparePairPage({
   */
   const chains = lineagesFor(pair.newDoc.id).filter((l) =>
     l.docs.some((d) => d.id === pair.oldDoc.id),
+  );
+  const dc = getDiffCopy(lang);
+  const cites = (refs: string[]) => refs.map((r) => formatCitation(parseCitation(r), lang)).join("; ");
+  const pointMeta: PointMeta[] = (pair.entry?.points ?? []).map((pt) => ({
+    id: pt.id,
+    kind: pt.kind,
+    topic: pt.topic[lang],
+    kindLabel: t.changeKind[pt.kind],
+    text: fold(
+      [pt.topic[lang], pt.before[lang], pt.after[lang], pt.observation[lang], ...pt.basis.before, ...pt.basis.after].join(" "),
+    ),
+    copy: [
+      `${pt.topic[lang]} [${t.changeKind[pt.kind]}]`,
+      `${t.compare.oldSide}: ${pt.before[lang]}`,
+      `${t.compare.newSide}: ${pt.after[lang]}`,
+      `${t.compare.observation}: ${pt.observation[lang]}`,
+      `${t.compare.basisOld}: ${cites(pt.basis.before)}`,
+      `${t.compare.basisNew}: ${cites(pt.basis.after)}`,
+    ].join("\n"),
+  }));
+  // Tổng quan chỉ đếm những gì đã viết: số điểm theo loại thay đổi. Không có
+  // con số nào về "điều khoản thay đổi", vì tập dữ liệu không chứa toàn văn.
+  const kindCounts = new Map<ChangeKind, number>();
+  for (const pt of pair.entry?.points ?? []) kindCounts.set(pt.kind, (kindCounts.get(pt.kind) ?? 0) + 1);
+  const total = pointMeta.length;
+  const same = kindCounts.get("giu-nguyen") ?? 0;
+  const maxKind = Math.max(1, ...kindCounts.values());
+  const overview = (
+    <div className="ldiff-overview" data-overview hidden>
+      <div className="ldiff-ov">
+        <p className="eyebrow">{dc.overviewTitle}</p>
+        <dl className="ldiff-ov-stats tnum">
+          <div>
+            <dd>{total}</dd>
+            <dt>{dc.statLabels.points}</dt>
+          </div>
+          <div>
+            <dd>{total - same}</dd>
+            <dt>{dc.statLabels.changed}</dt>
+          </div>
+          <div>
+            <dd>{same}</dd>
+            <dt>{dc.statLabels.same}</dt>
+          </div>
+        </dl>
+        <p className="eyebrow mt-5">{dc.byKind}</p>
+        <ul className="ldiff-ov-kinds">
+          {[...kindCounts.entries()]
+            .sort((a, b) => b[1] - a[1])
+            .map(([k, n]) => (
+              <li key={k}>
+                <span>{t.changeKind[k]}</span>
+                <span className="ldiff-ov-bar" aria-hidden="true">
+                  <span style={{ width: `${(n / maxKind) * 100}%` }} />
+                </span>
+                <span className="tnum">{n}</span>
+              </li>
+            ))}
+        </ul>
+        <p className="ldiff-ov-note">{dc.overviewNote}</p>
+      </div>
+      <nav aria-label={dc.jump} className="ldiff-toc">
+        <p className="eyebrow">{dc.jump}</p>
+        <ol>
+          {pointMeta.map((pm, i) => (
+            <li key={pm.id}>
+              <button type="button" data-jump={pm.id}>
+                <span className="tnum ldiff-toc-n">{String(i + 1).padStart(2, "0")}</span>
+                <span className="ldiff-toc-topic">{pm.topic}</span>
+                <span className={`ldiff-toc-kind kind-${pm.kind}`}>{pm.kindLabel}</span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </div>
   );
   const fieldLabel: Record<(typeof facts)[number]["field"], string> = {
     type: t.doc.type,
@@ -259,12 +339,19 @@ export default async function ComparePairPage({
                 {t.compare.basisHint}
               </p>
 
-              <div className="mt-6 space-y-8">
+              <LegalDiff
+                lang={lang}
+                points={pointMeta}
+                copyHead={`${pair.oldDoc.number} → ${pair.newDoc.number}\n${SITE_URL}${pathFor(lang, `/doi-chieu/${pair.id}`)}`}
+              >
+                {overview}
                 {pair.entry.points.map((point) => (
                   <section
                     key={point.id}
                     id={point.id}
-                    className="scroll-mt-24 border-t border-[var(--rule-strong)] pt-5"
+                    data-point={point.id}
+                    data-kind={point.kind}
+                    className="ldiff-point scroll-mt-24 border-t border-[var(--rule-strong)] pt-5"
                   >
                     <div className="flex flex-wrap items-center gap-3">
                       <h3 className="text-[1.15rem]">{point.topic[lang]}</h3>
@@ -276,58 +363,71 @@ export default async function ComparePairPage({
                       )}
                     </div>
 
-                    <div className="mt-4 grid gap-5 md:grid-cols-2 md:gap-8">
-                      <div className="min-w-0 border-l-2 border-[var(--rule)] pl-4">
-                        <p className="eyebrow">{t.compare.oldSide}</p>
-                        <p className="mt-1.5 leading-relaxed text-[var(--ink-2)]">
-                          {point.before[lang]}
+                    {/* Điểm tương đương được thu gọn ở chế độ "Toàn bộ": chỉ còn
+                        tên vấn đề và nút mở. */}
+                    {point.kind === "giu-nguyen" && (
+                      <p className="ldiff-collapsed-note">
+                        {dc.collapsed}{" "}
+                        <button type="button" data-expand={point.id} className="ref-link">
+                          {dc.expand}
+                        </button>
+                      </p>
+                    )}
+
+                    <div className="ldiff-detail">
+                      <div className="mt-4 grid gap-5 md:grid-cols-2 md:gap-8">
+                        <div className="pt-old min-w-0 border-l-2 border-[var(--rule)] pl-4">
+                          <p className="eyebrow">{t.compare.oldSide}</p>
+                          <p className="mt-1.5 leading-relaxed text-[var(--ink-2)]">
+                            {point.before[lang]}
+                          </p>
+                        </div>
+                        <div className="pt-new min-w-0 border-l-2 border-[var(--accent)] pl-4">
+                          <p className="eyebrow">{t.compare.newSide}</p>
+                          <p className="mt-1.5 leading-relaxed">{point.after[lang]}</p>
+                        </div>
+                      </div>
+
+                      {/* Nhận định đặt dưới hai vế chứ không đặt xen giữa: người
+                          đọc gặp dữ kiện trước, gặp nhận định sau, và nhận định
+                          được đóng khung bằng nhãn riêng để không lẫn vào nội
+                          dung của văn bản. */}
+                      <div className="mt-4 bg-[var(--paper-2)] px-4 py-3">
+                        <p className="eyebrow text-[var(--brass)]">
+                          {t.compare.observation}
+                        </p>
+                        <p className="measure mt-1 leading-relaxed text-[var(--ink-2)]">
+                          {point.observation[lang]}
                         </p>
                       </div>
-                      <div className="min-w-0 border-l-2 border-[var(--accent)] pl-4">
-                        <p className="eyebrow">{t.compare.newSide}</p>
-                        <p className="mt-1.5 leading-relaxed">{point.after[lang]}</p>
+
+                      {/* Căn cứ tách theo vế. Gộp chung thì người đọc thấy được
+                          những văn bản nào đã được đọc nhưng không biết vế nào
+                          đọc từ đâu, mà đó chính là điều cần kiểm lại. */}
+                      <div className="mt-3 space-y-1">
+                        <BasisSide
+                          label={t.compare.basisOld}
+                          refs={point.basis.before}
+                          lang={lang}
+                        />
+                        <BasisSide
+                          label={t.compare.basisNew}
+                          refs={point.basis.after}
+                          lang={lang}
+                        />
                       </div>
-                    </div>
 
-                    {/* Nhận định đặt dưới hai vế chứ không đặt xen giữa: người
-                        đọc gặp dữ kiện trước, gặp nhận định sau, và nhận định
-                        được đóng khung bằng nhãn riêng để không lẫn vào nội
-                        dung của văn bản. */}
-                    <div className="mt-4 bg-[var(--paper-2)] px-4 py-3">
-                      <p className="eyebrow text-[var(--brass)]">
-                        {t.compare.observation}
-                      </p>
-                      <p className="measure mt-1 leading-relaxed text-[var(--ink-2)]">
-                        {point.observation[lang]}
-                      </p>
-                    </div>
-
-                    {/* Căn cứ tách theo vế. Gộp chung thì người đọc thấy được
-                        những văn bản nào đã được đọc nhưng không biết vế nào
-                        đọc từ đâu, mà đó chính là điều cần kiểm lại. */}
-                    <div className="mt-3 space-y-1">
-                      <BasisSide
-                        label={t.compare.basisOld}
-                        refs={point.basis.before}
-                        lang={lang}
-                      />
-                      <BasisSide
-                        label={t.compare.basisNew}
-                        refs={point.basis.after}
+                      {/* Phép so sánh cơ học chạy thẳng trên hai vế đã viết, cùng
+                          thuật toán với ô dán văn bản ở cuối trang. */}
+                      <PointDiff
+                        before={point.before[lang]}
+                        after={point.after[lang]}
                         lang={lang}
                       />
                     </div>
-
-                    {/* Phép so sánh cơ học chạy thẳng trên hai vế đã viết, cùng
-                        thuật toán với ô dán văn bản ở cuối trang. */}
-                    <PointDiff
-                      before={point.before[lang]}
-                      after={point.after[lang]}
-                      lang={lang}
-                    />
                   </section>
                 ))}
-              </div>
+              </LegalDiff>
             </>
           )}
         </section>

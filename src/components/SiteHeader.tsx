@@ -2,14 +2,25 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
+import { AsOfBar } from "@/components/asof/AsOfBar";
 import { BrandMark, Wordmark } from "@/components/brand/BrandMark";
+import { openPalette } from "@/components/search/PaletteHost";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import type { Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
+import { getSearchCopy } from "@/i18n/search";
 
 /**
  * Thanh điều hướng.
+ *
+ * Năm mục đi theo đúng nhịp làm việc của người tra cứu: tra một văn bản, khám
+ * phá theo lĩnh vực, đối chiếu hai đời văn bản, xem điều gì vừa thay đổi, và
+ * theo dõi những văn bản mình đang dùng. Trang chủ nằm sau dấu hiệu ở góc trái.
+ *
+ * Nút tìm kiếm có mặt ở mọi trang và mở bảng lệnh (Ctrl K / ⌘ K): người đang
+ * đọc giữa một nghị định không phải quay về trang chủ để tra văn bản khác.
  *
  * Nút đổi ngôn ngữ giữ nguyên đường dẫn đang xem thay vì trả người đọc về trang
  * chủ. Người đang đọc chi tiết một nghị định mà bấm sang tiếng Anh thì vẫn ở
@@ -17,90 +28,107 @@ import { getDict } from "@/i18n/dictionary";
  */
 export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang }) {
   const t = getDict(lang);
+  const s = getSearchCopy(lang);
   const pathname = usePathname() ?? `/${lang}`;
+  const [mac, setMac] = useState(false);
+  const ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setMac(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent));
+  }, []);
+
+  // Chiều cao thật của thanh (một hay hai hàng, có hay không dải ngày tra cứu)
+  // ghi vào `--hdr-h`, để các thanh dính bên dưới và neo cuộn nằm đúng chỗ ở
+  // mọi bề ngang thay vì đoán một con số cố định.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const apply = () =>
+      document.documentElement.style.setProperty("--hdr-h", `${Math.round(el.offsetHeight)}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const swapped = pathname.startsWith(`/${lang}`)
     ? `/${otherLang}${pathname.slice(lang.length + 1)}`
     : `/${otherLang}`;
 
   const links = [
-    // Trang chủ phải có mặt trong thanh điều hướng, không chỉ nằm sau dấu ấn ở
-    // góc trái: dải văn bản nối xích và khối lối vào là một mục thật của trang
-    // chứ không phải một tấm bìa để lướt qua một lần. So khớp đúng bằng địa chỉ
-    // gốc, nếu không mục này sáng lên ở mọi trang con.
-    { href: `/${lang}`, label: t.nav.home, exact: true },
-    { href: `/${lang}/van-ban`, label: t.nav.documents, exact: false },
-    { href: `/${lang}/linh-vuc`, label: t.nav.domains, exact: false },
-    { href: `/${lang}/doi-chieu`, label: t.nav.compare, exact: false },
-    { href: `/${lang}/phuong-phap`, label: t.nav.about, exact: false },
+    { href: `/${lang}/van-ban`, label: s.nav.lookup },
+    { href: `/${lang}/linh-vuc`, label: s.nav.explore },
+    { href: `/${lang}/doi-chieu`, label: s.nav.compare },
+    { href: `/${lang}/thay-doi`, label: s.nav.changes },
+    { href: `/${lang}/theo-doi`, label: s.nav.watch },
   ];
 
+  const searchButton = (compact: boolean) => (
+    <button
+      type="button"
+      onClick={openPalette}
+      className={compact ? "hdr-search hdr-search--icon" : "hdr-search"}
+      aria-label={compact ? `${s.palette.open} (${mac ? "⌘" : "Ctrl"} K)` : undefined}
+      aria-keyshortcuts={mac ? "Meta+K" : "Control+K"}
+    >
+      <svg viewBox="0 0 20 20" aria-hidden="true" className="hdr-search-icon">
+        <circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M12.6 12.6 17 17" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      </svg>
+      {!compact && (
+        <>
+          <span className="hdr-search-label">{s.nav.search}</span>
+          <kbd className="hdr-kbd">{mac ? "⌘" : "Ctrl"} K</kbd>
+        </>
+      )}
+    </button>
+  );
+
   return (
-    <header className="rule-b header-lux sticky top-0 z-30 bg-[color-mix(in_oklab,var(--paper)_88%,transparent)] backdrop-blur-md">
-      {/*
-        Không cắt chữ, và cũng không để thanh xuống ba hàng. Trên điện thoại,
-        `flex-wrap` cũ đẩy sáu mục điều hướng thành ba hàng, nên một thanh dính
-        trên cùng ăn gần một phần bảy màn hình và theo người đọc suốt trang. Ở
-        đây tên trang giữ hàng riêng, còn phần điều hướng nằm gọn một hàng và tự
-        cuộn ngang khi thiếu chỗ — chữ vẫn đủ, thân trang không bị đẩy lệch.
-      */}
-      <div className="mx-auto flex w-full max-w-[76rem] flex-col gap-y-1 px-5 py-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-x-4 sm:px-8 sm:py-3">
+    <header ref={ref} className="site-header rule-b header-lux sticky top-0 z-30">
+      <div className="hdr-row">
         <Link href={`/${lang}`} className="brand-link group flex items-center gap-2.5" aria-label={t.siteName}>
-          {/*
-            Dấu nhỏ của trang: cán cân mọc rễ trên nền mực, viền vàng. Tên đi
-            kèm viết hoa giãn chữ như trên một tấm danh thiếp in nổi.
-          */}
           <BrandMark variant="badge" id="hdr" className="brand-badge h-8 w-8 shrink-0" />
           <Wordmark />
         </Link>
 
         {/*
-          Trên màn hình hẹp, thanh điều hướng là một dải cuộn ngang: `min-w-0`
-          cho phép nó co lại trong khung cha, và `overflow-x-auto` giữ phần cuộn
-          nằm trong chính dải này thay vì làm cả trang trượt ngang. Lớp
-          `nav-strip` xóa thanh cuộn hệ điều hành, vốn cắt ngang một thanh cao
-          chưa tới ba mươi sáu điểm ảnh. Từ `sm` trở lên mọi mục vừa đủ chỗ, và
-          dải trở lại một hàng tĩnh như cũ.
+          Trên màn hình hẹp, năm mục điều hướng nằm ở hàng riêng và tự cuộn
+          ngang khi thiếu chỗ, còn nút tìm, ngôn ngữ, nền ở cùng hàng với tên
+          trang: ô tìm luôn trong tầm một ngón tay.
         */}
-        <nav className="nav-strip -mx-1 flex min-w-0 items-center gap-1 overflow-x-auto px-1 sm:mx-0 sm:overflow-visible sm:px-0 sm:gap-2">
+        <nav className="hdr-nav nav-strip" aria-label={s.nav.primary}>
           {links.map((l) => {
-            const active = l.exact ? pathname === l.href : pathname.startsWith(l.href);
+            const active = pathname.startsWith(l.href);
             return (
               <Link
                 key={l.href}
                 href={l.href}
                 aria-current={active ? "page" : undefined}
-                className={`group relative shrink-0 whitespace-nowrap px-2 py-1.5 text-sm transition-colors sm:px-2.5 ${
-                  active
-                    ? "text-[var(--ink)]"
-                    : "text-[var(--ink-3)] hover:text-[var(--ink)]"
-                }`}
+                className={`hdr-link group ${active ? "is-active" : ""}`}
               >
                 {l.label}
-                {/*
-                  Gạch chân là một phần tử riêng chứ không phải border, nhờ vậy
-                  nó chạy ngang ra khi rê chuột mà chiều cao dòng không đổi.
-                */}
-                <span
-                  aria-hidden="true"
-                  className={`absolute inset-x-2 bottom-0 h-[2px] origin-left bg-[var(--accent)] transition-transform duration-300 ease-[var(--ease-out-soft)] sm:inset-x-2.5 ${
-                    active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                />
+                <span aria-hidden="true" className="hdr-link-bar" />
               </Link>
             );
           })}
+        </nav>
+
+        <div className="hdr-tools">
+          <span className="hdr-search-wide">{searchButton(false)}</span>
+          <span className="hdr-search-narrow">{searchButton(true)}</span>
           <Link
             href={swapped}
             hrefLang={otherLang}
             aria-label={t.footer.switchLangFull}
-            className="ml-1 shrink-0 whitespace-nowrap border border-[var(--rule-strong)] px-2.5 py-1 text-xs font-medium tracking-wide transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+            className="hdr-lang"
           >
-            {t.footer.switchLang}
+            {otherLang.toUpperCase()}
           </Link>
           <ThemeToggle lang={lang} />
-        </nav>
+        </div>
       </div>
+      <AsOfBar lang={lang} />
     </header>
   );
 }

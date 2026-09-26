@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { documents, domains, relations } from "@/data/documents";
 import { getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { getHome } from "@/i18n/home";
-import { getHub } from "@/i18n/hub";
+import { getLanding } from "@/i18n/landing";
 import { pairs } from "@/lib/compare";
 import { C, OG_SIZE, renderCard, SERIF } from "@/og/card";
 
@@ -25,12 +25,12 @@ export default async function Image({ params }: { params: Promise<{ lang: string
   const { lang } = await params;
   if (!isLang(lang)) notFound();
   const t = getDict(lang);
-  const h = getHub(lang);
+  const h = getLanding(lang).coverage;
   const stats = [
-    [documents.length, h.statDocs],
-    [relations.length, h.statRelations],
-    [domains.length, h.statDomains],
-    [pairs.length, h.statPairs],
+    [documents.length, h.docs],
+    [relations.length, h.relations],
+    [domains.length, h.domains],
+    [pairs.length, h.pairs],
   ] as const;
 
   return renderCard(
