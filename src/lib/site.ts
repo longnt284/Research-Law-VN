@@ -21,6 +21,16 @@ function resolveSiteUrl(): string {
 
 export const SITE_URL = resolveSiteUrl();
 
+/**
+ * Thông tin liên hệ in ở chân trang. Số điện thoại giữ hai dạng: dạng quốc tế
+ * cho liên kết `tel:` để gọi được từ máy ở nước ngoài, dạng nhóm số để đọc.
+ */
+export const CONTACT = {
+  phone: "0941 563 789",
+  phoneHref: "tel:+84941563789",
+  email: "longnt284.lawyer@gmail.com",
+} as const;
+
 /** Đường dẫn của một trang trong một ngôn ngữ, ví dụ `/vi/van-ban/luat-xay-dung-2025`. */
 export function pathFor(lang: Lang, sub = ""): string {
   return `/${lang}${sub}`;

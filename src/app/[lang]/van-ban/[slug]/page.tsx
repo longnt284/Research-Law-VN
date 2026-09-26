@@ -8,6 +8,7 @@ import { FamilyChart, FamilyList } from "@/components/FamilyTree";
 import { JsonLd } from "@/components/JsonLd";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
 import { ShareLinks } from "@/components/ShareLinks";
+import { FullTextAction, SourceList } from "@/components/SourceLinks";
 import { ValidityProbe } from "@/components/validity/ValidityProbe";
 import { ValidityTimeline } from "@/components/validity/ValidityTimeline";
 import { documents, documentsById, verifiedOnOf } from "@/data/documents";
@@ -19,6 +20,7 @@ import { pairsFor } from "@/lib/compare";
 import { familyOf } from "@/lib/family";
 import { lineagesFor } from "@/lib/lineage";
 import { alternatesFor, clip, pathFor, shareMeta, SITE_URL } from "@/lib/site";
+import { describeSources } from "@/lib/sources";
 import { breadcrumbLd, legislationLd } from "@/lib/structured-data";
 import { validitySegments } from "@/lib/validity";
 
@@ -66,6 +68,7 @@ export default async function DocumentPage({
   const docLineages = lineagesFor(doc.id);
   const citation = citeDocument(doc, lang);
   const legislation = legislationLd(doc, lang, documentsById);
+  const sources = describeSources(doc.sources);
 
   return (
     <article>
@@ -110,6 +113,9 @@ export default async function DocumentPage({
                 <DomainChip key={d} id={d} lang={lang} />
               ))}
             </div>
+            <div className="rise rise-3">
+              <FullTextAction sources={sources} lang={lang} />
+            </div>
           </header>
         </div>
       </section>
@@ -137,6 +143,10 @@ export default async function DocumentPage({
               </p>
             </section>
           )}
+
+          {/* Nguồn đặt ngay sau phần tóm tắt: đọc tóm tắt xong, việc kế tiếp của
+              người làm pháp lý là mở nguyên văn để kiểm lại trước khi viện dẫn. */}
+          <SourceList sources={sources} lang={lang} />
 
           {/* Diễn biến hiệu lực đặt trước phần quan hệ: câu hỏi đầu tiên của
               người mở một văn bản là nó còn dùng được không, và từ khi nào. */}
@@ -291,24 +301,6 @@ export default async function DocumentPage({
             <p className="mt-2 text-xs leading-relaxed text-[var(--ink-3)]">{t.share.hint}</p>
           </div>
 
-          <div className="mt-6 border-t border-[var(--rule)] pt-5">
-            <p className="eyebrow">{t.doc.sources}</p>
-            <ul className="mt-2 space-y-2">
-              {doc.sources.map((s) => (
-                <li key={s} className="min-w-0">
-                  <a
-                    href={s}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    className="block truncate text-xs text-[var(--ink-3)] underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors hover:text-[var(--accent)]"
-                    title={s}
-                  >
-                    {new URL(s).hostname.replace(/^www\./, "")}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
         </aside>
       </div>
     </article>
