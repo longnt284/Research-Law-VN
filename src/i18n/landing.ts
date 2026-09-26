@@ -259,7 +259,7 @@ const vi: LandingCopy = {
   watch: {
     title: "Theo dõi",
     lede: "Văn bản bạn đang theo dõi, văn bản vừa xem và các bộ hồ sơ. Trang cho biết điều gì đã đổi ở mỗi văn bản kể từ ngày bạn bắt đầu theo dõi.",
-    local: "Mọi thứ ở đây chỉ lưu trong trình duyệt này, không gửi đi đâu và không cần tài khoản. Xóa dữ liệu trình duyệt là mất.",
+    local: "Chưa đăng nhập: mọi thứ ở đây chỉ lưu trong trình duyệt này. Đăng nhập để giữ danh sách theo dõi và bộ hồ sơ trên mọi máy.",
     followedTitle: "Đang theo dõi",
     followedEmpty: "Chưa theo dõi văn bản nào. Bấm “Theo dõi” trên trang một văn bản để thêm vào đây.",
     since: (d) => `Theo dõi từ ${d}`,
@@ -445,7 +445,7 @@ const en: LandingCopy = {
   watch: {
     title: "Watchlist",
     lede: "Instruments you follow, instruments you recently opened and your matters. The page says what has changed for each instrument since you started following it.",
-    local: "Everything here is stored in this browser only. Nothing is sent anywhere and no account is needed. Clearing browser data removes it.",
+    local: "Not signed in: everything here is stored in this browser only. Sign in to keep your watchlist and matters on every device.",
     followedTitle: "Following",
     followedEmpty: "You are not following any instrument. Select “Follow” on an instrument's page to add it here.",
     since: (d) => `Following since ${d}`,

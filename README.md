@@ -178,6 +178,52 @@ bản ghi mỗi đợt), **báo lỗi và sửa dữ liệu**, **quyền riêng 
 đếm thẳng từ tập dữ liệu. Chân trang chia bốn cột: sản phẩm, dữ liệu, pháp lý,
 liên hệ.
 
+## Tài khoản người dùng
+
+Tài khoản là tùy chọn: mọi công cụ dùng được khi chưa đăng nhập, dữ liệu khi
+ấy nằm trong trình duyệt. Có tài khoản thì văn bản đang theo dõi và bộ hồ sơ
+đi theo người dùng trên mọi máy.
+
+Backend là Supabase, không có máy chủ riêng:
+
+- **Supabase Auth**: tạo tài khoản bằng email và mật khẩu, xác nhận email, quên
+  mật khẩu, đổi mật khẩu.
+- **Hai bảng** trong `supabase/migrations/20260926090000_user_accounts.sql`:
+  `follows` (văn bản theo dõi, ngày bắt đầu theo dõi) và `matters` (bộ hồ sơ).
+  Không bảng nào chép dữ liệu văn bản; mọi thứ nối với tập dữ liệu qua mã văn
+  bản. Row Level Security bật trên cả hai: mỗi người chỉ đọc, ghi được hàng của
+  mình, nên trình duyệt gọi thẳng cơ sở dữ liệu bằng khóa công khai.
+- **Hàm `delete_my_account()`** cho người dùng tự xóa vĩnh viễn tài khoản; mọi
+  hàng của họ xóa theo. Hàm chạy `security definer` nhưng chỉ xóa đúng người
+  đang gọi (trình kiểm tra bảo mật của Supabase có cảnh báo chung cho kiểu hàm
+  này; ở đây là chủ ý).
+
+Phía trang (`src/lib/account.ts`, `src/components/account/`): trang
+`/vi/tai-khoan` để đăng ký, đăng nhập, đổi mật khẩu, đăng xuất, xóa tài khoản;
+nút tài khoản trên thanh điều hướng. Thư viện Supabase chỉ tải khi mở trang tài
+khoản hoặc khi trình duyệt có phiên đăng nhập. Lần đầu đăng nhập trên một trình
+duyệt, dữ liệu đã lưu trước đó được gộp vào tài khoản; những lần sau máy chủ là
+bản gốc. Đăng xuất xóa danh sách theo dõi và bộ hồ sơ khỏi trình duyệt.
+
+Biến môi trường (cả hai công khai, đã đặt trên Vercel):
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<publishable key>
+```
+
+Thiếu hai biến thì tài khoản tự tắt, trang vẫn chạy như trước. Địa chỉ
+Supabase được thêm vào `connect-src` của Content-Security-Policy.
+
+Cấu hình cần làm trong bảng điều khiển Supabase (Authentication):
+
+1. **URL Configuration**: Site URL là địa chỉ trang thật; thêm
+   `https://<tên-miền>/**` vào Redirect URLs, để liên kết xác nhận email và
+   đặt lại mật khẩu quay về `/vi/tai-khoan`.
+2. **SMTP**: dịch vụ email mặc định của Supabase chỉ gửi tới thành viên của tổ
+   chức và giới hạn vài email mỗi giờ. Để người ngoài đăng ký được, cấu hình
+   SMTP riêng (Resend, SendGrid, Amazon SES…), hoặc tắt "Confirm email".
+
 ## Toàn văn và nguồn tra cứu
 
 Người đọc chính của trang là pháp chế doanh nghiệp và luật sư, nên câu hỏi về một
@@ -484,6 +530,9 @@ src/
   lib/search-engine.ts      # bộ máy tìm chạy trên trình duyệt
   lib/client-store.ts       # theo dõi, vừa xem, bộ hồ sơ, ngày tra cứu
   lib/changes.ts            # dòng thay đổi của cả kho
+  lib/account.ts            # tài khoản Supabase và đồng bộ theo dõi, bộ hồ sơ
+  app/[lang]/tai-khoan/     # đăng ký, đăng nhập, đổi mật khẩu, xóa tài khoản
+supabase/migrations/        # bảng follows, matters, RLS, hàm xóa tài khoản
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
 references/                 # thư viện đã khảo sát, và lý do dùng hay loại

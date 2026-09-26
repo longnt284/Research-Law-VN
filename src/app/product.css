@@ -3144,3 +3144,61 @@ mark.hl {
     mask-image: linear-gradient(to right, #000 calc(100% - 1.5rem), transparent);
   }
 }
+
+/* ── Tài khoản ────────────────────────────────────────────────────────────── */
+
+.hdr-icon-btn.is-on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.acc {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.acc-note {
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+.acc-card {
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  padding: 1.1rem 1.2rem 1.25rem;
+}
+.acc-card .fb-actions {
+  margin-top: 1rem;
+}
+.acc-email {
+  margin-top: 0.25rem;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+.acc-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.25rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+.acc-h {
+  font-size: 1.15rem;
+}
+.acc-danger {
+  border-color: color-mix(in oklab, var(--accent) 45%, var(--rule));
+}
+.acc-error {
+  border-left: 2px solid var(--accent);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--accent);
+  background: color-mix(in oklab, var(--accent) 7%, transparent);
+}
+.acc-info {
+  margin-top: 0.5rem;
+  border-left: 2px solid var(--st-active);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  background: color-mix(in oklab, var(--st-active) 7%, transparent);
+}

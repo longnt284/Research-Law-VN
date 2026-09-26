@@ -237,8 +237,9 @@ const extra: Record<
     privacy: {
       h: "Quyền riêng tư",
       p: [
-        "Trang không dùng cookie theo dõi, không nạp mã của bên thứ ba và không có tài khoản. Không có dữ liệu cá nhân nào được gửi tới máy chủ của trang.",
-        "Văn bản đang theo dõi, văn bản vừa xem, bộ hồ sơ và câu tìm gần đây được lưu trong bộ nhớ của chính trình duyệt bạn đang dùng; ngày tra cứu đang đặt chỉ giữ trong phiên. Xóa dữ liệu trình duyệt là xóa hết. Góp ý dữ liệu được gửi bằng ứng dụng email của bạn, trang không lưu lại nội dung.",
+        "Trang không dùng cookie theo dõi và không nạp mã quảng cáo hay đo lường của bên thứ ba. Tài khoản là tùy chọn: mọi công cụ dùng được mà không cần đăng nhập.",
+        "Khi chưa đăng nhập, văn bản đang theo dõi, bộ hồ sơ, văn bản vừa xem và câu tìm gần đây chỉ nằm trong bộ nhớ của trình duyệt bạn đang dùng; ngày tra cứu đang đặt chỉ giữ trong phiên.",
+        "Khi có tài khoản, Supabase lưu email, mật khẩu đã băm, danh sách văn bản theo dõi và bộ hồ sơ, để chúng đi theo bạn trên mọi máy. Văn bản vừa xem và câu tìm gần đây vẫn chỉ ở trong trình duyệt. Mỗi người chỉ đọc được dữ liệu của chính mình. Bạn có thể xóa vĩnh viễn tài khoản cùng toàn bộ dữ liệu ở trang tài khoản. Góp ý dữ liệu được gửi bằng ứng dụng email của bạn, trang không lưu lại nội dung.",
       ],
     },
   },
@@ -281,8 +282,9 @@ const extra: Record<
     privacy: {
       h: "Privacy",
       p: [
-        "The site uses no tracking cookies, loads no third-party code and has no accounts. No personal data is sent to the site's server.",
-        "Followed instruments, recently viewed instruments, matters and recent searches are stored in your own browser; the lookup date is kept for the session only. Clearing browser data removes all of it. Data feedback is sent with your own email app; the site keeps no copy.",
+        "The site uses no tracking cookies and loads no third-party advertising or analytics code. Accounts are optional: every tool works without signing in.",
+        "When you are not signed in, followed instruments, matters, recently viewed instruments and recent searches stay in your own browser; the lookup date is kept for the session only.",
+        "With an account, Supabase stores your email, a hashed password, your watchlist and your matters so they follow you across devices. Recently viewed instruments and recent searches still stay in the browser. Each person can read only their own data. You can permanently delete the account and all its data from the account page. Data feedback is sent with your own email app; the site keeps no copy.",
       ],
     },
   },
