@@ -16,7 +16,7 @@ import { formatDate, getDict, isLang, LANGS } from "@/i18n/dictionary";
 import { getHome } from "@/i18n/home";
 import { getLanding } from "@/i18n/landing";
 import { getSearchCopy } from "@/i18n/search";
-import { CONTACT, SITE_URL } from "@/lib/site";
+import { CONTACT, FIRM, SITE_URL } from "@/lib/site";
 
 /*
   Hai họ chữ, mỗi họ một nhiệm vụ. Lora có chân, dùng cho tiêu đề và trích dẫn
@@ -215,6 +215,18 @@ export default async function LangLayout({
                     <dd className="break-all">
                       <a href={`mailto:${CONTACT.email}`} className="link-sweep font-medium">
                         {CONTACT.email}
+                      </a>
+                    </dd>
+                  </div>
+                  {/* Trang tra cứu không tư vấn vụ việc (xem miễn trừ bên dưới);
+                      hãng luật thì có, và website hãng đọc tình trạng hiệu lực
+                      từ chính trang này. */}
+                  <div>
+                    <dt className="text-xs text-[var(--ink-3)]">{t.footer.firmLabel}</dt>
+                    <dd>
+                      <span className="block text-sm leading-relaxed text-[var(--ink-3)]">{t.footer.firmLede}</span>
+                      <a href={`${FIRM.url}/#lien-he`} target="_blank" rel="noopener" className="link-sweep font-medium">
+                        {FIRM.name[lang]} <span aria-hidden="true">↗</span>
                       </a>
                     </dd>
                   </div>
