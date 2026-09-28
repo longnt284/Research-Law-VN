@@ -31,6 +31,19 @@ export const CONTACT = {
   email: "longnt284.lawyer@gmail.com",
 } as const;
 
+/**
+ * Hãng luật nhận tư vấn cho vụ việc cụ thể — việc mà trang tra cứu này, theo
+ * chính lời miễn trừ của nó, không làm. Website hãng đọc lại tình trạng hiệu lực
+ * từ `/api/v1/documents.json` của trang này, nên hai trang dẫn qua lại nhau.
+ *
+ * Địa chỉ đến từ `NEXT_PUBLIC_FIRM_URL` để đổi tên miền không phải sửa mã; mặc
+ * định là địa chỉ đang chạy thật trên Vercel.
+ */
+export const FIRM = {
+  name: { vi: "Công ty Luật TNHH LHPT", en: "LHPT Law Firm" },
+  url: (process.env.NEXT_PUBLIC_FIRM_URL?.trim() || "https://lhpt-lawfirm.vercel.app").replace(/\/+$/, ""),
+} as const;
+
 /** Đường dẫn của một trang trong một ngôn ngữ, ví dụ `/vi/van-ban/luat-xay-dung-2025`. */
 export function pathFor(lang: Lang, sub = ""): string {
   return `/${lang}${sub}`;

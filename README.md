@@ -447,6 +447,36 @@ ra từ nó. Bảy ràng buộc:
 Cả bảy đều khẳng định được từ chính tập dữ liệu, không cần tra cứu bên ngoài —
 điều kiện để chúng còn chạy được lâu dài.
 
+## Nguồn dữ liệu công khai và website hãng luật LHPT
+
+Lex & Lineage và website Công ty Luật TNHH LHPT (repo `lhpt-lawfirm`) cùng chủ sở
+hữu và chạy độc lập: trang nào hỏng hay chưa triển khai thì trang kia vẫn chạy.
+Hai trang nối với nhau ở hai chỗ.
+
+**Dữ liệu: `/api/v1/documents.json`.** Tệp tĩnh dựng lúc `next build`
+(`src/app/api/v1/documents.json/route.ts`, hợp đồng ở `src/lib/public-feed.ts`).
+Mỗi văn bản gồm mã, số hiệu, loại, tình trạng tại ngày tra cứu, tên hai thứ
+tiếng, ngày ban hành, ngày hiệu lực, ngày tra cứu, mức xác minh, các đoạn hiệu
+lực tính sẵn (cùng dạng ô chọn ngày dùng), văn bản thay thế, văn bản sửa đổi,
+trang toàn văn và đường dẫn trang văn bản. Trường `schema` mang phiên bản
+(`lex-lineage/documents@1`): thêm trường thì giữ nguyên; đổi nghĩa hay bỏ một
+trường thì lên `@2` và phục vụ song song ở đường dẫn mới.
+
+Website LHPT đọc tệp này **lúc build** của nó, giữ lại đúng các văn bản nó giới
+thiệu, và lấy theo đây bốn trường dữ kiện: tình trạng, ngày hiệu lực, ngày hết
+hiệu lực, văn bản thay thế. Phần tóm tắt và bình luận của hãng giữ nguyên. Trình
+duyệt của khách không gọi sang đây, nên không cần mở CORS.
+
+**Liên kết.** Chân trang có mục "Tư vấn vụ việc" dẫn tới trang liên hệ của hãng,
+vì trang này không tư vấn cho vụ việc cụ thể (xem miễn trừ). Ngược lại, mỗi văn
+bản trên trang hãng có nút mở trang gia phả của chính nó ở đây.
+
+Biến môi trường, tùy chọn: `NEXT_PUBLIC_FIRM_URL` là địa chỉ website hãng, mặc
+định `https://lhpt-lawfirm.vercel.app`.
+
+Sửa dữ liệu ở đây thì trang hãng nhận ở lần build kế tiếp của nó. Trong khoảng
+giữa, trang hãng vẫn tự đổi nhãn đúng ngày nhờ các đoạn hiệu lực đã tính sẵn.
+
 ## Chạy dự án
 
 ```bash
@@ -497,6 +527,7 @@ src/
   app/[lang]/               # định tuyến song ngữ, sinh tĩnh toàn bộ
   app/[lang]/page.tsx       # trang chủ: ô tìm, công cụ, thay đổi, khám phá, giải thích
   app/[lang]/search-index.json/ # chỉ mục tìm kiếm tĩnh của từng thứ tiếng
+  app/api/v1/documents.json/ # nguồn dữ liệu công khai, website LHPT đọc lúc build
   app/[lang]/thay-doi/      # dòng thay đổi của cả kho
   app/[lang]/theo-doi/      # theo dõi, bộ hồ sơ, vừa xem (lưu trong trình duyệt)
   app/[lang]/gop-y/         # báo lỗi dữ liệu, yêu cầu bổ sung văn bản
@@ -528,6 +559,7 @@ src/
   lib/structured-data.ts    # JSON-LD Legislation và BreadcrumbList
   lib/search-index.ts       # dựng chỉ mục tìm kiếm lúc build
   lib/search-engine.ts      # bộ máy tìm chạy trên trình duyệt
+  lib/public-feed.ts        # hợp đồng dữ liệu `lex-lineage/documents@1`
   lib/client-store.ts       # theo dõi, vừa xem, bộ hồ sơ, ngày tra cứu
   lib/changes.ts            # dòng thay đổi của cả kho
   lib/account.ts            # tài khoản Supabase và đồng bộ theo dõi, bộ hồ sơ
@@ -688,6 +720,15 @@ image rendered at build time with `next/og` from the record itself, with the
 mark read from `src/app/icon.svg`. Document and pair pages have share controls: the operating system's
 share sheet on phones, copy-link on desktops, and plain links to Facebook and
 LinkedIn; no third-party script is loaded.
+
+A versioned public feed, `/api/v1/documents.json` (schema
+`lex-lineage/documents@1`, contract in `src/lib/public-feed.ts`), is built as a
+static file. The LHPT Law Firm website reads it at its own build time and takes
+status, commencement, expiry and replacement from it, keeping its own commentary;
+each instrument there links back to its lineage page here. The footer here links
+to the firm for advice on a specific matter (`NEXT_PUBLIC_FIRM_URL`, default
+`https://lhpt-lawfirm.vercel.app`). Either site runs on its own if the other is
+down.
 
 To deploy, set `NEXT_PUBLIC_SITE_URL` to the site's origin. Canonical tags,
 hreflang tags and `sitemap.xml` all need absolute addresses, and that address
