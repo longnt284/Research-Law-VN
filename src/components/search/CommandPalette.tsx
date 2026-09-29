@@ -87,6 +87,7 @@ export default function CommandPalette({ lang, onClose }: { lang: Lang; onClose:
       { href: `/${lang}/doi-chieu`, label: s.nav.compare, hint: t.compare.title },
       { href: `/${lang}/thay-doi`, label: s.nav.changes, hint: "" },
       { href: `/${lang}/theo-doi`, label: s.nav.watch, hint: "" },
+      { href: `/${lang}/video`, label: s.nav.video, hint: "" },
       { href: `/${lang}/phuong-phap`, label: s.nav.method, hint: t.about.title },
       { href: `/${lang}`, label: t.nav.home, hint: t.siteName },
     ],

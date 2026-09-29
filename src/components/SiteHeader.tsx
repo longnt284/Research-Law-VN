@@ -18,9 +18,10 @@ import { useAccount } from "@/lib/client-store";
 /**
  * Thanh điều hướng.
  *
- * Năm mục đi theo đúng nhịp làm việc của người tra cứu: tra một văn bản, khám
- * phá theo lĩnh vực, đối chiếu hai đời văn bản, xem điều gì vừa thay đổi, và
- * theo dõi những văn bản mình đang dùng. Trang chủ nằm sau dấu hiệu ở góc trái.
+ * Năm mục đầu đi theo đúng nhịp làm việc của người tra cứu: tra một văn bản,
+ * khám phá theo lĩnh vực, đối chiếu hai đời văn bản, xem điều gì vừa thay đổi,
+ * và theo dõi những văn bản mình đang dùng. Mục cuối mở video giới thiệu các
+ * văn bản pháp lý số. Trang chủ nằm sau dấu hiệu ở góc trái.
  *
  * Nút tìm kiếm có mặt ở mọi trang và mở bảng lệnh (Ctrl K / ⌘ K): người đang
  * đọc giữa một nghị định không phải quay về trang chủ để tra văn bản khác.
@@ -66,6 +67,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     { href: `/${lang}/doi-chieu`, label: s.nav.compare },
     { href: `/${lang}/thay-doi`, label: s.nav.changes },
     { href: `/${lang}/theo-doi`, label: s.nav.watch },
+    { href: `/${lang}/video`, label: s.nav.video },
   ];
 
   const searchButton = (compact: boolean) => (
