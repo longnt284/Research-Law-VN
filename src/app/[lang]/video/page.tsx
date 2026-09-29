@@ -1,136 +1,144 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { LuxBackdrop } from "@/components/LuxBackdrop";
-import { ShowcasePlayer, type Chapter } from "@/components/showcase/ShowcasePlayer";
-import type { Lang } from "@/data/types";
+import { JsonLd } from "@/components/JsonLd";
+import { IntroPlayer, type DomainMark } from "@/components/showcase/IntroPlayer";
+import { documentsById, domains } from "@/data/documents";
+import type { DomainId, Lang } from "@/data/types";
 import { isLang } from "@/i18n/dictionary";
-import { getSearchCopy } from "@/i18n/search";
-import { alternatesFor, shareMeta } from "@/lib/site";
+import { alternatesFor, pathFor, shareMeta, SITE_URL } from "@/lib/site";
 
-const SRC = "/video/luat-chay-bang-code.mp4";
-const WEBM = "/video/luat-chay-bang-code.webm";
-const POSTER = "/video/luat-chay-bang-code.jpg";
-
-/**
- * Mốc chương tính theo nhịp của bản nhạc: 128 nhịp mỗi phút, mỗi nhịp 0,46875
- * giây. Các mốc trùng với ranh giới cảnh trong `video/scene.js`.
- */
-const BEAT = 60 / 128;
-const AT = [0, 4, 10, 20, 32, 40, 46, 54, 62].map((b) => b * BEAT);
+const SRC = "/video/gioi-thieu.mp4";
+const WEBM = "/video/gioi-thieu.webm";
+const POSTER = "/video/gioi-thieu.jpg";
 
 /**
- * Nguồn của bốn văn bản xuất hiện trong video. Bốn văn bản này chưa có trong
- * kho dữ liệu của trang, nên dẫn thẳng tới trang văn bản trên cổng Chính phủ,
- * nơi số hiệu và ngày hiệu lực đã được đối chiếu khi dựng video.
+ * Mốc thời gian tính theo nhịp của bản nhạc: 110 nhịp mỗi phút, 92 nhịp cả bài.
+ * Các mốc trùng với ranh giới cảnh trong `video/scene.js`: năm chương ở nhịp 0,
+ * 12, 24, 68, 80; mỗi lĩnh vực chiếm một ô nhịp bốn phách, bắt đầu từ nhịp 28.
  */
-const SOURCES = [
-  {
-    no: "05/2025/NQ-CP",
-    url: "https://vanban.chinhphu.vn/?pageid=27160&docid=215249",
-    vi: { name: "Nghị quyết về triển khai thí điểm thị trường tài sản mã hóa tại Việt Nam", when: "Ban hành và có hiệu lực ngày 09/09/2025" },
-    en: { name: "Resolution on piloting the crypto-asset market in Viet Nam", when: "Issued and effective 9 September 2025" },
-  },
-  {
-    no: "71/2025/QH15",
-    url: "https://vanban.chinhphu.vn/?pageid=27160&docid=214609&classid=1&typegroupid=3",
-    vi: { name: "Luật Công nghiệp công nghệ số", when: "Có hiệu lực từ ngày 01/01/2026" },
-    en: { name: "Law on Digital Technology Industry", when: "Effective 1 January 2026" },
-  },
-  {
-    no: "91/2025/QH15",
-    url: "https://chinhphu.vn/?pageid=27160&docid=214590&classid=1&typegroupid=3",
-    vi: { name: "Luật Bảo vệ dữ liệu cá nhân", when: "Có hiệu lực từ ngày 01/01/2026" },
-    en: { name: "Law on Personal Data Protection", when: "Effective 1 January 2026" },
-  },
-  {
-    no: "134/2025/QH15",
-    url: "https://vanban.chinhphu.vn/?pageid=27160&docid=216334&classid=1&typegroupid=3",
-    vi: { name: "Luật Trí tuệ nhân tạo", when: "Thông qua ngày 10/12/2025, có hiệu lực từ ngày 01/03/2026" },
-    en: { name: "Law on Artificial Intelligence", when: "Passed 10 December 2025, effective 1 March 2026" },
-  },
-];
+const BEAT = 60 / 110;
+const DURATION = 92 * BEAT;
+const CHAPTER_AT = [0, 12, 24, 68, 80].map((b) => b * BEAT);
+const DOMAIN_AT = (i: number) => (28 + 4 * i) * BEAT;
+const DOMAIN_LEN = 4 * BEAT;
+
+/**
+ * Văn bản nền tảng của từng lĩnh vực, đúng như video trình bày. Số hiệu và tên
+ * đọc từ tập dữ liệu, nên lưới bên dưới video luôn khớp với trang văn bản.
+ */
+const FLAGSHIP: Record<DomainId, string> = {
+  "xay-dung": "luat-xay-dung-2025",
+  "nang-luong": "luat-dien-luc-2024",
+  "hop-dong": "blds-2015",
+  "to-tung": "bltds-2015",
+  "doanh-nghiep": "luat-dn-2020",
+  "dau-tu": "luat-dau-tu-2025",
+  "lao-dong": "blld-2019",
+  thue: "luat-qlt-2025",
+  "dat-dai": "luat-dat-dai-2024",
+  ppp: "luat-ppp-2020",
+};
 
 const copy: Record<
   Lang,
   {
+    eyebrow: string;
     title: string;
     lede: string;
     videoTitle: string;
-    chapters: string;
-    list: Omit<Chapter, "t">[];
-    facts: [string, string][];
-    sourcesH: string;
-    sourcesP: string;
-    howH: string;
-    howP: string[];
+    chaptersLabel: string;
+    chapters: { label: string; onScreen: string }[];
+    domainsH: string;
+    domainsP: string;
+    play: string;
+    open: string;
     download: string;
     note: string;
+    transcript: string;
   }
 > = {
   vi: {
-    title: "Khi luật chạy bằng code",
-    lede: "Video ngắn 34 giây về nơi pháp luật, công nghệ và tài chính gặp nhau: tài sản số, dữ liệu cá nhân và trí tuệ nhân tạo, qua bốn văn bản có hiệu lực trong năm 2025 và 2026.",
-    videoTitle: "Video: Khi luật chạy bằng code",
-    chapters: "Chương",
-    list: [
-      { label: "Mở đầu", onScreen: "> law.compile()" },
-      { label: "Luật × Code × Tiền", onScreen: "LUẬT · CODE · TIỀN — Pháp lý, Công nghệ, Tài chính" },
-      { label: "Cán cân mới", onScreen: "CÁN CÂN MỚI — Luật · Công nghệ · Tài chính" },
-      { label: "Bốn cột mốc pháp lý số", onScreen: "NQ 05/2025/NQ-CP · Luật 71/2025/QH15 · Luật 91/2025/QH15 · Luật 134/2025/QH15" },
-      { label: "Tài sản số", onScreen: "TIỀN ĐANG SỐ HÓA — TÀI SẢN SỐ // đã có khung pháp lý" },
-      { label: "Dữ liệu cá nhân", onScreen: "DỮ LIỆU CÁ NHÂN — KHÔNG ĐỂ MUA BÁN" },
-      { label: "Trí tuệ nhân tạo", onScreen: "AI PHỤC VỤ CON NGƯỜI — KHÔNG THAY THẾ THẨM QUYỀN & TRÁCH NHIỆM CỦA CON NGƯỜI" },
-      { label: "Từ khóa", onScreen: "Hợp đồng thông minh · Blockchain · KYC · Dữ liệu · AI · Token · Fintech · Legaltech · Tuân thủ · Bảo mật · Thanh toán số · Pháp lý số" },
-      { label: "Kết", onScreen: "KHI LUẬT CHẠY BẰNG CODE. Bạn đã sẵn sàng?" },
+    eyebrow: "Lex & Lineage",
+    title: "Video Giới thiệu",
+    lede: "50 giây về mười lĩnh vực pháp luật, một gia phả văn bản, và câu hỏi người làm luật nào cũng gặp: văn bản còn hiệu lực vào ngày nào?",
+    videoTitle: "Video giới thiệu Lex & Lineage",
+    chaptersLabel: "Chương",
+    chapters: [
+      {
+        label: "Còn hiệu lực không?",
+        onScreen:
+          "Luật Xây dựng số 50/2014/QH13, có hiệu lực từ 01/01/2015. Câu hỏi: văn bản này còn hiệu lực không? Ngày tra cứu chạy tới 01/07/2026 thì văn bản bị đóng dấu hết hiệu lực, và Luật Xây dựng số 135/2025/QH15 thay thế. Hợp đồng xây dựng ký trước 01/07/2026, về nguyên tắc, vẫn theo luật cũ.",
+      },
+      {
+        label: "Gia phả văn bản",
+        onScreen:
+          "Luật 135/2025/QH15 thay thế Luật 50/2014/QH13, luật cũ từng được Luật 62/2020/QH14 sửa đổi; bảy nghị định năm 2026 hướng dẫn luật mới. Mỗi văn bản pháp luật đều có một gia phả. Lex & Lineage, gia phả văn bản pháp luật Việt Nam.",
+      },
+      {
+        label: "10 lĩnh vực",
+        onScreen:
+          "10 lĩnh vực pháp luật, từ công trường đến phòng xử án. Mỗi lĩnh vực đi kèm một văn bản nền tảng, số hiệu và ngày có hiệu lực, như lưới bên dưới.",
+      },
+      {
+        label: "Ba công cụ",
+        onScreen:
+          "Tra hiệu lực theo ngày: ngày 15/12/2025 và ngày 01/07/2026 cho hai kết quả khác nhau với Luật Xây dựng 2014 và 2025. So sánh phiên bản: mốc hiệu lực, miễn giấy phép xây dựng, văn bản thi hành. Theo dõi thay đổi: bốn luật có hiệu lực trong năm 2026.",
+      },
+      {
+        label: "Lex & Lineage",
+        onScreen:
+          "10 lĩnh vực, hơn 140 văn bản, một gia phả. Mỗi văn bản kèm nguồn chính thức và ngày tra cứu. Thông tin tham khảo, không thay thế ý kiến pháp lý cho vụ việc cụ thể.",
+      },
     ],
-    facts: [
-      ["Thời lượng", "34 giây"],
-      ["Khung hình", "1080 × 1920, dọc 9:16"],
-      ["Tốc độ", "60 hình/giây"],
-      ["Nhạc", "128 nhịp/phút, tổng hợp bằng mã"],
-    ],
-    sourcesH: "Văn bản trong video",
-    sourcesP: "Số hiệu, ngày ban hành và ngày hiệu lực của bốn văn bản dưới đây được đối chiếu trên cổng văn bản của Chính phủ trước khi đưa vào video. Câu về Luật Trí tuệ nhân tạo diễn lại nguyên tắc của luật: trí tuệ nhân tạo phục vụ con người, không thay thế thẩm quyền và trách nhiệm của con người.",
-    howH: "Video được làm thế nào",
-    howP: [
-      "Mỗi khung hình là một hàm của thời gian, vẽ bằng Canvas 2D: chữ động, hạt ráp thành cán cân, dòng thời gian, nến giá hóa khối chuỗi, quét vân tay, mạng nơ-ron và đường hầm tốc độ. Không dùng cảnh quay hay hình ảnh tải về.",
-      "Nhạc nền được tổng hợp bằng mã ở cùng nhịp với hình, nên mỗi cú dập chữ rơi đúng tiếng trống. Mã nguồn nằm trong thư mục video của kho mã.",
-    ],
+    domainsH: "10 lĩnh vực trong video",
+    domainsP: "Bấm một lĩnh vực để xem đúng đoạn đó.",
+    play: "Xem trong video từ",
+    open: "Mở lĩnh vực",
     download: "Tải video (MP4)",
-    note: "Video mang tính giới thiệu, không phải ý kiến pháp lý. Trước khi áp dụng, đối chiếu toàn văn văn bản tại nguồn chính thức.",
+    note: "Video mang tính giới thiệu, không phải ý kiến pháp lý. Đối chiếu toàn văn văn bản tại nguồn chính thức trước khi áp dụng.",
+    transcript: "Chữ trên màn hình",
   },
   en: {
-    title: "When law runs on code",
-    lede: "A 34-second short on where law, technology and finance meet: digital assets, personal data and artificial intelligence, told through four instruments that took effect in 2025 and 2026.",
-    videoTitle: "Video: When law runs on code",
-    chapters: "Chapters",
-    list: [
-      { label: "Opening", onScreen: "> law.compile()" },
-      { label: "Law × Code × Money", onScreen: "LUẬT · CODE · TIỀN — law, technology, finance" },
-      { label: "A new balance", onScreen: "CÁN CÂN MỚI (A new balance) — law · technology · finance" },
-      { label: "Four digital-law milestones", onScreen: "Resolution 05/2025/NQ-CP · Laws 71/2025/QH15, 91/2025/QH15, 134/2025/QH15" },
-      { label: "Digital assets", onScreen: "Money is going digital — digital assets now have a legal framework" },
-      { label: "Personal data", onScreen: "Personal data — not for sale" },
-      { label: "Artificial intelligence", onScreen: "AI serves people — it does not replace human authority and responsibility" },
-      { label: "Keywords", onScreen: "Smart contracts · Blockchain · KYC · Data · AI · Token · Fintech · Legaltech · Compliance · Security · Digital payments · Digital law" },
-      { label: "Close", onScreen: "When law runs on code. Are you ready?" },
+    eyebrow: "Lex & Lineage",
+    title: "Introductory Video",
+    lede: "Fifty seconds on ten practice areas, one family tree of legal instruments, and the question every lawyer meets: is this law in force on that date?",
+    videoTitle: "Lex & Lineage introductory video",
+    chaptersLabel: "Chapters",
+    chapters: [
+      {
+        label: "Still in force?",
+        onScreen:
+          "Construction Law No. 50/2014/QH13, in force from 1 January 2015. The question: is this instrument still in force? The lookup date runs to 1 July 2026, the instrument is stamped as no longer in force, and Construction Law No. 135/2025/QH15 replaces it. Construction contracts signed before 1 July 2026 in principle stay under the old Law.",
+      },
+      {
+        label: "A family tree",
+        onScreen:
+          "Law 135/2025/QH15 replaces Law 50/2014/QH13, which Law 62/2020/QH14 had amended; seven 2026 decrees implement the new Law. Every legal instrument has a family tree. Lex & Lineage, the genealogy of Vietnamese law.",
+      },
+      {
+        label: "Ten areas",
+        onScreen:
+          "Ten practice areas, from the building site to the courtroom. Each comes with one foundational instrument, its number and its date of effect, as in the grid below.",
+      },
+      {
+        label: "Three tools",
+        onScreen:
+          "Validity on a date: 15 December 2025 and 1 July 2026 give different answers for the 2014 and 2025 Construction Laws. Version comparison: dates of effect, permit exemption, implementing instruments. Change tracking: four Laws that took effect in 2026.",
+      },
+      {
+        label: "Lex & Lineage",
+        onScreen:
+          "10 practice areas, 140+ instruments, one family tree. Every instrument carries its official source and the date it was checked. For reference only; not legal advice on a specific matter.",
+      },
     ],
-    facts: [
-      ["Length", "34 seconds"],
-      ["Frame", "1080 × 1920, vertical 9:16"],
-      ["Frame rate", "60 fps"],
-      ["Music", "128 BPM, synthesised in code"],
-    ],
-    sourcesH: "Instruments in the video",
-    sourcesP: "The numbers, dates of issue and dates of effect of the four instruments below were checked on the Government's document portal before they went into the video. The line on the AI Law restates the law's principle: artificial intelligence serves people and does not replace human authority and responsibility.",
-    howH: "How the video was made",
-    howP: [
-      "Every frame is a function of time drawn with Canvas 2D: kinetic type, particles assembling a scale of justice, a timeline, price candles turning into chain blocks, a fingerprint scan, a neural network and a speed tunnel. No footage or downloaded images are used.",
-      "The soundtrack is synthesised in code on the same beat grid as the picture, so every type slam lands on a drum hit. The source lives in the video folder of the repository.",
-    ],
+    domainsH: "The ten areas in the video",
+    domainsP: "Pick an area to jump to its part of the video.",
+    play: "Watch in the video from",
+    open: "Open area",
     download: "Download video (MP4)",
     note: "The on-screen text is in Vietnamese. The video is an introduction, not legal advice; check the full text at an official source before relying on it.",
+    transcript: "On-screen text",
   },
 };
 
@@ -159,84 +167,81 @@ export default async function VideoPage({
   if (!isLang(raw)) notFound();
   const lang: Lang = raw;
   const c = copy[lang];
-  const nav = getSearchCopy(lang).nav;
-  const chapters: Chapter[] = c.list.map((ch, i) => ({ ...ch, t: AT[i] }));
+
+  const chapters = c.chapters.map((ch, i) => ({ label: ch.label, t: CHAPTER_AT[i] }));
+  const marks: DomainMark[] = domains.map((d, i) => {
+    const doc = documentsById.get(FLAGSHIP[d.id]);
+    if (!doc) throw new Error(`Thiếu văn bản nền tảng cho lĩnh vực ${d.id}`);
+    return {
+      id: d.id,
+      t: DOMAIN_AT(i),
+      len: DOMAIN_LEN,
+      hue: d.hue,
+      name: d.label[lang],
+      law: doc.title[lang],
+      number: doc.number,
+      href: pathFor(lang, `/linh-vuc/${d.id}`),
+    };
+  });
+
+  const videoLd = {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: c.videoTitle,
+    description: c.lede,
+    inLanguage: "vi",
+    uploadDate: "2026-09-29",
+    duration: `PT${Math.round(DURATION)}S`,
+    thumbnailUrl: `${SITE_URL}${POSTER}`,
+    contentUrl: `${SITE_URL}${SRC}`,
+    url: `${SITE_URL}${pathFor(lang, "/video")}`,
+  };
 
   return (
     <>
-      <section className="rule-b hero-lux">
-        <LuxBackdrop />
-        <div className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-          <p className="eyebrow eyebrow-tick rise">{nav.video}</p>
-          <h1 className="display rise rise-1 mt-3 max-w-[20ch]">{c.title}</h1>
-          <p className="measure rise rise-2 mt-5 text-[1.125rem] leading-relaxed text-[var(--ink-2)]">
-            {c.lede}
-          </p>
-        </div>
-      </section>
-
-      <article className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-14">
-        <ShowcasePlayer
-          src={SRC}
-          webm={WEBM}
-          poster={POSTER}
-          title={c.videoTitle}
-          chapters={chapters}
-          chaptersLabel={c.chapters}
-        />
-
-        <dl className="showcase-facts tnum mt-10">
-          {c.facts.map(([k, v]) => (
-            <div key={k}>
-              <dt className="eyebrow">{k}</dt>
-              <dd>{v}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+      <JsonLd data={videoLd} />
+      <IntroPlayer
+        head={
+          <header className="intro-head">
+            <p className="eyebrow eyebrow-tick rise">{c.eyebrow}</p>
+            <h1 className="display intro-title rise rise-1">{c.title}</h1>
+            <p className="intro-lede rise rise-2">{c.lede}</p>
+          </header>
+        }
+        src={SRC}
+        webm={WEBM}
+        poster={POSTER}
+        title={c.videoTitle}
+        chapters={chapters}
+        chaptersLabel={c.chaptersLabel}
+        domainsHead={
+          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+            <h2 className="display-sm">{c.domainsH}</h2>
+            <p className="text-sm text-[var(--ink-3)]">{c.domainsP}</p>
+          </div>
+        }
+        domains={marks}
+        playLabel={c.play}
+        openLabel={c.open}
+      >
+        <div className="intro-foot">
           <a href={SRC} download className="btn btn-outline">
             {c.download} <span aria-hidden="true">↓</span>
           </a>
           <p className="text-sm text-[var(--ink-3)]">{c.note}</p>
         </div>
-
-        <div className="mt-14 space-y-14">
-          <section id="van-ban" className="method-sec scroll-mt-24">
-            <p aria-hidden="true" className="method-n tnum">I</p>
-            <div className="min-w-0">
-              <h2 className="method-h">{c.sourcesH}</h2>
-              <p className="measure mt-3 leading-[1.75] text-[var(--ink-2)]">{c.sourcesP}</p>
-              <ul className="showcase-sources">
-                {SOURCES.map((s) => (
-                  <li key={s.no}>
-                    <a href={s.url} target="_blank" rel="noopener" className="link-sweep font-medium">
-                      {s[lang].name} <span aria-hidden="true">↗</span>
-                    </a>
-                    <span className="showcase-source-meta tnum">
-                      {s.no} · {s[lang].when}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </section>
-
-          <section id="cach-lam" className="method-sec scroll-mt-24">
-            <p aria-hidden="true" className="method-n tnum">II</p>
-            <div className="min-w-0">
-              <h2 className="method-h">{c.howH}</h2>
-              <div className="measure mt-3 space-y-4">
-                {c.howP.map((p) => (
-                  <p key={p} className="leading-[1.75] text-[var(--ink-2)]">
-                    {p}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </section>
-        </div>
-      </article>
+        <details className="intro-transcript">
+          <summary>{c.transcript}</summary>
+          <ol>
+            {c.chapters.map((ch) => (
+              <li key={ch.label}>
+                <span className="intro-transcript-label">{ch.label}</span>
+                <span>{ch.onScreen}</span>
+              </li>
+            ))}
+          </ol>
+        </details>
+      </IntroPlayer>
     </>
   );
 }
