@@ -49,8 +49,8 @@ node render.mjs video 4          # -> out/video_silent.mp4
 python3 audio.py                 # -> out/audio.wav
 cd out
 # MP4 cho web, mã hóa 2 lượt
-$FFMPEG -y -i video_silent.mp4 -c:v libx264 -preset slow -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 1 -an -f mp4 /dev/null
-$FFMPEG -y -i video_silent.mp4 -i audio.wav -c:v libx264 -preset slow -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 2 \
+$FFMPEG -y -i video_silent.mp4 -c:v libx264 -preset slow -profile:v high -level:v 4.2 -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 1 -an -f mp4 /dev/null
+$FFMPEG -y -i video_silent.mp4 -i audio.wav -c:v libx264 -preset slow -profile:v high -level:v 4.2 -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 2 \
   -c:a aac -b:a 192k -shortest -movflags +faststart ../../public/video/gioi-thieu.mp4
 # WebM cho trình duyệt không có H.264
 $FFMPEG -y -i video_silent.mp4 -i audio.wav -c:v libvpx-vp9 -b:v 0 -crf 36 -row-mt 1 -c:a libopus -b:a 128k -shortest ../../public/video/gioi-thieu.webm
