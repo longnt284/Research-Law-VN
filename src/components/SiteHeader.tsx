@@ -20,9 +20,10 @@ import { useAccount } from "@/lib/client-store";
  *
  * Năm mục đầu đi theo đúng nhịp làm việc của người tra cứu: tra một văn bản,
  * khám phá theo lĩnh vực, đối chiếu hai đời văn bản, xem điều gì vừa thay đổi,
- * và theo dõi những văn bản mình đang dùng. Mục cuối mở video giới thiệu trang:
- * mười lĩnh vực và ba công cụ trong năm mươi giây. Trang chủ nằm sau dấu hiệu ở
- * góc trái.
+ * và theo dõi những văn bản mình đang dùng. Nút "Giới thiệu" viền đồng mở video
+ * giới thiệu trang; nó mang dáng nút chứ không phải một mục chữ, để người lần đầu
+ * tới trang nhận ra ngay. Trên màn hình hẹp nút đứng đầu dải điều hướng cuộn
+ * ngang, nên không bị đẩy khuất. Trang chủ nằm sau dấu hiệu ở góc trái.
  *
  * Nút tìm kiếm có mặt ở mọi trang và mở bảng lệnh (Ctrl K / ⌘ K): người đang
  * đọc giữa một nghị định không phải quay về trang chủ để tra văn bản khác.
@@ -68,8 +69,9 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     { href: `/${lang}/doi-chieu`, label: s.nav.compare },
     { href: `/${lang}/thay-doi`, label: s.nav.changes },
     { href: `/${lang}/theo-doi`, label: s.nav.watch },
-    { href: `/${lang}/video`, label: s.nav.video },
   ];
+  const introHref = `/${lang}/video`;
+  const introActive = pathname.startsWith(introHref);
 
   const searchButton = (compact: boolean) => (
     <button
@@ -120,6 +122,18 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
               </Link>
             );
           })}
+          <Link
+            href={introHref}
+            aria-current={introActive ? "page" : undefined}
+            className={`hdr-intro ${introActive ? "is-active" : ""}`}
+          >
+            <span aria-hidden="true" className="hdr-intro-icon">
+              <svg viewBox="0 0 16 16" width="10" height="10">
+                <path d="M5 3.2v9.6L12.8 8z" fill="currentColor" />
+              </svg>
+            </span>
+            {s.nav.video}
+          </Link>
         </nav>
 
         <div className="hdr-tools">
