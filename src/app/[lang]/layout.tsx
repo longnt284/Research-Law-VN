@@ -169,6 +169,7 @@ export default async function LangLayout({
                   <li><Link href={`/${lang}/doi-chieu`} className="link-sweep">{nav.compare}</Link></li>
                   <li><Link href={`/${lang}/thay-doi`} className="link-sweep">{nav.changes}</Link></li>
                   <li><Link href={`/${lang}/theo-doi`} className="link-sweep">{nav.watch}</Link></li>
+                  <li><Link href={`/${lang}/video`} className="link-sweep">{nav.video}</Link></li>
                 </ul>
               </nav>
               <nav aria-label={f.data}>

@@ -16,6 +16,7 @@ export interface SearchCopy {
     compare: string;
     changes: string;
     watch: string;
+    video: string;
     method: string;
     search: string;
     primary: string;
@@ -112,6 +113,7 @@ const vi: SearchCopy = {
     compare: "Đối chiếu",
     changes: "Thay đổi",
     watch: "Theo dõi",
+    video: "Video",
     method: "Phương pháp",
     search: "Tìm văn bản",
     primary: "Điều hướng chính",
@@ -226,6 +228,7 @@ const en: SearchCopy = {
     compare: "Compare",
     changes: "Changes",
     watch: "Watchlist",
+    video: "Video",
     method: "Method",
     search: "Search instruments",
     primary: "Main navigation",

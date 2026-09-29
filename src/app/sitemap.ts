@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/phuong-phap",
     "/thay-doi",
     "/gop-y",
+    "/video",
     ...domains.map((d) => `/linh-vuc/${d.id}`),
     ...documents.map((d) => `/van-ban/${d.id}`),
     ...pairs.map((p) => `/doi-chieu/${p.id}`),
