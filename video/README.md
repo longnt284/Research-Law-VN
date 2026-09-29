@@ -1,7 +1,7 @@
 # Lex & Lineage — video giới thiệu
 
-Video ngang 16:9 (1920×1080, 60 fps, ~50 giây) giới thiệu trang: câu hỏi hiệu lực theo ngày,
-gia phả văn bản, mười lĩnh vực pháp luật và ba công cụ tra cứu. Mọi khung hình được vẽ bằng
+Video ngang 16:9 (1920×1080, 60 fps, ~55 giây) giới thiệu trang: câu hỏi hiệu lực theo ngày,
+gia phả văn bản, mười hai lĩnh vực pháp luật và ba công cụ tra cứu. Mọi khung hình được vẽ bằng
 Canvas 2D thuần, là hàm thuần của thời gian `t`, rồi render qua Chromium headless và mã hóa bằng
 ffmpeg. Nhạc nền được tổng hợp bằng code (110 BPM, Rê thứ), khóa nhịp với hình qua khối `SYNC`
 trong `scene.js`.
@@ -26,9 +26,14 @@ của trang (`src/app/globals.css`). Dấu hiệu và biểu tượng lĩnh vự
 | --- | --- |
 | 0–12 | Luật Xây dựng 50/2014/QH13: "còn hiệu lực không?"; ngày tra cứu chạy tới 01/07/2026, đóng dấu hết hiệu lực; 135/2025/QH15 thay thế; hợp đồng ký trước mốc vẫn theo luật cũ |
 | 12–24 | Gia phả của Luật Xây dựng 2025 (thay thế, sửa đổi, bảy nghị định hướng dẫn), rồi dấu hiệu và tên trang |
-| 24–68 | "10 lĩnh vực pháp luật", mỗi lĩnh vực một ô nhịp: biểu tượng, từ khóa, văn bản nền tảng |
-| 68–80 | Ba công cụ: tra hiệu lực theo ngày, so sánh phiên bản, theo dõi thay đổi |
-| 80–92 | Vòng mười lĩnh vực thu về dấu hiệu; chốt tên trang và lời miễn trừ |
+| 24–76 | "12 lĩnh vực pháp luật", mỗi lĩnh vực một ô nhịp: biểu tượng, từ khóa, văn bản nền tảng |
+| 76–88 | Ba công cụ: tra hiệu lực theo ngày, so sánh phiên bản, theo dõi thay đổi |
+| 88–100 | Vòng mười hai lĩnh vực thu về dấu hiệu; chốt tên trang và lời miễn trừ |
+
+Ranh giới cảnh không viết tay: `scene.js` và `audio.py` cùng tính `T4 = 28 + 4 × số lĩnh vực`
+(bắt đầu cảnh công cụ) và `T5 = T4 + 12` (bắt đầu cảnh chốt) từ `DOMAINS` và khối `SYNC`. Thêm
+một lĩnh vực là thêm một phần tử vào `DOMAINS`, `GLYPH` và `SYNC.domains`, dời các mốc `flip`,
+`rows`, `feed` và hai mốc `impacts` cuối thêm bốn nhịp, rồi tăng `TOTAL_BEATS` ở cả hai tệp.
 
 ## Nguồn nội dung pháp lý
 

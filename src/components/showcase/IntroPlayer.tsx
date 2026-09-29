@@ -26,7 +26,7 @@ export interface DomainMark {
 }
 
 /**
- * Video giới thiệu: sân khấu tối có khung 16:9, dải chương, và lưới mười lĩnh
+ * Video giới thiệu: sân khấu tối có khung 16:9, dải chương, và lưới các lĩnh
  * vực bên dưới để nhảy thẳng tới đoạn của từng lĩnh vực.
  *
  * Dùng thẻ `<video>` gốc của trình duyệt, có sẵn nút điều khiển, phím tắt và
