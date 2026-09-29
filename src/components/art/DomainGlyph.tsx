@@ -6,7 +6,8 @@ import type { DomainId } from "@/data/types";
  * Mỗi hình là một vật mà người làm nghề trong lĩnh vực ấy nhận ra ngay: cần cẩu
  * và khối nhà cho xây dựng, cột điện cho năng lượng, trang hợp đồng có chữ ký,
  * cán cân, tòa văn phòng, đồ thị tăng trưởng, mũ bảo hộ, biên lai thuế, thửa đất
- * có mốc giới, cây cầu hạ tầng. Không có khối hình học trừu tượng nào: hình phải
+ * có mốc giới, cây cầu hạ tầng, đồng xu nối mạch cho fintech, tấm khiên có lỗ
+ * khóa cho dữ liệu. Không có khối hình học trừu tượng nào: hình phải
  * tự nói lĩnh vực trước khi người đọc kịp đọc nhãn.
  *
  * Nét vẽ bằng `currentColor`, nên màu do nơi gọi quyết định — thường là sắc của
@@ -96,6 +97,24 @@ const GLYPHS: Record<DomainId, React.ReactNode> = {
       <path d="M12 13q12 16 24 0M12 13 4 31M36 13l8 18" />
       <path d="M18 31v-7M24 31v-5M30 31v-7" />
       <path d="M8 38c4-2 8 2 12 0s8 2 12 0 8 2 12 0" />
+    </>
+  ),
+  fintech: (
+    <>
+      <circle cx="17" cy="24" r="12" />
+      <circle cx="17" cy="24" r="8" />
+      <path d="M17 19.5l3.9 2.25v4.5L17 28.5l-3.9-2.25v-4.5z" />
+      <path d="M29 18h4l4-5h4M29 24h12M29 30h4l4 5h4" />
+      <circle cx="43" cy="13" r="1.8" />
+      <circle cx="43" cy="24" r="1.8" />
+      <circle cx="43" cy="35" r="1.8" />
+    </>
+  ),
+  "du-lieu": (
+    <>
+      <path d="M24 4 9 9.5V22c0 10.5 6.5 18 15 22 8.5-4 15-11.5 15-22V9.5z" />
+      <circle cx="24" cy="20.5" r="4" />
+      <path d="M22.4 24.1 21 32h6l-1.4-7.9" />
     </>
   ),
 };

@@ -1,6 +1,6 @@
 import { LegalStatus } from "@/components/legal/LegalStatus";
 import { domains } from "@/data/documents";
-import type { DocStatus, DocType, DomainId, Lang } from "@/data/types";
+import type { DocStatus, DomainId, Lang } from "@/data/types";
 import { getDict } from "@/i18n/dictionary";
 import { getSearchCopy } from "@/i18n/search";
 
@@ -46,10 +46,6 @@ export function DomainChip({ id, lang }: { id: DomainId; lang: Lang }) {
       {d.label[lang]}
     </span>
   );
-}
-
-export function TypeLabel({ type, lang }: { type: DocType; lang: Lang }) {
-  return <>{getDict(lang).type[type]}</>;
 }
 
 /**

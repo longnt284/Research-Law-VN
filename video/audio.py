@@ -1,4 +1,4 @@
-"""Synthesize the soundtrack, beat-locked to scene.js (110 BPM, 92 beats, D minor).
+"""Synthesize the soundtrack, beat-locked to scene.js (110 BPM, 100 beats, D minor).
 
 Every event time is read from the SYNC block in scene.js, so picture and sound
 share one source. Output: out/audio.wav (48 kHz, stereo, 16-bit).
@@ -14,7 +14,7 @@ DIR = Path(__file__).parent
 SR = 48000
 BPM = 110
 B = 60 / BPM
-TOTAL_BEATS = 92
+TOTAL_BEATS = 100
 DUR = TOTAL_BEATS * B + 1.0
 N = int(DUR * SR)
 rng = np.random.default_rng(11)
@@ -22,6 +22,11 @@ rng = np.random.default_rng(11)
 src = (DIR / "scene.js").read_text()
 block = src.split("/*SYNC*/")[1].split("/*END*/")[0]
 SYNC = json.loads(block.split("=", 1)[1].strip().rstrip(";"))
+# Scene boundaries, as in scene.js: one four-beat bar per domain from beat 28,
+# then three bars of tools (T4), then the lockup (T5).
+ND = len(SYNC["domains"])
+T4 = 28 + 4 * ND
+T5 = T4 + 12
 
 dry = np.zeros((N, 2))
 send = np.zeros((N, 2))  # reverb bus
@@ -219,20 +224,20 @@ both(r, sec(24), 0.16, 0.1)
 t = tt(sec(4))
 place(dry, np.sin(2 * np.pi * np.cumsum(mtof(38) * 2 ** (t / sec(4) * 2)) / SR) * (t / sec(4)) ** 3 * 0.08, sec(24))
 
-# groove under the ten domains (beats 28-68), lighter under the tools (68-80)
-kick_beats = list(np.arange(28, 68, 1.0)) + list(np.arange(68, 80, 2.0))
+# groove under the domains (beats 28-T4), lighter under the tools (T4-T5)
+kick_beats = list(np.arange(28, T4, 1.0)) + list(np.arange(T4, T5, 2.0))
 K = kick()
 for b in kick_beats:
-    place(dry, K, sec(b), 0.55 if b < 68 else 0.4)
+    place(dry, K, sec(b), 0.55 if b < T4 else 0.4)
 RIM = rim()
-for b in np.arange(29, 68, 2.0):
+for b in np.arange(29, T4, 2.0):
     place(dry, RIM, sec(b), 0.16, pan=0.1)
     place(send, RIM, sec(b), 0.08)
 H1, H2 = hat(), hat(True)
-for b in np.arange(28, 80, 0.5):
+for b in np.arange(28, T5, 0.5):
     if b % 1 == 0.5:
         place(dry, H2 if int(b) % 4 == 3 else H1, sec(b), 0.1, pan=0.3)
-for b in np.arange(36, 66, 0.25):
+for b in np.arange(36, T4 - 2, 0.25):
     if b % 0.5:
         place(dry, H1, sec(b), 0.045, pan=-0.3)
 
@@ -244,7 +249,7 @@ for b in kick_beats:
     duck[i0:i1] = np.minimum(duck[i0:i1], 1 - 0.45 * np.exp(-d / 0.1))
 
 bass = np.zeros(N)
-for b in np.arange(28, 80, 0.5):
+for b in np.arange(28, T5, 0.5):
     root, _ = chord_at(b)
     f = mtof(root - 24)
     t = tt(B * 0.5)
@@ -255,7 +260,7 @@ for b in np.arange(28, 80, 0.5):
 bass = filt(bass, "lowpass", 600) * duck
 place(dry, np.tanh(bass * 1.3) * 0.32, 0)
 
-for bar in range(13):
+for bar in range((T5 - 28) // 4):
     b0 = 28 + bar * 4
     root, iv = chord_at(b0)
     pad_chord(b0, 4, root, iv, 0.8)
@@ -264,17 +269,17 @@ for bar in range(13):
 for k, b in enumerate(SYNC["domains"]):
     root, iv = chord_at(b)
     m = root + 24 + iv[k % 3]
-    both(bell(mtof(m), 3.0), sec(b), 0.22, 0.25, pan=np.interp(k, [0, 9], [-0.6, 0.6]))
+    both(bell(mtof(m), 3.0), sec(b), 0.22, 0.25, pan=np.interp(k, [0, ND - 1], [-0.6, 0.6]))
 
 # arpeggio: eighth-note plucks over the chord, from the second domain on
-for k, b in enumerate(np.arange(32, 80, 0.5)):
+for k, b in enumerate(np.arange(32, T5, 0.5)):
     root, iv = chord_at(b)
     pat = [0, 1, 2, 1, 2, 0, 2, 1]
     m = root + 12 + iv[pat[k % 8]] + (12 if k % 8 in (2, 4) else 0)
     both(pluck(mtof(m), 0.7, bright=0.8), sec(b), 0.07, 0.05, pan=-0.35 if k % 2 else 0.35)
 
 # transitions
-for b in (24, 68, 80):
+for b in (24, T4, T5):
     w = sweep_noise(sec(1.0), 400, 6000, q=0.5)
     both(w, sec(b - 1.0), 0.16, 0.1)
 
@@ -287,17 +292,17 @@ for b in SYNC["rows"] + SYNC["feed"]:
     both(pluck(mtof(81), 0.6), sec(b), 0.06, 0.06)
 
 # lockup: wide chord, then the last bell
-pad_chord(80, 11.5, 50, [0, 3, 7], 1.1, extra=[14, 19])
+pad_chord(T5, 11.5, 50, [0, 3, 7], 1.1, extra=[14, 19])
 for b, amp in SYNC["impacts"]:
     both(boom(amp), sec(b), 0.55, 0.3 * amp)
 for m, g, p in ((74, 0.45, -0.25), (81, 0.3, 0.25), (86, 0.18, 0.0)):
-    both(bell(mtof(m), 6), sec(84), g, 0.4, pan=p)
-for k, b in enumerate(np.arange(80, 88, 0.25)):
+    both(bell(mtof(m), 6), sec(T5 + 4), g, 0.4, pan=p)
+for k, b in enumerate(np.arange(T5, T5 + 8, 0.25)):
     m = 74 + [0, 3, 7, 10, 14, 10, 7, 3][k % 8]
-    both(pluck(mtof(m), 0.8, bright=1.2), sec(b), 0.04 * (1 - (b - 80) / 8), 0.05, pan=np.sin(k * 0.7) * 0.5)
+    both(pluck(mtof(m), 0.8, bright=1.2), sec(b), 0.04 * (1 - (b - T5) / 8), 0.05, pan=np.sin(k * 0.7) * 0.5)
 
 pad = filt(pad, "lowpass", 1400) * 0.05
-pad *= np.where((tk > sec(28)) & (tk < sec(80)), duck, 1.0)
+pad *= np.where((tk > sec(28)) & (tk < sec(T5)), duck, 1.0)
 place(dry, np.stack([pad, np.roll(pad, 360)], axis=1), 0)
 place(send, np.stack([pad, pad], axis=1), 0, 0.5)
 

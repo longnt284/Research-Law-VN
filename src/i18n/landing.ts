@@ -17,6 +17,8 @@ export interface LandingCopy {
     lineageLabel: string;
     lineageHint: string;
     lineageCaption: (number: string) => string;
+    /** Lối vào video giới thiệu dưới ô tìm. */
+    intro: { title: string; meta: (domains: number) => string };
   };
   intents: {
     eyebrow: string;
@@ -64,7 +66,6 @@ export interface LandingCopy {
     domains: string;
     verified: string;
     crossCheck: string;
-    byDomain: string;
     more: string;
     request: string;
   };
@@ -153,6 +154,10 @@ const vi: LandingCopy = {
     lineageLabel: "Một dòng đời văn bản có thật trong tập dữ liệu",
     lineageHint: "Rê chuột hoặc chạm vào một văn bản để thấy các quan hệ của nó.",
     lineageCaption: (n) => `Dòng đời quanh ${n}, dựng từ chính quan hệ ghi trong bản ghi.`,
+    intro: {
+      title: "Xem video giới thiệu",
+      meta: (n) => `55 giây · ${n} lĩnh vực · ba công cụ tra cứu`,
+    },
   },
   intents: {
     eyebrow: "Công cụ",
@@ -226,7 +231,6 @@ const vi: LandingCopy = {
     domains: "lĩnh vực",
     verified: "đã đối chiếu nguồn chính thống",
     crossCheck: "cần đối chiếu thêm",
-    byDomain: "Số văn bản theo lĩnh vực",
     more: "Xem phạm vi dữ liệu",
     request: "Yêu cầu bổ sung văn bản",
   },
@@ -339,6 +343,10 @@ const en: LandingCopy = {
     lineageLabel: "A real line of descent from the dataset",
     lineageHint: "Hover or tap an instrument to see its relations.",
     lineageCaption: (n) => `The lineage around ${n}, drawn from the relations recorded in each entry.`,
+    intro: {
+      title: "Watch the introduction",
+      meta: (n) => `55 seconds · ${n} practice areas · three tools`,
+    },
   },
   intents: {
     eyebrow: "Tools",
@@ -412,7 +420,6 @@ const en: LandingCopy = {
     domains: "domains",
     verified: "checked against an official source",
     crossCheck: "need further checking",
-    byDomain: "Instruments by domain",
     more: "See data coverage",
     request: "Request an instrument",
   },

@@ -208,35 +208,3 @@ export function assertIntegrity(
     `Kho văn bản không qua được phép kiểm tính chỉnh (${findings.length}):\n${lines.join("\n")}`,
   );
 }
-
-/** Số ràng buộc đang canh, hiển thị trên trang phương pháp. */
-export const integrityRules: { vi: string; en: string }[] = [
-  {
-    vi: "Mã và số hiệu không trùng nhau giữa hai bản ghi.",
-    en: "No two records share an identifier or a document number.",
-  },
-  {
-    vi: "Số hiệu phải khớp quy ước đánh số của loại văn bản.",
-    en: "A document number must match the numbering convention of its type.",
-  },
-  {
-    vi: "Ngày ghi theo ISO, và ngày hiệu lực không sớm hơn ngày ban hành.",
-    en: "Dates are ISO-formatted, and commencement is never earlier than issue.",
-  },
-  {
-    vi: "Mỗi bản ghi thuộc ít nhất một lĩnh vực có trong danh sách.",
-    en: "Every record belongs to at least one domain from the list.",
-  },
-  {
-    vi: "Mỗi bản ghi dẫn ít nhất một nguồn, và mọi nguồn là địa chỉ https.",
-    en: "Every record cites at least one source, and every source is an https address.",
-  },
-  {
-    vi: "Quan hệ chỉ trỏ tới bản ghi có thật, không trỏ về chính nó, không lặp.",
-    en: "Relations point to records that exist, never to themselves, and never repeat.",
-  },
-  {
-    vi: "Văn bản đã bị một văn bản đang có hiệu lực thay thế không còn được ghi là còn hiệu lực.",
-    en: "A record replaced by an instrument already in force is not marked as still in force.",
-  },
-];

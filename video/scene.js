@@ -9,7 +9,7 @@
 
 const W = 1920, H = 1080;
 const BPM = 110, B = 60 / BPM;
-const TOTAL_BEATS = 92;
+const TOTAL_BEATS = 100;
 const DURATION = TOTAL_BEATS * B;
 
 const C = {
@@ -26,13 +26,13 @@ const HUE = { green: 148, coral: 10, brass: 43 };
 // domains: one bar per domain; flip, rows, feed: interface events in the tools scene.
 /*SYNC*/
 const SYNC = {
-  "impacts": [[8, 1], [20, 0.85], [80, 0.7], [84, 0.55]],
+  "impacts": [[8, 1], [20, 0.85], [88, 0.7], [92, 0.55]],
   "ticks": [4.5, 8],
   "pops": [13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5],
-  "domains": [28, 32, 36, 40, 44, 48, 52, 56, 60, 64],
-  "flip": [69.8],
-  "rows": [72.8, 73.3, 73.8],
-  "feed": [76.6, 77, 77.4, 77.8]
+  "domains": [28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72],
+  "flip": [77.8],
+  "rows": [80.8, 81.3, 81.8],
+  "feed": [84.6, 85, 85.4, 85.8]
 };
 /*END*/
 
@@ -386,6 +386,8 @@ const GLYPH = {
   'thue': ['M12 4h24v40l-4-3-4 3-4-3-4 3-4-3-4 3z', 'M18 30l12-12', circ(19, 19, 2.2), circ(29, 29, 2.2), 'M18 36h12'],
   'dat-dai': ['M5 37 14 12l23 5 6 21-21 6z', circ(5, 37, 1.8), circ(14, 12, 1.8), circ(37, 17, 1.8), circ(43, 38, 1.8), circ(22, 44, 1.8), 'M24 32V18l8 3-8 3'],
   'ppp': ['M3 31h42M12 31V13M36 31V13', 'M12 13q12 16 24 0M12 13 4 31M36 13l8 18', 'M18 31v-7M24 31v-5M30 31v-7', 'M8 38c4-2 8 2 12 0s8 2 12 0 8 2 12 0'],
+  'fintech': [circ(17, 24, 12), circ(17, 24, 8), 'M17 19.5l3.9 2.25v4.5L17 28.5l-3.9-2.25v-4.5z', 'M29 18h4l4-5h4M29 24h12M29 30h4l4 5h4', circ(43, 13, 1.8), circ(43, 24, 1.8), circ(43, 35, 1.8)],
+  'du-lieu': ['M24 4 9 9.5V22c0 10.5 6.5 18 15 22 8.5-4 15-11.5 15-22V9.5z', circ(24, 20.5, 4), 'M22.4 24.1 21 32h6l-1.4-7.9'],
 };
 const DOMAINS = [
   { id: 'xay-dung', hue: 24, name: 'Xây dựng', short: 'Xây dựng', keys: ['Quy hoạch', 'Cấp phép', 'Thi công', 'Nghiệm thu'], law: 'Luật Xây dựng', no: '135/2025/QH15', eff: '01/07/2026' },
@@ -398,7 +400,11 @@ const DOMAINS = [
   { id: 'thue', hue: 302, name: 'Thuế', short: 'Thuế', keys: ['Giá trị gia tăng', 'Thu nhập doanh nghiệp', 'Quản lý thuế'], law: 'Luật Quản lý thuế', no: '108/2025/QH15', eff: '01/07/2026' },
   { id: 'dat-dai', hue: 96, name: 'Đất đai & Bất động sản', short: 'Đất đai', keys: ['Quyền sử dụng đất', 'Giá đất', 'Thu hồi, bồi thường'], law: 'Luật Đất đai', no: '31/2024/QH15', eff: '01/08/2024' },
   { id: 'ppp', hue: 240, name: 'Đối tác công tư', short: 'PPP', keys: ['Lựa chọn nhà đầu tư', 'Vốn nhà nước', 'Hợp đồng BT'], law: 'Luật Đầu tư theo phương thức đối tác công tư', no: '64/2020/QH14', eff: '01/01/2021' },
+  { id: 'fintech', hue: 192, name: 'Fintech & Tài sản số', short: 'Fintech', keys: ['Tài sản mã hóa', 'Thanh toán số', 'Thử nghiệm có kiểm soát'], law: 'Luật Công nghiệp công nghệ số', no: '71/2025/QH15', eff: '01/01/2026' },
+  { id: 'du-lieu', hue: 326, name: 'Dữ liệu & An ninh mạng', short: 'Dữ liệu', keys: ['Dữ liệu cá nhân', 'An ninh mạng', 'Trí tuệ nhân tạo'], law: 'Luật Bảo vệ dữ liệu cá nhân', no: '91/2025/QH15', eff: '01/01/2026' },
 ];
+/** Scene boundaries in beats: one four-beat bar per domain from beat 28, then tools, then the lockup. */
+const ND = DOMAINS.length, T4 = 28 + 4 * ND, T5 = T4 + 12;
 
 // ---------- ambient ----------
 const DUST = (() => {
@@ -630,25 +636,25 @@ function S2(b, t) {
 }
 
 // =====================================================================
-// S3 — ten domains, one bar each (beats 24–68)
+// S3 — twelve domains, one bar each (beats 24–T4)
 // =====================================================================
-const RAIL = { x0: 250, x1: 1670, y: 950 };
-const railX = i => lerp(RAIL.x0, RAIL.x1, i / 9);
+const RAIL = { x0: 200, x1: 1720, y: 950 };
+const railX = i => lerp(RAIL.x0, RAIL.x1, i / (ND - 1));
 const MED = { x: 540, y: 480, r: 210 };
 function rail(b, al) {
   if (al <= 0) return;
-  const cur = clamp(Math.floor((b - 28) / 4), -1, 9);
+  const cur = clamp(Math.floor((b - 28) / 4), -1, ND - 1);
   const draw = E.inOutCubic(prog(b, 25.5, 27.5));
   ctx.save(); ctx.globalAlpha *= al;
   ctx.strokeStyle = C.rule; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.moveTo(RAIL.x0, RAIL.y); ctx.lineTo(lerp(RAIL.x0, RAIL.x1, draw), RAIL.y); ctx.stroke();
   // travelled thread, brass
-  const pos = clamp((b - 28) / 4, 0, 9.999);
-  const tx = b < 28 ? RAIL.x0 : lerp(railX(Math.floor(pos)), railX(Math.min(9, Math.floor(pos) + 1)), Math.floor(pos) >= 9 ? 0 : E.inOutCubic(prog(pos % 1, .85, 1)));
+  const pos = clamp((b - 28) / 4, 0, ND - .001);
+  const tx = b < 28 ? RAIL.x0 : lerp(railX(Math.floor(pos)), railX(Math.min(ND - 1, Math.floor(pos) + 1)), Math.floor(pos) >= ND - 1 ? 0 : E.inOutCubic(prog(pos % 1, .85, 1)));
   ctx.strokeStyle = C.brass; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(RAIL.x0, RAIL.y); ctx.lineTo(tx, RAIL.y); ctx.stroke();
   DOMAINS.forEach((d, i) => {
-    const x = railX(i), appear = prog(draw, i / 10, i / 10 + .15);
+    const x = railX(i), appear = prog(draw, i / ND, i / ND + .15);
     if (appear <= 0) return;
     const visited = i <= cur, isCur = i === cur;
     const lb = b - SYNC.domains[i];
@@ -679,10 +685,10 @@ function glyph(d, cx, cy, size, p, col) {
   ctx.restore();
 }
 function medallion(b, t) {
-  const i = clamp(Math.floor((b - 28) / 4), 0, 9), d = DOMAINS[i], lb = b - SYNC.domains[i];
+  const i = clamp(Math.floor((b - 28) / 4), 0, ND - 1), d = DOMAINS[i], lb = b - SYNC.domains[i];
   const prev = DOMAINS[Math.max(0, i - 1)];
   const enter = b < 28 ? 0 : 1;
-  const a = prog(b, 27.4, 28.4) * (1 - prog(b, 67.4, 68.2));
+  const a = prog(b, 27.4, 28.4) * (1 - prog(b, T4 - .6, T4 + .2));
   if (a <= 0) return;
   const hueMix = i === 0 ? d.hue : lerpHue(prev.hue, d.hue, E.inOutCubic(prog(lb, 0, .6)));
   ctx.save(); ctx.globalAlpha *= a;
@@ -709,12 +715,12 @@ function medallion(b, t) {
 }
 function lerpHue(a, b, t) { let d = ((b - a + 540) % 360) - 180; return (a + d * t + 360) % 360; }
 function domainText(b) {
-  if (b < 28 || b >= 68) return;
+  if (b < 28 || b >= T4) return;
   const i = Math.floor((b - 28) / 4), d = DOMAINS[i], lb = b - SYNC.domains[i];
-  const out = i === 9 ? prog(b, 67.2, 67.9) : prog(lb, 3.45, 3.95);
+  const out = i === ND - 1 ? prog(b, T4 - .8, T4 - .1) : prog(lb, 3.45, 3.95);
   const x = 900;
   ctx.save(); ctx.globalAlpha *= 1 - out; ctx.translate(-50 * E.inCubic(out), 0);
-  riseT(`LĨNH VỰC ${pad2(i + 1)} / 10`, x, 292, { f: 'BVP', w: 600, s: 19, ls: 5, c: C.brass }, prog(lb, .05, .5), 16);
+  riseT(`LĨNH VỰC ${pad2(i + 1)} / ${ND}`, x, 292, { f: 'BVP', w: 600, s: 19, ls: 5, c: C.brass }, prog(lb, .05, .5), 16);
   const nameSt = fit(d.name, { f: 'Lora', w: 600, s: 96, c: C.paper }, 860);
   // name rises out of a mask
   {
@@ -750,17 +756,17 @@ function S3(b, t) {
     riseT('PHẠM VI TRA CỨU', W / 2, 380, { f: 'BVP', w: 600, s: 20, ls: 6, c: C.brass, a: 'center', al: ia }, prog(b, 24.1, 24.8), 16);
     const p = prog(b, 24.4, 25.3);
     ctx.save(); ctx.globalAlpha *= clamp(p * 1.5) * ia; ctx.translate(0, (1 - E.outCubic(p)) * 34);
-    rich([['10', { it: true, w: 500, c: C.brass }], [' lĩnh vực pháp luật', {}]], W / 2, 510, { f: 'Lora', w: 600, s: 112, c: C.paper }, 'center');
+    rich([[String(ND), { it: true, w: 500, c: C.brass }], [' lĩnh vực pháp luật', {}]], W / 2, 510, { f: 'Lora', w: 600, s: 112, c: C.paper }, 'center');
     ctx.restore();
-    riseT('từ công trường đến phòng xử án', W / 2, 590, { f: 'Lora', it: true, w: 400, s: 42, c: C.ink2, a: 'center', al: ia }, prog(b, 25.1, 26), 20);
+    riseT('từ công trường, phòng xử án đến không gian số', W / 2, 590, { f: 'Lora', it: true, w: 400, s: 42, c: C.ink2, a: 'center', al: ia }, prog(b, 25.1, 26), 20);
   }
   medallion(b, t);
   domainText(b);
-  rail(b, 1 - prog(b, 67.4, 68.2));
+  rail(b, 1 - prog(b, T4 - .6, T4 + .2));
 }
 
 // =====================================================================
-// S4 — three tools (beats 68–80)
+// S4 — three tools (beats T4–T5)
 // =====================================================================
 const FEATURES = [
   { n: 'I', title: 'Tra hiệu lực\ntheo ngày', text: 'Chọn một ngày bất kỳ. Xem văn bản nào\nđang có hiệu lực vào đúng ngày đó.' },
@@ -782,7 +788,7 @@ const LBL = { in: ['Đang có hiệu lực', HUE.green], pending: ['Chưa có hi
  */
 function featAsOf(lb, al) {
   const X = PANEL.x + 60;
-  const mid = SYNC.flip[0] - 68, fp = prog(lb, mid - .175, mid + .175), after = fp >= .5;
+  const mid = SYNC.flip[0] - T4, fp = prog(lb, mid - .175, mid + .175), after = fp >= .5;
   const sy = Math.abs(Math.cos(fp * Math.PI));
   T('NGÀY TRA CỨU', X, PANEL.y + 78, { f: 'BVP', w: 600, s: 16, ls: 4, c: C.brass, al });
   ctx.save(); ctx.translate(0, PANEL.y + 136); ctx.scale(1, Math.max(.02, sy)); ctx.translate(0, -(PANEL.y + 136));
@@ -825,7 +831,7 @@ function featCompare(lb, al) {
     ['Văn bản thi hành', 'NĐ 175/2024/NĐ-CP', 'Bộ nghị định 2026'],
   ];
   rows.forEach(([topic, a, bb], i) => {
-    const y = PANEL.y + 262 + i * 110, rp = prog(lb, SYNC.rows[i] - 72, SYNC.rows[i] - 72 + .45);
+    const y = PANEL.y + 262 + i * 110, rp = prog(lb, SYNC.rows[i] - T4 - 4, SYNC.rows[i] - T4 - 4 + .45);
     ctx.save(); ctx.globalAlpha *= al * clamp(rp * 1.5); ctx.translate(0, (1 - E.outCubic(rp)) * 16);
     ctx.fillStyle = C.rule; ctx.fillRect(X, y - 30, PANEL.w - 120, 1.5);
     const tl = wrap(topic, { f: 'BVP', w: 600, s: 19 }, 190);
@@ -858,7 +864,7 @@ function featWatch(lb, al) {
     ['01/03/2026', 'Luật Phục hồi, phá sản', '142/2025/QH15'],
   ];
   items.forEach(([date, law, no], i) => {
-    const y = PANEL.y + 170 + i * 104, rp = prog(lb, SYNC.feed[i] - 76, SYNC.feed[i] - 76 + .45);
+    const y = PANEL.y + 170 + i * 104, rp = prog(lb, SYNC.feed[i] - T4 - 8, SYNC.feed[i] - T4 - 8 + .45);
     ctx.save(); ctx.globalAlpha *= al * clamp(rp * 1.5); ctx.translate(0, (1 - E.outCubic(rp)) * -24);
     ctx.fillStyle = C.rule; ctx.fillRect(X, y - 22, PANEL.w - 120, 1.5);
     T(date, X, y + 30, { f: 'BVP', w: 600, s: 22, c: C.brass });
@@ -877,8 +883,8 @@ function featWatch(lb, al) {
   }
 }
 function S4(b, t) {
-  const j = clamp(Math.floor((b - 68) / 4), 0, 2), f = FEATURES[j], lb = b - 68 - j * 4;
-  const enter = prog(b, 68, 68.8), exit = prog(b, 79.2, 80);
+  const j = clamp(Math.floor((b - T4) / 4), 0, 2), f = FEATURES[j], lb = b - T4 - j * 4;
+  const enter = prog(b, T4, T4 + .8), exit = prog(b, T5 - .8, T5);
   const pa = enter * (1 - exit);
   ctx.save(); ctx.translate(0, (1 - E.outCubic(enter)) * 30);
   panelFrame(pa);
@@ -912,15 +918,16 @@ function S4(b, t) {
 }
 
 // =====================================================================
-// S5 — lockup (beats 80–92)
+// S5 — lockup (beats T5–T5+12; timings below are written from beat 80)
 // =====================================================================
-function S5(b, t) {
+function S5(b0, t) {
+  const b = b0 - T5 + 80;
   const cx = 960, cy = 450, R = 300;
   const collapse = E.inExpo(prog(b, 84, 84.9));
   const ringA = prog(b, 80, 81) * (1 - prog(b, 84.6, 85));
   const rot = (b - 80) * .035;
   const pts = DOMAINS.map((d, i) => {
-    const a = -Math.PI / 2 + i / 10 * Math.PI * 2 + rot, r = lerp(R, 0, collapse) * E.outCubic(prog(b, 80 + i * .08, 81 + i * .08));
+    const a = -Math.PI / 2 + i / ND * Math.PI * 2 + rot, r = lerp(R, 0, collapse) * E.outCubic(prog(b, 80 + i * .08, 81 + i * .08));
     return [cx + Math.cos(a) * r, cy + Math.sin(a) * r, a];
   });
   if (ringA > 0) {
@@ -952,7 +959,7 @@ function S5(b, t) {
   if (stA > 0) {
     ctx.save(); ctx.globalAlpha *= stA; ctx.translate(0, (1 - E.outCubic(sp)) * 20);
     const g = { it: true, w: 500, c: C.brass };
-    rich([['10', g], [' lĩnh vực', {}], ['   ·   ', { c: C.ruleStrong }], ['140+', g], [' văn bản', {}], ['   ·   ', { c: C.ruleStrong }], ['1', g], [' gia phả', {}]],
+    rich([[String(ND), g], [' lĩnh vực', {}], ['   ·   ', { c: C.ruleStrong }], ['170+', g], [' văn bản', {}], ['   ·   ', { c: C.ruleStrong }], ['1', g], [' gia phả', {}]],
       W / 2, 880, { f: 'Lora', w: 600, s: 54, c: C.paper }, 'center');
     ctx.restore();
   }
@@ -971,12 +978,12 @@ function S5(b, t) {
 
 // ---------- overlays & post ----------
 function hud(b) {
-  const a = .7 * prog(b, .6, 1.6) * (1 - prog(b, 79.4, 80.2));
+  const a = .7 * prog(b, .6, 1.6) * (1 - prog(b, T5 - .6, T5 + .2));
   if (a <= 0) return;
   let label = 'MỞ ĐẦU';
   if (b >= 12) label = 'GIA PHẢ VĂN BẢN';
-  if (b >= 24) label = 'LĨNH VỰC' + (b >= 28 && b < 68 ? ` · ${pad2(Math.floor((b - 28) / 4) + 1)} / 10` : '');
-  if (b >= 68) label = 'CÔNG CỤ';
+  if (b >= 24) label = 'LĨNH VỰC' + (b >= 28 && b < T4 ? ` · ${pad2(Math.floor((b - 28) / 4) + 1)} / ${ND}` : '');
+  if (b >= T4) label = 'CÔNG CỤ';
   ctx.save(); ctx.globalAlpha = a;
   T('LEX & LINEAGE', 80, 76, { f: 'BVP', w: 600, s: 15, ls: 5, c: C.ink3 });
   T(label, W - 80, 76, { f: 'BVP', w: 600, s: 15, ls: 5, c: C.ink3, a: 'right' });
@@ -984,12 +991,12 @@ function hud(b) {
   for (const [x, y, sx, sy] of [[44, 44, 1, 1], [W - 44, 44, -1, 1], [44, H - 44, 1, -1], [W - 44, H - 44, -1, -1]]) {
     ctx.beginPath(); ctx.moveTo(x, y + sy * 26); ctx.lineTo(x, y); ctx.lineTo(x + sx * 26, y); ctx.stroke();
   }
-  ctx.fillStyle = C.brass; ctx.globalAlpha = a * .6; ctx.fillRect(0, H - 3, W * clamp(b / 80), 3);
+  ctx.fillStyle = C.brass; ctx.globalAlpha = a * .6; ctx.fillRect(0, H - 3, W * clamp(b / T5), 3);
   ctx.restore();
 }
 /** Brass light sweep across the frame at scene cuts. */
 function sweep(b) {
-  for (const c of [12, 24, 68, 80]) {
+  for (const c of [12, 24, T4, T5]) {
     const p = prog(b, c - .5, c + .7);
     if (p <= 0 || p >= 1) continue;
     const x = lerp(-700, W + 700, E.inOutCubic(p));
@@ -1015,7 +1022,7 @@ function post(b, t) {
   const k = Math.floor(t * 30), ox = Math.floor(hash(k * 91) * 256), oy = Math.floor(hash(k * 37) * 256);
   ctx.translate(-ox, -oy); ctx.fillStyle = ctx.createPattern(grainC, 'repeat'); ctx.fillRect(0, 0, W + 256, H + 256);
   ctx.restore();
-  const fi = 1 - prog(b, 0, .8), fo = prog(b, 90.6, 91.6);
+  const fi = 1 - prog(b, 0, .8), fo = prog(b, TOTAL_BEATS - 1.4, TOTAL_BEATS - .4);
   const blk = Math.max(fi, fo);
   if (blk > 0) { ctx.fillStyle = '#000'; ctx.globalAlpha = blk; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
 }
@@ -1027,7 +1034,7 @@ function renderFrame(t) {
   ctx.drawImage(bgC, 0, 0);
   dust(t, .9);
   // slow push-in per scene, plus a short shake on impacts
-  const starts = [0, 12, 24, 68, 80, 92];
+  const starts = [0, 12, 24, T4, T5, TOTAL_BEATS];
   let k = 0; while (b >= starts[k + 1]) k++;
   const z = 1 + .018 * E.outCubic(prog(b, starts[k], starts[k + 1]));
   const sh = shakeAt(b) * 7;
@@ -1036,8 +1043,8 @@ function renderFrame(t) {
   ctx.scale(z, z); ctx.translate(-W / 2, -H / 2);
   if (b < 12) S1(b, t);
   else if (b < 24) S2(b, t);
-  else if (b < 68) S3(b, t);
-  else if (b < 80) S4(b, t);
+  else if (b < T4) S3(b, t);
+  else if (b < T5) S4(b, t);
   else S5(b, t);
   ctx.restore();
   hud(b);

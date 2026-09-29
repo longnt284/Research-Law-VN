@@ -56,7 +56,9 @@ export type DomainId =
   | "lao-dong"
   | "thue"
   | "dat-dai"
-  | "ppp";
+  | "ppp"
+  | "fintech"
+  | "du-lieu";
 
 /**
  * Mức độ xác minh của bản ghi.

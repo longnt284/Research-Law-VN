@@ -42,7 +42,9 @@ phần giới thiệu trước. Thứ tự trang chủ vì vậy là:
 1. **Phần đầu**: câu khẩu hiệu "Mỗi văn bản pháp luật đều có một gia phả.", lời
    hứa của sản phẩm và **ô tìm kiếm lớn** — thứ lớn nhất trên màn hình đầu tiên.
    Dưới ô là bốn lối tắt: kiểm tra hiệu lực, xem gia phả, so sánh văn bản, luật
-   tại một thời điểm. Bên phải là một dòng đời văn bản có thật, dựng từ gia phả
+   tại một thời điểm. Tiếp theo là lối vào video giới thiệu: ảnh bìa có nút phát,
+   tên và độ dài. Trên thanh điều hướng, mục "Giới thiệu" là nút viền đồng có
+   biểu tượng phát, đứng đầu dải điều hướng trên điện thoại. Bên phải là một dòng đời văn bản có thật, dựng từ gia phả
    tiêu biểu (`src/lib/hero-lineage.ts`): rê chuột vào một văn bản thì quan hệ
    của nó sáng lên; khi đã đặt ngày tra cứu, văn bản không có hiệu lực vào ngày
    đó nhạt đi.
@@ -52,7 +54,7 @@ phần giới thiệu trước. Thứ tự trang chủ vì vậy là:
 3. **Thay đổi gần đây** (`src/lib/changes.ts`): mốc hiệu lực, sửa đổi, thay thế,
    hướng dẫn đọc từ bản ghi, chia "sắp có hiệu lực" và "đã diễn ra" theo ngày
    tra cứu gần nhất của kho.
-4. **Khám phá theo lĩnh vực**: mười lĩnh vực, thanh đếm số văn bản thật.
+4. **Khám phá theo lĩnh vực**: mười hai lĩnh vực, thanh đếm số văn bản thật.
 5. **Gia phả tiêu biểu** và các chuỗi văn bản đang động.
 6. **Phạm vi dữ liệu**: số văn bản, quan hệ, cặp đối chiếu, lĩnh vực, và tỷ lệ
    bản ghi đã đối chiếu nguồn chính thống.
@@ -263,10 +265,21 @@ cùng một văn bản vào hai tầng khác nhau.
 
 ## Phạm vi
 
-Mười lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
-Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản, Đối tác công tư.
-Hai lĩnh vực sau cùng được thêm trong đợt rà soát ngày 24/9/2026, mỗi lĩnh vực
-có cây văn bản riêng dựng từ các văn bản trụ cột đã đọc trên vbpl.vn.
+Mười hai lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
+Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản, Đối tác công tư,
+Fintech và Tài sản số, Dữ liệu và An ninh mạng. Đất đai và Đối tác công tư được
+thêm trong đợt rà soát ngày 24/9/2026, mỗi lĩnh vực có cây văn bản riêng dựng từ
+các văn bản trụ cột đã đọc trên vbpl.vn.
+
+Fintech và Dữ liệu được thêm ngày 29/9/2026 với hai mươi sáu văn bản mới và tám
+văn bản sẵn có gắn thêm lĩnh vực. Fintech gồm tài sản số và thị trường tài sản mã
+hóa thí điểm, thanh toán không dùng tiền mặt, cơ chế thử nghiệm và Open API ngân
+hàng, phòng, chống rửa tiền, Trung tâm tài chính quốc tế. Dữ liệu gồm Luật Bảo vệ
+dữ liệu cá nhân, Luật Dữ liệu, Luật An ninh mạng 2025 cùng các nghị định hướng dẫn
+và xử phạt, và Luật Trí tuệ nhân tạo. Các chuỗi thay thế (Nghị định 13/2023 sang
+356/2025, Luật An ninh mạng 2018 và Luật An toàn thông tin mạng 2015 sang Luật
+116/2025, Nghị định 53/2022 sang 333/2026) tự sinh gia phả, cặp đối chiếu và mốc
+hiệu lực theo ngày.
 
 ## Nguyên tắc về dữ liệu
 
@@ -309,6 +322,13 @@ không tìm thấy văn bản thay thế), Luật Tổ chức Tòa án nhân dâ
 (vbpl.vn vẫn ghi còn hiệu lực dù Luật 34/2024/QH15 đã chấm dứt hiệu lực của nó),
 Luật Quản lý thuế 38/2019/QH14 (ngày hiệu lực trên vbpl.vn khác Công báo), và các
 luật hết hiệu lực ngày 01/7/2026 mà nhãn trên vbpl.vn được cập nhật trước mốc đó.
+
+Đợt bổ sung ngày 29/9/2026 (Fintech và Dữ liệu) tra trong điều kiện không mở được
+vbpl.vn, Công báo và cổng văn bản Chính phủ. Số hiệu, ngày ban hành, ngày hiệu lực
+và quan hệ của từng bản ghi được đối chiếu giữa ít nhất hai kết quả tìm kiếm độc
+lập; quan hệ không khẳng định được thì không ghi (ví dụ Nghị định 331/2026/NĐ-CP
+chưa ghi là thay thế Nghị định 85/2016/NĐ-CP). Cả hai mươi sáu bản ghi mang
+`confidence: "cross-check"` và `verifiedOn` 29/9/2026.
 
 Các nghị định thi hành Luật Xây dựng 2025 chưa có trang trên vbpl.vn được thêm
 với ngày đối chiếu trên Công báo và điều khoản hiệu lực, chuyển tiếp đọc trên
@@ -692,8 +712,11 @@ did not agree was left blank. All fifty carry `confidence: "cross-check"`, so th
 interface flags them, and their `sources` are addresses found rather than pages
 opened.
 
-The dataset covers ten domains; Land & Real Estate and Public-Private
-Partnership were added in the review of 24 September 2026. In that review every
+The dataset covers twelve domains. Land & Real Estate and Public-Private
+Partnership were added in the review of 24 September 2026; Fintech & Digital
+Assets and Data Privacy & Cybersecurity were added on 29 September 2026 with
+twenty-six new instruments, all marked `cross-check` because the official
+sources could not be opened from that session. In that review every
 Vietnamese instrument was read again on the National Legal Database (vbpl.vn),
 which states each instrument's status in words with the date it was last
 updated; missing dates came from the Official Gazette or the Government portal.

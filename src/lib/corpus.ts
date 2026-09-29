@@ -40,11 +40,6 @@ export function tierOf(doc: LegalDoc): Tier {
   return TIER[doc.type] ?? 3;
 }
 
-/** Văn bản cấp luật: bộ luật, luật, điều ước. Được vẽ đậm hơn ở mọi hình. */
-export function isPrimary(doc: LegalDoc): boolean {
-  return TIER[doc.type] === 0;
-}
-
 /**
  * Mốc xếp thứ tự thời gian của một văn bản: ngày hiệu lực, thiếu thì ngày ban
  * hành, thiếu cả hai thì chuỗi rỗng.

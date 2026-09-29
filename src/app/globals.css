@@ -494,6 +494,9 @@ a {
 .rise-3 {
   animation-delay: 210ms;
 }
+.rise-4 {
+  animation-delay: 280ms;
+}
 
 /* Thanh cuộn mảnh, hợp với nền giấy. */
 @supports (scrollbar-width: thin) {

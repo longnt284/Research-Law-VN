@@ -2,6 +2,7 @@ import { BrandMark } from "@/components/brand/BrandMark";
 import { HeroLineage } from "@/components/home/HeroLineage";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { IntroTeaser } from "@/components/showcase/IntroTeaser";
 import type { Lang } from "@/data/types";
 import { getHome } from "@/i18n/home";
 import { getLanding } from "@/i18n/landing";
@@ -13,6 +14,8 @@ import { heroLineage } from "@/lib/hero-lineage";
  * Câu khẩu hiệu giữ nguyên — mỗi văn bản pháp luật đều có một gia phả — nhưng
  * thứ lớn nhất trên màn hình đầu tiên là ô tìm kiếm. Người quay lại trang chỉ
  * cần gõ số hiệu là thấy tình trạng hiệu lực, không phải đọc phần giới thiệu.
+ *
+ * Dưới ô tìm là lối vào video giới thiệu, cho người lần đầu tới trang.
  *
  * Bên phải là một dòng đời văn bản có thật, dựng từ gia phả tiêu biểu: nó nói ý
  * tưởng của trang bằng hình thay vì bằng một đoạn văn.
@@ -41,6 +44,9 @@ export function HomeHero({ lang }: { lang: Lang }) {
           <p className="home-hero-promise rise rise-2">{l.promise}</p>
           <div className="rise rise-3">
             <HeroSearch lang={lang} />
+          </div>
+          <div className="rise rise-4">
+            <IntroTeaser lang={lang} />
           </div>
         </div>
 

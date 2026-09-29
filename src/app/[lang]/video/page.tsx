@@ -13,13 +13,13 @@ const WEBM = "/video/gioi-thieu.webm";
 const POSTER = "/video/gioi-thieu.jpg";
 
 /**
- * Mốc thời gian tính theo nhịp của bản nhạc: 110 nhịp mỗi phút, 92 nhịp cả bài.
+ * Mốc thời gian tính theo nhịp của bản nhạc: 110 nhịp mỗi phút, 100 nhịp cả bài.
  * Các mốc trùng với ranh giới cảnh trong `video/scene.js`: năm chương ở nhịp 0,
- * 12, 24, 68, 80; mỗi lĩnh vực chiếm một ô nhịp bốn phách, bắt đầu từ nhịp 28.
+ * 12, 24, 76, 88; mỗi lĩnh vực chiếm một ô nhịp bốn phách, bắt đầu từ nhịp 28.
  */
 const BEAT = 60 / 110;
-const DURATION = 92 * BEAT;
-const CHAPTER_AT = [0, 12, 24, 68, 80].map((b) => b * BEAT);
+const DURATION = 100 * BEAT;
+const CHAPTER_AT = [0, 12, 24, 76, 88].map((b) => b * BEAT);
 const DOMAIN_AT = (i: number) => (28 + 4 * i) * BEAT;
 const DOMAIN_LEN = 4 * BEAT;
 
@@ -38,6 +38,8 @@ const FLAGSHIP: Record<DomainId, string> = {
   thue: "luat-qlt-2025",
   "dat-dai": "luat-dat-dai-2024",
   ppp: "luat-ppp-2020",
+  fintech: "luat-cncns-2025",
+  "du-lieu": "luat-bvdlcn-2025",
 };
 
 const copy: Record<
@@ -61,7 +63,7 @@ const copy: Record<
   vi: {
     eyebrow: "Lex & Lineage",
     title: "Video Giới thiệu",
-    lede: "50 giây về mười lĩnh vực pháp luật, một gia phả văn bản, và câu hỏi người làm luật nào cũng gặp: văn bản còn hiệu lực vào ngày nào?",
+    lede: "55 giây về mười hai lĩnh vực pháp luật, một gia phả văn bản, và câu hỏi người làm luật nào cũng gặp: văn bản còn hiệu lực vào ngày nào?",
     videoTitle: "Video giới thiệu Lex & Lineage",
     chaptersLabel: "Chương",
     chapters: [
@@ -76,9 +78,9 @@ const copy: Record<
           "Luật 135/2025/QH15 thay thế Luật 50/2014/QH13, luật cũ từng được Luật 62/2020/QH14 sửa đổi; bảy nghị định năm 2026 hướng dẫn luật mới. Mỗi văn bản pháp luật đều có một gia phả. Lex & Lineage, gia phả văn bản pháp luật Việt Nam.",
       },
       {
-        label: "10 lĩnh vực",
+        label: "12 lĩnh vực",
         onScreen:
-          "10 lĩnh vực pháp luật, từ công trường đến phòng xử án. Mỗi lĩnh vực đi kèm một văn bản nền tảng, số hiệu và ngày có hiệu lực, như lưới bên dưới.",
+          "12 lĩnh vực pháp luật, từ công trường, phòng xử án đến không gian số. Mỗi lĩnh vực đi kèm một văn bản nền tảng, số hiệu và ngày có hiệu lực, như lưới bên dưới.",
       },
       {
         label: "Ba công cụ",
@@ -88,10 +90,10 @@ const copy: Record<
       {
         label: "Lex & Lineage",
         onScreen:
-          "10 lĩnh vực, hơn 140 văn bản, một gia phả. Mỗi văn bản kèm nguồn chính thức và ngày tra cứu. Thông tin tham khảo, không thay thế ý kiến pháp lý cho vụ việc cụ thể.",
+          "12 lĩnh vực, hơn 170 văn bản, một gia phả. Mỗi văn bản kèm nguồn chính thức và ngày tra cứu. Thông tin tham khảo, không thay thế ý kiến pháp lý cho vụ việc cụ thể.",
       },
     ],
-    domainsH: "10 lĩnh vực trong video",
+    domainsH: "12 lĩnh vực trong video",
     domainsP: "Bấm một lĩnh vực để xem đúng đoạn đó.",
     play: "Xem trong video từ",
     open: "Mở lĩnh vực",
@@ -102,7 +104,7 @@ const copy: Record<
   en: {
     eyebrow: "Lex & Lineage",
     title: "Introductory Video",
-    lede: "Fifty seconds on ten practice areas, one family tree of legal instruments, and the question every lawyer meets: is this law in force on that date?",
+    lede: "Fifty-five seconds on twelve practice areas, one family tree of legal instruments, and the question every lawyer meets: is this law in force on that date?",
     videoTitle: "Lex & Lineage introductory video",
     chaptersLabel: "Chapters",
     chapters: [
@@ -117,9 +119,9 @@ const copy: Record<
           "Law 135/2025/QH15 replaces Law 50/2014/QH13, which Law 62/2020/QH14 had amended; seven 2026 decrees implement the new Law. Every legal instrument has a family tree. Lex & Lineage, the genealogy of Vietnamese law.",
       },
       {
-        label: "Ten areas",
+        label: "Twelve areas",
         onScreen:
-          "Ten practice areas, from the building site to the courtroom. Each comes with one foundational instrument, its number and its date of effect, as in the grid below.",
+          "Twelve practice areas, from the building site and the courtroom to the digital space. Each comes with one foundational instrument, its number and its date of effect, as in the grid below.",
       },
       {
         label: "Three tools",
@@ -129,10 +131,10 @@ const copy: Record<
       {
         label: "Lex & Lineage",
         onScreen:
-          "10 practice areas, 140+ instruments, one family tree. Every instrument carries its official source and the date it was checked. For reference only; not legal advice on a specific matter.",
+          "12 practice areas, 170+ instruments, one family tree. Every instrument carries its official source and the date it was checked. For reference only; not legal advice on a specific matter.",
       },
     ],
-    domainsH: "The ten areas in the video",
+    domainsH: "The twelve areas in the video",
     domainsP: "Pick an area to jump to its part of the video.",
     play: "Watch in the video from",
     open: "Open area",

@@ -142,11 +142,37 @@ export function buildTree(docs: LegalDoc[], relations: Relation[]): Tree {
     const leftToRight = a.x < b.x;
     const x1 = leftToRight ? a.x + nodeW : a.x;
     const x2 = leftToRight ? b.x : b.x + nodeW;
-    const mid = (x1 + x2) / 2;
+    const tip = { x: x2, y: by, angle: leftToRight ? 0 : Math.PI };
+    const lo = Math.min(ay, by) - 4;
+    const hi = Math.max(ay, by) + 4;
+    const blocked = nodes.some(
+      (n) =>
+        n.x > Math.min(a.x, b.x) && n.x < Math.max(a.x, b.x) && n.y < hi && n.y + nodeH > lo,
+    );
+    if (!blocked) {
+      const mid = (x1 + x2) / 2;
+      edges.push({ ...rel, d: `M${x1} ${ay} C${mid} ${ay} ${mid} ${by} ${x2} ${by}`, tip });
+      continue;
+    }
+    /*
+      Có văn bản ở cột giữa nằm trên đường đi: đường cong thường sẽ xuyên qua nó,
+      và vì ô văn bản che nét, người đọc thấy như văn bản ấy nối với cả hai đầu.
+      Đường đi vào rãnh dọc sau cột nguồn, chạy ngang theo khe giữa hai hàng gần
+      nhất, rồi ra rãnh dọc trước cột đích.
+    */
+    const dir = leftToRight ? 1 : -1;
+    const pitch = nodeH + rowGap;
+    const k = Math.round(((ay + by) / 2 - padY - nodeH / 2) / pitch + 0.5);
+    const cy = padY + k * pitch - rowGap / 2;
+    const g1 = x1 + (dir * colGap) / 2;
+    const g2 = x2 - (dir * colGap) / 2;
+    const bend = 10 * dir;
     edges.push({
       ...rel,
-      d: `M${x1} ${ay} C${mid} ${ay} ${mid} ${by} ${x2} ${by}`,
-      tip: { x: x2, y: by, angle: leftToRight ? 0 : Math.PI },
+      d:
+        `M${x1} ${ay} C${g1} ${ay} ${g1 - bend} ${cy} ${g1 + bend} ${cy}` +
+        ` L${g2 - bend} ${cy} C${g2 + bend} ${cy} ${g2} ${by} ${x2} ${by}`,
+      tip,
     });
   }
 

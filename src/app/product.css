@@ -194,6 +194,49 @@ html {
   transform: scaleX(1);
 }
 
+/*
+  Lối vào video giới thiệu: một nút viền đồng có biểu tượng phát, khác hẳn các
+  mục chữ bên cạnh. Trên màn hình hẹp dải điều hướng cuộn ngang, nên nút đứng
+  đầu dải; từ 960px dải nằm giữa thanh và nút về cuối.
+*/
+.hdr-intro {
+  order: -1;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.45rem;
+  margin-right: 0.35rem;
+  border: 1px solid color-mix(in oklab, var(--brass) 65%, transparent);
+  background: color-mix(in oklab, var(--brass) 10%, transparent);
+  padding: 0.28rem 0.75rem 0.28rem 0.32rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--ink);
+  transition: background-color 0.2s, border-color 0.2s;
+}
+.hdr-intro:hover,
+.hdr-intro.is-active {
+  border-color: var(--brass);
+  background: color-mix(in oklab, var(--brass) 22%, transparent);
+}
+.hdr-intro-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.3rem;
+  height: 1.3rem;
+  border-radius: 50%;
+  padding-left: 1px;
+  background: var(--brass);
+  color: var(--paper);
+}
+@media (min-width: 960px) {
+  .hdr-intro {
+    order: 0;
+    margin: 0 0 0 0.5rem;
+  }
+}
+
 .hdr-search {
   display: inline-flex;
   align-items: center;
@@ -983,6 +1026,83 @@ mark.hl {
 .hero-search {
   margin-top: 1.75rem;
   max-width: 44rem;
+}
+
+/* Lối vào video giới thiệu dưới ô tìm: ảnh bìa thu nhỏ có nút phát, tên và độ dài. */
+.intro-teaser {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  max-width: 100%;
+  margin-top: 1.1rem;
+  border: 1px solid var(--rule);
+  background: color-mix(in oklab, var(--paper) 80%, transparent);
+  padding: 0.4rem 1rem 0.4rem 0.4rem;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+.intro-teaser:hover {
+  border-color: var(--brass);
+  background: var(--paper);
+}
+.intro-teaser-thumb {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 6.5rem;
+  aspect-ratio: 16 / 9;
+  background: #0d0f13 url("/video/gioi-thieu.jpg") center / cover no-repeat;
+}
+.intro-teaser-play {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  padding-left: 2px;
+  background: var(--brass);
+  color: #16181d;
+  animation: intro-pulse 2.4s var(--ease-out-soft) infinite;
+}
+@keyframes intro-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--brass) 55%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 0.65rem color-mix(in oklab, var(--brass) 0%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-teaser-play {
+    animation: none;
+  }
+}
+:root[data-motion="off"] .intro-teaser-play {
+  animation: none;
+}
+.intro-teaser-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.intro-teaser-title {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.intro-teaser-meta {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.intro-teaser-arrow {
+  margin-left: 0.25rem;
+  color: var(--brass);
+  transition: transform 0.2s;
+}
+.intro-teaser:hover .intro-teaser-arrow {
+  transform: translateX(3px);
 }
 .quick {
   display: flex;
@@ -3337,7 +3457,7 @@ mark.hl {
   color: var(--st-brass);
 }
 
-/* Mười lĩnh vực: bấm thẻ để nhảy tới đoạn của lĩnh vực trong video. */
+/* Mười hai lĩnh vực: bấm thẻ để nhảy tới đoạn của lĩnh vực trong video. */
 .intro-tiles {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3349,9 +3469,10 @@ mark.hl {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+/* Bốn cột cho mười hai thẻ: ba hàng đủ, không có hàng cuối lẻ. */
 @media (min-width: 1024px) {
   .intro-tiles {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 .intro-tile {
