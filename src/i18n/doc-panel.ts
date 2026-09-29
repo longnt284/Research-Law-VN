@@ -30,8 +30,6 @@ export interface DocPanelCopy {
     amends: string;
     none: string;
     noAmender: string;
-    noPredecessor: string;
-    noSuccessor: string;
     noGuide: string;
     guideCount: (n: number) => string;
     seeAll: string;
@@ -125,8 +123,6 @@ const vi: DocPanelCopy = {
     amends: "Sửa đổi, bổ sung",
     none: "Chưa ghi nhận",
     noAmender: "Chưa ghi nhận văn bản sửa đổi.",
-    noPredecessor: "Chưa ghi nhận văn bản đời trước.",
-    noSuccessor: "Chưa ghi nhận văn bản đời sau.",
     noGuide: "Chưa ghi nhận văn bản hướng dẫn.",
     guideCount: (n) => `${n} văn bản`,
     seeAll: "xem trong gia phả",
@@ -220,8 +216,6 @@ const en: DocPanelCopy = {
     amends: "Amends",
     none: "None recorded",
     noAmender: "No amending instrument recorded.",
-    noPredecessor: "No predecessor recorded.",
-    noSuccessor: "No successor recorded.",
     noGuide: "No implementing instrument recorded.",
     guideCount: (n) => `${n} ${n === 1 ? "instrument" : "instruments"}`,
     seeAll: "see the lineage",

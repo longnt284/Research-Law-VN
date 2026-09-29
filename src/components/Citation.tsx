@@ -6,29 +6,8 @@ import {
   citationHref,
   formatCitation,
   formatPinpoint,
-  formatShortCitation,
   parseCitation,
 } from "@/lib/citation";
-
-/**
- * Một căn cứ hiển thị trên trang.
- *
- * Nhãn là số hiệu kèm phần chỉ chỗ, đủ ngắn để nằm gọn trong một dòng căn cứ.
- * Trích dẫn đầy đủ nằm ở thuộc tính `title`, nên người rê chuột đọc được ngay
- * dạng dán được vào hồ sơ mà dòng căn cứ không bị kéo dài ra.
- */
-export function CitationLink({ cite, lang }: { cite: CitationRef; lang: Lang }) {
-  const parsed = parseCitation(cite);
-  return (
-    <Link
-      href={citationHref(parsed, lang)}
-      title={formatCitation(parsed, lang)}
-      className="tnum underline decoration-[var(--rule-strong)] underline-offset-2 transition-colors hover:text-[var(--accent)]"
-    >
-      {formatShortCitation(parsed, lang)}
-    </Link>
-  );
-}
 
 /**
  * Gom các trích dẫn cùng một văn bản lại một chỗ.

@@ -15,12 +15,6 @@ export interface HomeCopy {
     /** Câu khẩu hiệu, đặt làm tiêu đề trang. */
     motto: string;
     lede: string;
-    statDocs: string;
-    statRelations: string;
-    statDomains: string;
-    statSpan: string;
-    enterFamily: string;
-    enterDocs: string;
     pause: string;
     play: string;
   };
@@ -77,12 +71,6 @@ export const home: Record<Lang, HomeCopy> = {
       eyebrow: "GIA PHẢ VĂN BẢN PHÁP LUẬT VIỆT NAM",
       motto: "Mỗi văn bản pháp luật đều có một gia phả.",
       lede: "Luật mới thay luật cũ, nghị định quy định chi tiết, thông tư hướng dẫn thi hành, rồi một luật sửa đổi ghi thêm vào đời văn bản ấy. Lex & Lineage chép lại dòng dõi đó cho từng văn bản, như một cuốn gia phả: đời trước, đời sau, các nhánh hướng dẫn và những lần sửa đổi. Mỗi số hiệu đều đã được tra cứu, mỗi quan hệ đều ghi trong chính bản ghi.",
-      statDocs: "văn bản",
-      statRelations: "quan hệ",
-      statDomains: "lĩnh vực",
-      statSpan: "mốc hiệu lực",
-      enterFamily: "Xem một gia phả",
-      enterDocs: "Tra danh mục văn bản",
       pause: "Dừng chuyển động",
       play: "Chạy lại chuyển động",
     },
@@ -165,12 +153,6 @@ export const home: Record<Lang, HomeCopy> = {
       eyebrow: "THE GENEALOGY OF VIETNAMESE LAW",
       motto: "Every law has a lineage.",
       lede: "A new law replaces the old, a decree supplies the detail, a circular guides its execution, and an amending law writes itself into the record. Lex & Lineage keeps that line of descent for every instrument, the way a family register would: predecessors, successors, implementing branches and amendments. Every number was looked up; every relation sits in the record itself.",
-      statDocs: "instruments",
-      statRelations: "relations",
-      statDomains: "domains",
-      statSpan: "years of force",
-      enterFamily: "See a lineage",
-      enterDocs: "Browse the index",
       pause: "Pause motion",
       play: "Resume motion",
     },

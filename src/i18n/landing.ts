@@ -64,7 +64,6 @@ export interface LandingCopy {
     domains: string;
     verified: string;
     crossCheck: string;
-    byDomain: string;
     more: string;
     request: string;
   };
@@ -226,7 +225,6 @@ const vi: LandingCopy = {
     domains: "lĩnh vực",
     verified: "đã đối chiếu nguồn chính thống",
     crossCheck: "cần đối chiếu thêm",
-    byDomain: "Số văn bản theo lĩnh vực",
     more: "Xem phạm vi dữ liệu",
     request: "Yêu cầu bổ sung văn bản",
   },
@@ -412,7 +410,6 @@ const en: LandingCopy = {
     domains: "domains",
     verified: "checked against an official source",
     crossCheck: "need further checking",
-    byDomain: "Instruments by domain",
     more: "See data coverage",
     request: "Request an instrument",
   },

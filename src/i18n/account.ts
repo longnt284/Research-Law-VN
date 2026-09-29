@@ -34,7 +34,6 @@ export interface AccountCopy {
   deleteText: string;
   deleteConfirm: string;
   deleteButton: string;
-  deleted: string;
   errors: {
     invalid: string;
     exists: string;
@@ -79,7 +78,6 @@ const vi: AccountCopy = {
   deleteText: "Xóa vĩnh viễn tài khoản, danh sách theo dõi và mọi bộ hồ sơ trên máy chủ. Không khôi phục được.",
   deleteConfirm: "Gõ email của bạn để xác nhận",
   deleteButton: "Xóa vĩnh viễn tài khoản",
-  deleted: "Đã xóa tài khoản.",
   errors: {
     invalid: "Email hoặc mật khẩu không đúng.",
     exists: "Email này đã có tài khoản. Hãy đăng nhập.",
@@ -124,7 +122,6 @@ const en: AccountCopy = {
   deleteText: "Permanently delete the account, its watchlist and every matter on the server. This cannot be undone.",
   deleteConfirm: "Type your email to confirm",
   deleteButton: "Permanently delete account",
-  deleted: "Account deleted.",
   errors: {
     invalid: "Wrong email or password.",
     exists: "This email already has an account. Sign in instead.",
