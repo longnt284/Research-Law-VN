@@ -32,7 +32,7 @@ function serve() {
 }
 
 async function openPage(browser, port) {
-  const page = await browser.newPage({ viewport: { width: 1080, height: 1920 }, deviceScaleFactor: 1 });
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
   page.on('pageerror', e => console.error('pageerror', e));
   await page.goto(`http://localhost:${port}/index.html`);
   await page.evaluate(() => window.ready);

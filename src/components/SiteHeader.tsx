@@ -20,8 +20,9 @@ import { useAccount } from "@/lib/client-store";
  *
  * Năm mục đầu đi theo đúng nhịp làm việc của người tra cứu: tra một văn bản,
  * khám phá theo lĩnh vực, đối chiếu hai đời văn bản, xem điều gì vừa thay đổi,
- * và theo dõi những văn bản mình đang dùng. Mục cuối mở video giới thiệu các
- * văn bản pháp lý số. Trang chủ nằm sau dấu hiệu ở góc trái.
+ * và theo dõi những văn bản mình đang dùng. Mục cuối mở video giới thiệu trang:
+ * mười lĩnh vực và ba công cụ trong năm mươi giây. Trang chủ nằm sau dấu hiệu ở
+ * góc trái.
  *
  * Nút tìm kiếm có mặt ở mọi trang và mở bảng lệnh (Ctrl K / ⌘ K): người đang
  * đọc giữa một nghị định không phải quay về trang chủ để tra văn bản khác.

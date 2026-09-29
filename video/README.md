@@ -1,40 +1,44 @@
-# Khi luật chạy bằng code — motion showcase
+# Lex & Lineage — video giới thiệu
 
-Video ngắn 9:16 (1080×1920, 60 fps, ~34 giây) về giao điểm Luật × Công nghệ × Tài chính.
-Mọi khung hình được vẽ bằng Canvas 2D thuần, là hàm thuần của thời gian `t`, rồi render
-qua Chromium headless và mã hóa bằng ffmpeg. Nhạc nền được tổng hợp bằng code (128 BPM),
-khóa nhịp với hình qua cùng danh sách `IMPACTS` trong `scene.js`.
+Video ngang 16:9 (1920×1080, 60 fps, ~50 giây) giới thiệu trang: câu hỏi hiệu lực theo ngày,
+gia phả văn bản, mười lĩnh vực pháp luật và ba công cụ tra cứu. Mọi khung hình được vẽ bằng
+Canvas 2D thuần, là hàm thuần của thời gian `t`, rồi render qua Chromium headless và mã hóa bằng
+ffmpeg. Nhạc nền được tổng hợp bằng code (110 BPM, Rê thứ), khóa nhịp với hình qua khối `SYNC`
+trong `scene.js`.
+
+Bảng màu, phông chữ và ba kiểu nét quan hệ (hướng dẫn, sửa đổi, thay thế) lấy đúng chế độ tối
+của trang (`src/app/globals.css`). Dấu hiệu và biểu tượng lĩnh vực vẽ lại từ
+`src/components/brand/BrandMark.tsx` và `src/components/art/DomainGlyph.tsx`.
 
 ## Cấu trúc
 
 | Tệp | Vai trò |
 | --- | --- |
-| `index.html`, `scene.js` | Toàn bộ cảnh, chuyển cảnh, hậu kỳ (glitch, RGB split, grain) |
-| `audio.py` | Tổng hợp nhạc: kick, clap, hat, bass sidechain, pad, arp, riser, impact, reverb |
+| `index.html`, `scene.js` | Toàn bộ cảnh, chuyển cảnh, hậu kỳ (quét sáng, vignette, hạt) |
+| `audio.py` | Tổng hợp nhạc: drone, pad, pluck, chuông, trống nhẹ, tiếng đồng hồ, dấu mộc, reverb |
 | `render.mjs` | Render song song nhiều worker, ghép segment |
-| `fonts/` | Be Vietnam Pro, JetBrains Mono (SIL OFL) |
-| `../public/video/luat-chay-bang-code.mp4` | Bản xuất cho web (H.264 ~7 Mbps, AAC), phát ở trang `/vi/video` |
+| `fonts/` | Lora, Be Vietnam Pro (SIL OFL, giấy phép kèm theo) |
+| `../public/video/gioi-thieu.*` | Bản xuất cho web (MP4 H.264/AAC, WebM VP9/Opus, ảnh bìa), phát ở trang `/vi/video` |
 
-## Kịch bản (theo beat)
+## Kịch bản (theo nhịp)
 
-| Beat | Cảnh |
+| Nhịp | Cảnh |
 | --- | --- |
-| 0–4 | Hook: gõ lệnh `> law.compile()`, glitch, hút vào |
-| 4–10 | LUẬT × CODE × TIỀN — kinetic slam, đổi màu theo beat |
-| 10–20 | Chữ tan thành hạt, ráp thành cán cân công lý; đồng ₫ và `</>` cân bằng |
-| 20–32 | Timeline 4 cột mốc pháp lý số |
-| 32–40 | Nến giá biến thành block chuỗi khối — “Tài sản số” |
-| 40–46 | Quét vân tay, mã hóa dữ liệu, khóa — “Dữ liệu cá nhân không để mua bán” |
-| 46–54 | Mạng nơ-ron + nguyên tắc của Luật Trí tuệ nhân tạo |
-| 54–62 | Đường hầm tốc độ, montage từ khóa |
-| 62–72 | Chốt: “Khi luật chạy bằng code.” rồi thu về một điểm |
+| 0–12 | Luật Xây dựng 50/2014/QH13: "còn hiệu lực không?"; ngày tra cứu chạy tới 01/07/2026, đóng dấu hết hiệu lực; 135/2025/QH15 thay thế; hợp đồng ký trước mốc vẫn theo luật cũ |
+| 12–24 | Gia phả của Luật Xây dựng 2025 (thay thế, sửa đổi, bảy nghị định hướng dẫn), rồi dấu hiệu và tên trang |
+| 24–68 | "10 lĩnh vực pháp luật", mỗi lĩnh vực một ô nhịp: biểu tượng, từ khóa, văn bản nền tảng |
+| 68–80 | Ba công cụ: tra hiệu lực theo ngày, so sánh phiên bản, theo dõi thay đổi |
+| 80–92 | Vòng mười lĩnh vực thu về dấu hiệu; chốt tên trang và lời miễn trừ |
 
-## Nguồn nội dung pháp lý (đã đối chiếu vanban.chinhphu.vn)
+## Nguồn nội dung pháp lý
 
-- Nghị quyết 05/2025/NQ-CP (09/09/2025): thí điểm thị trường tài sản mã hóa, thời hạn 5 năm.
-- Luật Công nghiệp công nghệ số, số 71/2025/QH15: hiệu lực 01/01/2026.
-- Luật Bảo vệ dữ liệu cá nhân, số 91/2025/QH15: hiệu lực 01/01/2026.
-- Luật Trí tuệ nhân tạo, số 134/2025/QH15: thông qua 10/12/2025, hiệu lực 01/03/2026.
+Mọi số hiệu và ngày trên màn hình lấy từ `src/data/documents.ts` (bản ghi `verified`) và
+`src/data/comparisons.ts`. Khi dữ liệu đổi, sửa `DOMAINS`, các cảnh S1, S2, S4 trong `scene.js`
+và bảng `FLAGSHIP` ở `src/app/[lang]/video/page.tsx` cho khớp, rồi render lại.
+
+Cảnh "tra hiệu lực theo ngày" đổi ngày bằng một lần lật, không chạy liên tục: từ 01/01/2026 tới
+30/06/2026 nhóm quy định miễn giấy phép của Luật 135/2025/QH15 đã áp dụng, nên không được hiện
+một ngày trong khoảng đó kèm nhãn "chưa có hiệu lực".
 
 ## Build
 
@@ -43,11 +47,15 @@ pip install numpy scipy imageio-ffmpeg
 export FFMPEG=$(python3 -c "import imageio_ffmpeg as i; print(i.get_ffmpeg_exe())")
 node render.mjs video 4          # -> out/video_silent.mp4
 python3 audio.py                 # -> out/audio.wav
-# Bản master crf 15 rất nặng (~450 MB) vì lớp nhiễu hạt; bản web mã hóa 2 lượt ~7 Mbps (~30 MB)
 cd out
-$FFMPEG -y -i video_silent.mp4 -c:v libx264 -preset slow -b:v 7M -maxrate 10M -bufsize 14M -pix_fmt yuv420p -pass 1 -an -f mp4 /dev/null
-$FFMPEG -y -i video_silent.mp4 -i audio.wav -c:v libx264 -preset slow -b:v 7M -maxrate 10M -bufsize 14M -pix_fmt yuv420p -pass 2 \
-  -c:a aac -b:a 192k -shortest -movflags +faststart ../../public/video/luat-chay-bang-code.mp4
+# MP4 cho web, mã hóa 2 lượt
+$FFMPEG -y -i video_silent.mp4 -c:v libx264 -preset slow -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 1 -an -f mp4 /dev/null
+$FFMPEG -y -i video_silent.mp4 -i audio.wav -c:v libx264 -preset slow -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 2 \
+  -c:a aac -b:a 192k -shortest -movflags +faststart ../../public/video/gioi-thieu.mp4
+# WebM cho trình duyệt không có H.264
+$FFMPEG -y -i video_silent.mp4 -i audio.wav -c:v libvpx-vp9 -b:v 0 -crf 36 -row-mt 1 -c:a libopus -b:a 128k -shortest ../../public/video/gioi-thieu.webm
+# Ảnh bìa: khung dấu hiệu, nhịp 22.9
+node ../render.mjs stills 12.49 && cp stills/t012.49.jpg ../../public/video/gioi-thieu.jpg
 ```
 
 Xem trước trực tiếp: `npx http-server video` rồi mở `index.html?preview`.
