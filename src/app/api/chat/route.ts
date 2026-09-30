@@ -145,7 +145,7 @@ export async function POST(req: Request): Promise<Response> {
   const picked = pickRoutes(userTexts);
   let system: string;
   try {
-    system = buildSystemPrompt({ lang: parsed.lang, ...picked, text: userTexts.slice(-3).join("\n") });
+    system = buildSystemPrompt({ lang: parsed.lang, ...picked, texts: userTexts.slice(-3) });
   } catch (e) {
     console.error(`chat: không dựng được prompt: ${e instanceof Error ? e.message : "không rõ"}`);
     return fail(503, "config");
