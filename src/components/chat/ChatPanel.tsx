@@ -36,10 +36,24 @@ function errorText(t: ChatCopy, code: string, status: number): string {
 
 /*
   Markdown tối thiểu cho câu trả lời: đoạn, dòng tiêu đề, gạch đầu dòng, chữ đậm,
-  đường dẫn. Đường dẫn trong trang (/vi/..., /en/...) đi bằng `Link` để chuyển
-  trang mà không mất cuộc trò chuyện.
+  chữ nghiêng, liên kết dạng [chữ](đường dẫn) và đường dẫn trần. Đường dẫn trong
+  trang (/vi/..., /en/...) đi bằng `Link` để chuyển trang mà không mất cuộc trò
+  chuyện. Liên kết dạng Markdown chỉ nhận đích http(s) hoặc đường dẫn trong trang.
 */
-const INLINE = /\*\*([^*\n]+)\*\*|(https?:\/\/[^\s<>()[\]]+)|(\/(?:vi|en)\/[\w\-/#?=.]+)/g;
+const INLINE =
+  /\[([^\]\n]+)\]\(((?:https?:\/\/|\/(?:vi|en)\/)[^\s)]+)\)|\*\*([^*\n]+)\*\*|\*([^*\n]+)\*|(https?:\/\/[^\s<>()[\]]+)|(\/(?:vi|en)\/[\w\-/#?=.]+)/g;
+
+function linkTo(href: string, label: string, key: number): ReactNode {
+  return href.startsWith("/") ? (
+    <Link key={key} href={href} className="link-sweep">
+      {label}
+    </Link>
+  ) : (
+    <a key={key} href={href} target="_blank" rel="nofollow noopener noreferrer" className="link-sweep">
+      {label}
+    </a>
+  );
+}
 
 function inline(text: string): ReactNode[] {
   const out: ReactNode[] = [];
@@ -47,25 +61,16 @@ function inline(text: string): ReactNode[] {
   for (const m of text.matchAll(INLINE)) {
     const at = m.index ?? 0;
     if (at > last) out.push(text.slice(last, at));
-    if (m[1]) {
-      out.push(<strong key={at}>{m[1]}</strong>);
-      last = at + m[0].length;
-      continue;
+    last = at + m[0].length;
+    if (m[1]) out.push(linkTo(m[2], m[1], at));
+    else if (m[3]) out.push(<strong key={at}>{m[3]}</strong>);
+    else if (m[4]) out.push(<em key={at}>{m[4]}</em>);
+    else {
+      // Dấu câu dính cuối đường dẫn thuộc về câu, không thuộc đường dẫn.
+      const href = (m[5] ?? m[6]).replace(/[.,;:]+$/, "");
+      out.push(linkTo(href, href, at));
+      last = at + href.length;
     }
-    // Dấu câu dính cuối đường dẫn thuộc về câu, không thuộc đường dẫn.
-    const href = (m[2] ?? m[3]).replace(/[.,;:]+$/, "");
-    out.push(
-      m[3] ? (
-        <Link key={at} href={href} className="link-sweep">
-          {href}
-        </Link>
-      ) : (
-        <a key={at} href={href} target="_blank" rel="nofollow noopener noreferrer" className="link-sweep">
-          {href}
-        </a>
-      ),
-    );
-    last = at + href.length;
   }
   if (last < text.length) out.push(text.slice(last));
   return out;
