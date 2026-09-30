@@ -48,6 +48,10 @@ const baseHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  // Trang không mở cửa sổ bật lên nào cần giữ liên lạc với trang khác (đăng nhập
+  // bằng email và mật khẩu, không qua cửa sổ OAuth). Tách hẳn khỏi cửa sổ của
+  // trang lạ thì trang lạ không với tới `window` của trang này được.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   // Trang không dùng máy ảnh, micrô, vị trí hay cảm biến nào. Nói rõ điều đó thì
   // một khung nhúng lạ cũng không xin được các quyền ấy dưới tên trang này.
   {
