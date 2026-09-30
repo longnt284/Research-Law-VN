@@ -3579,3 +3579,196 @@ mark.hl {
   font-weight: 600;
   color: var(--ink);
 }
+
+/* ── Trợ lý hỏi đáp ──────────────────────────────────────────────────────── */
+
+.chat-launch {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--paper);
+  padding: 0.55rem 0.95rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-pop);
+  transition: background-color 0.2s var(--ease-out-soft), border-color 0.2s var(--ease-out-soft);
+}
+.chat-launch:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-soft);
+}
+.chat-launch[hidden],
+.chat-panel[hidden] {
+  display: none;
+}
+/* Trang đối chiếu có thanh điều hướng nổi ở cùng góc: đẩy nút lên trên nó. */
+body:has(.ldiff-nav) .chat-launch {
+  bottom: calc(max(1rem, env(safe-area-inset-bottom)) + 3.5rem);
+}
+.chat-panel {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  width: min(27rem, calc(100vw - 2rem));
+  height: min(38rem, calc(100dvh - 2rem));
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  box-shadow: var(--shadow-pop);
+  animation: pop-in 0.2s var(--ease-out-soft);
+}
+@media (max-width: 639px) {
+  .chat-panel {
+    inset: 0;
+    width: auto;
+    height: 100dvh;
+    border: 0;
+  }
+}
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+}
+.chat-title {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+.chat-badge {
+  margin-left: 0.35rem;
+  border: 1px solid var(--rule-strong);
+  padding: 0.05rem 0.35rem;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  vertical-align: middle;
+  color: var(--ink-3);
+}
+.chat-icon-btn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.chat-icon-btn:hover {
+  color: var(--accent);
+}
+.chat-log {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.9rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.chat-log a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.chat-notice {
+  border-left: 2px solid var(--rule-strong);
+  padding-left: 0.65rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ink-3);
+}
+.chat-intro {
+  margin-top: 1rem;
+  color: var(--ink-2);
+}
+.chat-intro ul {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+.chat-intro .chip {
+  text-align: left;
+  white-space: normal;
+}
+.chat-msg {
+  margin-top: 1rem;
+}
+.chat-user {
+  margin-left: 2.5rem;
+  border: 1px solid var(--rule);
+  background: var(--paper-2);
+  padding: 0.5rem 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.chat-bot {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.chat-bot > * + * {
+  margin-top: 0.55rem;
+}
+.chat-bot p {
+  white-space: pre-wrap;
+}
+.chat-bot ul {
+  list-style: disc;
+  padding-left: 1.2rem;
+}
+.chat-bot li + li {
+  margin-top: 0.25rem;
+}
+.chat-h {
+  font-weight: 600;
+}
+.chat-error {
+  border-left-color: var(--rule-strong);
+  color: var(--ink-3);
+}
+.chat-wait {
+  color: var(--ink-3);
+}
+.chat-skill {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.chat-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  border-top: 1px solid var(--rule);
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+}
+.chat-input {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  background: transparent;
+  padding: 0.35rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  outline: none;
+}
+.chat-form .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel {
+    animation: none;
+  }
+}
+:root[data-motion="off"] .chat-panel {
+  animation: none;
+}

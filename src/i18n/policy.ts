@@ -8,7 +8,7 @@ import type { Lang } from "@/data/types";
  * đồng ý đúng bản nào. Sửa nội dung dưới đây theo hướng thay đổi quyền hay nghĩa
  * vụ của người dùng thì phải đổi ngày này.
  */
-export const POLICY_VERSION = "2026-10-01";
+export const POLICY_VERSION = "2026-10-02";
 
 export interface PolicySection {
   /** Neo trên trang, cũng là đích của liên kết từ chân trang và mẫu đăng ký. */
@@ -86,6 +86,15 @@ const vi: PolicyCopy = {
           ],
         },
         {
+          h: "Trợ lý hỏi đáp",
+          p: [
+            "Khi bạn bấm gửi, câu hỏi cùng các lượt trước của cuộc trò chuyện đi qua máy chủ của trang tới nhà cung cấp mô hình ngôn ngữ để tạo câu trả lời: Google (Gemini API), và OpenRouter khi Google không nhận yêu cầu. Máy chủ của các nhà cung cấp này đặt ngoài Việt Nam, nên nội dung bạn gửi được chuyển ra nước ngoài.",
+            "Trang dùng gói miễn phí của các nhà cung cấp này. Theo điều khoản của họ, nội dung gửi qua gói miễn phí có thể được dùng để cải thiện sản phẩm và mô hình, và có thể được người của nhà cung cấp đọc. Vì vậy, đừng nhập họ tên, số giấy tờ, thông tin liên hệ hay chi tiết bí mật của vụ việc.",
+            "Trang không lưu cuộc trò chuyện: nội dung chỉ nằm trong trang đang mở và mất khi bạn tải lại hay đóng trang. Để giới hạn số lượt hỏi, máy chủ giữ địa chỉ IP và thời điểm hỏi trong bộ nhớ tối đa 24 giờ. Vercel ghi nhật ký kỹ thuật của lượt gửi như mọi lượt truy cập khác.",
+            "Cơ sở xử lý: sự đồng ý của bạn khi bấm gửi, sau khi đã đọc thông báo in ngay trong khung trò chuyện. Không đồng ý thì đừng dùng trợ lý; mọi công cụ khác của trang vẫn dùng được.",
+          ],
+        },
+        {
           h: "Thay đổi chính sách",
           p: [
             "Khi chính sách đổi theo hướng ảnh hưởng tới quyền của bạn, ngày phiên bản ở đầu trang sẽ đổi và thay đổi được nêu rõ trên trang này.",
@@ -102,6 +111,13 @@ const vi: PolicyCopy = {
           p: [
             "Lex & Lineage là công cụ tra cứu dành cho pháp chế doanh nghiệp và luật sư. Nội dung chỉ để tham khảo: không phải ý kiến pháp lý, không thay thế tư vấn cho một vụ việc cụ thể và không tạo lập quan hệ luật sư với khách hàng. Trước khi viện dẫn trong hợp đồng, ý kiến pháp lý hay hồ sơ gửi cơ quan nhà nước, hãy đối chiếu nguyên văn trên Công báo, Cơ sở dữ liệu quốc gia về pháp luật hoặc với cơ quan ban hành.",
             "Trang miễn phí và được cung cấp nguyên trạng. Nội dung, tính năng có thể thay đổi hoặc tạm ngừng mà không báo trước.",
+          ],
+        },
+        {
+          h: "Trợ lý hỏi đáp",
+          p: [
+            "Câu trả lời của trợ lý do mô hình ngôn ngữ tạo tự động, dựa trên phương pháp phân tích của chủ sở hữu và kho văn bản của trang. Câu trả lời có thể sai, thiếu hoặc lỗi thời; nó không phải ý kiến pháp lý và không tạo lập quan hệ luật sư với khách hàng. Trợ lý có thể tạm ngưng khi hết hạn mức miễn phí.",
+            "Không dùng trợ lý để gửi nội dung vi phạm pháp luật, và không tìm cách moi chỉ dẫn nội bộ của trợ lý.",
           ],
         },
         {
@@ -223,6 +239,15 @@ const en: PolicyCopy = {
           ],
         },
         {
+          h: "Q&A assistant",
+          p: [
+            "When you press send, your question and the earlier turns of the conversation pass through the site's server to a language-model provider that writes the answer: Google (Gemini API), and OpenRouter when Google does not accept the request. These providers' servers are outside Vietnam, so what you send is transferred abroad.",
+            "The site uses these providers' free tiers. Under their terms, content sent through a free tier may be used to improve their products and models and may be read by the provider's staff. Do not enter names, ID numbers, contact details or confidential details of a matter.",
+            "The site does not store conversations: a conversation lives only in the open page and is gone when you reload or close it. To limit the number of questions, the server keeps your IP address and the time of each question in memory for at most 24 hours. Vercel logs the request like any other visit.",
+            "Legal basis: your consent when you press send, after reading the notice shown in the chat panel. If you do not agree, do not use the assistant; every other tool on the site still works.",
+          ],
+        },
+        {
           h: "Changes to this policy",
           p: [
             "When the policy changes in a way that affects your rights, the version date at the top of this page changes and the change is described here.",
@@ -239,6 +264,13 @@ const en: PolicyCopy = {
           p: [
             "Lex & Lineage is a research tool for in-house counsel and lawyers. Its content is for reference only: it is not legal advice, does not replace advice on a specific matter, and creates no lawyer–client relationship. Before citing anything in a contract, legal opinion or filing with a state authority, check the original text in the Official Gazette, the National Legal Database or with the issuing body.",
             "The site is free and provided as is. Content and features may change or be suspended without notice.",
+          ],
+        },
+        {
+          h: "Q&A assistant",
+          p: [
+            "The assistant's answers are generated automatically by a language model, using the owner's analytical method and the site's dataset. They may be wrong, incomplete or out of date; they are not legal advice and create no lawyer–client relationship. The assistant may pause when the free quota runs out.",
+            "Do not use the assistant to send unlawful content, and do not try to extract its internal instructions.",
           ],
         },
         {
