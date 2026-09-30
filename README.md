@@ -533,17 +533,38 @@ triển, và sai một cách dễ thấy nếu quên đặt trước khi triển
 
 ## Trợ lý hỏi đáp
 
-Nút "Hỏi trợ lý AI" ở góc phải dưới, có trên mọi trang, mở khung chat. Route
-`/api/chat` (`src/app/api/chat/route.ts`) chọn tối đa hai skill pháp lý theo từ
-khóa của câu hỏi (`src/lib/chat/skills.ts`). Sau đó route dựng system prompt gồm
-lời dẫn cho chế độ chatbot, thân skill và danh sách văn bản trong kho kèm tình
-trạng hiệu lực hôm nay (`src/lib/chat/prompt.ts`). Cuối cùng route gọi mô hình
-theo chuẩn chat completions kiểu OpenAI và trả câu trả lời dạng luồng NDJSON gồm
-chữ trả lời, chữ suy luận và tên model (`src/lib/chat/provider.ts`). Văn bản
-trong kho được dẫn như đã tra cứu, kèm đường dẫn; văn bản ngoài kho mang nhãn
-`[CHƯA XÁC MINH]`. Dưới mỗi câu trả lời có tên model và dòng nhắc nội dung chỉ
-để tham khảo. Trang không lưu cuộc trò chuyện. Mỗi địa chỉ IP được 6 lượt mỗi
-phút và 40 lượt mỗi ngày.
+Nút "Hỏi trợ lý AI" ở góc phải dưới, có trên mọi trang, mở khung chat. Trợ lý
+trả lời mọi câu hỏi về trang và mọi vấn đề pháp lý (pháp luật Việt Nam ở mọi
+lĩnh vực, pháp luật quốc tế và nước ngoài); câu hỏi ngoài hai nhóm đó được trả
+lời ngắn rồi mời quay lại.
+
+Route `/api/chat` (`src/app/api/chat/route.ts`) chọn tối đa hai skill pháp lý
+theo từ khóa của câu hỏi (`src/lib/chat/skills.ts`). Sau đó route dựng system
+prompt (`src/lib/chat/prompt.ts`) gồm:
+
+- lời dẫn cho chế độ chatbot;
+- thân skill đứng đầu, gửi nguyên văn làm phương pháp;
+- các đoạn tư liệu liên quan tới câu hỏi (`src/lib/chat/retrieve.ts`), tìm trong
+  mọi skill và tệp tham chiếu của gói (tối đa 8.000 ký tự), và trong tóm tắt văn
+  bản cùng điểm đối chiếu của trang (tối đa 3.000 ký tự, kèm đường dẫn);
+- danh sách văn bản trong kho kèm tình trạng hiệu lực hôm nay;
+- phần hướng dẫn dùng trang.
+
+Đoạn tư liệu được xếp hạng bằng BM25 trên âm tiết và cặp âm tiết, hiểu cả câu gõ
+không dấu, không tốn thêm lượt gọi mô hình. Đoạn chỉ khớp một từ chung bị loại,
+nên câu hỏi tư liệu không bàn tới (ví dụ hình sự) không kéo đoạn nhiễu vào.
+Cuối cùng route gọi mô hình theo chuẩn chat completions kiểu OpenAI và trả câu
+trả lời dạng luồng NDJSON gồm chữ trả lời, chữ suy luận và tên model
+(`src/lib/chat/provider.ts`).
+
+Văn bản trong kho được dẫn như đã tra cứu, kèm đường dẫn. Số hiệu mà tư liệu ghi
+nhãn đã đối chiếu (`[A <ngày>]`, `[A-tiêu đề]`, `[T <ngày>]`) cũng được dẫn như
+đã tra. Mọi văn bản khác mang nhãn `[CHƯA XÁC MINH]`. Dưới mỗi câu trả lời có
+tên model và dòng nhắc nội dung chỉ để tham khảo. Trang không lưu cuộc trò
+chuyện. Mỗi địa chỉ IP được 6 lượt mỗi phút và 40 lượt mỗi ngày.
+
+Phần hướng dẫn trang trong `prompt.ts` là nguồn duy nhất trợ lý dùng để nói về
+trang. Thêm hay đổi tính năng thì sửa cả phần đó.
 
 Người dùng chọn model trong khung chat, hoặc để trang tự chọn theo độ khó của câu
 hỏi (`src/lib/chat/models.ts`). Dấu hiệu khó được cộng điểm: đòi phân tích, so
@@ -555,12 +576,15 @@ luận mở rộng" bật mức suy luận cao và hiện bản tóm tắt suy l
 Gemini 3.1 Pro và suy luận mở rộng tốn nhiều hơn, nên mỗi địa chỉ IP chỉ được 10
 lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng 3.8 Flash ở chế độ thường.
 
-Chín skill dùng cho bot: `vn-orchestrator`, `vn-construction-partner`,
+Chín skill bot chọn được: `vn-orchestrator`, `vn-construction-partner`,
 `vn-energy-partner`, `vn-ppp-partner`, `vn-land-realestate`,
 `vn-fintech-partner`, `vn-data-privacy-partner`, `vn-litigation-partner` và
-`vn-legal-review`. Repo công khai, nên chỉ bản mã hóa AES-256-GCM được commit
-(`src/lib/chat/skills.enc.json`). Khi sửa skill, đóng gói lại bằng lệnh sau rồi
-commit tệp mới:
+`vn-legal-review`. Gói còn có `vn-legal-lookup` chỉ làm tư liệu, và mọi tệp
+trong thư mục `references/` của cả mười skill, trừ `tvpl-browser.md` (hướng dẫn
+dùng trình duyệt mà bot không có). Gói đóng theo cách cũ, chỉ có thân skill,
+vẫn chạy nhưng không có tư liệu tham chiếu. Repo công khai, nên chỉ bản mã hóa
+AES-256-GCM được commit (`src/lib/chat/skills.enc.json`). Khi sửa skill, đóng
+gói lại bằng lệnh sau rồi commit tệp mới:
 
 ```bash
 CHAT_SKILLS_KEY=<khóa> node scripts/pack-chat-skills.mjs <thư mục chứa các skill vn-*>
@@ -574,15 +598,19 @@ CHAT_API_BASE=https://generativelanguage.googleapis.com/v1beta/openai
 CHAT_API_KEY=<khóa Gemini API, tạo ở Google AI Studio>
 CHAT_FALLBACK_API_BASE=https://openrouter.ai/api/v1
 CHAT_FALLBACK_API_KEY=<khóa OpenRouter>
-CHAT_FALLBACK_MODEL=openrouter/free
+CHAT_FALLBACK_MODEL=openrouter/free   # hoặc nhiều model, cách nhau bằng dấu phẩy
 ```
 
 Mã các model Gemini nằm trong `src/lib/chat/models.ts`, không nằm trong biến môi
 trường; `CHAT_MODEL` không còn được dùng. Khi model đã chọn từ chối (hết lượt,
 quá tải, không trả lời trong 25 giây), câu hỏi chuyển sang các bản Flash rồi tới
-nhà cung cấp dự phòng, không bao giờ tự nâng lên Pro. `openrouter/free` chọn
-ngẫu nhiên một model miễn phí cho mỗi câu hỏi; tên model thật hiện dưới câu trả
-lời. Nhà cung cấp dự phòng là tùy chọn. Thiếu `CHAT_SKILLS_KEY` hoặc thiếu nhà
+nhà cung cấp dự phòng, không bao giờ tự nâng lên Pro. Model Gemini trả 429 (hết
+lượt) được cho nghỉ tới hết thời gian chờ Google báo, mặc định một phút, tối đa
+một giờ: trong lúc đó câu hỏi đi thẳng sang model kế tiếp hoặc OpenRouter thay
+vì hỏi lại rồi nhận cùng lỗi. `CHAT_FALLBACK_MODEL` nhận một model hoặc danh sách
+model cách nhau bằng dấu phẩy, thử theo thứ tự. `openrouter/free` chọn ngẫu
+nhiên một model miễn phí cho mỗi câu hỏi; tên model thật hiện dưới câu trả lời.
+Nhà cung cấp dự phòng là tùy chọn. Thiếu `CHAT_SKILLS_KEY` hoặc thiếu nhà
 cung cấp thì trợ lý báo tạm ngưng; phần còn lại của trang không bị ảnh hưởng.
 
 ## Skill Claude Code
@@ -654,7 +682,7 @@ src/
   lib/client-store.ts       # theo dõi, vừa xem, bộ hồ sơ, ngày tra cứu
   lib/changes.ts            # dòng thay đổi của cả kho
   lib/account.ts            # tài khoản Supabase và đồng bộ theo dõi, bộ hồ sơ
-  lib/chat/                 # bộ skill mã hóa, chọn skill, dựng prompt, gọi nhà cung cấp
+  lib/chat/                 # bộ skill mã hóa, chọn skill, tìm đoạn tư liệu, dựng prompt, gọi nhà cung cấp
   components/chat/          # nút mở và khung trò chuyện của trợ lý
   app/[lang]/tai-khoan/     # đăng ký, đăng nhập, đổi mật khẩu, xóa tài khoản
 supabase/migrations/        # bảng follows, matters, consents, RLS, hàm xóa tài khoản
@@ -848,17 +876,24 @@ cannot be derived from the source. On Vercel the platform's
 the build falls back to `http://localhost:3000`.
 
 The "Ask the AI assistant" button, on every page, opens a chat panel. `/api/chat`
-picks up to two of the owner's legal skills by keyword. It builds a system prompt
-from those skills plus the matching instruments in the dataset, with today's
-validity status. Then it streams the answer as NDJSON (answer text, reasoning
-text, model name) from an OpenAI-compatible chat completions endpoint. The
+picks up to two of the owner's legal skills by keyword. The assistant answers any
+question about the site and any legal question, Vietnamese, international or
+foreign. The system prompt carries the top skill verbatim, the passages of the
+whole skill bundle and its reference files that best match the question (BM25
+over syllables and syllable pairs, `src/lib/chat/retrieve.ts`), the matching
+dataset summaries and comparison points with links, the matching instruments
+with today's validity status, and a guide to the site. Then it streams the
+answer as NDJSON (answer text, reasoning text, model name) from an
+OpenAI-compatible chat completions endpoint. The
 primary provider is the Gemini API (`CHAT_API_BASE`, `CHAT_API_KEY`) with the
 models listed in `src/lib/chat/models.ts`: Gemini 3.6 Flash, 3.8 Flash and
 3.1 Pro. Users pick a model or let the site choose one by question difficulty,
 and can turn on extended thinking; Pro and extended thinking are limited to 10
 questions a day per IP. An optional fallback (`CHAT_FALLBACK_*`, e.g.
-OpenRouter's `openrouter/free`, a random free model) takes over when every
-Gemini model refuses. The repository is public, so the skills are
+OpenRouter's `openrouter/free`, a random free model, or a comma-separated list
+of models tried in order) takes over when every Gemini model refuses. A Gemini
+model that returns 429 rests until the retry delay Google reports (one minute by
+default, one hour at most), so later questions go straight to the next model. The repository is public, so the skills are
 committed only in encrypted form (`src/lib/chat/skills.enc.json`, AES-256-GCM,
 key in `CHAT_SKILLS_KEY`). Repack them with `scripts/pack-chat-skills.mjs`.
 Conversations are not stored. Each IP address gets 6 questions a minute and

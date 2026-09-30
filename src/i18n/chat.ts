@@ -48,17 +48,17 @@ const vi: ChatCopy = {
   notice:
     "Câu trả lời do máy tạo, chỉ để tham khảo và có thể sai; không phải tư vấn pháp lý. Câu hỏi được gửi tới Google (Gemini) hoặc OpenRouter, máy chủ ở nước ngoài, và có thể được họ dùng để cải thiện mô hình. Đừng nhập họ tên, số giấy tờ, thông tin liên hệ hay chi tiết bí mật của vụ việc.",
   policy: "Chính sách riêng tư",
-  placeholder: "Nhập câu hỏi pháp lý…",
+  placeholder: "Nhập câu hỏi…",
   send: "Gửi",
   stop: "Dừng",
   reset: "Trò chuyện mới",
   close: "Đóng",
   intro:
-    "Hỏi về hiệu lực văn bản, đất đai, xây dựng, năng lượng, PPP, fintech, dữ liệu hay tranh chấp. Văn bản có trong kho của trang được dẫn kèm đường dẫn; văn bản ngoài kho mang nhãn chưa xác minh.",
+    "Hỏi về mọi vấn đề pháp luật, hiệu lực và cơ sở pháp lý của văn bản, hay cách dùng trang này. Văn bản có trong kho của trang được dẫn kèm đường dẫn; văn bản chưa được đối chiếu mang nhãn chưa xác minh.",
   examples: [
     "Luật Đất đai 2024 còn hiệu lực không?",
     "Mua đất chưa có sổ đỏ, đã đặt cọc thì có rủi ro gì?",
-    "Hợp đồng FIDIC bị sửa Clause 20 cần lưu ý gì?",
+    "Làm sao xem văn bản nào còn hiệu lực tại một ngày trong quá khứ?",
   ],
   skillPrefix: "Chuyên môn",
   skills: {
@@ -105,16 +105,16 @@ const en: ChatCopy = {
   notice:
     "Answers are machine-generated, for reference only and may be wrong; they are not legal advice. Questions are sent to Google (Gemini) or OpenRouter, whose servers are outside Vietnam, and may be used by them to improve their models. Do not enter names, ID numbers, contact details or confidential details of a matter.",
   policy: "Privacy policy",
-  placeholder: "Type a legal question…",
+  placeholder: "Type your question…",
   send: "Send",
   stop: "Stop",
   reset: "New chat",
   close: "Close",
   intro:
-    "Ask about the validity of an instrument, land, construction, energy, PPP, fintech, data or disputes. Instruments in this site's dataset are cited with a link; anything outside it is marked unverified.",
+    "Ask about any legal matter, the validity and legal basis of an instrument, or how to use this site. Instruments in this site's dataset are cited with a link; anything not yet checked is marked unverified.",
   examples: [
     "Is the 2024 Land Law in force?",
-    "What should a contractor watch for in an amended FIDIC Clause 20?",
+    "How do I see which instruments were in force on a past date?",
     "Can a foreigner own an apartment in Vietnam?",
   ],
   skillPrefix: "Expertise",

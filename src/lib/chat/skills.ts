@@ -12,6 +12,10 @@ import bundle from "./skills.enc.json";
  * trong repo (`skills.enc.json`, đóng gói bằng `scripts/pack-chat-skills.mjs`).
  * Khóa đến từ `CHAT_SKILLS_KEY`, chỉ có trên máy chủ. Tệp này chỉ được route
  * `/api/chat` nhập, nên bản mã hóa không bao giờ xuống trình duyệt.
+ *
+ * Gói là một bảng tên mục → chữ: thân skill mang khóa là tên skill, tệp tham
+ * chiếu của skill mang khóa `<skill>/references/<tệp>`. Gói đóng theo cách cũ
+ * chỉ có thân skill, và vẫn dùng được.
  */
 
 /** Phải khớp danh sách `SKILLS` trong `scripts/pack-chat-skills.mjs`. */
@@ -29,15 +33,20 @@ export const SKILL_IDS = [
 
 export type SkillId = (typeof SKILL_IDS)[number];
 
-let bodies: Record<SkillId, string> | undefined;
+let library: Record<string, string> | undefined;
 
-/** Thân một skill. Ném lỗi khi thiếu khóa hoặc khóa sai: route trả 503. */
-export function skillBody(id: SkillId): string {
-  bodies ??= decrypt();
-  return bodies[id];
+/** Mọi mục của gói. Ném lỗi khi thiếu khóa hoặc khóa sai: route trả 503. */
+export function skillLibrary(): Record<string, string> {
+  library ??= decrypt();
+  return library;
 }
 
-function decrypt(): Record<SkillId, string> {
+/** Thân một skill. */
+export function skillBody(id: SkillId): string {
+  return skillLibrary()[id];
+}
+
+function decrypt(): Record<string, string> {
   const key = Buffer.from(process.env.CHAT_SKILLS_KEY ?? "", "base64");
   if (key.length !== 32) throw new Error("CHAT_SKILLS_KEY chưa đặt hoặc không đủ 32 byte");
   const d = createDecipheriv("aes-256-gcm", key, Buffer.from(bundle.iv, "base64"));
@@ -47,7 +56,10 @@ function decrypt(): Record<SkillId, string> {
   for (const id of SKILL_IDS) {
     if (typeof out[id] !== "string") throw new Error(`Gói skill thiếu ${id}`);
   }
-  return out as Record<SkillId, string>;
+  for (const [k, v] of Object.entries(out)) {
+    if (typeof v !== "string") throw new Error(`Mục ${k} của gói skill không phải chữ`);
+  }
+  return out as Record<string, string>;
 }
 
 /*
@@ -141,7 +153,7 @@ const ROUTES: Route[] = [
       "trọng tài", "viac", "icc", "siac", "hkiac", "lcia", "uncitral", "phán quyết",
       "hủy phán quyết", "biện pháp khẩn cấp tạm thời", "phản tố", "luận cứ", "hòa giải",
       "thi hành án", "tranh chấp", "bản án", "án lệ", "lawsuit", "litigation", "arbitration",
-      "court", "dispute",
+      "court", "dispute", "disputes",
     ],
   },
   {
@@ -189,6 +201,58 @@ const ROUTES: Route[] = [
       "hợp đồng", "thương mại", "phạt vi phạm", "bồi thường thiệt hại", "contract", "commercial",
     ],
   },
+  /*
+    Lĩnh vực ngoài kho văn bản của trang, nên không kèm văn bản nào. Các tuyến
+    này để câu hỏi dân sự, gia đình, hình sự, hành chính không rơi vào skill
+    chuyên ngành chỉ vì có chữ "tranh chấp" hay "tòa án".
+  */
+  {
+    skill: "vn-orchestrator",
+    domains: [],
+    keywords: [
+      "dân sự", "bộ luật dân sự", "giao dịch dân sự", "thừa kế", "di chúc", "di sản", "vay tiền",
+      "đòi nợ", "ủy quyền", "civil code", "inheritance",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: [],
+    keywords: [
+      "hôn nhân", "kết hôn", "ly hôn", "nuôi con", "cấp dưỡng", "tài sản chung", "divorce", "marriage",
+      "custody",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: [],
+    keywords: [
+      "hình sự", "bộ luật hình sự", "tội", "phạm tội", "truy cứu trách nhiệm hình sự", "án tù",
+      "tố cáo", "criminal", "crime",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: [],
+    keywords: [
+      "xử phạt hành chính", "vi phạm hành chính", "khiếu nại", "thủ tục hành chính", "cư trú",
+      "căn cước", "administrative",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: [],
+    keywords: [
+      "sở hữu trí tuệ", "nhãn hiệu", "quyền tác giả", "bản quyền", "sáng chế", "kiểu dáng công nghiệp",
+      "intellectual property", "trademark", "copyright", "patent",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: [],
+    keywords: [
+      "bảo hiểm", "giao thông", "giấy phép lái xe", "bằng lái", "nồng độ cồn", "insurance", "traffic",
+    ],
+  },
 ];
 
 /*
@@ -202,7 +266,7 @@ const TONE: Record<string, string> = {
   "uý": "úy", "uỳ": "ùy", "uỷ": "ủy", "uỹ": "ũy", "uỵ": "ụy",
 };
 
-function norm(s: string): string {
+export function norm(s: string): string {
   const t = s
     .normalize("NFC")
     .toLowerCase()
