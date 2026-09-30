@@ -229,6 +229,10 @@ export default async function LangLayout({
                       <a href={`${FIRM.url}/#lien-he`} target="_blank" rel="noopener" className="link-sweep font-medium">
                         {FIRM.name[lang]} <span aria-hidden="true">↗</span>
                       </a>
+                      {/* Video giới thiệu nằm trên website hãng; trang này chỉ dẫn sang. */}
+                      <a href={`${FIRM.url}/video`} target="_blank" rel="noopener" className="link-sweep mt-1 block w-fit text-sm text-[var(--ink-2)]">
+                        {t.footer.firmVideo} <span aria-hidden="true">↗</span>
+                      </a>
                     </dd>
                   </div>
                 </dl>
