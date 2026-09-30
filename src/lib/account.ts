@@ -85,10 +85,22 @@ async function pull(sb: SupabaseClient): Promise<{ followed: Followed[]; matters
   };
 }
 
+/*
+  Cùng dạng mã với ràng buộc của bảng (xem `supabase/migrations`). Danh sách đọc
+  từ bộ nhớ trình duyệt, ai cũng sửa tay được, nên lọc trước khi gửi: một mã
+  chứa dấu phẩy hay dấu ngoặc sẽ làm sai nghĩa bộ lọc `not in (...)` ghép bên
+  dưới.
+*/
+const DOC_ID = /^[a-z0-9-]{1,120}$/;
+const MATTER_ID = /^[a-z0-9]{1,40}$/;
+const isDocId = (v: unknown): v is string => typeof v === "string" && DOC_ID.test(v);
+
 /** Thay dữ liệu trên máy chủ bằng đúng danh sách đang có trong trình duyệt. */
 async function push(sb: SupabaseClient, userId: string) {
-  const followed = readFollowed();
-  const matters = readMatters();
+  const followed = readFollowed().filter((f) => isDocId(f.id));
+  const matters = readMatters()
+    .filter((m) => MATTER_ID.test(m.id))
+    .map((m) => ({ ...m, docIds: m.docIds.filter(isDocId) }));
 
   if (followed.length) {
     const { error } = await sb
@@ -158,6 +170,27 @@ export async function syncOnSignIn(user: User) {
   } catch {
     // Lần sau sẽ gộp lại; gộp hai lần cho cùng kết quả.
   }
+}
+
+/**
+ * Mọi dữ liệu tài khoản đang giữ về người dùng, đọc thẳng từ máy chủ, để người
+ * dùng tải về: email, ngày tạo tài khoản, văn bản theo dõi, bộ hồ sơ và bằng
+ * chứng đồng ý chính sách.
+ */
+export async function exportMyData(user: User) {
+  const sb = await supabase();
+  const [data, consents] = await Promise.all([
+    pull(sb),
+    sb.from("consents").select("policy_version, accepted_at").order("accepted_at"),
+  ]);
+  if (consents.error) throw consents.error;
+  return {
+    exported_at: new Date().toISOString(),
+    account: { email: user.email ?? "", created_at: user.created_at },
+    followed: data.followed,
+    matters: data.matters,
+    consents: consents.data,
+  };
 }
 
 let pending: number | null = null;

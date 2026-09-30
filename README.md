@@ -199,6 +199,11 @@ Backend là Supabase, không có máy chủ riêng:
   hàng của họ xóa theo. Hàm chạy `security definer` nhưng chỉ xóa đúng người
   đang gọi (trình kiểm tra bảo mật của Supabase có cảnh báo chung cho kiểu hàm
   này; ở đây là chủ ý).
+- **Migration gia cố** `supabase/migrations/20261001090000_harden_accounts_and_consent.sql`:
+  thu hồi quyền bảng của `anon`; trần 1000 văn bản theo dõi và 100 bộ hồ sơ mỗi
+  người; kiểm từng mã trong `matters.doc_ids`; bảng `consents` ghi phiên bản
+  chính sách người dùng đồng ý khi đăng ký. Hàng `consents` do trigger trên
+  `auth.users` ghi theo đồng hồ máy chủ, người dùng chỉ đọc được, không sửa được.
 
 Phía trang (`src/lib/account.ts`, `src/components/account/`): trang
 `/vi/tai-khoan` để đăng ký, đăng nhập, đổi mật khẩu, đăng xuất, xóa tài khoản;
@@ -206,6 +211,13 @@ nút tài khoản trên thanh điều hướng. Thư viện Supabase chỉ tải
 khoản hoặc khi trình duyệt có phiên đăng nhập. Lần đầu đăng nhập trên một trình
 duyệt, dữ liệu đã lưu trước đó được gộp vào tài khoản; những lần sau máy chủ là
 bản gốc. Đăng xuất xóa danh sách theo dõi và bộ hồ sơ khỏi trình duyệt.
+
+Quyền dữ liệu cá nhân (Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15): mẫu tạo tài
+khoản có ô đồng ý bắt buộc, gửi `POLICY_VERSION` (`src/i18n/policy.ts`) lên
+Supabase; trang tài khoản có nút tải toàn bộ dữ liệu thành tệp JSON; chính sách
+quyền riêng tư, điều khoản sử dụng và bản quyền ở `/vi/chinh-sach`. Đổi nội dung
+chính sách theo hướng ảnh hưởng quyền người dùng thì đổi `POLICY_VERSION`. Dữ
+liệu tài khoản lưu ở Supabase region Seoul (Hàn Quốc).
 
 Biến môi trường (cả hai công khai, đã đặt trên Vercel):
 
@@ -554,6 +566,7 @@ src/
   app/[lang]/thay-doi/      # dòng thay đổi của cả kho
   app/[lang]/theo-doi/      # theo dõi, bộ hồ sơ, vừa xem (lưu trong trình duyệt)
   app/[lang]/gop-y/         # báo lỗi dữ liệu, yêu cầu bổ sung văn bản
+  app/[lang]/chinh-sach/    # quyền riêng tư, điều khoản sử dụng, bản quyền
   app/product.css           # kiểu dáng của lớp sản phẩm
   app/icon.svg              # dấu hiệu dạng nhỏ, dùng cho tab và ảnh chia sẻ
   app/[lang]/**/opengraph-image.tsx # ảnh chia sẻ dựng lúc build
@@ -587,11 +600,25 @@ src/
   lib/changes.ts            # dòng thay đổi của cả kho
   lib/account.ts            # tài khoản Supabase và đồng bộ theo dõi, bộ hồ sơ
   app/[lang]/tai-khoan/     # đăng ký, đăng nhập, đổi mật khẩu, xóa tài khoản
-supabase/migrations/        # bảng follows, matters, RLS, hàm xóa tài khoản
+supabase/migrations/        # bảng follows, matters, consents, RLS, hàm xóa tài khoản
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
 references/                 # thư viện đã khảo sát, và lý do dùng hay loại
 ```
+
+## Bản quyền
+
+Bản quyền © 2026 Nguyễn Thành Long. Bảo lưu mọi quyền. Kho mã công khai để
+xem, không phải giấy phép mã nguồn mở; điều kiện đầy đủ ở `LICENSE`. Văn bản
+quy phạm pháp luật không thuộc phạm vi bảo hộ quyền tác giả (khoản 2 Điều 15
+Luật Sở hữu trí tuệ). Nguồn dữ liệu công khai dùng được để tham khảo khi ghi
+nguồn, xem `/vi/chinh-sach#dieu-khoan`.
+
+## Bảo mật
+
+Báo lỗ hổng theo `SECURITY.md` (có `/.well-known/security.txt`). CI
+(`.github/workflows/ci.yml`) chạy lint, build, typecheck và `npm audit` cho mọi
+pull request; Dependabot (`.github/dependabot.yml`) mở PR cập nhật thư viện.
 
 ## Miễn trừ trách nhiệm
 

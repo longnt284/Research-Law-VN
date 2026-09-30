@@ -142,6 +142,8 @@ export interface LandingCopy {
       request: string;
       disclaimer: string;
       privacy: string;
+      terms: string;
+      copyright: string;
     };
   };
 }
@@ -331,6 +333,8 @@ const vi: LandingCopy = {
       request: "Yêu cầu bổ sung văn bản",
       disclaimer: "Miễn trừ trách nhiệm",
       privacy: "Quyền riêng tư",
+      terms: "Điều khoản sử dụng",
+      copyright: "Bản quyền",
     },
   },
 };
@@ -520,6 +524,8 @@ const en: LandingCopy = {
       request: "Request an instrument",
       disclaimer: "Disclaimer",
       privacy: "Privacy",
+      terms: "Terms of use",
+      copyright: "Copyright",
     },
   },
 };

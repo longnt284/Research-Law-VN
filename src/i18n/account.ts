@@ -42,7 +42,12 @@ export interface AccountCopy {
     rate: string;
     generic: string;
   };
+  consent: { before: string; privacy: string; and: string; terms: string; after: string };
+  exportTitle: string;
+  exportText: string;
+  exportButton: string;
   privacy: string;
+  policyLink: string;
 }
 
 const vi: AccountCopy = {
@@ -86,7 +91,18 @@ const vi: AccountCopy = {
     rate: "Thử quá nhiều lần. Đợi vài phút rồi thử lại.",
     generic: "Không thực hiện được. Thử lại sau.",
   },
-  privacy: "Tài khoản chỉ lưu email, mật khẩu đã băm, danh sách văn bản theo dõi và bộ hồ sơ, trên Supabase. Không có dữ liệu nào khác được thu thập.",
+  consent: {
+    before: "Tôi đã đọc và đồng ý với ",
+    privacy: "Chính sách quyền riêng tư",
+    and: " và ",
+    terms: "Điều khoản sử dụng",
+    after: ", kể cả việc lưu tài khoản trên máy chủ đặt tại Hàn Quốc.",
+  },
+  exportTitle: "Tải dữ liệu của tôi",
+  exportText: "Tải về một tệp JSON chứa mọi dữ liệu tài khoản đang lưu trên máy chủ: email, ngày tạo tài khoản, văn bản theo dõi, bộ hồ sơ và lần đồng ý chính sách.",
+  exportButton: "Tải tệp JSON",
+  privacy: "Tài khoản chỉ lưu email, mật khẩu đã băm, danh sách văn bản theo dõi, bộ hồ sơ và lần đồng ý chính sách, trên Supabase (máy chủ tại Seoul, Hàn Quốc). Không có dữ liệu nào khác được thu thập.",
+  policyLink: "Đọc chính sách quyền riêng tư",
 };
 
 const en: AccountCopy = {
@@ -130,7 +146,18 @@ const en: AccountCopy = {
     rate: "Too many attempts. Wait a few minutes and try again.",
     generic: "That did not work. Try again later.",
   },
-  privacy: "The account stores only your email, a hashed password, your watchlist and your matters, on Supabase. Nothing else is collected.",
+  consent: {
+    before: "I have read and agree to the ",
+    privacy: "Privacy policy",
+    and: " and the ",
+    terms: "Terms of use",
+    after: ", including storage of my account on servers in South Korea.",
+  },
+  exportTitle: "Download my data",
+  exportText: "Download a JSON file with all account data held on the server: your email, account creation date, watchlist, matters and policy consent.",
+  exportButton: "Download JSON",
+  privacy: "The account stores only your email, a hashed password, your watchlist, your matters and your policy consent, on Supabase (servers in Seoul, South Korea). Nothing else is collected.",
+  policyLink: "Read the privacy policy",
 };
 
 export const accountCopy: Record<Lang, AccountCopy> = { vi, en };

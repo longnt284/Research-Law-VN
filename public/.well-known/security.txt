@@ -1,0 +1,5 @@
+Contact: mailto:longnt284.lawyer@gmail.com
+Contact: https://github.com/longnt284/Research-Law-VN/security/advisories/new
+Expires: 2027-09-30T00:00:00.000Z
+Preferred-Languages: vi, en
+Policy: https://github.com/longnt284/Research-Law-VN/blob/main/SECURITY.md

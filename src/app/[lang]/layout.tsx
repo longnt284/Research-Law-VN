@@ -187,7 +187,9 @@ export default async function LangLayout({
                 <p className="eyebrow eyebrow-tick">{f.legal}</p>
                 <ul>
                   <li><a href="#mien-tru" className="link-sweep">{f.links.disclaimer}</a></li>
-                  <li><Link href={`/${lang}/phuong-phap#rieng-tu`} className="link-sweep">{f.links.privacy}</Link></li>
+                  <li><Link href={`/${lang}/chinh-sach#rieng-tu`} className="link-sweep">{f.links.privacy}</Link></li>
+                  <li><Link href={`/${lang}/chinh-sach#dieu-khoan`} className="link-sweep">{f.links.terms}</Link></li>
+                  <li><Link href={`/${lang}/chinh-sach#ban-quyen`} className="link-sweep">{f.links.copyright}</Link></li>
                   <li>
                     <Link href={`/${other}`} hrefLang={other} className="link-sweep">
                       {t.footer.switchLangFull}

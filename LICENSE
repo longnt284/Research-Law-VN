@@ -1,0 +1,105 @@
+Bản quyền (c) 2026 Nguyễn Thành Long. Bảo lưu mọi quyền.
+Copyright (c) 2026 Nguyễn Thành Long. All rights reserved.
+
+========================================================================
+TIẾNG VIỆT
+========================================================================
+
+1. Tác phẩm
+
+Giấy phép này áp dụng cho toàn bộ nội dung của kho mã Lex & Lineage (gọi
+chung là "Tác phẩm"), gồm: chương trình máy tính; sưu tập dữ liệu văn bản
+pháp luật đã được tuyển chọn, sắp xếp và xác minh; bản dịch tiếng Anh; phần
+giải thích, đối chiếu và bình luận; thiết kế giao diện, hình minh họa và
+video giới thiệu.
+
+Tác phẩm được bảo hộ theo Luật Sở hữu trí tuệ Việt Nam và các điều ước quốc
+tế mà Việt Nam là thành viên.
+
+2. Quyền được phép
+
+Kho mã được công khai trên GitHub chỉ để người khác xem và đọc, và thực hiện
+những thao tác mà Điều khoản dịch vụ của GitHub cho phép trên chính nền tảng
+GitHub. Ngoài ra không có quyền nào được cấp, dù rõ ràng hay ngụ ý.
+
+3. Hành vi cần có văn bản đồng ý của chủ sở hữu
+
+Sao chép, sửa đổi, tạo tác phẩm phái sinh, phân phối, cho thuê, công bố,
+triển khai lên máy chủ, hoặc sử dụng Tác phẩm hay bất kỳ phần nào của nó,
+dù vì mục đích thương mại hay phi thương mại.
+
+4. Ngoại lệ
+
+a) Văn bản quy phạm pháp luật và văn bản hành chính được nhắc tới trong Tác
+   phẩm không thuộc phạm vi bảo hộ quyền tác giả (khoản 2 Điều 15 Luật Sở hữu
+   trí tuệ). Bất kỳ ai cũng được dùng các văn bản đó từ nguồn chính thức.
+b) Nguồn dữ liệu công khai tại đường dẫn /api/v1/documents.json của trang
+   được dùng để tham khảo theo Điều khoản sử dụng đăng tại /vi/chinh-sach,
+   với điều kiện ghi rõ nguồn "Lex & Lineage".
+c) Thành phần của bên thứ ba giữ nguyên giấy phép riêng: thư viện khai báo
+   trong package.json; skill trong .claude/skills/ (MIT, xem
+   .claude/skills/README.md); phông chữ trong src/og/fonts/ và video/fonts/
+   (SIL Open Font License 1.1, xem các tệp OFL-*.txt đi kèm).
+
+5. Không bảo đảm
+
+Tác phẩm được cung cấp nguyên trạng, không kèm bất kỳ bảo đảm nào. Nội dung
+chỉ để tham khảo, không phải ý kiến pháp lý.
+
+6. Xin phép sử dụng
+
+Liên hệ: longnt284.lawyer@gmail.com
+
+Nếu hai bản có chỗ khác nhau, bản tiếng Việt được áp dụng.
+
+========================================================================
+ENGLISH
+========================================================================
+
+1. The Work
+
+This licence covers the entire contents of the Lex & Lineage repository
+(the "Work"): the computer program; the compilation of legal documents as
+selected, arranged and verified; the English translations; the
+explanations, comparisons and commentary; and the interface design,
+illustrations and introduction video.
+
+The Work is protected under the Law on Intellectual Property of Vietnam and
+the international treaties to which Vietnam is a party.
+
+2. What is permitted
+
+The repository is public on GitHub only so that others may view and read
+it, and carry out the actions the GitHub Terms of Service allow on the
+GitHub platform itself. No other right is granted, expressly or by
+implication.
+
+3. What requires the owner's written consent
+
+Copying, modifying, creating derivative works from, distributing, renting,
+publishing, deploying to a server, or otherwise using the Work or any part
+of it, whether for commercial or non-commercial purposes.
+
+4. Exceptions
+
+a) Legal normative documents and administrative documents referred to in
+   the Work are not subject to copyright (Article 15(2) of the Law on
+   Intellectual Property). Anyone may use them from their official sources.
+b) The public data feed at the site's /api/v1/documents.json path may be
+   used for reference under the Terms of Use published at /en/chinh-sach,
+   provided the source "Lex & Lineage" is clearly credited.
+c) Third-party components keep their own licences: libraries declared in
+   package.json; the skills in .claude/skills/ (MIT, see
+   .claude/skills/README.md); the fonts in src/og/fonts/ and video/fonts/
+   (SIL Open Font License 1.1, see the accompanying OFL-*.txt files).
+
+5. No warranty
+
+The Work is provided as is, without warranty of any kind. Its content is
+for reference only and is not legal advice.
+
+6. Permission requests
+
+Contact: longnt284.lawyer@gmail.com
+
+In case of any inconsistency, the Vietnamese version prevails.
