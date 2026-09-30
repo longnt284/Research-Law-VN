@@ -40,7 +40,7 @@ export function ChatHost({ lang }: { lang: Lang }) {
           setOpen(true);
         }}
       >
-        <svg viewBox="0 0 20 20" aria-hidden="true" className="h-4 w-4">
+        <svg viewBox="0 0 20 20" aria-hidden="true" className="h-5 w-5">
           <path
             d="M4 4.5h12v8.5H9l-3.5 3v-3H4z"
             fill="none"

@@ -5,15 +5,17 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { Lang } from "@/data/types";
 import { getChatCopy, type ChatCopy } from "@/i18n/chat";
+import { MODELS, modelLabel, type ModelChoice } from "@/lib/chat/models";
 import type { SkillId } from "@/lib/chat/skills";
 
 /**
  * Khung trò chuyện của trợ lý hỏi đáp.
  *
  * Cuộc trò chuyện chỉ nằm trong bộ nhớ của trang: mỗi lượt hỏi gửi lại cả phần
- * trước lên `/api/chat`, máy chủ không giữ gì. Câu trả lời chảy về dạng chữ thuần
- * và được dựng thành phần tử React, không qua `dangerouslySetInnerHTML`, nên chữ
- * của mô hình không bao giờ chạy được như mã.
+ * trước lên `/api/chat`, máy chủ không giữ gì. Câu trả lời chảy về dạng NDJSON
+ * (chữ trả lời, chữ suy luận, tên model) và được dựng thành phần tử React, không
+ * qua `dangerouslySetInnerHTML`, nên chữ của mô hình không bao giờ chạy được như
+ * mã.
  */
 
 const MAX_CHARS = 2000;
@@ -22,8 +24,21 @@ interface Msg {
   role: "user" | "assistant";
   content: string;
   skills?: SkillId[];
+  /** Mã model đã trả lời. */
+  model?: string;
+  /** Model do trang tự chọn theo độ khó. */
+  auto?: boolean;
+  thinking?: boolean;
+  /** Đã hết lượt Pro và suy luận mở rộng nên chạy ở chế độ thường. */
+  limited?: boolean;
+  /** Bản tóm tắt suy luận của mô hình; không gửi lại lên máy chủ. */
+  reasoning?: string;
   /** Thông báo lỗi hiện ở chỗ câu trả lời; không gửi lại lên máy chủ. */
   error?: boolean;
+}
+
+function modelName(t: ChatCopy, id: string): string {
+  return id === "openrouter/free" ? t.freeModel : modelLabel(id);
 }
 
 function errorText(t: ChatCopy, code: string, status: number): string {
@@ -132,6 +147,8 @@ export default function ChatPanel({
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [model, setModel] = useState<ModelChoice>("auto");
+  const [thinking, setThinking] = useState(false);
   const abort = useRef<AbortController | null>(null);
   const field = useRef<HTMLTextAreaElement>(null);
   const log = useRef<HTMLDivElement>(null);
@@ -173,11 +190,12 @@ export default function ChatPanel({
       setMsgs((cur) => [...cur.slice(0, -1), { ...cur[cur.length - 1], ...patch }]);
 
     let acc = "";
+    let think = "";
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lang, messages: [...history, { role: "user", content: q }] }),
+        body: JSON.stringify({ lang, messages: [...history, { role: "user", content: q }], model, thinking }),
         signal: ctl.signal,
       });
       if (!res.ok || !res.body) {
@@ -193,17 +211,44 @@ export default function ChatPanel({
       const skills = (res.headers.get("X-Chat-Skill") ?? "")
         .split(",")
         .filter((s): s is SkillId => s in t.skills);
-      update({ skills });
+      let served = res.headers.get("X-Chat-Model") ?? "";
+      update({
+        skills,
+        model: served,
+        auto: res.headers.has("X-Chat-Auto"),
+        thinking: res.headers.has("X-Chat-Thinking"),
+        limited: res.headers.has("X-Chat-Limited"),
+      });
+      // Mỗi dòng là một sự kiện JSON; dòng có thể bị cắt giữa hai gói dữ liệu.
+      const apply = (line: string) => {
+        if (!line.trim()) return;
+        try {
+          const e = JSON.parse(line) as { t?: unknown; r?: unknown; m?: unknown };
+          if (typeof e.t === "string") acc += e.t;
+          else if (typeof e.r === "string") think += e.r;
+          else if (typeof e.m === "string") served = e.m;
+        } catch {
+          // Dòng hỏng: bỏ qua.
+        }
+      };
       const reader = res.body.getReader();
       const dec = new TextDecoder();
+      let buf = "";
       for (;;) {
         const { done, value } = await reader.read();
         if (done) break;
-        acc += dec.decode(value, { stream: true });
-        update({ content: acc });
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split("\n");
+        buf = lines.pop() ?? "";
+        lines.forEach(apply);
+        update({ content: acc, reasoning: think, model: served });
       }
-      acc += dec.decode();
-      update(acc.trim() ? { content: acc } : { content: t.errors.empty, error: true });
+      apply(buf + dec.decode());
+      update(
+        acc.trim()
+          ? { content: acc, reasoning: think, model: served }
+          : { content: t.errors.empty, error: true },
+      );
     } catch {
       if (ctl.signal.aborted) {
         // Người dùng bấm dừng: giữ phần đã nhận.
@@ -274,15 +319,59 @@ export default function ChatPanel({
             </p>
           ) : (
             <div key={i} className={`chat-msg chat-bot${m.error ? " chat-error" : ""}`}>
-              {m.content ? <Answer text={m.content} /> : <p className="chat-wait">…</p>}
-              {m.skills && m.skills.length > 0 && !m.error && (
+              {m.reasoning && !m.error && (
+                <details className="chat-think">
+                  <summary>{m.content ? t.thinkingDone : t.thinkingNow}</summary>
+                  <div className="chat-think-body">
+                    <Answer text={m.reasoning} />
+                  </div>
+                </details>
+              )}
+              {m.content ? <Answer text={m.content} /> : !m.reasoning && <p className="chat-wait">…</p>}
+              {m.content && !m.error && <p className="chat-ref">{t.reference}</p>}
+              {m.model && !m.error && (
                 <p className="chat-skill">
-                  {t.skillPrefix}: {m.skills.map((s) => t.skills[s]).join(" · ")}
+                  {[
+                    `${t.modelPrefix}: ${modelName(t, m.model)}${m.auto ? ` (${t.autoTag})` : ""}`,
+                    m.thinking ? t.thinking : "",
+                    m.skills?.length ? `${t.skillPrefix}: ${m.skills.map((s) => t.skills[s]).join(", ")}` : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
               )}
+              {m.limited && !m.error && <p className="chat-skill">{t.limited}</p>}
             </div>
           ),
         )}
+      </div>
+
+      <div className="chat-opts">
+        <label className="chat-opt">
+          <span>{t.modelPrefix}</span>
+          <select
+            className="chat-select"
+            value={model}
+            disabled={busy}
+            onChange={(e) => setModel(e.target.value as ModelChoice)}
+          >
+            <option value="auto">{t.auto}</option>
+            {MODELS.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label} ({t.modelHints[m.id]})
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="chat-opt">
+          <input
+            type="checkbox"
+            checked={thinking}
+            disabled={busy}
+            onChange={(e) => setThinking(e.target.checked)}
+          />
+          <span>{t.thinking}</span>
+        </label>
       </div>
 
       <form
