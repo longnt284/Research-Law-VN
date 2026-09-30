@@ -195,7 +195,7 @@ const extra: Record<
     sources: { h: string; p: string; kinds: Record<SourceKind, string>; none: string };
     log: { h: string; p: string; date: string; count: string; verified: string };
     report: { h: string; p: string[]; cta: string };
-    privacy: { h: string; p: string[] };
+    privacy: { h: string; p: string[]; cta: string };
   }
 > = {
   vi: {
@@ -239,8 +239,9 @@ const extra: Record<
       p: [
         "Trang không dùng cookie theo dõi và không nạp mã quảng cáo hay đo lường của bên thứ ba. Tài khoản là tùy chọn: mọi công cụ dùng được mà không cần đăng nhập.",
         "Khi chưa đăng nhập, văn bản đang theo dõi, bộ hồ sơ, văn bản vừa xem và câu tìm gần đây chỉ nằm trong bộ nhớ của trình duyệt bạn đang dùng; ngày tra cứu đang đặt chỉ giữ trong phiên.",
-        "Khi có tài khoản, Supabase lưu email, mật khẩu đã băm, danh sách văn bản theo dõi và bộ hồ sơ, để chúng đi theo bạn trên mọi máy. Văn bản vừa xem và câu tìm gần đây vẫn chỉ ở trong trình duyệt. Mỗi người chỉ đọc được dữ liệu của chính mình. Bạn có thể xóa vĩnh viễn tài khoản cùng toàn bộ dữ liệu ở trang tài khoản. Góp ý dữ liệu được gửi bằng ứng dụng email của bạn, trang không lưu lại nội dung.",
+        "Khi có tài khoản, Supabase lưu email, mật khẩu đã băm, danh sách văn bản theo dõi, bộ hồ sơ và lần đồng ý chính sách, trên máy chủ tại Seoul, Hàn Quốc, để chúng đi theo bạn trên mọi máy. Văn bản vừa xem và câu tìm gần đây vẫn chỉ ở trong trình duyệt. Mỗi người chỉ đọc được dữ liệu của chính mình. Bạn có thể tải về hoặc xóa vĩnh viễn tài khoản cùng toàn bộ dữ liệu ở trang tài khoản. Góp ý dữ liệu được gửi bằng ứng dụng email của bạn, trang không lưu lại nội dung.",
       ],
+      cta: "Đọc chính sách quyền riêng tư đầy đủ",
     },
   },
   en: {
@@ -284,8 +285,9 @@ const extra: Record<
       p: [
         "The site uses no tracking cookies and loads no third-party advertising or analytics code. Accounts are optional: every tool works without signing in.",
         "When you are not signed in, followed instruments, matters, recently viewed instruments and recent searches stay in your own browser; the lookup date is kept for the session only.",
-        "With an account, Supabase stores your email, a hashed password, your watchlist and your matters so they follow you across devices. Recently viewed instruments and recent searches still stay in the browser. Each person can read only their own data. You can permanently delete the account and all its data from the account page. Data feedback is sent with your own email app; the site keeps no copy.",
+        "With an account, Supabase stores your email, a hashed password, your watchlist, your matters and your policy consent, on servers in Seoul, South Korea, so they follow you across devices. Recently viewed instruments and recent searches still stay in the browser. Each person can read only their own data. You can download or permanently delete the account and all its data from the account page. Data feedback is sent with your own email app; the site keeps no copy.",
       ],
+      cta: "Read the full privacy policy",
     },
   },
 };
@@ -542,6 +544,9 @@ export default async function AboutPage({
                   </p>
                 ))}
               </div>
+              <Link href={`/${lang}/chinh-sach#rieng-tu`} className="btn btn-quiet mt-5">
+                {x.privacy.cta} →
+              </Link>
             </div>
           </section>
         </div>

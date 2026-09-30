@@ -7,8 +7,9 @@ import { useEffect, useState } from "react";
 import type { Lang } from "@/data/types";
 import { getAccountCopy } from "@/i18n/account";
 import { formatDate } from "@/i18n/dictionary";
-import { ACCOUNTS_ENABLED, signOut, supabase, syncOnSignIn } from "@/lib/account";
-import { replaceUserData, setAccount, useFollowed, useMatters } from "@/lib/client-store";
+import { POLICY_VERSION } from "@/i18n/policy";
+import { ACCOUNTS_ENABLED, exportMyData, signOut, supabase, syncOnSignIn } from "@/lib/account";
+import { replaceUserData, setAccount, todayIso, useFollowed, useMatters } from "@/lib/client-store";
 
 /**
  * Trang tài khoản: tạo tài khoản, đăng nhập, quên mật khẩu, đổi mật khẩu,
@@ -65,6 +66,7 @@ function SignedOut({ lang }: { lang: Lang }) {
   const [tab, setTab] = useState<Tab>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [info, setInfo] = useState("");
@@ -85,7 +87,8 @@ function SignedOut({ lang }: { lang: Lang }) {
         const { data, error } = await sb.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: back },
+          // Trigger trên `auth.users` chép phiên bản này vào bảng `consents`.
+          options: { emailRedirectTo: back, data: { policy_version: POLICY_VERSION } },
         });
         if (error) throw error;
         if (data.session && data.user) await syncOnSignIn(data.user);
@@ -153,6 +156,22 @@ function SignedOut({ lang }: { lang: Lang }) {
             )}
           </label>
         )}
+        {tab === "signUp" && (
+          <label className="fb-kind">
+            <input type="checkbox" required checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+            <span>
+              {c.consent.before}
+              <Link href={`/${lang}/chinh-sach#rieng-tu`} target="_blank" className="underline underline-offset-2">
+                {c.consent.privacy}
+              </Link>
+              {c.consent.and}
+              <Link href={`/${lang}/chinh-sach#dieu-khoan`} target="_blank" className="underline underline-offset-2">
+                {c.consent.terms}
+              </Link>
+              {c.consent.after}
+            </span>
+          </label>
+        )}
         {error && (
           <p className="acc-error" role="alert">
             {error}
@@ -164,11 +183,16 @@ function SignedOut({ lang }: { lang: Lang }) {
           </p>
         )}
         <div className="fb-actions">
-          <button type="submit" className="btn btn-solid" disabled={busy}>
+          <button type="submit" className="btn btn-solid" disabled={busy || (tab === "signUp" && !agreed)}>
             {busy ? c.working : tab === "signIn" ? c.signIn : tab === "signUp" ? c.signUp : c.sendReset}
           </button>
         </div>
-        <p className="fb-note">{c.privacy}</p>
+        <p className="fb-note">
+          {c.privacy}{" "}
+          <Link href={`/${lang}/chinh-sach#rieng-tu`} className="underline underline-offset-2">
+            {c.policyLink}
+          </Link>
+        </p>
       </form>
     </div>
   );
@@ -233,6 +257,51 @@ function NewPassword({ lang, onDone, intro }: { lang: Lang; onDone: () => void; 
   );
 }
 
+/** Tải về mọi dữ liệu tài khoản đang giữ, đọc thẳng từ máy chủ, thành một tệp JSON. */
+function ExportData({ lang, user }: { lang: Lang; user: User }) {
+  const c = getAccountCopy(lang);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  return (
+    <section className="acc-card">
+      <h2 className="acc-h">{c.exportTitle}</h2>
+      <p className="fb-note">{c.exportText}</p>
+      {error && (
+        <p className="acc-error" role="alert">
+          {error}
+        </p>
+      )}
+      <div className="fb-actions">
+        <button
+          type="button"
+          className="btn btn-quiet btn-sm"
+          disabled={busy}
+          onClick={async () => {
+            setBusy(true);
+            setError("");
+            try {
+              const data = await exportMyData(user);
+              const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `lex-lineage-${todayIso()}.json`;
+              a.click();
+              window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+            } catch (err) {
+              setError(errorText(lang, err as Error));
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          {busy ? c.working : c.exportButton}
+        </button>
+      </div>
+    </section>
+  );
+}
+
 function SignedIn({ lang, user }: { lang: Lang; user: User }) {
   const c = getAccountCopy(lang);
   const followed = useFollowed();
@@ -275,6 +344,8 @@ function SignedIn({ lang, user }: { lang: Lang; user: User }) {
         <p className="fb-note">{c.signOutNote}</p>
         {changing && <NewPassword lang={lang} onDone={() => setChanging(false)} />}
       </section>
+
+      <ExportData lang={lang} user={user} />
 
       <section className="acc-card acc-danger">
         <h2 className="acc-h">{c.deleteTitle}</h2>
