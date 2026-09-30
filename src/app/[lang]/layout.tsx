@@ -7,6 +7,7 @@ import "../globals.css";
 import "../product.css";
 import { AccountSync } from "@/components/account/AccountSync";
 import { BrandMark, Wordmark } from "@/components/brand/BrandMark";
+import { ChatHost } from "@/components/chat/ChatHost";
 import { MotionToggle } from "@/components/home/MotionToggle";
 import { PaletteHost } from "@/components/search/PaletteHost";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -132,6 +133,7 @@ export default async function LangLayout({
         <main id="main">{children}</main>
 
         <PaletteHost lang={lang} />
+        <ChatHost lang={lang} />
         <AccountSync />
 
         <footer className="rule-t mt-20 bg-[var(--paper-2)]">

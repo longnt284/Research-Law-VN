@@ -531,6 +531,47 @@ biến `VERCEL_PROJECT_PRODUCTION_URL` của nền tảng được dùng thay kh
 Không có cả hai thì rơi về `http://localhost:3000`: đúng cho lúc chạy phát
 triển, và sai một cách dễ thấy nếu quên đặt trước khi triển khai.
 
+## Trợ lý hỏi đáp
+
+Nút "Hỏi trợ lý" ở góc phải dưới mở khung chat. Route `/api/chat`
+(`src/app/api/chat/route.ts`) chọn tối đa hai skill pháp lý theo từ khóa của câu
+hỏi (`src/lib/chat/skills.ts`). Sau đó route dựng system prompt gồm lời dẫn cho
+chế độ chatbot, thân skill và danh sách văn bản trong kho kèm tình trạng hiệu lực
+hôm nay (`src/lib/chat/prompt.ts`). Cuối cùng route gọi mô hình theo chuẩn chat
+completions kiểu OpenAI và trả câu trả lời dạng luồng chữ
+(`src/lib/chat/provider.ts`). Văn bản trong kho được dẫn như đã tra cứu, kèm
+đường dẫn; văn bản ngoài kho mang nhãn `[CHƯA XÁC MINH]`. Trang không lưu cuộc
+trò chuyện. Mỗi địa chỉ IP được 6 lượt mỗi phút và 40 lượt mỗi ngày.
+
+Chín skill dùng cho bot: `vn-orchestrator`, `vn-construction-partner`,
+`vn-energy-partner`, `vn-ppp-partner`, `vn-land-realestate`,
+`vn-fintech-partner`, `vn-data-privacy-partner`, `vn-litigation-partner` và
+`vn-legal-review`. Repo công khai, nên chỉ bản mã hóa AES-256-GCM được commit
+(`src/lib/chat/skills.enc.json`). Khi sửa skill, đóng gói lại bằng lệnh sau rồi
+commit tệp mới:
+
+```bash
+CHAT_SKILLS_KEY=<khóa> node scripts/pack-chat-skills.mjs <thư mục chứa các skill vn-*>
+```
+
+Biến môi trường trên Vercel, chỉ ở phía máy chủ:
+
+```
+CHAT_SKILLS_KEY=<base64 32 byte, khóa giải mã bộ skill>
+CHAT_API_BASE=https://generativelanguage.googleapis.com/v1beta/openai
+CHAT_API_KEY=<khóa Gemini API, tạo ở Google AI Studio>
+CHAT_MODEL=<mã model Gemini Flash-Lite hiện hành trong AI Studio>
+CHAT_FALLBACK_API_BASE=https://openrouter.ai/api/v1
+CHAT_FALLBACK_API_KEY=<khóa OpenRouter>
+CHAT_FALLBACK_MODEL=<mã một model miễn phí, đuôi :free>
+```
+
+Khi nhà cung cấp chính từ chối (hết lượt, quá tải, không trả lời trong 25 giây),
+câu hỏi chuyển sang nhà cung cấp dự phòng. Nhà cung cấp dự phòng là tùy chọn.
+Đổi nhà cung cấp (NVIDIA, Groq…) chỉ cần đổi ba biến tương ứng. Thiếu
+`CHAT_SKILLS_KEY` hoặc thiếu nhà cung cấp thì trợ lý báo tạm ngưng; phần còn lại
+của trang không bị ảnh hưởng.
+
 ## Skill Claude Code
 
 Repo có sẵn hai skill dùng chung cho phiên Claude Code: `/caveman` (chế độ trả
@@ -563,6 +604,7 @@ src/
   app/[lang]/page.tsx       # trang chủ: ô tìm, công cụ, thay đổi, khám phá, giải thích
   app/[lang]/search-index.json/ # chỉ mục tìm kiếm tĩnh của từng thứ tiếng
   app/api/v1/documents.json/ # nguồn dữ liệu công khai, website LHPT đọc lúc build
+  app/api/chat/             # trợ lý hỏi đáp: chọn skill, gọi mô hình, trả luồng chữ
   app/[lang]/thay-doi/      # dòng thay đổi của cả kho
   app/[lang]/theo-doi/      # theo dõi, bộ hồ sơ, vừa xem (lưu trong trình duyệt)
   app/[lang]/gop-y/         # báo lỗi dữ liệu, yêu cầu bổ sung văn bản
@@ -599,6 +641,8 @@ src/
   lib/client-store.ts       # theo dõi, vừa xem, bộ hồ sơ, ngày tra cứu
   lib/changes.ts            # dòng thay đổi của cả kho
   lib/account.ts            # tài khoản Supabase và đồng bộ theo dõi, bộ hồ sơ
+  lib/chat/                 # bộ skill mã hóa, chọn skill, dựng prompt, gọi nhà cung cấp
+  components/chat/          # nút mở và khung trò chuyện của trợ lý
   app/[lang]/tai-khoan/     # đăng ký, đăng nhập, đổi mật khẩu, xóa tài khoản
 supabase/migrations/        # bảng follows, matters, consents, RLS, hàm xóa tài khoản
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
@@ -789,3 +833,15 @@ hreflang tags and `sitemap.xml` all need absolute addresses, and that address
 cannot be derived from the source. On Vercel the platform's
 `VERCEL_PROJECT_PRODUCTION_URL` is used when the variable is unset; with neither,
 the build falls back to `http://localhost:3000`.
+
+The "Ask the assistant" button opens a chat panel. `/api/chat` picks up to two of
+the owner's legal skills by keyword. It builds a system prompt from those skills
+plus the matching instruments in the dataset, with today's validity status.
+Then it streams the answer from any OpenAI-compatible chat completions endpoint.
+The primary provider is Gemini (`CHAT_API_BASE`, `CHAT_API_KEY`, `CHAT_MODEL`).
+An optional fallback (`CHAT_FALLBACK_*`, e.g. an OpenRouter free model) takes
+over when the primary refuses. The repository is public, so the skills are
+committed only in encrypted form (`src/lib/chat/skills.enc.json`, AES-256-GCM,
+key in `CHAT_SKILLS_KEY`). Repack them with `scripts/pack-chat-skills.mjs`.
+Conversations are not stored. Each IP address gets 6 questions a minute and
+40 a day.
