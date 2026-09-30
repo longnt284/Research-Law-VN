@@ -1,4 +1,5 @@
 import type { Lang } from "@/data/types";
+import type { ModelId } from "@/lib/chat/models";
 import type { SkillId } from "@/lib/chat/skills";
 
 /** Chữ của trợ lý hỏi đáp: nút mở, khung chat, thông báo và lỗi. */
@@ -17,6 +18,17 @@ export interface ChatCopy {
   examples: string[];
   skillPrefix: string;
   skills: Record<SkillId, string>;
+  modelPrefix: string;
+  auto: string;
+  autoTag: string;
+  modelHints: Record<ModelId, string>;
+  /** Tên hiển thị của `openrouter/free` trước khi biết model thật. */
+  freeModel: string;
+  thinking: string;
+  thinkingNow: string;
+  thinkingDone: string;
+  limited: string;
+  reference: string;
   stopped: string;
   errors: {
     rate: string;
@@ -30,7 +42,7 @@ export interface ChatCopy {
 }
 
 const vi: ChatCopy = {
-  launch: "Hỏi trợ lý",
+  launch: "Hỏi trợ lý AI",
   title: "Trợ lý hỏi đáp",
   badge: "Thử nghiệm",
   notice:
@@ -60,6 +72,20 @@ const vi: ChatCopy = {
     "vn-litigation-partner": "Tố tụng & Trọng tài",
     "vn-legal-review": "Rà soát pháp lý",
   },
+  modelPrefix: "Model",
+  auto: "Tự động theo độ khó",
+  autoTag: "tự chọn",
+  modelHints: {
+    "gemini-3.6-flash": "nhanh",
+    "gemini-3.8-flash": "cân bằng",
+    "gemini-3.1-pro-preview": "chuyên sâu",
+  },
+  freeModel: "Model miễn phí (OpenRouter)",
+  thinking: "Suy luận mở rộng",
+  thinkingNow: "Đang suy luận…",
+  thinkingDone: "Xem phần suy luận",
+  limited: "Hôm nay bạn đã dùng hết lượt Gemini 3.1 Pro và suy luận mở rộng; câu này trả lời ở chế độ thường.",
+  reference: "Nội dung chỉ mang tính tham khảo. Hãy tự tìm hiểu thêm để chắc chắn kết quả đúng.",
   stopped: "Đã dừng.",
   errors: {
     rate: "Bạn đã hỏi quá số lượt cho phép. Thử lại sau ít phút.",
@@ -73,7 +99,7 @@ const vi: ChatCopy = {
 };
 
 const en: ChatCopy = {
-  launch: "Ask the assistant",
+  launch: "Ask the AI assistant",
   title: "Q&A assistant",
   badge: "Beta",
   notice:
@@ -103,6 +129,20 @@ const en: ChatCopy = {
     "vn-litigation-partner": "Litigation & arbitration",
     "vn-legal-review": "Legal review",
   },
+  modelPrefix: "Model",
+  auto: "Automatic by difficulty",
+  autoTag: "auto",
+  modelHints: {
+    "gemini-3.6-flash": "fast",
+    "gemini-3.8-flash": "balanced",
+    "gemini-3.1-pro-preview": "in-depth",
+  },
+  freeModel: "Free model (OpenRouter)",
+  thinking: "Extended thinking",
+  thinkingNow: "Thinking…",
+  thinkingDone: "Show reasoning",
+  limited: "You have used today's Gemini 3.1 Pro and extended-thinking quota; this answer uses the standard mode.",
+  reference: "This content is for reference only. Do your own research to make sure it is correct.",
   stopped: "Stopped.",
   errors: {
     rate: "You have reached the question limit. Try again in a few minutes.",

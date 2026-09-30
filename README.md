@@ -533,15 +533,27 @@ triển, và sai một cách dễ thấy nếu quên đặt trước khi triển
 
 ## Trợ lý hỏi đáp
 
-Nút "Hỏi trợ lý" ở góc phải dưới mở khung chat. Route `/api/chat`
-(`src/app/api/chat/route.ts`) chọn tối đa hai skill pháp lý theo từ khóa của câu
-hỏi (`src/lib/chat/skills.ts`). Sau đó route dựng system prompt gồm lời dẫn cho
-chế độ chatbot, thân skill và danh sách văn bản trong kho kèm tình trạng hiệu lực
-hôm nay (`src/lib/chat/prompt.ts`). Cuối cùng route gọi mô hình theo chuẩn chat
-completions kiểu OpenAI và trả câu trả lời dạng luồng chữ
-(`src/lib/chat/provider.ts`). Văn bản trong kho được dẫn như đã tra cứu, kèm
-đường dẫn; văn bản ngoài kho mang nhãn `[CHƯA XÁC MINH]`. Trang không lưu cuộc
-trò chuyện. Mỗi địa chỉ IP được 6 lượt mỗi phút và 40 lượt mỗi ngày.
+Nút "Hỏi trợ lý AI" ở góc phải dưới, có trên mọi trang, mở khung chat. Route
+`/api/chat` (`src/app/api/chat/route.ts`) chọn tối đa hai skill pháp lý theo từ
+khóa của câu hỏi (`src/lib/chat/skills.ts`). Sau đó route dựng system prompt gồm
+lời dẫn cho chế độ chatbot, thân skill và danh sách văn bản trong kho kèm tình
+trạng hiệu lực hôm nay (`src/lib/chat/prompt.ts`). Cuối cùng route gọi mô hình
+theo chuẩn chat completions kiểu OpenAI và trả câu trả lời dạng luồng NDJSON gồm
+chữ trả lời, chữ suy luận và tên model (`src/lib/chat/provider.ts`). Văn bản
+trong kho được dẫn như đã tra cứu, kèm đường dẫn; văn bản ngoài kho mang nhãn
+`[CHƯA XÁC MINH]`. Dưới mỗi câu trả lời có tên model và dòng nhắc nội dung chỉ
+để tham khảo. Trang không lưu cuộc trò chuyện. Mỗi địa chỉ IP được 6 lượt mỗi
+phút và 40 lượt mỗi ngày.
+
+Người dùng chọn model trong khung chat, hoặc để trang tự chọn theo độ khó của câu
+hỏi (`src/lib/chat/models.ts`). Dấu hiệu khó được cộng điểm: đòi phân tích, so
+sánh, rà soát, soạn thảo (2 điểm); dài trên 200 ký tự (1 điểm) hoặc trên 600 ký
+tự (2 điểm); chạm hai lĩnh vực chuyên môn (1 điểm); từ lượt hỏi thứ ba (1 điểm).
+0 điểm dùng Gemini 3.6 Flash, 1–2 điểm dùng Gemini 3.8 Flash, từ 3 điểm dùng
+Gemini 3.1 Pro. Ô "Suy
+luận mở rộng" bật mức suy luận cao và hiện bản tóm tắt suy luận của mô hình.
+Gemini 3.1 Pro và suy luận mở rộng tốn nhiều hơn, nên mỗi địa chỉ IP chỉ được 10
+lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng 3.8 Flash ở chế độ thường.
 
 Chín skill dùng cho bot: `vn-orchestrator`, `vn-construction-partner`,
 `vn-energy-partner`, `vn-ppp-partner`, `vn-land-realestate`,
@@ -560,17 +572,18 @@ Biến môi trường trên Vercel, chỉ ở phía máy chủ:
 CHAT_SKILLS_KEY=<base64 32 byte, khóa giải mã bộ skill>
 CHAT_API_BASE=https://generativelanguage.googleapis.com/v1beta/openai
 CHAT_API_KEY=<khóa Gemini API, tạo ở Google AI Studio>
-CHAT_MODEL=<mã model Gemini Flash-Lite hiện hành trong AI Studio>
 CHAT_FALLBACK_API_BASE=https://openrouter.ai/api/v1
 CHAT_FALLBACK_API_KEY=<khóa OpenRouter>
-CHAT_FALLBACK_MODEL=<mã một model miễn phí, đuôi :free>
+CHAT_FALLBACK_MODEL=openrouter/free
 ```
 
-Khi nhà cung cấp chính từ chối (hết lượt, quá tải, không trả lời trong 25 giây),
-câu hỏi chuyển sang nhà cung cấp dự phòng. Nhà cung cấp dự phòng là tùy chọn.
-Đổi nhà cung cấp (NVIDIA, Groq…) chỉ cần đổi ba biến tương ứng. Thiếu
-`CHAT_SKILLS_KEY` hoặc thiếu nhà cung cấp thì trợ lý báo tạm ngưng; phần còn lại
-của trang không bị ảnh hưởng.
+Mã các model Gemini nằm trong `src/lib/chat/models.ts`, không nằm trong biến môi
+trường; `CHAT_MODEL` không còn được dùng. Khi model đã chọn từ chối (hết lượt,
+quá tải, không trả lời trong 25 giây), câu hỏi chuyển sang các bản Flash rồi tới
+nhà cung cấp dự phòng, không bao giờ tự nâng lên Pro. `openrouter/free` chọn
+ngẫu nhiên một model miễn phí cho mỗi câu hỏi; tên model thật hiện dưới câu trả
+lời. Nhà cung cấp dự phòng là tùy chọn. Thiếu `CHAT_SKILLS_KEY` hoặc thiếu nhà
+cung cấp thì trợ lý báo tạm ngưng; phần còn lại của trang không bị ảnh hưởng.
 
 ## Skill Claude Code
 
@@ -834,13 +847,18 @@ cannot be derived from the source. On Vercel the platform's
 `VERCEL_PROJECT_PRODUCTION_URL` is used when the variable is unset; with neither,
 the build falls back to `http://localhost:3000`.
 
-The "Ask the assistant" button opens a chat panel. `/api/chat` picks up to two of
-the owner's legal skills by keyword. It builds a system prompt from those skills
-plus the matching instruments in the dataset, with today's validity status.
-Then it streams the answer from any OpenAI-compatible chat completions endpoint.
-The primary provider is Gemini (`CHAT_API_BASE`, `CHAT_API_KEY`, `CHAT_MODEL`).
-An optional fallback (`CHAT_FALLBACK_*`, e.g. an OpenRouter free model) takes
-over when the primary refuses. The repository is public, so the skills are
+The "Ask the AI assistant" button, on every page, opens a chat panel. `/api/chat`
+picks up to two of the owner's legal skills by keyword. It builds a system prompt
+from those skills plus the matching instruments in the dataset, with today's
+validity status. Then it streams the answer as NDJSON (answer text, reasoning
+text, model name) from an OpenAI-compatible chat completions endpoint. The
+primary provider is the Gemini API (`CHAT_API_BASE`, `CHAT_API_KEY`) with the
+models listed in `src/lib/chat/models.ts`: Gemini 3.6 Flash, 3.8 Flash and
+3.1 Pro. Users pick a model or let the site choose one by question difficulty,
+and can turn on extended thinking; Pro and extended thinking are limited to 10
+questions a day per IP. An optional fallback (`CHAT_FALLBACK_*`, e.g.
+OpenRouter's `openrouter/free`, a random free model) takes over when every
+Gemini model refuses. The repository is public, so the skills are
 committed only in encrypted form (`src/lib/chat/skills.enc.json`, AES-256-GCM,
 key in `CHAT_SKILLS_KEY`). Repack them with `scripts/pack-chat-skills.mjs`.
 Conversations are not stored. Each IP address gets 6 questions a minute and

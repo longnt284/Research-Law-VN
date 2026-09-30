@@ -1,12 +1,15 @@
+import { MODELS } from "@/lib/chat/models";
+
 /**
  * Gọi mô hình ngôn ngữ qua giao thức chat completions kiểu OpenAI.
  *
- * Gemini, OpenRouter, NVIDIA, Groq đều nhận cùng dạng yêu cầu này, nên đổi nhà
- * cung cấp chỉ là đổi biến môi trường. Có hai chỗ: nhà cung cấp chính
- * (`CHAT_API_*`) và nhà cung cấp dự phòng (`CHAT_FALLBACK_*`). Gói miễn phí nào
- * cũng có hạn mức theo ngày; khi nhà cung cấp chính từ chối (hết lượt, quá tải,
- * không trả lời kịp) thì câu hỏi chuyển sang nhà cung cấp dự phòng. Đã nhận chữ
- * rồi thì không chuyển nữa, để người đọc không thấy hai câu trả lời nối nhau.
+ * Gemini và OpenRouter đều nhận cùng dạng yêu cầu này. Có hai chỗ: nhà cung cấp
+ * chính (`CHAT_API_BASE`, `CHAT_API_KEY`, là Gemini API) chạy các model trong
+ * `models.ts`, và nhà cung cấp dự phòng (`CHAT_FALLBACK_*`, là OpenRouter với
+ * `openrouter/free`, tức một model miễn phí chọn ngẫu nhiên). Model nào từ chối
+ * (hết lượt, quá tải, không trả lời kịp) thì câu hỏi chuyển sang model kế tiếp,
+ * cuối cùng là nhà cung cấp dự phòng. Đã nhận chữ rồi thì không chuyển nữa, để
+ * người đọc không thấy hai câu trả lời nối nhau.
  */
 
 export interface ChatMessage {
@@ -14,21 +17,32 @@ export interface ChatMessage {
   content: string;
 }
 
+/**
+ * Một dòng của luồng trả về trình duyệt, dạng NDJSON: `t` là chữ của câu trả
+ * lời, `r` là chữ của phần suy luận, `m` là mã model thật sự trả lời (chỉ gửi
+ * khi nhà cung cấp là bộ định tuyến, như `openrouter/free`).
+ */
+export type ChatEvent = { t: string } | { r: string } | { m: string };
+
 interface Provider {
   base: string;
   key: string;
   model: string;
 }
 
-/** Giới hạn độ dài câu trả lời. Mô hình có bước suy luận cũng tính vào đây. */
-const MAX_TOKENS = 4096;
+/** Giới hạn độ dài câu trả lời, tính cả bước suy luận của mô hình. */
+const MAX_TOKENS = 8192;
+const MAX_TOKENS_THINKING = 32_768;
 /** Thời gian chờ tối đa tới khi nhà cung cấp trả phần đầu câu trả lời. */
 const FIRST_BYTE_MS = 25_000;
 
-function providers(): Provider[] {
+const GEMINI_HOST = "generativelanguage.googleapis.com";
+const OPENROUTER_HOST = "openrouter.ai";
+
+function providers(models: readonly string[]): Provider[] {
   const env = process.env;
   return [
-    { base: env.CHAT_API_BASE, key: env.CHAT_API_KEY, model: env.CHAT_MODEL },
+    ...models.map((model) => ({ base: env.CHAT_API_BASE, key: env.CHAT_API_KEY, model })),
     { base: env.CHAT_FALLBACK_API_BASE, key: env.CHAT_FALLBACK_API_KEY, model: env.CHAT_FALLBACK_MODEL },
   ]
     .filter((p): p is Provider => !!(p.base?.trim() && p.key?.trim() && p.model?.trim()))
@@ -37,20 +51,44 @@ function providers(): Provider[] {
 }
 
 export function chatConfigured(): boolean {
-  return providers().length > 0;
+  return providers(MODELS.map((m) => m.id)).length > 0;
+}
+
+/*
+  Tham số suy luận riêng của từng nhà cung cấp. Gemini: chế độ thường đặt mức
+  suy luận thấp cho nhanh; chế độ suy luận mở rộng đặt mức cao và xin bản tóm
+  tắt suy luận qua `extra_body.google.thinking_config`. OpenRouter: chỉ gửi
+  `reasoning` khi bật suy luận mở rộng; `openrouter/free` khi đó chỉ chọn trong
+  các model có suy luận.
+*/
+function reasoningParams(host: string, thinking: boolean): Record<string, unknown> {
+  if (host === GEMINI_HOST) {
+    return thinking
+      ? { extra_body: { google: { thinking_config: { thinking_level: "high", include_thoughts: true } } } }
+      : { reasoning_effort: "low" };
+  }
+  if (host === OPENROUTER_HOST && thinking) return { reasoning: { effort: "high" } };
+  return {};
+}
+
+export interface ChatStream {
+  body: ReadableStream<Uint8Array>;
+  /** Mã model của nhà cung cấp đã nhận yêu cầu. */
+  model: string;
 }
 
 /**
- * Luồng chữ của câu trả lời, từ nhà cung cấp đầu tiên nhận yêu cầu. `null` khi
- * mọi nhà cung cấp đều từ chối. Nhật ký chỉ ghi tên máy chủ và mã lỗi, không
- * ghi nội dung câu hỏi.
+ * Luồng NDJSON của câu trả lời, từ model đầu tiên nhận yêu cầu trong `models`,
+ * rồi tới nhà cung cấp dự phòng. `null` khi tất cả đều từ chối. Nhật ký chỉ ghi
+ * tên máy chủ, mã model và mã lỗi, không ghi nội dung câu hỏi.
  */
 export async function streamChat(
   system: string,
   messages: ChatMessage[],
+  opts: { models: readonly string[]; thinking: boolean },
   signal: AbortSignal,
-): Promise<ReadableStream<Uint8Array> | null> {
-  for (const p of providers()) {
+): Promise<ChatStream | null> {
+  for (const p of providers(opts.models)) {
     const host = new URL(p.base).host;
     // Hẹn giờ chỉ áp cho tới khi có phản hồi; phần chữ chảy về sau đó được phép
     // dài hơn. Người đọc đóng khung chat thì hủy luôn yêu cầu lên nhà cung cấp.
@@ -65,16 +103,19 @@ export async function streamChat(
         body: JSON.stringify({
           model: p.model,
           stream: true,
-          max_tokens: MAX_TOKENS,
+          max_tokens: opts.thinking ? MAX_TOKENS_THINKING : MAX_TOKENS,
           messages: [{ role: "system", content: system }, ...messages],
+          ...reasoningParams(host, opts.thinking),
         }),
         signal: ctl.signal,
       });
-      if (res.ok && res.body) return res.body.pipeThrough(sseToText());
-      console.warn(`chat: ${host} trả ${res.status}`);
+      if (res.ok && res.body) {
+        return { body: res.body.pipeThrough(sseToEvents(p.model.startsWith("openrouter/"))), model: p.model };
+      }
+      console.warn(`chat: ${host} ${p.model} trả ${res.status}`);
       await res.body?.cancel();
     } catch (e) {
-      console.warn(`chat: ${host} lỗi ${e instanceof Error ? e.name : "không rõ"}`);
+      console.warn(`chat: ${host} ${p.model} lỗi ${e instanceof Error ? e.name : "không rõ"}`);
     } finally {
       clearTimeout(timer);
     }
@@ -83,26 +124,78 @@ export async function streamChat(
   return null;
 }
 
+/*
+  Gemini qua cổng tương thích OpenAI trả bản tóm tắt suy luận ngay trong
+  `content`, bọc trong thẻ <thought>…</thought>. Thẻ có thể bị cắt giữa hai gói
+  dữ liệu, nên phần đuôi có thể là đầu của một thẻ được giữ lại chờ gói sau.
+*/
+function thoughtSplitter() {
+  let inside = false;
+  let held = "";
+  const piece = (s: string): ChatEvent => (inside ? { r: s } : { t: s });
+  return {
+    push(chunk: string): ChatEvent[] {
+      const out: ChatEvent[] = [];
+      let s = held + chunk;
+      held = "";
+      for (;;) {
+        const tag = inside ? "</thought>" : "<thought>";
+        const at = s.indexOf(tag);
+        if (at < 0) {
+          let keep = Math.min(tag.length - 1, s.length);
+          while (keep > 0 && !tag.startsWith(s.slice(-keep))) keep--;
+          held = s.slice(s.length - keep);
+          if (s.length > keep) out.push(piece(s.slice(0, s.length - keep)));
+          return out;
+        }
+        if (at > 0) out.push(piece(s.slice(0, at)));
+        s = s.slice(at + tag.length);
+        inside = !inside;
+      }
+    },
+    end(): ChatEvent[] {
+      return held ? [piece(held)] : [];
+    },
+  };
+}
+
 /**
- * Chuyển luồng server-sent events thành chữ thuần: chỉ lấy `delta.content`, bỏ
- * phần suy luận và dòng chú thích. Một dòng có thể bị cắt giữa hai gói dữ liệu,
- * nên phần dở dang được giữ lại chờ gói sau.
+ * Chuyển luồng server-sent events thành NDJSON: chữ trả lời từ `delta.content`,
+ * suy luận từ `delta.reasoning` (OpenRouter), `delta.reasoning_content` hoặc
+ * thẻ <thought> (Gemini). Một dòng có thể bị cắt giữa hai gói dữ liệu, nên phần
+ * dở dang được giữ lại chờ gói sau.
  */
-function sseToText(): TransformStream<Uint8Array, Uint8Array> {
+function sseToEvents(reportModel: boolean): TransformStream<Uint8Array, Uint8Array> {
   const dec = new TextDecoder();
   const enc = new TextEncoder();
+  const thoughts = thoughtSplitter();
   let buf = "";
+  let modelSent = !reportModel;
+  const send = (out: TransformStreamDefaultController<Uint8Array>, events: ChatEvent[]) => {
+    for (const e of events) out.enqueue(enc.encode(`${JSON.stringify(e)}\n`));
+  };
   const emit = (line: string, out: TransformStreamDefaultController<Uint8Array>) => {
     const t = line.trim();
     if (!t.startsWith("data:")) return;
     const data = t.slice(5).trim();
     if (data === "[DONE]") return;
+    let json;
     try {
-      const text = JSON.parse(data)?.choices?.[0]?.delta?.content;
-      if (typeof text === "string" && text) out.enqueue(enc.encode(text));
+      json = JSON.parse(data);
     } catch {
-      // Dòng không phải JSON: bỏ qua.
+      return; // Dòng không phải JSON: bỏ qua.
     }
+    if (!modelSent && typeof json?.model === "string" && json.model) {
+      send(out, [{ m: json.model }]);
+      modelSent = true;
+    }
+    const delta = json?.choices?.[0]?.delta;
+    const reasoning = delta?.reasoning ?? delta?.reasoning_content;
+    if (typeof reasoning === "string" && reasoning) send(out, [{ r: reasoning }]);
+    const text = delta?.content;
+    if (typeof text !== "string" || !text) return;
+    if (delta?.extra_content?.google?.thought === true) send(out, [{ r: text }]);
+    else send(out, thoughts.push(text));
   };
   return new TransformStream({
     transform(chunk, out) {
@@ -113,6 +206,7 @@ function sseToText(): TransformStream<Uint8Array, Uint8Array> {
     },
     flush(out) {
       emit(buf + dec.decode(), out);
+      send(out, thoughts.end());
     },
   });
 }
