@@ -488,8 +488,11 @@ hiệu lực, văn bản thay thế. Phần tóm tắt và bình luận của h�
 duyệt của khách không gọi sang đây, nên không cần mở CORS.
 
 **Liên kết.** Chân trang có mục "Tư vấn vụ việc" dẫn tới trang liên hệ của hãng,
-vì trang này không tư vấn cho vụ việc cụ thể (xem miễn trừ). Ngược lại, mỗi văn
-bản trên trang hãng có nút mở trang gia phả của chính nó ở đây.
+vì trang này không tư vấn cho vụ việc cụ thể (xem miễn trừ), kèm lối xem video
+giới thiệu hãng ở `/video` trên website hãng. Video đó là sản phẩm riêng của repo
+`lhpt-lawfirm`, chỉ mượn kỹ thuật dựng của video giới thiệu trang này (Canvas 2D,
+Chromium headless, nhạc tổng hợp). Ngược lại, mỗi văn bản trên trang hãng có nút
+mở trang gia phả của chính nó ở đây.
 
 Biến môi trường, tùy chọn: `NEXT_PUBLIC_FIRM_URL` là địa chỉ website hãng, mặc
 định `https://lhpt-lawfirm.vercel.app`.
@@ -749,7 +752,8 @@ A versioned public feed, `/api/v1/documents.json` (schema
 static file. The LHPT Law Firm website reads it at its own build time and takes
 status, commencement, expiry and replacement from it, keeping its own commentary;
 each instrument there links back to its lineage page here. The footer here links
-to the firm for advice on a specific matter (`NEXT_PUBLIC_FIRM_URL`, default
+to the firm for advice on a specific matter, and to the firm's one-minute
+introduction film at `/video` (`NEXT_PUBLIC_FIRM_URL`, default
 `https://lhpt-lawfirm.vercel.app`). Either site runs on its own if the other is
 down.
 
