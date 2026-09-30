@@ -5,11 +5,12 @@ import { MODELS } from "@/lib/chat/models";
  *
  * Gemini và OpenRouter đều nhận cùng dạng yêu cầu này. Có hai chỗ: nhà cung cấp
  * chính (`CHAT_API_BASE`, `CHAT_API_KEY`, là Gemini API) chạy các model trong
- * `models.ts`, và nhà cung cấp dự phòng (`CHAT_FALLBACK_*`, là OpenRouter với
- * `openrouter/free`, tức một model miễn phí chọn ngẫu nhiên). Model nào từ chối
- * (hết lượt, quá tải, không trả lời kịp) thì câu hỏi chuyển sang model kế tiếp,
- * cuối cùng là nhà cung cấp dự phòng. Đã nhận chữ rồi thì không chuyển nữa, để
- * người đọc không thấy hai câu trả lời nối nhau.
+ * `models.ts`, và nhà cung cấp dự phòng (`CHAT_FALLBACK_*`, là OpenRouter).
+ * `CHAT_FALLBACK_MODEL` là một model hoặc nhiều model cách nhau bằng dấu phẩy,
+ * thử theo thứ tự; `openrouter/free` là một model miễn phí chọn ngẫu nhiên.
+ * Model nào từ chối (hết lượt, quá tải, không trả lời kịp) thì câu hỏi chuyển
+ * sang model kế tiếp, cuối cùng là nhà cung cấp dự phòng. Đã nhận chữ rồi thì
+ * không chuyển nữa, để người đọc không thấy hai câu trả lời nối nhau.
  */
 
 export interface ChatMessage {
@@ -28,6 +29,8 @@ interface Provider {
   base: string;
   key: string;
   model: string;
+  /** Model của nhà cung cấp chính, là model được nghỉ khi hết lượt. */
+  primary: boolean;
 }
 
 /** Giới hạn độ dài câu trả lời, tính cả bước suy luận của mô hình. */
@@ -41,13 +44,39 @@ const OPENROUTER_HOST = "openrouter.ai";
 
 function providers(models: readonly string[]): Provider[] {
   const env = process.env;
+  const fallback = (env.CHAT_FALLBACK_MODEL ?? "").split(",");
   return [
-    ...models.map((model) => ({ base: env.CHAT_API_BASE, key: env.CHAT_API_KEY, model })),
-    { base: env.CHAT_FALLBACK_API_BASE, key: env.CHAT_FALLBACK_API_KEY, model: env.CHAT_FALLBACK_MODEL },
+    ...models.map((model) => ({ base: env.CHAT_API_BASE, key: env.CHAT_API_KEY, model, primary: true })),
+    ...fallback.map((model) => ({
+      base: env.CHAT_FALLBACK_API_BASE,
+      key: env.CHAT_FALLBACK_API_KEY,
+      model,
+      primary: false,
+    })),
   ]
     .filter((p): p is Provider => !!(p.base?.trim() && p.key?.trim() && p.model?.trim()))
-    .map((p) => ({ base: p.base.trim().replace(/\/+$/, ""), key: p.key.trim(), model: p.model.trim() }))
+    .map((p) => ({ ...p, base: p.base.trim().replace(/\/+$/, ""), key: p.key.trim(), model: p.model.trim() }))
     .filter((p) => URL.canParse(p.base));
+}
+
+/*
+  Model của nhà cung cấp chính đã trả 429 (hết lượt) được nghỉ tới hết thời gian
+  chờ mà nhà cung cấp báo (header Retry-After, hoặc trường retryDelay trong lỗi
+  của Gemini), mặc định một phút, tối đa một giờ. Trong lúc nghỉ, câu hỏi đi
+  thẳng sang model kế tiếp hoặc nhà cung cấp dự phòng thay vì hỏi lại rồi nhận
+  cùng lỗi. Model dự phòng không nghỉ, vì là chốt cuối và `openrouter/free` mỗi
+  lần chọn một model khác. Bảng nằm trong bộ nhớ của từng phiên bản serverless,
+  như giới hạn lượt ở route.
+*/
+const REST_MS = 60_000;
+const MAX_REST_MS = 3_600_000;
+const resting = new Map<string, number>();
+
+function restMs(res: Response, body: string): number {
+  const header = Number(res.headers.get("retry-after"));
+  const delay = /"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"/.exec(body);
+  const ms = header > 0 ? header * 1000 : delay ? Number(delay[1]) * 1000 : REST_MS;
+  return Math.min(Math.max(ms, 1000), MAX_REST_MS);
 }
 
 export function chatConfigured(): boolean {
@@ -89,6 +118,7 @@ export async function streamChat(
   signal: AbortSignal,
 ): Promise<ChatStream | null> {
   for (const p of providers(opts.models)) {
+    if (p.primary && (resting.get(p.model) ?? 0) > Date.now()) continue;
     const host = new URL(p.base).host;
     // Hẹn giờ chỉ áp cho tới khi có phản hồi; phần chữ chảy về sau đó được phép
     // dài hơn. Người đọc đóng khung chat thì hủy luôn yêu cầu lên nhà cung cấp.
@@ -113,7 +143,13 @@ export async function streamChat(
         return { body: res.body.pipeThrough(sseToEvents(p.model.startsWith("openrouter/"))), model: p.model };
       }
       console.warn(`chat: ${host} ${p.model} trả ${res.status}`);
-      await res.body?.cancel();
+      if (res.status === 429 && p.primary) {
+        const ms = restMs(res, await res.text());
+        resting.set(p.model, Date.now() + ms);
+        console.warn(`chat: ${p.model} nghỉ ${Math.round(ms / 1000)} giây`);
+      } else {
+        await res.body?.cancel();
+      }
     } catch (e) {
       console.warn(`chat: ${host} ${p.model} lỗi ${e instanceof Error ? e.name : "không rõ"}`);
     } finally {
