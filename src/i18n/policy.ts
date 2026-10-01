@@ -8,7 +8,7 @@ import type { Lang } from "@/data/types";
  * đồng ý đúng bản nào. Sửa nội dung dưới đây theo hướng thay đổi quyền hay nghĩa
  * vụ của người dùng thì phải đổi ngày này.
  */
-export const POLICY_VERSION = "2026-10-02";
+export const POLICY_VERSION = "2026-10-03";
 
 export interface PolicySection {
   /** Neo trên trang, cũng là đích của liên kết từ chân trang và mẫu đăng ký. */
@@ -90,7 +90,8 @@ const vi: PolicyCopy = {
           p: [
             "Khi bạn bấm gửi, câu hỏi cùng các lượt trước của cuộc trò chuyện đi qua máy chủ của trang tới nhà cung cấp mô hình ngôn ngữ để tạo câu trả lời: Google (Gemini API), hoặc OpenRouter khi bạn chọn một model của OpenRouter hay khi Google không nhận yêu cầu; OpenRouter chuyển yêu cầu tới nhà phát triển của model đó. Máy chủ của các nhà cung cấp này đặt ngoài Việt Nam, nên nội dung bạn gửi được chuyển ra nước ngoài.",
             "Trang dùng gói miễn phí của các nhà cung cấp này. Theo điều khoản của họ, nội dung gửi qua gói miễn phí có thể được dùng để cải thiện sản phẩm và mô hình, và có thể được người của nhà cung cấp đọc. Vì vậy, đừng nhập họ tên, số giấy tờ, thông tin liên hệ hay chi tiết bí mật của vụ việc.",
-            "Trang không lưu cuộc trò chuyện: nội dung chỉ nằm trong trang đang mở và mất khi bạn tải lại hay đóng trang. Để giới hạn số lượt hỏi, máy chủ giữ địa chỉ IP và thời điểm hỏi trong bộ nhớ tối đa 24 giờ. Vercel ghi nhật ký kỹ thuật của lượt gửi như mọi lượt truy cập khác.",
+            "Máy chủ của trang không lưu cuộc trò chuyện. Lịch sử tối đa 5 cuộc gần nhất được lưu trong bộ nhớ của trình duyệt bạn đang dùng, không gửi lên máy chủ; bạn xóa được từng cuộc hoặc toàn bộ trong mục Lịch sử của khung chat, hoặc bằng cách xóa dữ liệu trang trong trình duyệt. Trên máy dùng chung, hãy xóa lịch sử sau khi dùng.",
+            "Để giới hạn số lượt hỏi, trình duyệt gửi kèm mỗi câu hỏi một mã thiết bị ngẫu nhiên, không gắn với danh tính của bạn; máy chủ giữ mã đó, địa chỉ IP và thời điểm hỏi trong bộ nhớ tối đa 24 giờ. Với mỗi câu trả lời, máy chủ ghi nhật ký số liệu kỹ thuật (model trả lời, số ký tự, số token, thời gian xử lý), không ghi nội dung câu hỏi hay câu trả lời. Vercel ghi nhật ký kỹ thuật của lượt gửi như mọi lượt truy cập khác.",
             "Cơ sở xử lý: sự đồng ý của bạn khi bấm gửi, sau khi đã đọc thông báo in ngay trong khung trò chuyện. Không đồng ý thì đừng dùng trợ lý; mọi công cụ khác của trang vẫn dùng được.",
           ],
         },
@@ -243,7 +244,8 @@ const en: PolicyCopy = {
           p: [
             "When you press send, your question and the earlier turns of the conversation pass through the site's server to a language-model provider that writes the answer: Google (Gemini API), or OpenRouter when you pick an OpenRouter model or when Google does not accept the request; OpenRouter passes the request to that model's developer. These providers' servers are outside Vietnam, so what you send is transferred abroad.",
             "The site uses these providers' free tiers. Under their terms, content sent through a free tier may be used to improve their products and models and may be read by the provider's staff. Do not enter names, ID numbers, contact details or confidential details of a matter.",
-            "The site does not store conversations: a conversation lives only in the open page and is gone when you reload or close it. To limit the number of questions, the server keeps your IP address and the time of each question in memory for at most 24 hours. Vercel logs the request like any other visit.",
+            "The site's server does not store conversations. The history of your last 5 chats is kept in the storage of the browser you are using and is never sent to the server; you can delete one chat or all of them under History in the chat panel, or by clearing the site's data in your browser. On a shared computer, clear the history when you are done.",
+            "To limit the number of questions, the browser sends a random device code with each question, not linked to your identity; the server keeps that code, your IP address and the time of each question in memory for at most 24 hours. For each answer the server logs technical figures (the model that answered, character and token counts, processing time), never the text of the question or the answer. Vercel logs the request like any other visit.",
             "Legal basis: your consent when you press send, after reading the notice shown in the chat panel. If you do not agree, do not use the assistant; every other tool on the site still works.",
           ],
         },

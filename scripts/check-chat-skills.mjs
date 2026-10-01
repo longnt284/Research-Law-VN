@@ -25,13 +25,13 @@ const key = Buffer.from(process.env.CHAT_SKILLS_KEY, "base64");
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const bundle = JSON.parse(readFileSync(join(root, "src/lib/chat/skills.enc.json"), "utf8"));
 
-let entries;
+let library;
 try {
   if (key.length !== 32) throw new Error("khóa không đủ 32 byte");
   const d = createDecipheriv("aes-256-gcm", key, Buffer.from(bundle.iv, "base64"));
   d.setAuthTag(Buffer.from(bundle.tag, "base64"));
   const json = Buffer.concat([d.update(Buffer.from(bundle.data, "base64")), d.final()]).toString("utf8");
-  entries = Object.keys(JSON.parse(json)).length;
+  library = JSON.parse(json);
 } catch (e) {
   console.error(
     `check-chat-skills: CHAT_SKILLS_KEY không giải mã được src/lib/chat/skills.enc.json (${
@@ -40,4 +40,13 @@ try {
   );
   process.exit(1);
 }
-console.log(`check-chat-skills: khóa khớp gói skill, ${entries} mục.`);
+console.log(`check-chat-skills: khóa khớp gói skill, ${Object.keys(library).length} mục.`);
+
+// Thân mỗi skill được gửi nguyên văn trong system prompt ở mọi câu hỏi chọn
+// skill đó, nên độ dài của nó là phần lớn token mỗi lượt. In ra để theo dõi chi
+// phí; không in nội dung.
+const sizes = Object.entries(library)
+  .filter(([k]) => !k.includes("/"))
+  .map(([k, v]) => `${k} ${v.length}`)
+  .join(", ");
+console.log(`check-chat-skills: số ký tự thân skill: ${sizes}.`);

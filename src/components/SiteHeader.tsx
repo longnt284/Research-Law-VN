@@ -63,12 +63,13 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
     ? `/${otherLang}${pathname.slice(lang.length + 1)}`
     : `/${otherLang}`;
 
+  // Thay đổi và Theo dõi không nằm trên thanh điều hướng; mở từ chân trang,
+  // bảng lệnh hoặc trang tài khoản.
   const links = [
+    { href: `/${lang}/hoi-dap`, label: s.nav.ask },
     { href: `/${lang}/van-ban`, label: s.nav.lookup },
     { href: `/${lang}/linh-vuc`, label: s.nav.explore },
     { href: `/${lang}/doi-chieu`, label: s.nav.compare },
-    { href: `/${lang}/thay-doi`, label: s.nav.changes },
-    { href: `/${lang}/theo-doi`, label: s.nav.watch },
   ];
   const introHref = `/${lang}/video`;
   const introActive = pathname.startsWith(introHref);
@@ -103,7 +104,7 @@ export function SiteHeader({ lang, otherLang }: { lang: Lang; otherLang: Lang })
         </Link>
 
         {/*
-          Trên màn hình hẹp, năm mục điều hướng nằm ở hàng riêng và tự cuộn
+          Trên màn hình hẹp, các mục điều hướng nằm ở hàng riêng và tự cuộn
           ngang khi thiếu chỗ, còn nút tìm, ngôn ngữ, nền ở cùng hàng với tên
           trang: ô tìm luôn trong tầm một ngón tay.
         */}

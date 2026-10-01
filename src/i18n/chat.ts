@@ -1,5 +1,5 @@
 import type { Lang } from "@/data/types";
-import type { ModelId } from "@/lib/chat/models";
+import { PRO_ENABLED, type ModelId } from "@/lib/chat/models";
 import type { SkillId } from "@/lib/chat/skills";
 
 /** Chữ của trợ lý hỏi đáp: nút mở, khung chat, thông báo và lỗi. */
@@ -21,7 +21,7 @@ export interface ChatCopy {
   modelPrefix: string;
   auto: string;
   autoTag: string;
-  modelHints: Record<ModelId, string>;
+  modelHints: Partial<Record<ModelId, string>>;
   groupGemini: string;
   groupFree: string;
   /** Lưu ý dưới ô chọn khi chọn 3.1 Pro, và khi chọn model OpenRouter. */
@@ -52,6 +52,31 @@ export interface ChatCopy {
     empty: string;
     other: string;
   };
+  /** Lịch sử trò chuyện, tối đa 5 cuộc, lưu trong trình duyệt. */
+  history: {
+    button: (n: number) => string;
+    title: string;
+    empty: string;
+    note: string;
+    removeLabel: (title: string) => string;
+    clear: string;
+    clearConfirm: string;
+    dropped: string;
+  };
+  /** Trang `/hoi-dap` và ô hỏi ở trang chủ. */
+  page: { title: string; lede: string };
+  ask: { label: string; placeholder: string; submit: string };
+  /** Câu trả lời tra cứu tự động khi mọi model đều không nhận (`offline.ts`). */
+  offline: {
+    model: string;
+    note: string;
+    related: string;
+    open: string;
+    none: string;
+    guideTitle: string;
+    guide: string[];
+    retry: string;
+  };
 }
 
 const vi: ChatCopy = {
@@ -59,7 +84,7 @@ const vi: ChatCopy = {
   title: "Trợ lý hỏi đáp",
   badge: "Thử nghiệm",
   notice:
-    "Câu trả lời do máy tạo, chỉ để tham khảo và có thể sai; không phải tư vấn pháp lý. Câu hỏi được gửi tới Google (Gemini) hoặc OpenRouter, máy chủ ở nước ngoài, và có thể được họ dùng để cải thiện mô hình. Đừng nhập họ tên, số giấy tờ, thông tin liên hệ hay chi tiết bí mật của vụ việc.",
+    "Câu trả lời do máy tạo, chỉ để tham khảo và có thể sai; không phải tư vấn pháp lý. Câu hỏi được gửi tới Google (Gemini) hoặc OpenRouter, máy chủ ở nước ngoài, và có thể được họ dùng để cải thiện mô hình. Đừng nhập họ tên, số giấy tờ, thông tin liên hệ hay chi tiết bí mật của vụ việc. Lịch sử 5 cuộc gần nhất chỉ lưu trên trình duyệt này.",
   policy: "Chính sách riêng tư",
   placeholder: "Nhập câu hỏi…",
   send: "Gửi",
@@ -110,7 +135,9 @@ const vi: ChatCopy = {
   thinkingNow: "Đang suy luận…",
   thinkingDone: "Xem phần suy luận",
   limited: {
-    pro: "Hôm nay bạn đã dùng hết lượt Gemini 3.1 Pro và suy luận mở rộng; câu này trả lời ở chế độ thường.",
+    pro: PRO_ENABLED
+      ? "Hôm nay bạn đã dùng hết lượt Gemini 3.1 Pro và suy luận mở rộng; câu này trả lời ở chế độ thường."
+      : "Hôm nay bạn đã dùng hết lượt suy luận mở rộng; câu này trả lời ở chế độ thường.",
     free: "Hôm nay bạn đã dùng hết lượt chọn model OpenRouter; câu này trả lời bằng Gemini.",
   },
   buyCredits: "Mua thêm lượt Pro",
@@ -133,6 +160,40 @@ const vi: ChatCopy = {
     empty: "Không nhận được câu trả lời. Thử hỏi lại.",
     other: "Có lỗi xảy ra. Thử lại sau.",
   },
+  history: {
+    button: (n) => `Lịch sử (${n}/5)`,
+    title: "Lịch sử trò chuyện",
+    empty: "Chưa có cuộc trò chuyện nào.",
+    note: "Tối đa 5 cuộc gần nhất, chỉ lưu trên trình duyệt này, không gửi lên máy chủ.",
+    removeLabel: (title) => `Xóa cuộc trò chuyện: ${title}`,
+    clear: "Xóa toàn bộ lịch sử",
+    clearConfirm: "Xóa toàn bộ lịch sử trò chuyện trên trình duyệt này?",
+    dropped: "Đã bỏ cuộc trò chuyện cũ nhất để giữ tối đa 5 cuộc.",
+  },
+  page: {
+    title: "Hỏi đáp pháp luật với trợ lý AI",
+    lede: "Hỏi về hiệu lực, cơ sở pháp lý và mọi vấn đề pháp luật. Văn bản trong kho của trang được dẫn kèm đường dẫn.",
+  },
+  ask: {
+    label: "Hỏi trợ lý AI",
+    placeholder: "Ví dụ: Luật Đất đai 2024 còn hiệu lực không?",
+    submit: "Hỏi",
+  },
+  offline: {
+    model: "Tra cứu tự động",
+    note: "**Trợ lý AI đang quá tải hoặc tạm ngưng**, nên câu trả lời dưới đây do trang tự tra trong kho văn bản, không dùng AI.",
+    related: "Văn bản liên quan trong kho",
+    open: "Xem văn bản",
+    none: "Kho văn bản của trang chưa có văn bản khớp với câu hỏi này. Thử hỏi kèm số hiệu (ví dụ \"31/2024/QH15\") hoặc tên văn bản, hoặc mở [danh mục văn bản](/vi/van-ban).",
+    guideTitle: "Cách dùng trang",
+    guide: [
+      "Tìm văn bản theo số hiệu, tên, ngày hay điều khoản ở ô tìm trang chủ, hoặc bảng lệnh (Ctrl K, ⌘ K hay phím /).",
+      "Xem luật tại một thời điểm: đặt ngày tra cứu ở ô chọn ngày; cả trang tính hiệu lực theo ngày đó.",
+      "Trang của từng văn bản có tình trạng hiệu lực, gia phả (văn bản thay thế, sửa đổi, hướng dẫn) và nguồn toàn văn: [danh mục văn bản](/vi/van-ban).",
+      "So sánh văn bản mới với văn bản cũ theo từng điểm: [Đối chiếu](/vi/doi-chieu).",
+    ],
+    retry: "Hỏi lại sau ít phút để nhận câu trả lời đầy đủ từ trợ lý AI.",
+  },
 };
 
 const en: ChatCopy = {
@@ -140,7 +201,7 @@ const en: ChatCopy = {
   title: "Q&A assistant",
   badge: "Beta",
   notice:
-    "Answers are machine-generated, for reference only and may be wrong; they are not legal advice. Questions are sent to Google (Gemini) or OpenRouter, whose servers are outside Vietnam, and may be used by them to improve their models. Do not enter names, ID numbers, contact details or confidential details of a matter.",
+    "Answers are machine-generated, for reference only and may be wrong; they are not legal advice. Questions are sent to Google (Gemini) or OpenRouter, whose servers are outside Vietnam, and may be used by them to improve their models. Do not enter names, ID numbers, contact details or confidential details of a matter. The history of your last 5 chats is kept only in this browser.",
   policy: "Privacy policy",
   placeholder: "Type your question…",
   send: "Send",
@@ -191,7 +252,9 @@ const en: ChatCopy = {
   thinkingNow: "Thinking…",
   thinkingDone: "Show reasoning",
   limited: {
-    pro: "You have used today's Gemini 3.1 Pro and extended-thinking quota; this answer uses the standard mode.",
+    pro: PRO_ENABLED
+      ? "You have used today's Gemini 3.1 Pro and extended-thinking quota; this answer uses the standard mode."
+      : "You have used today's extended-thinking quota; this answer uses the standard mode.",
     free: "You have used today's quota for picking an OpenRouter model; this answer uses Gemini.",
   },
   buyCredits: "Buy more Pro credits",
@@ -213,6 +276,40 @@ const en: ChatCopy = {
     network: "Could not connect. Check your connection and try again.",
     empty: "No answer came back. Try asking again.",
     other: "Something went wrong. Try again later.",
+  },
+  history: {
+    button: (n) => `History (${n}/5)`,
+    title: "Chat history",
+    empty: "No chats yet.",
+    note: "Your last 5 chats, kept only in this browser and never sent to the server.",
+    removeLabel: (title) => `Delete chat: ${title}`,
+    clear: "Clear all history",
+    clearConfirm: "Clear all chat history in this browser?",
+    dropped: "The oldest chat was removed to keep at most 5.",
+  },
+  page: {
+    title: "Legal Q&A with the AI assistant",
+    lede: "Ask about validity, legal basis and any legal matter. Instruments in the site's dataset are cited with a link.",
+  },
+  ask: {
+    label: "Ask the AI assistant",
+    placeholder: "For example: Is the 2024 Land Law in force?",
+    submit: "Ask",
+  },
+  offline: {
+    model: "Automatic lookup",
+    note: "**The AI assistant is busy or paused**, so the answer below is an automatic lookup in the site's dataset, made without AI.",
+    related: "Related instruments in the dataset",
+    open: "View instrument",
+    none: "The site's dataset has no instrument matching this question. Try including the number (for example \"31/2024/QH15\") or the title, or open the [catalogue](/en/van-ban).",
+    guideTitle: "Using the site",
+    guide: [
+      "Find an instrument by number, title, date or article in the home search box, or in the command palette (Ctrl K, ⌘ K or /).",
+      "See the law at a point in time: set a lookup date; the whole site works out validity on that date.",
+      "Each instrument's page shows its validity, its family (replacing, amending and guiding instruments) and full-text sources: [catalogue](/en/van-ban).",
+      "Compare a new instrument with the old one point by point: [Compare](/en/doi-chieu).",
+    ],
+    retry: "Ask again in a few minutes for a full answer from the AI assistant.",
   },
 };
 

@@ -14,6 +14,10 @@ import { FREE_ROUTER, maxOutOf, MODELS, providerOf } from "@/lib/chat/models";
  *
  * Câu trả lời dừng vì chạm trần độ dài thì được viết tiếp bằng chính model đó,
  * tối đa `MAX_CONTINUE` lần, trong giới hạn thời gian của route.
+ *
+ * Việc chuyển model có ngân sách thời gian chung (`FAILOVER_MS`): hết ngân sách
+ * mà chưa model nào nhận thì `streamChat` trả `null` để route trả lời bằng tra
+ * cứu tự động, thay vì để người hỏi chờ cả chuỗi model.
  */
 
 export interface ChatMessage {
@@ -41,8 +45,14 @@ interface Provider {
 /** Giới hạn độ dài câu trả lời, tính cả bước suy luận của mô hình. */
 const MAX_TOKENS = 32_768;
 const MAX_TOKENS_THINKING = 65_536;
-/** Thời gian chờ tối đa tới khi nhà cung cấp trả phần đầu câu trả lời. */
+/**
+ * Thời gian chờ tối đa tới khi nhà cung cấp trả phần đầu câu trả lời: model
+ * đầu tiên, và các model dự phòng sau đó. Tổng thời gian chuyển model không
+ * vượt `FAILOVER_MS`.
+ */
 const FIRST_BYTE_MS = 25_000;
+const RETRY_FIRST_BYTE_MS = 12_000;
+const FAILOVER_MS = 40_000;
 /** Số lần viết tiếp tối đa, và thời gian còn lại tối thiểu để viết tiếp. */
 const MAX_CONTINUE = 2;
 const CONTINUE_MIN_MS = 30_000;
@@ -72,19 +82,46 @@ function providers(models: readonly string[]): Provider[] {
   Model đã trả 429 (hết lượt) được nghỉ tới hết thời gian chờ mà nhà cung cấp
   báo (header Retry-After, hoặc trường retryDelay trong lỗi của Gemini), mặc
   định một phút, tối đa một giờ. Trong lúc nghỉ, câu hỏi đi thẳng sang model kế
-  tiếp thay vì hỏi lại rồi nhận cùng lỗi. `openrouter/free` không nghỉ, vì mỗi
-  lần nó chọn một model khác. Bảng nằm trong bộ nhớ của từng phiên bản
-  serverless, như giới hạn lượt ở route.
+  tiếp thay vì hỏi lại rồi nhận cùng lỗi. `openrouter/free` không nghỉ vì 429,
+  vì mỗi lần nó chọn một model khác.
+
+  Lỗi không tự hết sau vài giây thì nghỉ lâu hơn: khóa sai hay bị thu hồi (401,
+  hay 400 kèm lời báo về khóa) và tài khoản hết tiền (402) làm nghỉ cả nhà cung
+  cấp 15 phút; model bị từ chối quyền (403) nghỉ 15 phút; model không còn (404)
+  nghỉ một giờ. Bảng nằm trong bộ nhớ của từng phiên bản serverless, như giới
+  hạn lượt ở route.
 */
 const REST_MS = 60_000;
 const MAX_REST_MS = 3_600_000;
+const AUTH_REST_MS = 900_000;
+const GONE_REST_MS = 3_600_000;
 const resting = new Map<string, number>();
+/** Khóa nghỉ của cả một nhà cung cấp, để không trùng mã model nào. */
+const hostKey = (host: string) => `@${host}`;
+
+function isResting(p: Provider, now: number): boolean {
+  return (resting.get(p.model) ?? 0) > now || (resting.get(hostKey(new URL(p.base).host)) ?? 0) > now;
+}
+
+function rest(key: string, ms: number) {
+  resting.set(key, Date.now() + ms);
+  console.warn(`chat: ${key} nghỉ ${Math.round(ms / 1000)} giây`);
+}
 
 function restMs(res: Response, body: string): number {
   const header = Number(res.headers.get("retry-after"));
   const delay = /"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"/.exec(body);
   const ms = header > 0 ? header * 1000 : delay ? Number(delay[1]) * 1000 : REST_MS;
   return Math.min(Math.max(ms, 1000), MAX_REST_MS);
+}
+
+/** Cho model, hay cả nhà cung cấp, nghỉ theo mã lỗi. */
+function restAfter(p: Provider, host: string, res: Response, body: string) {
+  const s = res.status;
+  if (s === 401 || s === 402 || (s === 400 && /api.?key/i.test(body))) rest(hostKey(host), AUTH_REST_MS);
+  else if (s === 403) rest(p.model, AUTH_REST_MS);
+  else if (s === 404) rest(p.model, GONE_REST_MS);
+  else if (s === 429 && p.model !== FREE_ROUTER) rest(p.model, restMs(res, body));
 }
 
 export function chatConfigured(): boolean {
@@ -123,16 +160,24 @@ interface Ask {
   signal: AbortSignal;
 }
 
+/** Số token nhà cung cấp báo trong gói cuối của luồng, khi có. */
+interface Usage {
+  input?: number;
+  cached?: number;
+  output?: number;
+}
+
 /**
- * Gửi một yêu cầu và chờ phản hồi đầu tiên. `null` khi nhà cung cấp từ chối.
- * Nhật ký chỉ ghi tên máy chủ, mã model và mã lỗi, không ghi nội dung câu hỏi.
+ * Gửi một yêu cầu và chờ phản hồi đầu tiên tối đa `wait` ms. `null` khi nhà
+ * cung cấp từ chối. Nhật ký chỉ ghi tên máy chủ, mã model và mã lỗi, không ghi
+ * nội dung câu hỏi.
  */
-async function open(p: Provider, ask: Ask): Promise<ReadableStream<Uint8Array> | null> {
+async function open(p: Provider, ask: Ask, wait = FIRST_BYTE_MS): Promise<ReadableStream<Uint8Array> | null> {
   const host = new URL(p.base).host;
   // Hẹn giờ chỉ áp cho tới khi có phản hồi; phần chữ chảy về sau đó được phép
   // dài hơn. Người đọc đóng khung chat thì hủy luôn yêu cầu lên nhà cung cấp.
   const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), Math.min(FIRST_BYTE_MS, ask.deadline - Date.now()));
+  const timer = setTimeout(() => ctl.abort(), Math.min(wait, ask.deadline - Date.now()));
   const cancel = () => ctl.abort();
   ask.signal.addEventListener("abort", cancel, { once: true });
   const wanted = ask.thinking ? MAX_TOKENS_THINKING : MAX_TOKENS;
@@ -151,13 +196,7 @@ async function open(p: Provider, ask: Ask): Promise<ReadableStream<Uint8Array> |
     });
     if (res.ok && res.body) return res.body;
     console.warn(`chat: ${host} ${p.model} trả ${res.status}`);
-    if (res.status === 429 && p.model !== FREE_ROUTER) {
-      const ms = restMs(res, await res.text());
-      resting.set(p.model, Date.now() + ms);
-      console.warn(`chat: ${p.model} nghỉ ${Math.round(ms / 1000)} giây`);
-    } else {
-      await res.body?.cancel();
-    }
+    restAfter(p, host, res, await res.text().catch(() => ""));
   } catch (e) {
     console.warn(`chat: ${host} ${p.model} lỗi ${e instanceof Error ? e.name : "không rõ"}`);
   } finally {
@@ -177,9 +216,14 @@ export async function streamChat(
   signal: AbortSignal,
 ): Promise<ChatStream | null> {
   const ask: Ask = { system, messages, thinking: opts.thinking, deadline: opts.deadline, signal };
+  const giveUp = Math.min(Date.now() + FAILOVER_MS, opts.deadline);
+  let tries = 0;
   for (const p of providers(opts.models)) {
-    if ((resting.get(p.model) ?? 0) > Date.now()) continue;
-    const body = await open(p, ask);
+    if (isResting(p, Date.now())) continue;
+    const wait = Math.min(tries === 0 ? FIRST_BYTE_MS : RETRY_FIRST_BYTE_MS, giveUp - Date.now());
+    if (wait < 1000) break;
+    tries++;
+    const body = await open(p, ask, wait);
     if (body) return { body: toStream(answer(p, body, ask)), model: p.model };
     if (signal.aborted) return null;
   }
@@ -192,38 +236,68 @@ export async function streamChat(
  * nó đã chọn. Câu trả lời vẫn chưa trọn khi kết thúc thì báo `e`.
  */
 async function* answer(p: Provider, first: ReadableStream<Uint8Array>, ask: Ask): AsyncGenerator<ChatEvent> {
+  const started = Date.now();
+  const usage: Usage = {};
   let body = first;
   let text = "";
   let served = "";
-  for (let round = 0; ; round++) {
-    const it = relay(body, ask.deadline, p.model === FREE_ROUTER && round === 0);
-    let end: End;
-    try {
-      let r = await it.next();
-      for (; !r.done; r = await it.next()) {
-        if ("t" in r.value) text += r.value.t;
-        if ("m" in r.value) served = r.value.m;
-        yield r.value;
+  let end: End = "cut";
+  try {
+    for (let round = 0; ; round++) {
+      const it = relay(body, ask.deadline, p.model === FREE_ROUTER && round === 0, usage);
+      try {
+        let r = await it.next();
+        for (; !r.done; r = await it.next()) {
+          if ("t" in r.value) text += r.value.t;
+          if ("m" in r.value) served = r.value.m;
+          yield r.value;
+        }
+        end = r.value;
+      } finally {
+        // Trình duyệt hủy giữa chừng thì đóng cả lượt đọc đang dở.
+        await it.return("cut");
       }
-      end = r.value;
-    } finally {
-      // Trình duyệt hủy giữa chừng thì đóng cả lượt đọc đang dở.
-      await it.return("cut");
-    }
-    if (end === "stop") return;
-    if (end === "length" && round < MAX_CONTINUE && text.trim() && ask.deadline - Date.now() > CONTINUE_MIN_MS) {
-      const next = await open(served ? { ...p, model: served } : p, {
-        ...ask,
-        messages: [...ask.messages, { role: "assistant", content: text }, { role: "user", content: CONTINUE_PROMPT }],
-      });
-      if (next) {
-        body = next;
-        continue;
+      if (end === "stop") return;
+      if (end === "length" && round < MAX_CONTINUE && text.trim() && ask.deadline - Date.now() > CONTINUE_MIN_MS) {
+        const next = await open(served ? { ...p, model: served } : p, {
+          ...ask,
+          messages: [...ask.messages, { role: "assistant", content: text }, { role: "user", content: CONTINUE_PROMPT }],
+        });
+        if (next) {
+          body = next;
+          continue;
+        }
       }
+      yield { e: end };
+      return;
     }
-    yield { e: end };
-    return;
+  } finally {
+    logAnswer(p.model, served, end, ask, usage, text.length, Date.now() - started);
   }
+}
+
+/**
+ * Một dòng JSON mỗi câu trả lời cho Vercel Logs, để đo token và chi phí thật:
+ * model nhận yêu cầu, model thật trả lời, cách kết thúc, số ký tự đã gửi và đã
+ * nhận, số token nhà cung cấp báo (vào, trúng bộ nhớ đệm, ra), thời gian. Không
+ * ghi nội dung câu hỏi hay câu trả lời.
+ */
+function logAnswer(model: string, served: string, end: End, ask: Ask, usage: Usage, outChars: number, ms: number) {
+  const inChars = ask.system.length + ask.messages.reduce((n, m) => n + m.content.length, 0);
+  console.info(
+    JSON.stringify({
+      scope: "chat",
+      event: "answer",
+      model,
+      served: served || model,
+      end,
+      thinking: ask.thinking,
+      inChars,
+      outChars,
+      ...usage,
+      ms,
+    }),
+  );
 }
 
 /** Chuyển chuỗi sự kiện thành luồng NDJSON; trình duyệt hủy thì dừng chuỗi. */
@@ -288,12 +362,14 @@ function thoughtSplitter() {
  * thẻ <thought> (Gemini). Một dòng có thể bị cắt giữa hai gói dữ liệu, nên phần
  * dở dang được giữ lại chờ gói sau. Trả về lý do kết thúc: `finish_reason` của
  * nhà cung cấp, `time` khi tới hạn chót, `cut` khi luồng đứt mà không có
- * `finish_reason` hay `[DONE]`.
+ * `finish_reason` hay `[DONE]`. Số token trong trường `usage` (thường ở gói cuối)
+ * được cộng dồn vào `usage`.
  */
 async function* relay(
   body: ReadableStream<Uint8Array>,
   deadline: number,
   reportModel: boolean,
+  usage: Usage,
 ): AsyncGenerator<ChatEvent, End> {
   const reader = body.getReader();
   const dec = new TextDecoder();
@@ -317,6 +393,15 @@ async function* relay(
       return []; // Dòng không phải JSON: bỏ qua.
     }
     const out: ChatEvent[] = [];
+    const u = json?.usage;
+    if (u && typeof u === "object") {
+      const add = (k: keyof Usage, v: unknown) => {
+        if (typeof v === "number" && v >= 0) usage[k] = (usage[k] ?? 0) + v;
+      };
+      add("input", u.prompt_tokens);
+      add("cached", u.prompt_tokens_details?.cached_tokens);
+      add("output", u.completion_tokens);
+    }
     if (!modelSent && typeof json?.model === "string" && json.model) {
       out.push({ m: json.model });
       modelSent = true;

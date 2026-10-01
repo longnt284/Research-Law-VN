@@ -11,6 +11,7 @@ import type { ValidityState } from "@/lib/validity-segment";
 
 export interface SearchCopy {
   nav: {
+    ask: string;
     lookup: string;
     explore: string;
     compare: string;
@@ -108,6 +109,7 @@ export interface SearchCopy {
 
 const vi: SearchCopy = {
   nav: {
+    ask: "Hỏi AI",
     lookup: "Tra cứu",
     explore: "Khám phá",
     compare: "Đối chiếu",
@@ -223,6 +225,7 @@ const vi: SearchCopy = {
 
 const en: SearchCopy = {
   nav: {
+    ask: "Ask AI",
     lookup: "Look up",
     explore: "Explore",
     compare: "Compare",

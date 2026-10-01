@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { Lang } from "@/data/types";
@@ -16,6 +17,9 @@ import { getChatCopy } from "@/i18n/chat";
  *
  * Phần khác của trang mở khung chat bằng sự kiện `CHAT_OPEN_EVENT` trên
  * `window` (ví dụ nút "Tiếp tục sử dụng Lex AI" sau khi thanh toán).
+ *
+ * Trang `/hoi-dap` đã là khung chat toàn trang, nên ở đó nút mở và khung nổi
+ * ẩn đi. Hai bản dùng chung lịch sử và cuộc đang mở (`src/lib/chat/history.ts`).
  */
 
 export const CHAT_OPEN_EVENT = "ll:chat-open";
@@ -26,6 +30,9 @@ export function ChatHost({ lang }: { lang: Lang }) {
   const [open, setOpen] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const launcher = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
+  const chatPage = `/${lang}/hoi-dap`;
+  const onChatPage = pathname === chatPage || pathname.startsWith(`${chatPage}/`);
   const close = useCallback(() => {
     setOpen(false);
     // Trả focus về nút mở, để người dùng bàn phím không bị rơi về đầu trang.
@@ -41,13 +48,18 @@ export function ChatHost({ lang }: { lang: Lang }) {
     return () => window.removeEventListener(CHAT_OPEN_EVENT, onOpen);
   }, []);
 
+  // Vào trang chat riêng thì đóng khung nổi, để rời trang không bật lại nó.
+  useEffect(() => {
+    if (onChatPage) setOpen(false);
+  }, [onChatPage]);
+
   return (
     <>
       <button
         ref={launcher}
         type="button"
         className="chat-launch"
-        hidden={open}
+        hidden={open || onChatPage}
         aria-haspopup="dialog"
         onClick={() => {
           setLoaded(true);
@@ -65,7 +77,7 @@ export function ChatHost({ lang }: { lang: Lang }) {
         </svg>
         <span>{getChatCopy(lang).launch}</span>
       </button>
-      {loaded && <ChatPanel lang={lang} open={open} onClose={close} />}
+      {loaded && <ChatPanel lang={lang} open={open && !onChatPage} onClose={close} />}
     </>
   );
 }

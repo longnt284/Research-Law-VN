@@ -40,7 +40,12 @@ function storage(area: Area): Storage | null {
   }
 }
 
-function readRaw(area: Area, key: string): string | null {
+/*
+  Ba hàm đọc, ghi, theo dõi dưới đây được xuất cho kho lịch sử trò chuyện của
+  trợ lý (`src/lib/chat/history.ts`), để mọi dữ liệu trong trình duyệt đi qua
+  cùng một chỗ bọc lỗi và cùng một sự kiện báo đổi.
+*/
+export function readRaw(area: Area, key: string): string | null {
   try {
     return storage(area)?.getItem(key) ?? null;
   } catch {
@@ -48,7 +53,7 @@ function readRaw(area: Area, key: string): string | null {
   }
 }
 
-function writeRaw(area: Area, key: string, value: string | null) {
+export function writeRaw(area: Area, key: string, value: string | null) {
   try {
     const s = storage(area);
     if (!s) return;
@@ -86,7 +91,7 @@ function snapshot<T>(area: Area, key: string, parse: (raw: string | null) => T):
   return value;
 }
 
-function useStored<T>(area: Area, key: string, parse: (raw: string | null) => T, fallback: T): T {
+export function useStored<T>(area: Area, key: string, parse: (raw: string | null) => T, fallback: T): T {
   return useSyncExternalStore(
     subscribe,
     () => snapshot(area, key, parse),

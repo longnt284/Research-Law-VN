@@ -40,7 +40,8 @@ Người quay lại trang phải tra được một văn bản trong vài giây,
 phần giới thiệu trước. Thứ tự trang chủ vì vậy là:
 
 1. **Phần đầu**: câu khẩu hiệu "Mỗi văn bản pháp luật đều có một gia phả.", lời
-   hứa của sản phẩm và **ô tìm kiếm lớn** — thứ lớn nhất trên màn hình đầu tiên.
+   hứa của sản phẩm, **ô hỏi trợ lý AI** (gửi câu hỏi sang trang `/hoi-dap`) và
+   **ô tìm kiếm lớn**.
    Dưới ô là bốn lối tắt: kiểm tra hiệu lực, xem gia phả, so sánh văn bản, luật
    tại một thời điểm. Tiếp theo là lối vào video giới thiệu: ảnh bìa có nút phát,
    tên và độ dài. Trên thanh điều hướng, mục "Giới thiệu" là nút viền đồng có
@@ -520,7 +521,7 @@ npm run dev        # môi trường phát triển
 npm run build      # dựng bản production
 npm run typecheck  # kiểm tra kiểu
 npm run lint       # kiểm tra quy tắc mã nguồn
-npm test           # kiểm thử thanh toán và lượt Pro
+npm test           # kiểm thử thanh toán, lượt Pro và trợ lý hỏi đáp
 ```
 
 ### Biến môi trường
@@ -534,10 +535,25 @@ triển, và sai một cách dễ thấy nếu quên đặt trước khi triển
 
 ## Trợ lý hỏi đáp
 
-Nút "Hỏi trợ lý AI" ở góc phải dưới, có trên mọi trang, mở khung chat. Trợ lý
-trả lời mọi câu hỏi về trang và mọi vấn đề pháp lý (pháp luật Việt Nam ở mọi
-lĩnh vực, pháp luật quốc tế và nước ngoài); câu hỏi ngoài hai nhóm đó được trả
-lời ngắn rồi mời quay lại.
+Trợ lý là tính năng chính của trang. Có hai lối vào dùng chung một khung chat
+(`src/components/chat/ChatPanel.tsx`):
+
+- trang **`/vi/hoi-dap`**: khung chat toàn trang, mục "Hỏi AI" đầu thanh điều
+  hướng, ô hỏi ở trang chủ dẫn tới đây;
+- nút **"Hỏi trợ lý AI"** ở góc phải dưới các trang khác (ẩn trên `/hoi-dap`).
+
+Trợ lý trả lời mọi câu hỏi về trang và mọi vấn đề pháp lý (pháp luật Việt Nam ở
+mọi lĩnh vực, pháp luật quốc tế và nước ngoài); câu hỏi ngoài hai nhóm đó được
+trả lời ngắn rồi mời quay lại.
+
+**Lịch sử**: tối đa 5 cuộc trò chuyện gần nhất, lưu trong `localStorage` của
+trình duyệt (`src/lib/chat/history.ts`), không gửi lên máy chủ, không đồng bộ
+theo tài khoản. Trên `/hoi-dap` màn hình rộng, lịch sử là cột trái; ở khung nổi
+và trên điện thoại, nút "Lịch sử (n/5)" mở danh sách. Mở cuộc thứ sáu thì cuộc
+cũ nhất bị bỏ. Mỗi cuộc giữ 40 tin gần nhất, không lưu phần suy luận. Cuộc đang
+mở ghi ở `sessionStorage`, nên chuyển giữa trang chat và khung nổi vẫn đúng
+cuộc. Ô hỏi trang chủ chuyển câu hỏi qua `sessionStorage`, không qua địa chỉ
+trang.
 
 Route `/api/chat` (`src/app/api/chat/route.ts`) chọn tối đa hai skill pháp lý
 theo từ khóa của câu hỏi (`src/lib/chat/skills.ts`). Sau đó route dựng system
@@ -561,9 +577,21 @@ trả lời dạng luồng NDJSON gồm chữ trả lời, chữ suy luận và 
 Văn bản trong kho được dẫn như đã tra cứu, kèm đường dẫn. Số hiệu mà tư liệu ghi
 nhãn đã đối chiếu (`[A <ngày>]`, `[A-tiêu đề]`, `[T <ngày>]`) cũng được dẫn như
 đã tra. Mọi văn bản khác mang nhãn `[CHƯA XÁC MINH]`. Dưới mỗi câu trả lời có
-tên model và dòng nhắc nội dung chỉ để tham khảo. Trang không lưu cuộc trò
-chuyện. Mỗi địa chỉ IP được 6 lượt mỗi phút và 40 lượt mỗi ngày. Câu hỏi tối đa
-6.000 ký tự; mỗi lượt gửi lại tối đa 16 tin gần nhất, tổng 40.000 ký tự.
+tên model và dòng nhắc nội dung chỉ để tham khảo. Câu hỏi tối đa 6.000 ký tự;
+mỗi lượt gửi lại tối đa 16 tin gần nhất, tổng 30.000 ký tự.
+
+Thứ tự các phần của system prompt theo độ ổn định: lời dẫn, hướng dẫn trang,
+thân skill (giống nhau ở mọi câu cùng skill) đứng đầu; tư liệu, kho văn bản và
+ngày hôm nay đứng cuối. Gemini tự lưu đệm phần đầu giống nhau của các yêu cầu
+(implicit caching), nên đổi thứ tự này làm tăng số token phải xử lý lại.
+
+**Giới hạn lượt** (`src/lib/chat/limits.ts`): tính theo thiết bị, vì mạng di động
+cho nhiều người dùng chung một địa chỉ IP. Trình duyệt sinh một mã ngẫu nhiên và
+gửi trong header `X-Chat-Client`; thiếu mã thì tính theo IP. Mỗi thiết bị 10
+lượt mỗi phút, 100 lượt mỗi ngày; mỗi IP có trần 60 lượt mỗi phút, 500 lượt mỗi
+ngày (đủ cho một lớp học hay văn phòng dùng chung mạng). Bảng nằm trong bộ nhớ của từng phiên bản serverless. Ở Free tier của
+Gemini, trần thật là hạn mức ngày của project trên Google: nới các số này chỉ
+chia hạn mức đó cho công bằng hơn.
 
 Phần hướng dẫn trang trong `prompt.ts` là nguồn duy nhất trợ lý dùng để nói về
 trang. Thêm hay đổi tính năng thì sửa cả phần đó.
@@ -576,9 +604,14 @@ tự (2 điểm); chạm hai lĩnh vực chuyên môn (1 điểm); từ lượt 
 Gemini 3.1 Pro. Chọn hẳn Gemini 3.1 Pro nghĩa là "Pro khi cần": từ 2 điểm mới
 chạy Pro, dưới đó vẫn chạy 3.8 hoặc 3.6 Flash; khung chat ghi rõ điều này dưới
 ô chọn. Ô "Suy luận mở rộng" bật mức suy luận cao và hiện bản tóm tắt suy luận
-của mô hình. Gemini 3.1 Pro và suy luận mở rộng tốn nhiều hơn, nên mỗi địa chỉ
-IP chỉ được 10 lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng 3.8 Flash ở chế độ
-thường.
+của mô hình. Gemini 3.1 Pro và suy luận mở rộng tốn nhiều hơn, nên mỗi thiết bị
+chỉ được 20 lượt mỗi ngày (trần 60 lượt mỗi IP); hết lượt thì câu hỏi chạy bằng
+3.8 Flash ở chế độ thường.
+
+Gemini 3.1 Pro không có ở Free tier của Gemini API, nên Pro **tắt mặc định**:
+ô chọn không có Pro, trang không tự chọn Pro, câu hỏi khó chạy bằng 3.8 Flash.
+Khi project Gemini đã có billing, đặt `NEXT_PUBLIC_CHAT_PRO=1` trên Vercel rồi
+triển khai lại để bật.
 
 Ô chọn còn có các model miễn phí của OpenRouter: Nemotron 3 Ultra, Inkling,
 Qwen3.8 27B, Gemma 4 31B, Nemotron 3 Super, và `openrouter/free` (OpenRouter chọn
@@ -586,7 +619,7 @@ ngẫu nhiên). Danh sách đối chiếu ngày 01/10/2026; bỏ các model chuy
 tạo nhạc, kiểm duyệt, y tế, model quá nhỏ và model ẩn danh. Model miễn phí dùng
 chung hạn mức của cả tài khoản OpenRouter (20 lượt mỗi phút; 50 lượt mỗi ngày,
 hoặc 1.000 lượt khi tài khoản đã từng nạp từ 10 USD), và hạn mức đó cũng là chốt
-dự phòng khi Gemini hết lượt. Vì vậy mỗi địa chỉ IP chỉ được chọn tay model
+dự phòng khi Gemini hết lượt. Vì vậy mỗi thiết bị chỉ được chọn tay model
 OpenRouter 10 lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng Gemini theo độ khó.
 OpenRouter gỡ hay thêm model thì sửa `MODELS` trong `models.ts` (kèm `maxOut`, trần
 độ dài câu trả lời của model) và `modelHints` trong `src/i18n/chat.ts`.
@@ -626,19 +659,53 @@ CHAT_FALLBACK_MODEL=openrouter/free   # hoặc nhiều model, cách nhau bằng 
 
 Mã các model nằm trong `src/lib/chat/models.ts`, không nằm trong biến môi
 trường. Model Gemini gọi qua `CHAT_API_*`, model OpenRouter gọi qua
-`CHAT_FALLBACK_*`. Khi model đã chọn từ chối (hết lượt, quá tải, không trả lời
-trong 25 giây), câu hỏi chuyển sang model kế tiếp: model OpenRouter thì sang
-`openrouter/free`, rồi các bản Flash, rồi các model trong `CHAT_FALLBACK_MODEL`;
-không bao giờ tự nâng lên Pro. Model trả 429 (hết lượt) được cho nghỉ tới hết
-thời gian chờ nhà cung cấp báo, mặc định một phút, tối đa một giờ: trong lúc đó
-câu hỏi đi thẳng sang model kế tiếp thay vì hỏi lại rồi nhận cùng lỗi;
-`openrouter/free` không nghỉ vì mỗi lần chọn một model khác.
-`CHAT_FALLBACK_MODEL` nhận một model hoặc danh sách model cách nhau bằng dấu
-phẩy, thử theo thứ tự. `openrouter/free` chọn ngẫu nhiên một model miễn phí cho
-mỗi câu hỏi; tên model thật hiện dưới câu trả lời. OpenRouter là tùy chọn: thiếu
-khóa thì model OpenRouter trong ô chọn chạy bằng Gemini. Thiếu `CHAT_SKILLS_KEY`
-hoặc thiếu mọi nhà cung cấp thì trợ lý báo tạm ngưng; phần còn lại của trang
-không bị ảnh hưởng.
+`CHAT_FALLBACK_*`.
+
+**Chuỗi dự phòng.** Hạn mức của Gemini API tính theo project (thêm khóa trong
+cùng project không thêm lượt), nhưng mỗi model có hạn mức riêng. Khi model đã
+chọn từ chối (hết lượt, quá tải, không trả lời kịp), câu hỏi chuyển sang model
+kế tiếp: model OpenRouter thì sang `openrouter/free`; rồi lần lượt Gemini 3.8
+Flash, 3.7 Flash, 3.6 Flash, 3.5 Flash, 3.5 Flash-Lite, 3.1 Flash-Lite (bốn bản
+sau chỉ dùng làm dự phòng, không hiện trong ô chọn); rồi các model trong
+`CHAT_FALLBACK_MODEL`; không bao giờ tự nâng lên Pro. Lần thử đầu chờ phần đầu
+câu trả lời tối đa 25 giây, các lần sau 12 giây, tổng thời gian chuyển model
+không quá 40 giây.
+
+Model hỏng thì được cho nghỉ, để câu sau đi thẳng sang model kế tiếp thay vì
+hỏi lại rồi nhận cùng lỗi: 429 (hết lượt) nghỉ tới hết thời gian chờ nhà cung
+cấp báo, mặc định một phút, tối đa một giờ (`openrouter/free` không nghỉ vì mỗi
+lần chọn một model khác); 403 nghỉ 15 phút; 404 (model bị gỡ) nghỉ một giờ;
+khóa sai hay bị thu hồi (401, hoặc 400 kèm lời báo về khóa) và tài khoản hết
+tiền (402) làm nghỉ cả nhà cung cấp 15 phút. `CHAT_FALLBACK_MODEL` nhận một
+model hoặc danh sách model cách nhau bằng dấu phẩy, thử theo thứ tự.
+`openrouter/free` chọn ngẫu nhiên một model miễn phí cho mỗi câu hỏi; tên model
+thật hiện dưới câu trả lời. OpenRouter là tùy chọn: thiếu khóa thì model
+OpenRouter trong ô chọn chạy bằng Gemini.
+
+**Tra cứu tự động khi mọi AI đều hỏng** (`src/lib/chat/offline.ts`): hết chuỗi
+dự phòng, hết 40 giây, hoặc chưa cấu hình nhà cung cấp nào thì trợ lý vẫn trả
+lời, không gọi mô hình: tình trạng hiệu lực hôm nay của văn bản được nhắc số
+hiệu (kèm văn bản thay thế, sửa đổi nó), văn bản có tên khớp câu hỏi, văn bản
+chính của lĩnh vực mà câu hỏi chạm tới, và hướng dẫn dùng trang khi câu hỏi hỏi
+về trang. Câu trả lời ghi rõ là tra cứu tự động; dưới câu trả lời hiện "Model:
+Tra cứu tự động" (`X-Chat-Model: offline`). Câu trả lời này chỉ dùng dữ liệu
+công khai của trang, không dùng gói skill. Thiếu hoặc sai `CHAT_SKILLS_KEY` thì
+trợ lý vẫn gọi mô hình, chỉ thiếu phần skill và tư liệu.
+
+**Nhật ký** (Vercel Logs): mỗi câu trả lời ghi một dòng JSON `scope: "chat",
+event: "answer"` gồm model nhận yêu cầu, model thật trả lời, cách kết thúc, số
+ký tự gửi và nhận, số token nhà cung cấp báo (`input`, `cached`, `output`) và
+thời gian; mỗi lần tra cứu tự động ghi `event: "offline"` kèm lý do. Không ghi
+nội dung câu hỏi hay câu trả lời. Lọc theo hai dòng này để đo chi phí token thật
+và tỷ lệ câu hỏi không được AI trả lời. Build in độ dài thân từng skill (số ký
+tự) trong bước `check-chat-skills`.
+
+Hàm chạy ở vùng `sin1` (Singapore, `vercel.json`), gần người dùng Việt Nam và
+gần Supabase (Seoul) hơn vùng mặc định ở Mỹ.
+
+Thử chịu tải không tốn hạn mức thật: `scripts/chat-load-test.mjs` dựng một máy
+chủ mô hình giả kiểu OpenAI và bắn nhiều câu hỏi đồng thời vào bản chạy trên máy
+(hướng dẫn ở đầu tệp).
 
 `npm run build` chạy `scripts/check-chat-skills.mjs` trước `next build`;
 `vercel.json` buộc Vercel dùng `npm run build` thay cho `next build` mặc định.
@@ -924,7 +991,11 @@ cannot be derived from the source. On Vercel the platform's
 `VERCEL_PROJECT_PRODUCTION_URL` is used when the variable is unset; with neither,
 the build falls back to `http://localhost:3000`.
 
-The "Ask the AI assistant" button, on every page, opens a chat panel. `/api/chat`
+The assistant is the site's main feature. It has a full-page chat at `/en/hoi-dap`
+("Ask AI", first in the navigation; the home page question box leads there) and
+an "Ask the AI assistant" button on every other page. The last 5 chats are kept
+in the browser's `localStorage` (`src/lib/chat/history.ts`), never on the
+server. `/api/chat`
 picks up to two of the owner's legal skills by keyword. The assistant answers any
 question about the site and any legal question, Vietnamese, international or
 foreign. The system prompt carries the top skill verbatim, the passages of the
@@ -937,20 +1008,27 @@ OpenAI-compatible chat completions endpoint. The
 primary provider is the Gemini API (`CHAT_API_BASE`, `CHAT_API_KEY`) with the
 models listed in `src/lib/chat/models.ts`: Gemini 3.6 Flash, 3.8 Flash and
 3.1 Pro. Users pick a model or let the site choose one by question difficulty,
-and can turn on extended thinking; Pro and extended thinking are limited to 10
-questions a day per IP. An optional fallback (`CHAT_FALLBACK_*`, e.g.
+and can turn on extended thinking; Pro and extended thinking are limited to 20
+questions a day per device. Gemini 3.1 Pro is not on the Gemini API free tier,
+so it stays off until `NEXT_PUBLIC_CHAT_PRO=1`. When the chosen model refuses,
+the question walks a ladder of Gemini Flash models on the same key (each model
+has its own quota), then the optional fallback (`CHAT_FALLBACK_*`, e.g.
 OpenRouter's `openrouter/free`, a random free model, or a comma-separated list
-of models tried in order) takes over when every Gemini model refuses. A Gemini
-model that returns 429 rests until the retry delay Google reports (one minute by
-default, one hour at most), so later questions go straight to the next model. The repository is public, so the skills are
+of models tried in order), within 40 seconds in total. A model that returns 429
+rests until the retry delay the provider reports; a bad or revoked key rests the
+whole provider for 15 minutes. When every model refuses, the assistant still
+answers with an automatic lookup in the site's own dataset, made without AI
+(`src/lib/chat/offline.ts`). Each answer logs one JSON line with token counts,
+never the text. The repository is public, so the skills are
 committed only in encrypted form (`src/lib/chat/skills.enc.json`, AES-256-GCM,
 key in `CHAT_SKILLS_KEY`). Repack them with `scripts/pack-chat-skills.mjs`.
 `npm run build` (which `vercel.json` makes Vercel use instead of its default
 `next build`) first runs `scripts/check-chat-skills.mjs`: when
 `CHAT_SKILLS_KEY` is set but cannot decrypt the bundle, the build fails, so
 Vercel keeps the running deployment instead of shipping a paused assistant.
-Conversations are not stored. Each IP address gets 6 questions a minute and
-40 a day.
+The server stores no conversations. Limits are per device (a random code the
+browser sends in `X-Chat-Client`), 10 questions a minute and 100 a day, with a
+ceiling of 60 a minute and 500 a day per IP address (`src/lib/chat/limits.ts`).
 
 Signed-in users can buy Pro credits on the account page (Starter 10,000 VND,
 Plus 50,000 VND, Pro 100,000 VND) by VietQR bank transfer through payOS. Once the

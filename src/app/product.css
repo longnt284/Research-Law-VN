@@ -1018,8 +1018,43 @@ mark.hl {
   color: var(--ink-2);
 }
 .hero-search {
+  margin-top: 1.25rem;
+  max-width: 44rem;
+}
+
+/* Ô hỏi trợ lý AI ở đầu trang chủ: gửi câu hỏi sang trang /hoi-dap. */
+.hero-ask {
   margin-top: 1.75rem;
   max-width: 44rem;
+}
+.hero-ask-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.hero-ask-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  border: 1px solid var(--accent);
+  background: var(--paper);
+  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
+  box-shadow: var(--shadow-pop);
+}
+.hero-ask-input {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  background: transparent;
+  padding: 0.3rem 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  outline: none;
+}
+.hero-ask .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 /* Lối vào video giới thiệu dưới ô tìm: ảnh bìa thu nhỏ có nút phát, tên và độ dài. */
@@ -3888,4 +3923,119 @@ body:has(.ldiff-nav) .chat-launch {
 :root[data-motion="off"] .chat-launch,
 :root[data-motion="off"] .chat-panel {
   animation: none;
+}
+
+/* Khung chat toàn trang (/hoi-dap) và lịch sử trò chuyện. */
+.chat-page {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--hdr-h, 4rem) - 1.5rem);
+  min-height: 28rem;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+}
+.chat-page .chat-title {
+  font-size: 1.25rem;
+}
+.chat-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.chat-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+/* Lịch sử thay chỗ khung trò chuyện khi bấm nút Lịch sử. */
+.chat-aside {
+  display: none;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.9rem 1rem;
+  font-size: 0.875rem;
+}
+[data-view="history"] > .chat-body > .chat-aside {
+  display: block;
+  flex: 1;
+}
+[data-view="history"] > .chat-body > .chat-main {
+  display: none;
+}
+/* Màn hình rộng: lịch sử luôn là cột trái của trang chat. */
+@media (min-width: 1024px) {
+  .chat-page .chat-hist-btn {
+    display: none;
+  }
+  .chat-page > .chat-body > .chat-aside {
+    display: block;
+    flex: 0 0 17rem;
+    border-right: 1px solid var(--rule);
+  }
+  .chat-page[data-view="history"] > .chat-body > .chat-main {
+    display: flex;
+  }
+}
+.chat-aside-title {
+  font-weight: 600;
+}
+.chat-aside-count {
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.chat-aside-new {
+  margin-top: 0.6rem;
+  width: 100%;
+  justify-content: center;
+}
+.chat-hist {
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.chat-hist li {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid transparent;
+}
+.chat-hist li.is-active {
+  border-color: var(--rule-strong);
+  background: var(--paper-2);
+}
+.chat-hist-open {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+}
+.chat-hist-open:hover .chat-hist-title {
+  color: var(--accent);
+}
+.chat-hist-title {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.chat-hist-time {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.chat-hist-del {
+  padding: 0 0.55rem;
+  color: var(--ink-3);
+}
+.chat-hist-del:hover {
+  color: var(--accent);
+}
+.chat-aside .chat-hint {
+  margin-top: 0.75rem;
+}
+.chat-aside-clear {
+  margin-top: 0.5rem;
+  padding-left: 0;
 }
