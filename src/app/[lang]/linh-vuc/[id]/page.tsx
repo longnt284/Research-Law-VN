@@ -6,6 +6,7 @@ import { DocMetaRow } from "@/components/DomainDocRow";
 import { DomainGlyph } from "@/components/art/DomainGlyph";
 import { DomainTree } from "@/components/DomainTree";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { PrecedentDrafts } from "@/components/PrecedentDrafts";
 import { Reveal } from "@/components/Reveal";
 import { documents, domains, relations } from "@/data/documents";
 import type { DomainId, Lang } from "@/data/types";
@@ -139,6 +140,14 @@ export default async function DomainPage({
             </ul>
           </section>
         </Reveal>
+
+        {/* Dự thảo án lệ không nằm trong kho văn bản, nên chỉ hiện ở đây, tách
+            khỏi danh sách phía trên và đứng sau một lời cảnh báo. */}
+        {domainId === "an-le" && (
+          <Reveal>
+            <PrecedentDrafts lang={lang} />
+          </Reveal>
+        )}
 
         <Link href={`/${lang}/linh-vuc`} className="btn btn-quiet mt-10">
           {t.domainPage.backToDomains}

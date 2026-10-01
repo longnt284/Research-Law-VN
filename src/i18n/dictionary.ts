@@ -206,6 +206,7 @@ export const dict = {
       vbhn: "Văn bản hợp nhất",
       "dieu-uoc": "Điều ước quốc tế",
       "quy-tac": "Quy tắc tố tụng",
+      "an-le": "Án lệ",
     },
     confidence: {
       crossCheckLabel: "Cần đối chiếu thêm",
@@ -439,6 +440,7 @@ export const dict = {
       vbhn: "Consolidated text",
       "dieu-uoc": "Treaty",
       "quy-tac": "Institutional rules",
+      "an-le": "Precedent",
     },
     confidence: {
       crossCheckLabel: "Needs further checking",

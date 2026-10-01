@@ -69,6 +69,7 @@ const NUMBER_SHAPE: Partial<Record<LegalDoc["type"], { re: RegExp; shape: string
   "quyet-dinh": { re: new RegExp(`/QĐ-${ORG}$`), shape: "…/QĐ-… hoặc …/…/QĐ-…" },
   "thong-tu": { re: new RegExp(`/TT-${ORG}$`), shape: "…/…/TT-…" },
   vbhn: { re: /VBHN/i, shape: "…/VBHN-…" },
+  "an-le": { re: /^\d+\/\d{4}\/AL$/, shape: "<số>/<năm>/AL" },
 };
 
 /** So sánh hai mốc ISO. Chuỗi rỗng nghĩa là chưa xác minh được, bỏ qua. */

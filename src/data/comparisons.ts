@@ -983,8 +983,115 @@ export const comparisons: ComparisonEntry[] = [
       },
     ],
   },
+  {
+    newId: "viac-2026",
+    oldId: "viac-2017",
+    scope: {
+      vi: "Đối chiếu năm điểm theo tin công bố của VIAC và bài phân tích của các hãng luật về hai bản quy tắc, tra ngày 01/10/2026. Chưa đặt toàn văn hai bản cạnh nhau theo từng điều, nên mọi điểm ở mức cần đối chiếu thêm.",
+      en: "Five points compared from VIAC's announcements and law-firm analyses of the two sets of Rules, checked on 1 October 2026. The full texts have not been set side by side article by article, so every point is at cross-check level.",
+    },
+    points: [
+      {
+        id: "pham-vi-thoi-gian",
+        topic: { vi: "Phạm vi áp dụng theo thời gian", en: "Temporal scope" },
+        kind: "chuyen-tiep",
+        before: {
+          vi: "Áp dụng từ 01/3/2017, thay thế Quy tắc năm 2012.",
+          en: "Applied from 1 March 2017, replacing the 2012 Rules.",
+        },
+        after: {
+          vi: "Áp dụng cho tố tụng trọng tài bắt đầu từ ngày 01/7/2026 trở đi.",
+          en: "Applies to arbitrations commenced on or after 1 July 2026.",
+        },
+        observation: {
+          vi: "Mốc phân định giữa hai bản gắn với ngày bắt đầu tố tụng trọng tài, không gắn với ngày ký hợp đồng hay ngày xác lập thỏa thuận trọng tài.",
+          en: "The dividing line between the two versions is tied to the date the arbitration commences, not to the date of the contract or of the arbitration agreement.",
+        },
+        basis: { before: ["viac-2017"], after: ["viac-2026"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "thu-tuc-rut-gon",
+        topic: { vi: "Thủ tục rút gọn", en: "Expedited procedure" },
+        kind: "mo-rong",
+        before: {
+          vi: "Điều 37: các bên có thể thỏa thuận giải quyết theo thủ tục rút gọn, với một trọng tài viên trừ khi các bên thỏa thuận khác, thời hạn rút ngắn và phiên họp có thể tổ chức qua hội nghị truyền hình hoặc điện thoại.",
+          en: "Article 37: the parties may agree to the expedited procedure, with a sole arbitrator unless they agree otherwise, shortened time limits and hearings that may be held by video or telephone conference.",
+        },
+        after: {
+          vi: "Phụ lục II quy định thủ tục rút gọn thành một cơ chế riêng. Ngoài thỏa thuận của các bên, việc áp dụng còn xét theo giá trị và tính chất tranh chấp khi Trung tâm chấp thuận; yêu cầu áp dụng có thể đưa ra bất kỳ lúc nào trước khi Trung tâm thông báo thành lập Hội đồng Trọng tài.",
+          en: "Appendix II sets the expedited procedure out as a separate track. Besides party agreement, it may apply by reference to the value and nature of the dispute with the Centre's approval, and a request may be made at any time before the Centre notifies the constitution of the tribunal.",
+        },
+        observation: {
+          vi: "Căn cứ áp dụng đi từ một căn cứ là thỏa thuận của các bên sang thêm căn cứ giá trị và tính chất tranh chấp; vị trí quy định đổi từ một điều sang một phụ lục riêng.",
+          en: "The grounds for applying it go from party agreement alone to include the value and nature of the dispute, and the rule moves from a single article to a separate appendix.",
+        },
+        basis: { before: ["viac-2017#dieu:37"], after: ["viac-2026#phuluc:II"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "nhieu-hop-dong-hop-nhat",
+        topic: {
+          vi: "Tranh chấp nhiều hợp đồng và gộp vụ tranh chấp",
+          en: "Multi-contract disputes and consolidation",
+        },
+        kind: "chi-tiet-hoa",
+        before: {
+          vi: "Điều 6 về tranh chấp phát sinh từ nhiều hợp đồng và Điều 15 về hợp nhất các vụ tranh chấp, cả hai là quy định mới khi ban hành bản 2017.",
+          en: "Article 6 on disputes arising from multiple contracts and Article 15 on consolidation, both new when the 2017 Rules were issued.",
+        },
+        after: {
+          vi: "Bổ sung và cụ thể hóa cơ chế xử lý tranh chấp phát sinh từ nhiều hợp đồng, tranh chấp nhiều bên và cơ chế gộp vụ tranh chấp.",
+          en: "Adds to and details the mechanisms for multi-contract disputes, multi-party disputes and consolidation.",
+        },
+        observation: {
+          vi: "Cả hai bản đều có cơ chế cho tranh chấp nhiều hợp đồng và gộp vụ; bản 2026 đưa thêm tranh chấp nhiều bên vào cùng nhóm quy định.",
+          en: "Both versions provide for multi-contract disputes and consolidation; the 2026 Rules bring multi-party disputes into the same group of provisions.",
+        },
+        basis: { before: ["viac-2017#dieu:6", "viac-2017#dieu:15"], after: ["viac-2026"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "gia-nhap",
+        topic: { vi: "Gia nhập của bên thứ ba", en: "Joinder of an additional party" },
+        kind: "moi",
+        before: {
+          vi: "Các bài phân tích đã tra ghi nhận bản 2017 không có điều khoản cho phép một bên ngoài thỏa thuận trọng tài gia nhập vụ tranh chấp.",
+          en: "The analyses consulted record that the 2017 Rules had no provision for a non-signatory to join the proceedings.",
+        },
+        after: {
+          vi: "Điều 18 cho phép bổ sung một bên không phải là bên của thỏa thuận trọng tài trở thành một bên của tranh chấp, theo thủ tục riêng; Hội đồng Trọng tài giữ quyền tự xem xét thẩm quyền của mình.",
+          en: "Article 18 allows a party that is not party to the arbitration agreement to be added to the dispute under its own procedure, with the tribunal keeping the power to rule on its own jurisdiction.",
+        },
+        observation: {
+          vi: "Cơ chế gia nhập có ở bản 2026 dưới một điều riêng và không có tương ứng ở bản 2017.",
+          en: "The joinder mechanism appears in the 2026 Rules as a separate article and has no counterpart in the 2017 Rules.",
+        },
+        basis: { before: ["viac-2017"], after: ["viac-2026#dieu:18"] },
+        confidence: "cross-check",
+      },
+      {
+        id: "to-tung-dien-tu",
+        topic: { vi: "Tố tụng điện tử và phiên họp trực tuyến", en: "Electronic proceedings and remote hearings" },
+        kind: "mo-rong",
+        before: {
+          vi: "Phiên họp qua hội nghị truyền hình hoặc điện thoại được nêu trong thủ tục rút gọn tại Điều 37.",
+          en: "Hearings by video or telephone conference are mentioned within the expedited procedure in Article 37.",
+        },
+        after: {
+          vi: "Ghi nhận nền tảng nộp đơn và quản lý hồ sơ trực tuyến VIAC eCase, phiên họp kết hợp trực tiếp và trực tuyến, và việc dùng công cụ có hỗ trợ của trí tuệ nhân tạo.",
+          en: "Recognises the VIAC eCase platform for online filing and case management, hybrid in-person and online hearings, and the use of AI-assisted tools.",
+        },
+        observation: {
+          vi: "Hình thức họp từ xa ở bản 2017 nằm trong thủ tục rút gọn; bản 2026 thêm nộp đơn trực tuyến, phiên họp kết hợp và công cụ có hỗ trợ của trí tuệ nhân tạo.",
+          en: "Remote hearings in the 2017 Rules sit within the expedited procedure; the 2026 Rules add online filing, hybrid hearings and AI-assisted tools.",
+        },
+        basis: { before: ["viac-2017#dieu:37"], after: ["viac-2026"] },
+        confidence: "cross-check",
+      },
+    ],
+  },
 ];
-
 /**
  * Phép kiểm chạy ngay khi module được nạp, tức là trong lúc `next build` dựng
  * trang. Một câu bình luận lọt vào phần đối chiếu sẽ làm hỏng bản dựng thay vì

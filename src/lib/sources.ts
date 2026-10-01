@@ -69,6 +69,11 @@ const SITE_NAMES: Record<string, Bilingual> = {
   "thuvienphapluat.vn": { vi: "Thư Viện Pháp Luật", en: "Thu Vien Phap Luat" },
   "luatvietnam.vn": { vi: "LuatVietnam", en: "LuatVietnam" },
   "english.luatvietnam.vn": { vi: "LuatVietnam (bản tiếng Anh)", en: "LuatVietnam (English)" },
+  "anle.toaan.gov.vn": {
+    vi: "Trang thông tin án lệ · Tòa án nhân dân tối cao",
+    en: "Supreme People's Court · Precedent portal",
+  },
+  "tapchitoaan.vn": { vi: "Tạp chí Tòa án nhân dân", en: "People's Court Journal" },
   "viac.vn": {
     vi: "Trung tâm Trọng tài Quốc tế Việt Nam (VIAC)",
     en: "Vietnam International Arbitration Centre (VIAC)",

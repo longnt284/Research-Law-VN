@@ -1,4 +1,5 @@
 import { documents, domains as allDomains, LATEST_VERIFIED_ON, verifiedOnOf } from "@/data/documents";
+import { DRAFT_CONTEXT, precedentDrafts } from "@/data/precedent-drafts";
 import type { DomainId, Lang, LegalDoc } from "@/data/types";
 import { domainDocs, mentioned, statusText, todayVn } from "@/lib/chat/docs";
 import { modelLabel, PRO, PRO_ENABLED } from "@/lib/chat/models";
@@ -97,7 +98,7 @@ Lex & Lineage là gia phả văn bản pháp luật Việt Nam: mỗi văn bản
 - Tìm kiếm: ô tìm ở trang chủ, hoặc bảng lệnh mở bằng Ctrl K, ⌘ K hay phím / ở mọi trang. Tìm được theo số hiệu ("58/2025", "Nghị định 58"), tên văn bản, ngày ("01/05/2024"), điều khoản ("Điều 76") và ý định ("thay thế", "sửa đổi", "hướng dẫn", "còn hiệu lực"). Câu tìm nhắm đúng một văn bản thì có khối trả lời: tình trạng, văn bản thay thế, văn bản sửa đổi, số văn bản hướng dẫn.
 - Pháp luật tại ngày: đặt một ngày tra cứu dùng chung cho cả trang (ô chọn ngày, hoặc thêm ?ngay=2024-05-01 vào địa chỉ); ô tìm, danh mục, trang văn bản và hình gia phả đều tính tình trạng theo ngày đó. Dải dưới thanh điều hướng nhắc ngày đang đặt, kèm nút bỏ.
 - Văn bản ${p("/van-ban")}: danh mục. Trang của từng văn bản (${p("/van-ban/<mã>")}) có tình trạng hiệu lực, ngày ban hành, ngày hiệu lực, ngày kiểm tra, mức xác minh, gia phả dạng hình và dạng danh sách, nguồn và kiểm chứng, và thanh thao tác: theo dõi, lưu vào bộ hồ sơ, so sánh, sao chép trích dẫn, chia sẻ, xuất (in, PDF, tóm tắt, JSON), báo lỗi.
-- Lĩnh vực ${p("/linh-vuc")}: mỗi lĩnh vực có cây văn bản, luật ở cột đầu, nghị định ở giữa, thông tư ở cuối.
+- Lĩnh vực ${p("/linh-vuc")}: mỗi lĩnh vực có cây văn bản, luật ở cột đầu, nghị định ở giữa, thông tư ở cuối. Lĩnh vực Án lệ (${p("/linh-vuc/an-le")}) gồm án lệ đã công bố và nghị quyết về quy trình án lệ; cuối trang có mục "Dự thảo án lệ" chỉ để tham khảo, tách khỏi kho văn bản.
 - Đối chiếu ${p("/doi-chieu")}: đặt văn bản mới cạnh văn bản cũ theo từng điểm. Ba cách xem: Tổng quan, Chỉ điểm thay đổi, Toàn bộ; phím J và K đi tới điểm sau và điểm trước. Trang chỉ đếm điểm đã viết, không đếm số điều thay đổi vì không có toàn văn.
 - Thay đổi ${p("/thay-doi")}: mọi mốc hiệu lực, sửa đổi, thay thế, hướng dẫn, nhóm theo tháng. Mở từ chân trang hoặc bảng lệnh.
 - Theo dõi ${p("/theo-doi")}: văn bản đang theo dõi (kèm các mốc đổi tình trạng), bộ hồ sơ, văn bản vừa xem. Lưu trong trình duyệt; có tài khoản thì đi theo tài khoản. Mở từ chân trang, bảng lệnh hoặc trang tài khoản.
@@ -106,6 +107,25 @@ Lex & Lineage là gia phả văn bản pháp luật Việt Nam: mỗi văn bản
 - Phương pháp ${p("/phuong-phap")}: phạm vi dữ liệu, nguồn, nhật ký dữ liệu, cách báo và sửa lỗi. Chính sách ${p("/chinh-sach")}: quyền riêng tư, điều khoản sử dụng, bản quyền.
 - Dữ liệu mở: /api/v1/documents.json, danh sách văn bản kèm tình trạng hiệu lực.
 - Trợ lý hỏi đáp (chính bạn): trang ${p("/hoi-dap")} (mục "Hỏi AI" đầu thanh điều hướng, hoặc ô hỏi ở trang chủ), và nút "Hỏi trợ lý AI" ở góc phải dưới các trang khác. Mục Lịch sử giữ tối đa 5 cuộc trò chuyện gần nhất, chỉ trong trình duyệt của người dùng, không gửi lên máy chủ; xóa được từng cuộc hoặc toàn bộ. Người dùng để trang tự chọn model theo độ khó, hoặc chọn một model Gemini hay một model miễn phí của OpenRouter, và bật được "Suy luận mở rộng".${pro} Mỗi thiết bị có giới hạn lượt hỏi theo phút và theo ngày; ${premium} và model OpenRouter chọn tay có hạn mức riêng thấp hơn. Model đã chọn hết lượt hay quá tải thì câu hỏi chuyển sang model khác; tên model trả lời hiện dưới câu trả lời. Khi mọi model đều quá tải hay tạm ngưng, trang trả lời bằng tra cứu tự động trong kho văn bản, không dùng AI, và ghi rõ điều đó. Câu trả lời quá dài được tự viết tiếp; vẫn chưa trọn thì có nút "Viết tiếp". Câu hỏi được gửi tới Google hoặc OpenRouter.`;
+}
+
+/**
+ * Dự thảo án lệ, gửi kèm khi câu hỏi chạm lĩnh vực Án lệ hoặc nhắc chữ "dự
+ * thảo". Dự thảo không nằm trong kho văn bản nên không có đường dẫn trang văn
+ * bản; quy tắc đứng ngay đầu mục để trợ lý không viện dẫn dự thảo như án lệ.
+ */
+function draftsSection(lang: Lang, domains: DomainId[], text: string): string | null {
+  if (!domains.includes("an-le") && !/dự thảo|du thao|draft/i.test(text)) return null;
+  const lines = precedentDrafts.map(
+    (d) => `- ${d.label[lang]} — ${d.title[lang]}: ${d.summary[lang]} (tra ngày ${d.verifiedOn}; còn chi tiết chưa đối chiếu với nguồn chính thống)`,
+  );
+  return `# Dự thảo án lệ (chưa thông qua)
+
+Các mục dưới đây là dự thảo Tòa án nhân dân tối cao đăng để lấy ý kiến, chưa được Hội đồng Thẩm phán thông qua, không được viện dẫn trong xét xử. Chỉ nêu như tài liệu tham khảo, luôn gọi là "dự thảo án lệ", không viết như án lệ đang áp dụng. Danh sách dự thảo xem ở /${lang}/linh-vuc/an-le.
+
+${DRAFT_CONTEXT.text[lang]}
+
+${lines.join("\n")}`;
 }
 
 export function buildSystemPrompt(opts: {
@@ -131,6 +151,9 @@ export function buildSystemPrompt(opts: {
     siteGuide(opts.lang),
     ...skill,
     corpus(opts.lang, opts.domains, opts.texts.join("\n"), today),
+    draftsSection(opts.lang, opts.domains, opts.texts.join("\n")),
     `# Ngày hôm nay\n\nHôm nay là ${today} (giờ Việt Nam).`,
-  ].join("\n\n---\n\n");
+  ]
+    .filter((part): part is string => part !== null)
+    .join("\n\n---\n\n");
 }

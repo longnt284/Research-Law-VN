@@ -31,6 +31,7 @@ export const TIER: Record<DocType, 0 | 1 | 2 | 3> = {
   "quyet-dinh": 2,
   "thong-tu": 3,
   "quy-tac": 3,
+  "an-le": 3,
 };
 
 export const TIERS = [0, 1, 2, 3] as const;

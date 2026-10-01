@@ -23,6 +23,7 @@ const RANK: Record<DocType, number> = {
   "quyet-dinh": 3,
   "thong-tu": 4,
   "quy-tac": 4,
+  "an-le": 4,
 };
 
 /** Bỏ dấu để "dien luc" tìm được "điện lực". */

@@ -40,6 +40,8 @@ const FLAGSHIP: Record<DomainId, string> = {
   ppp: "luat-ppp-2020",
   fintech: "luat-cncns-2025",
   "du-lieu": "luat-bvdlcn-2025",
+  "dan-su": "luat-hngd-2014",
+  "an-le": "nq-04-2019-hdtp",
 };
 
 const copy: Record<

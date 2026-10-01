@@ -51,7 +51,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       h: "Giới hạn phải nói rõ",
       p: [
         "Kết quả tra cứu văn bản pháp luật chỉ có giá trị tại thời điểm tra. Pháp luật Việt Nam trong các lĩnh vực đầu tư, thuế, đất đai và xây dựng thay đổi nhanh; một văn bản đúng hôm nay có thể đã bị sửa sau vài tháng. Trước khi dùng bất kỳ nội dung nào ở đây vào hồ sơ chính thức, cần đối chiếu lại với Công báo, Cơ sở dữ liệu quốc gia về pháp luật hoặc cơ quan ban hành.",
-        "Tập dữ liệu này không đầy đủ và không cố tỏ ra đầy đủ. Nó tập trung vào mười hai lĩnh vực và chỉ chọn những văn bản trụ cột cùng quan hệ giữa chúng. Rất nhiều thông tư chuyên ngành, quyết định của Thủ tướng và văn bản địa phương không có mặt ở đây. Gia phả giúp định vị, không thay thế việc tra cứu đầy đủ.",
+        "Tập dữ liệu này không đầy đủ và không cố tỏ ra đầy đủ. Nó tập trung vào mười bốn lĩnh vực và chỉ chọn những văn bản trụ cột cùng quan hệ giữa chúng. Rất nhiều thông tư chuyên ngành, quyết định của Thủ tướng và văn bản địa phương không có mặt ở đây. Gia phả giúp định vị, không thay thế việc tra cứu đầy đủ.",
         "Cuối cùng, trang này là công cụ tra cứu, không phải ý kiến pháp lý. Một điều luật đọc đúng vẫn có thể áp dụng sai nếu tách khỏi tình tiết cụ thể của vụ việc. Với vấn đề có rủi ro thật, cần làm việc với luật sư.",
       ],
     },
@@ -69,7 +69,7 @@ const body: Record<Lang, { h: string; p: string[] }[]> = {
       h: "Limits worth stating plainly",
       p: [
         "A search of legislation is only good as at the date it was run. Vietnamese law on investment, tax, land and construction moves quickly; an instrument that is current today may be amended within months. Before relying on anything here in a formal filing, check it against the Official Gazette, the National Legal Database or the issuing authority.",
-        "This dataset is not comprehensive and does not pretend to be. It covers twelve domains and selects the load-bearing instruments together with the relations between them. A great many sector circulars, Prime Ministerial decisions and provincial instruments are absent. A lineage helps with orientation; it does not replace a full search.",
+        "This dataset is not comprehensive and does not pretend to be. It covers fourteen domains and selects the load-bearing instruments together with the relations between them. A great many sector circulars, Prime Ministerial decisions and provincial instruments are absent. A lineage helps with orientation; it does not replace a full search.",
         "Finally, this is a reference tool, not legal advice. An article read correctly can still be applied wrongly when detached from the facts of a matter. Where real risk is involved, work with a lawyer.",
       ],
     },
