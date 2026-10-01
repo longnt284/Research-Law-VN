@@ -5,11 +5,13 @@
  *
  * Palette, type and relation styles mirror the site's dark theme
  * (src/app/globals.css). Every law number and date on screen comes from
- * src/data/documents.ts and src/data/comparisons.ts. */
+ * src/data/documents.ts and src/data/comparisons.ts. The assistant's answers
+ * are written from the same records and labelled on screen as an
+ * illustration of the interface. */
 
 const W = 1920, H = 1080;
 const BPM = 110, B = 60 / BPM;
-const TOTAL_BEATS = 100;
+const TOTAL_BEATS = 110;
 const DURATION = TOTAL_BEATS * B;
 
 const C = {
@@ -22,17 +24,29 @@ const hsl = (h, a = 1, l = 66, s = 52) => `hsla(${h}, ${s}%, ${l}%, ${a})`;
 const HUE = { green: 148, coral: 10, brass: 43 };
 
 // Beat-locked events shared with audio.py, which parses the JSON between the markers.
-// impacts: [beat, strength]; ticks: clock span of the date scrub; pops: tree nodes;
-// domains: one bar per domain; flip, rows, feed: interface events in the tools scene.
+// scenes: hook, family tree, assistant, tools, scope, lockup, end. impacts: [beat, strength];
+// ticks: clock span of the date scrub; pops: tree nodes; typing, send, tag, chips, today,
+// montage: the assistant scene; flip, rows, feed: the tools scene; glyphs, counters,
+// collapse: the scope scene; cta: typing and button of the closing question box.
 /*SYNC*/
 const SYNC = {
-  "impacts": [[8, 1], [20, 0.85], [88, 0.7], [92, 0.55]],
+  "scenes": [0, 12, 24, 68, 80, 92, 110],
+  "impacts": [[8, 1], [20, 0.85], [80, 0.8], [91.6, 0.9]],
   "ticks": [4.5, 8],
   "pops": [13, 13.5, 14, 14.5, 15, 15.5, 16, 16.5],
-  "domains": [28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72],
-  "flip": [77.8],
-  "rows": [80.8, 81.3, 81.8],
-  "feed": [84.6, 85, 85.4, 85.8]
+  "typing": [26.8, 33.2],
+  "send": [34],
+  "tag": [39.6],
+  "chips": [45.8, 46.5, 54.1, 54.5, 58.1, 62.1, 62.5],
+  "today": [47.2],
+  "montage": [52, 56, 60],
+  "flip": [69.8],
+  "rows": [72.8, 73.3, 73.8],
+  "feed": [76.6, 77, 77.4, 77.8],
+  "glyphs": [80.2, 80.42, 80.64, 80.86, 81.08, 81.3, 81.52, 81.74, 81.96, 82.18, 82.4, 82.62, 82.84, 83.06],
+  "counters": [84.2, 86.2],
+  "collapse": [91.6],
+  "cta": [97, 100.5]
 };
 /*END*/
 
@@ -207,6 +221,7 @@ function buildAssets() {
   CARD_OLD = makeCard({ no: '50/2014/QH13', eff: 'Có hiệu lực từ 01/01/2015', seed: 3 });
   CARD_NEW = makeCard({ no: '135/2025/QH15', eff: 'Có hiệu lực từ 01/07/2026', seed: 4 });
   STAMP = makeStamp();
+  buildChat();
 }
 
 // ---------- document card (hook) ----------
@@ -374,12 +389,15 @@ function wordmark(x, y, size, al, align = 'left') {
   return rich([['LEX ', {}], ['&', amp], [' LINEAGE', {}]], x, y, base, align);
 }
 
+
 // ---------- domains (src/data/documents.ts; glyphs from src/components/art/DomainGlyph.tsx) ----------
 const GLYPH = {
   'xay-dung': ['M12 44V8M7 8h33M12 8l6-4 6 4M36 8v11', 'M33 19h6v3.5h-6z', 'M21 26h17v18h-17z', 'M25 31h3M31 31h3M25 36.5h3M31 36.5h3M5 44h38'],
   'nang-luong': ['M24 4 15 44M24 4l9 40M14.5 13h19M12 21h24M17.5 31h13', 'M16 13l15 8M32 13l-15 8M13 21l16 10M35 21 19 31', 'M9 44h30'],
   'hop-dong': ['M10 4h19l9 9v31H10z', 'M29 4v9h9', 'M15 18h17M15 23h17M15 28h11', 'M15 38c3-4 5 2 8-1s4 1 7-1 3 0 4 0'],
+  'dan-su': ['M5 21 24 6l19 15', 'M9 18v24M39 18v24M6 42h36', circ(19, 25, 3.5), 'M12.5 42v-5.5a6.5 6.5 0 0 1 13 0V42', circ(30.5, 29, 2.8), 'M25.5 42v-3.8a5 5 0 0 1 10 0V42'],
   'to-tung': ['M24 5v37M15 42h18M9 12h30', circ(24, 7.5, 2), 'M9 12 4 26M9 12l5 14M39 12l-5 14M39 12l5 14', 'M3 26h12a6 5 0 0 1-12 0zM33 26h12a6 5 0 0 1-12 0z'],
+  'an-le': ['M24 12c-5-3.5-12-4-18-2v28c6-2 13-1.5 18 2 5-3.5 12-4 18-2V10c-6-2-13-1.5-18 2z', 'M24 12v28', 'M10 17h9.5M10 22h9.5M10 27h9.5M10 32h6', circ(33, 25, 6), circ(33, 25, 3)],
   'doanh-nghiep': ['M9 7h19v37h-19z', 'M28 19h12v25h-12z', 'M13 13h3.5M20.5 13H24M13 19h3.5M20.5 19H24M13 25h3.5M20.5 25H24M13 31h3.5M20.5 31H24', 'M32 25h4M32 31h4M16.5 44v-6h4v6M5 44h39'],
   'dau-tu': ['M6 42h36M6 42V7', 'M10 34l8.5-8.5 7 6L37 18', 'M31 18h6v6', circ(38, 35, 4.5), 'M38 32.5v5'],
   'lao-dong': ['M10 31a14 14 0 0 1 28 0', 'M6 31h36v4H6z', 'M20.5 18.2V13h7v5.2M24 13v18', 'M14 41h20'],
@@ -389,22 +407,42 @@ const GLYPH = {
   'fintech': [circ(17, 24, 12), circ(17, 24, 8), 'M17 19.5l3.9 2.25v4.5L17 28.5l-3.9-2.25v-4.5z', 'M29 18h4l4-5h4M29 24h12M29 30h4l4 5h4', circ(43, 13, 1.8), circ(43, 24, 1.8), circ(43, 35, 1.8)],
   'du-lieu': ['M24 4 9 9.5V22c0 10.5 6.5 18 15 22 8.5-4 15-11.5 15-22V9.5z', circ(24, 20.5, 4), 'M22.4 24.1 21 32h6l-1.4-7.9'],
 };
+/** Same order and hues as `domains` in src/data/documents.ts. */
 const DOMAINS = [
-  { id: 'xay-dung', hue: 24, name: 'Xây dựng', short: 'Xây dựng', keys: ['Quy hoạch', 'Cấp phép', 'Thi công', 'Nghiệm thu'], law: 'Luật Xây dựng', no: '135/2025/QH15', eff: '01/07/2026' },
-  { id: 'nang-luong', hue: 43, name: 'Năng lượng', short: 'Năng lượng', keys: ['Nguồn điện', 'Mua bán điện trực tiếp', 'Năng lượng tái tạo'], law: 'Luật Điện lực', no: '61/2024/QH15', eff: '01/02/2025' },
-  { id: 'hop-dong', hue: 212, name: 'Hợp đồng thương mại', short: 'Hợp đồng', keys: ['Giao kết', 'Hiệu lực', 'Vi phạm', 'Chế tài'], law: 'Bộ luật Dân sự', no: '91/2015/QH13', eff: '01/01/2017' },
-  { id: 'to-tung', hue: 352, name: 'Tố tụng & Trọng tài', short: 'Tố tụng', keys: ['Tòa án', 'Trọng tài', 'Thi hành phán quyết nước ngoài'], law: 'Bộ luật Tố tụng dân sự', no: '92/2015/QH13', eff: '01/07/2016' },
-  { id: 'doanh-nghiep', hue: 268, name: 'Doanh nghiệp', short: 'Doanh nghiệp', keys: ['Thành lập', 'Quản trị', 'Tổ chức lại', 'Phá sản'], law: 'Luật Doanh nghiệp', no: '59/2020/QH14', eff: '01/01/2021' },
-  { id: 'dau-tu', hue: 176, name: 'Đầu tư', short: 'Đầu tư', keys: ['Chấp thuận chủ trương', 'Ngành nghề có điều kiện', 'Ưu đãi'], law: 'Luật Đầu tư', no: '143/2025/QH15', eff: '01/03/2026' },
-  { id: 'lao-dong', hue: 148, name: 'Lao động', short: 'Lao động', keys: ['Hợp đồng lao động', 'Tiền lương', 'Bảo hiểm xã hội'], law: 'Bộ luật Lao động', no: '45/2019/QH14', eff: '01/01/2021' },
-  { id: 'thue', hue: 302, name: 'Thuế', short: 'Thuế', keys: ['Giá trị gia tăng', 'Thu nhập doanh nghiệp', 'Quản lý thuế'], law: 'Luật Quản lý thuế', no: '108/2025/QH15', eff: '01/07/2026' },
-  { id: 'dat-dai', hue: 96, name: 'Đất đai & Bất động sản', short: 'Đất đai', keys: ['Quyền sử dụng đất', 'Giá đất', 'Thu hồi, bồi thường'], law: 'Luật Đất đai', no: '31/2024/QH15', eff: '01/08/2024' },
-  { id: 'ppp', hue: 240, name: 'Đối tác công tư', short: 'PPP', keys: ['Lựa chọn nhà đầu tư', 'Vốn nhà nước', 'Hợp đồng BT'], law: 'Luật Đầu tư theo phương thức đối tác công tư', no: '64/2020/QH14', eff: '01/01/2021' },
-  { id: 'fintech', hue: 192, name: 'Fintech & Tài sản số', short: 'Fintech', keys: ['Tài sản mã hóa', 'Thanh toán số', 'Thử nghiệm có kiểm soát'], law: 'Luật Công nghiệp công nghệ số', no: '71/2025/QH15', eff: '01/01/2026' },
-  { id: 'du-lieu', hue: 326, name: 'Dữ liệu & An ninh mạng', short: 'Dữ liệu', keys: ['Dữ liệu cá nhân', 'An ninh mạng', 'Trí tuệ nhân tạo'], law: 'Luật Bảo vệ dữ liệu cá nhân', no: '91/2025/QH15', eff: '01/01/2026' },
+  { id: 'xay-dung', hue: 24, short: 'Xây dựng' },
+  { id: 'nang-luong', hue: 43, short: 'Năng lượng' },
+  { id: 'hop-dong', hue: 212, short: 'Hợp đồng' },
+  { id: 'dan-su', hue: 122, short: 'Dân sự' },
+  { id: 'to-tung', hue: 352, short: 'Tố tụng' },
+  { id: 'an-le', hue: 68, short: 'Án lệ' },
+  { id: 'doanh-nghiep', hue: 268, short: 'Doanh nghiệp' },
+  { id: 'dau-tu', hue: 176, short: 'Đầu tư' },
+  { id: 'lao-dong', hue: 148, short: 'Lao động' },
+  { id: 'thue', hue: 302, short: 'Thuế' },
+  { id: 'dat-dai', hue: 96, short: 'Đất đai' },
+  { id: 'ppp', hue: 240, short: 'PPP' },
+  { id: 'fintech', hue: 192, short: 'Fintech' },
+  { id: 'du-lieu', hue: 326, short: 'Dữ liệu' },
 ];
-/** Scene boundaries in beats: one four-beat bar per domain from beat 28, then tools, then the lockup. */
-const ND = DOMAINS.length, T4 = 28 + 4 * ND, T5 = T4 + 12;
+const ND = DOMAINS.length;
+/** Counts shown in the scope scene; they must match src/data/documents.ts. */
+const STATS = { domains: ND, docs: 199, precedents: 16 };
+/** Draw a domain glyph centred at (cx, cy); p = draw-on progress, stroke by stroke. */
+function glyph(d, cx, cy, size, p, col) {
+  const k = size / 48;
+  ctx.save(); ctx.translate(cx - size / 2, cy - size / 2); ctx.scale(k, k);
+  ctx.strokeStyle = col; ctx.lineWidth = 1.7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const paths = GLYPH[d.id], n = paths.length;
+  paths.forEach((s, i) => {
+    const lp = E.inOutCubic(prog(p, i / n * .55, .45 + i / n * .55));
+    if (lp <= 0) return;
+    const L = d.lens[i];
+    ctx.setLineDash([L * lp, L + 1]); ctx.stroke(new Path2D(s));
+  });
+  ctx.restore();
+}
+/** Scene starts in beats, from the SYNC block: hook, family tree, assistant, tools, scope, lockup, end. */
+const [, , T_CHAT, T4, TB, T5] = SYNC.scenes;
 
 // ---------- ambient ----------
 const DUST = (() => {
@@ -636,137 +674,332 @@ function S2(b, t) {
 }
 
 // =====================================================================
-// S3 — twelve domains, one bar each (beats 24–T4)
+// S3 — the assistant (beats T_CHAT–T4)
+// One question typed, one answer streamed with its sources and validity,
+// then three quick questions across practice areas. The answers are written
+// from src/data/documents.ts and labelled on screen as an illustration.
 // =====================================================================
-const RAIL = { x0: 200, x1: 1720, y: 950 };
-const railX = i => lerp(RAIL.x0, RAIL.x1, i / (ND - 1));
-const MED = { x: 540, y: 480, r: 210 };
-function rail(b, al) {
-  if (al <= 0) return;
-  const cur = clamp(Math.floor((b - 28) / 4), -1, ND - 1);
-  const draw = E.inOutCubic(prog(b, 25.5, 27.5));
-  ctx.save(); ctx.globalAlpha *= al;
-  ctx.strokeStyle = C.rule; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(RAIL.x0, RAIL.y); ctx.lineTo(lerp(RAIL.x0, RAIL.x1, draw), RAIL.y); ctx.stroke();
-  // travelled thread, brass
-  const pos = clamp((b - 28) / 4, 0, ND - .001);
-  const tx = b < 28 ? RAIL.x0 : lerp(railX(Math.floor(pos)), railX(Math.min(ND - 1, Math.floor(pos) + 1)), Math.floor(pos) >= ND - 1 ? 0 : E.inOutCubic(prog(pos % 1, .85, 1)));
-  ctx.strokeStyle = C.brass; ctx.lineWidth = 2.5;
-  ctx.beginPath(); ctx.moveTo(RAIL.x0, RAIL.y); ctx.lineTo(tx, RAIL.y); ctx.stroke();
-  DOMAINS.forEach((d, i) => {
-    const x = railX(i), appear = prog(draw, i / ND, i / ND + .15);
-    if (appear <= 0) return;
-    const visited = i <= cur, isCur = i === cur;
-    const lb = b - SYNC.domains[i];
-    ctx.save(); ctx.globalAlpha *= appear;
-    if (visited) {
-      ctx.fillStyle = hsl(d.hue); ctx.beginPath(); ctx.arc(x, RAIL.y, isCur ? 10 : 7, 0, Math.PI * 2); ctx.fill();
-      if (isCur && lb < 1.5) { ctx.strokeStyle = hsl(d.hue, 1 - lb / 1.5); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(x, RAIL.y, 10 + E.outExpo(lb / 1.5) * 34, 0, Math.PI * 2); ctx.stroke(); }
-    } else {
-      ctx.fillStyle = '#0d0f13'; ctx.strokeStyle = C.ruleStrong; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(x, RAIL.y, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+const CP = { x: 770, y: 126, w: 1010, h: 836 };
+const BODY = { x: CP.x + 34, y: CP.y + 92, w: CP.w - 68, h: CP.h - 92 - 104 };
+const INPUT = { x: CP.x + 34, y: CP.y + CP.h - 86, w: CP.w - 68, h: 60 };
+const AV = 58; // assistant text indent (avatar column)
+const CST = {
+  q: { f: 'BVP', w: 500, s: 24, c: C.paper },
+  lead: { f: 'Lora', w: 600, s: 30, c: C.paper },
+  p: { f: 'BVP', w: 400, s: 23, c: C.ink2 },
+  tag: { f: 'BVP', w: 700, s: 13, ls: 1.6 },
+  chipNo: { f: 'BVP', w: 600, s: 19, c: C.paper },
+  chipName: { f: 'BVP', w: 400, s: 17, c: C.ink3 },
+  pill: { f: 'BVP', w: 600, s: 12, ls: 1.4 },
+  foot: { f: 'BVP', w: 400, s: 17, c: C.ink3 },
+};
+const B1 = { w: 600, c: C.paper };
+const TAG = 'CHƯA XÁC MINH';
+const Q1 = 'Tôi nhận cọc bán nhà, nhưng cơ quan nhà nước chậm cấp sổ nên không kịp ký hợp đồng. Tôi có bị phạt cọc không?';
+const TYPE = SYNC.typing;
+const CHAT = [
+  {
+    q: Q1, at: 34, status: [34.4, 35.6], foot: 47.2,
+    stream: [[35.8, 39.6], [39.9, 45.3]],
+    paras: [
+      { st: CST.lead, segs: [['Thường là không:', {}], ['chậm cấp sổ do cơ quan nhà nước', { c: C.brass, it: true, w: 500 }], ['được xem là lý do khách quan.', {}]] },
+      { st: CST.p, segs: [['Theo', {}], ['Điều 328', B1], [TAG, { tag: true }], ['Bộ luật Dân sự 2015,', { ...B1, ref: 0 }], ['bên nhận cọc từ chối giao kết hợp đồng thì phải trả lại cọc và một khoản tiền tương đương, trừ khi các bên thỏa thuận khác.', {}]] },
+      { st: CST.p, segs: [['Án lệ 25/2018/AL', { ...B1, ref: 1 }], ['xác định: bên nhận cọc chưa được cấp giấy chứng nhận do nguyên nhân từ cơ quan nhà nước có thẩm quyền thì không phải chịu phạt cọc.', {}]] },
+    ],
+    chips: [{ no: '91/2015/QH13', name: 'Bộ luật Dân sự', st: 'in' }, { no: '25/2018/AL', name: 'Án lệ', st: 'in' }],
+  },
+  {
+    q: 'Nộp đơn khởi kiện tại VIAC ngày 01/8/2026 thì áp dụng quy tắc nào?',
+    paras: [{ st: CST.p, segs: [['Quy tắc VIAC 2026,', B1], ['áp dụng cho tố tụng trọng tài bắt đầu từ ngày 01/07/2026.', {}]] }],
+    chips: [{ no: 'Quy tắc VIAC 2026', name: '', st: 'in' }, { no: 'Quy tắc VIAC 2017', name: '', st: 'out' }],
+  },
+  {
+    q: 'Luật Đất đai 2024 còn hiệu lực không?',
+    paras: [{ st: CST.p, segs: [['Còn hiệu lực', B1], ['từ 01/08/2024, đã được sửa đổi bởi Luật 43/2024/QH15.', {}]] }],
+    chips: [{ no: '31/2024/QH15', name: 'Luật Đất đai', st: 'in' }],
+  },
+  {
+    q: 'Thi hành án dân sự bây giờ theo luật nào?',
+    paras: [{ st: CST.p, segs: [['Luật Thi hành án dân sự 106/2025/QH15,', B1], ['có hiệu lực từ 01/07/2026, thay thế Luật 26/2008/QH12.', {}]] }],
+    chips: [{ no: '106/2025/QH15', name: 'Luật Thi hành án dân sự', st: 'in' }, { no: '26/2008/QH12', name: '', st: 'out' }],
+  },
+];
+// The three quick questions, one every four beats; their timings follow `at`.
+SYNC.montage.forEach((m, k) => Object.assign(CHAT[k + 1], { at: m, stream: [[m + .5, m + 1.8]] }));
+// Chip times are listed in SYNC.chips in feed order, so the soundtrack lands on each one.
+{ let k = 0; CHAT.forEach(a => { a.chipAt = a.chips.map(() => SYNC.chips[k++]); }); }
+
+const tagW = () => measure(TAG, CST.tag) + 22;
+function layoutText(paras, width) {
+  const toks = []; let y = 0;
+  paras.forEach((para, pi) => {
+    const lh = Math.round(para.st.s * 1.48), sp = measure(' ', para.st);
+    let x = 0;
+    y += para.st.s;
+    for (const [text, o] of para.segs) {
+      for (const word of o.tag ? [text] : text.split(' ')) {
+        const st = { ...para.st, ...o };
+        const w = o.tag ? tagW() : measure(word, st);
+        if (x > 0 && x + w > width) { x = 0; y += lh; }
+        toks.push({ s: word, st, x, y, w, tag: !!o.tag, ref: o.ref, lh });
+        x += w + sp;
+      }
     }
-    T(d.short, x, RAIL.y + 42, { f: 'BVP', w: isCur ? 600 : 500, s: 18, c: isCur ? C.paper : C.ink3, a: 'center' });
-    ctx.restore();
+    y += Math.round(para.st.s * .48) + (pi < paras.length - 1 ? 14 : 0);
   });
-  ctx.restore();
+  return { toks, h: y };
 }
-function glyph(d, cx, cy, size, p, col) {
-  const k = size / 48;
-  ctx.save(); ctx.translate(cx - size / 2, cy - size / 2); ctx.scale(k, k);
-  ctx.strokeStyle = col; ctx.lineWidth = 1.7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  const paths = GLYPH[d.id], n = paths.length;
-  paths.forEach((s, i) => {
-    const lp = E.inOutCubic(prog(p, i / n * .55, .45 + i / n * .55));
-    if (lp <= 0) return;
-    const L = d.lens[i];
-    ctx.setLineDash([L * lp, L + 1]); ctx.stroke(new Path2D(s));
+const chipW = c => 18 + measure(c.no, CST.chipNo) + (c.name ? 10 + measure(c.name, CST.chipName) : 0) + 16 + measure(LBL[c.st][0].toUpperCase(), CST.pill) + 26 + 16;
+let FEED, FEED_H;
+function buildChat() {
+  let y = 20;
+  FEED = [];
+  CHAT.forEach((a, k) => {
+    const lines = wrap(a.q, CST.q, 600);
+    const qw = Math.max(...lines.map(l => measure(l, CST.q))) + 48;
+    FEED.push({ kind: 'q', a, y, w: qw, h: lines.length * 34 + 30, lines });
+    y += lines.length * 34 + 30 + 22;
+    const top = y;
+    let yy = 0;
+    if (a.status) yy += 46;
+    const text = layoutText(a.paras, BODY.w - AV - 8);
+    const textY = yy; yy += text.h + 16;
+    let cx = 0, cy = yy;
+    const chips = a.chips.map(c => {
+      const w = chipW(c);
+      if (cx > 0 && cx + w > BODY.w - AV) { cx = 0; cy += 60; }
+      const r = { ...c, x: cx, y: cy, w }; cx += w + 12; return r;
+    });
+    yy = cy + 50;
+    if (a.foot) yy += 46;
+    // tokens before and after the tag: the tag lands exactly on SYNC.tag
+    const ti = text.toks.findIndex(t => t.tag);
+    a.map = ti < 0 ? [[a.stream[0][0], a.stream[0][1], 0, text.toks.length]]
+      : [[a.stream[0][0], a.stream[0][1], 0, ti + 1], [a.stream[1][0], a.stream[1][1], ti + 1, text.toks.length]];
+    FEED.push({ kind: 'a', a, y: top, h: yy, text, textY, chips, chipY: 0 });
+    y = top + yy + (k < CHAT.length - 1 ? 30 : 10);
   });
+  FEED_H = y;
+}
+/** Revealed tokens of an answer at beat b, as a float (piecewise linear). */
+function revealed(a, b) {
+  let n = 0;
+  for (const [b0, b1, n0, n1] of a.map) if (b >= b0) n = lerp(n0, n1, prog(b, b0, b1));
+  return n;
+}
+function streaming(a, b) { return a.map.some(([b0, b1]) => b >= b0 && b < b1 + .15); }
+/** Scroll offset of the feed: eases to each anchor so the newest content stays in view. */
+function scrollAt(b) {
+  const a1 = FEED[1], s = v => Math.max(0, v);
+  const anchors = [
+    [42.4, s(a1.y + a1.textY + a1.text.h * .8 - BODY.h + 40)],
+    [46.4, s(a1.y + a1.h - BODY.h + 12)],
+    ...SYNC.montage.map((m, k) => [m + .2, s(Math.min(FEED[2 + k * 2].y - 18, FEED_H - BODY.h))]),
+  ];
+  let v = 0;
+  for (const [tb, val] of anchors) v = lerp(v, val, E.inOutCubic(prog(b, tb - 1, tb)));
+  return v;
+}
+function avatar(x, y, al) {
+  if (al <= 0) return;
+  ctx.save(); ctx.globalAlpha *= al;
+  seal(x, y, 19, 1, 1);
   ctx.restore();
 }
-function medallion(b, t) {
-  const i = clamp(Math.floor((b - 28) / 4), 0, ND - 1), d = DOMAINS[i], lb = b - SYNC.domains[i];
-  const prev = DOMAINS[Math.max(0, i - 1)];
-  const enter = b < 28 ? 0 : 1;
-  const a = prog(b, 27.4, 28.4) * (1 - prog(b, T4 - .6, T4 + .2));
-  if (a <= 0) return;
-  const hueMix = i === 0 ? d.hue : lerpHue(prev.hue, d.hue, E.inOutCubic(prog(lb, 0, .6)));
-  ctx.save(); ctx.globalAlpha *= a;
-  glowAt(MED.x, MED.y, 560, hueMix, .16, 55);
-  // dial ticks turning slowly, like the edge of a seal
-  ctx.save(); ctx.translate(MED.x, MED.y); ctx.rotate(t * .06);
-  ctx.strokeStyle = C.ruleStrong; ctx.lineWidth = 2;
-  for (let k = 0; k < 72; k++) {
-    const r0 = MED.r + 18, r1 = MED.r + (k % 6 === 0 ? 34 : 26), ang = k / 72 * Math.PI * 2;
-    ctx.beginPath(); ctx.moveTo(Math.cos(ang) * r0, Math.sin(ang) * r0); ctx.lineTo(Math.cos(ang) * r1, Math.sin(ang) * r1); ctx.stroke();
-  }
-  ctx.restore();
-  ctx.fillStyle = 'rgba(12,14,18,.75)'; ctx.beginPath(); ctx.arc(MED.x, MED.y, MED.r, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = C.rule; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(MED.x, MED.y, MED.r - 16, 0, Math.PI * 2); ctx.stroke();
-  const ring = enter ? E.inOutCubic(prog(lb, 0, .9)) : 0;
-  ctx.strokeStyle = hsl(hueMix); ctx.lineWidth = 4; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.arc(MED.x, MED.y, MED.r, -Math.PI / 2, -Math.PI / 2 + Math.max(.001, ring) * Math.PI * 2); ctx.stroke();
-  // glyph: previous fades, current draws on
-  if (i > 0 && lb < .5) glyph(prev, MED.x, MED.y, 250, 1, hsl(prev.hue, 1 - lb / .5));
-  if (enter) glyph(d, MED.x, MED.y, 250, prog(lb, .15, 1.6), hsl(d.hue));
-  T(pad2(i + 1), MED.x, MED.y + MED.r - 40, { f: 'Lora', it: true, w: 500, s: 26, c: hsl(d.hue), a: 'center', al: prog(lb, .4, .9) });
-  ctx.restore();
-  if (enter) sparkBurst(b, SYNC.domains[i], MED.x, MED.y, d.hue, 40 + i, 26, .7);
-}
-function lerpHue(a, b, t) { let d = ((b - a + 540) % 360) - 180; return (a + d * t + 360) % 360; }
-function domainText(b) {
-  if (b < 28 || b >= T4) return;
-  const i = Math.floor((b - 28) / 4), d = DOMAINS[i], lb = b - SYNC.domains[i];
-  const out = i === ND - 1 ? prog(b, T4 - .8, T4 - .1) : prog(lb, 3.45, 3.95);
-  const x = 900;
-  ctx.save(); ctx.globalAlpha *= 1 - out; ctx.translate(-50 * E.inCubic(out), 0);
-  riseT(`LĨNH VỰC ${pad2(i + 1)} / ${ND}`, x, 292, { f: 'BVP', w: 600, s: 19, ls: 5, c: C.brass }, prog(lb, .05, .5), 16);
-  const nameSt = fit(d.name, { f: 'Lora', w: 600, s: 96, c: C.paper }, 860);
-  // name rises out of a mask
-  {
-    const p = E.outCubic(prog(lb, .12, .75));
-    ctx.save(); ctx.beginPath(); ctx.rect(x - 20, 290, 1000, 128); ctx.clip();
-    T(d.name, x, 398 + (1 - p) * 110, nameSt);
-    ctx.restore();
-  }
-  {
-    const p = prog(lb, .45, 1);
-    ctx.save(); ctx.globalAlpha *= clamp(p * 1.5); ctx.translate(0, (1 - E.outCubic(p)) * 18);
-    const segs = [];
-    d.keys.forEach((k, j) => { if (j) segs.push(['  ·  ', { c: hsl(d.hue) }]); segs.push([k, {}]); });
-    rich(segs, x, 466, fit(d.keys.join('  ·  '), { f: 'BVP', w: 400, s: 30, c: C.ink2 }, 900));
-    ctx.restore();
-  }
-  ctx.fillStyle = C.rule; ctx.fillRect(x, 522, 860 * E.outCubic(prog(lb, .6, 1.2)), 1.5);
-  ctx.fillStyle = hsl(d.hue); ctx.fillRect(x, 521, 90 * E.outCubic(prog(lb, .7, 1.2)), 3);
-  riseT('VĂN BẢN NỀN TẢNG', x, 568, { f: 'BVP', w: 600, s: 16, ls: 4, c: C.ink3 }, prog(lb, .75, 1.2), 14);
-  riseT(d.law, x, 626, fit(d.law, { f: 'Lora', w: 600, s: 44, c: C.paper }, 880), prog(lb, .85, 1.35), 18);
-  {
-    const p = prog(lb, 1, 1.5);
-    ctx.save(); ctx.globalAlpha *= clamp(p * 1.5); ctx.translate(0, (1 - E.outCubic(p)) * 16);
-    rich([[d.no, { w: 600, c: hsl(d.hue, 1, 74) }], ['   ·   có hiệu lực từ ', {}], [d.eff, { w: 600, c: C.paper }]], x, 676, { f: 'BVP', w: 400, s: 28, c: C.ink2 });
-    ctx.restore();
-  }
+function chip(c, x, y, al, sc = 1) {
+  if (al <= 0) return;
+  const [lbl, hue] = LBL[c.st];
+  ctx.save(); ctx.globalAlpha *= al; ctx.translate(x, y + 23); ctx.scale(sc, sc); ctx.translate(0, -23);
+  ctx.fillStyle = 'rgba(27,31,39,.95)'; rr(ctx, 0, 0, c.w, 46, 12); ctx.fill();
+  ctx.strokeStyle = hsl(hue, .45); ctx.lineWidth = 1.5; ctx.stroke();
+  let cx = 18;
+  T(c.no, cx, 30, CST.chipNo); cx += measure(c.no, CST.chipNo) + 10;
+  if (c.name) { T(c.name, cx, 30, CST.chipName); cx += measure(c.name, CST.chipName) + 6; }
+  const pw = measure(lbl.toUpperCase(), CST.pill) + 26;
+  const px = c.w - 16 - pw;
+  ctx.fillStyle = hsl(hue, .14); rr(ctx, px, 11, pw, 24, 12); ctx.fill();
+  ctx.strokeStyle = hsl(hue, .6); ctx.lineWidth = 1.2; ctx.stroke();
+  T(lbl.toUpperCase(), px + 13, 28, { ...CST.pill, c: hsl(hue, 1, 74) });
   ctx.restore();
 }
-function S3(b, t) {
-  // intro title
-  const ia = 1 - prog(b, 27, 27.8);
+function tagPill(x, y, al, sc) {
+  if (al <= 0) return;
+  const w = tagW(), h = 26;
+  ctx.save(); ctx.globalAlpha *= al; ctx.translate(x + w / 2, y - 8); ctx.scale(sc, sc); ctx.rotate((1 - Math.min(1, sc)) * -.1);
+  ctx.fillStyle = 'rgba(196,81,59,.16)'; rr(ctx, -w / 2, -h / 2, w, h, 6); ctx.fill();
+  ctx.strokeStyle = C.stamp; ctx.lineWidth = 1.6; ctx.stroke();
+  T(TAG, 0, 5, { ...CST.tag, c: C.coral, a: 'center' });
+  ctx.restore();
+}
+function drawQ(blk, b, ox, oy) {
+  const a = blk.a, p = prog(b, a.at, a.at + .45);
+  if (p <= 0) return;
+  const x = ox + BODY.w - blk.w, y = oy + blk.y + (1 - E.outCubic(p)) * 40;
+  ctx.save(); ctx.globalAlpha *= clamp(p * 1.6);
+  ctx.fillStyle = hsl(HUE.brass, .13, 52); rr(ctx, x, y, blk.w, blk.h, 22); ctx.fill();
+  ctx.strokeStyle = hsl(HUE.brass, .35, 60); ctx.lineWidth = 1.2; ctx.stroke();
+  blk.lines.forEach((l, i) => T(l, x + 24, y + 40 + i * 34, CST.q));
+  ctx.restore();
+}
+function drawA(blk, b, ox, oy) {
+  const a = blk.a, x0 = ox + AV, y0 = oy + blk.y;
+  const start = a.status ? a.status[0] : a.stream[0][0];
+  if (b < start) return;
+  avatar(ox + 20, y0 + 22, prog(b, start, start + .4));
+  if (a.status) {
+    const [s0, s1] = a.status, done = b >= s1;
+    const st = { f: 'BVP', w: 500, s: 18, c: done ? C.ink3 : C.ink2 };
+    T(done ? 'Đã đối chiếu kho văn bản của trang' : 'Đang đối chiếu kho văn bản…', x0, y0 + 28, { ...st, al: prog(b, s0, s0 + .3) });
+    const bx = x0 + 330, bw = 200;
+    ctx.save(); ctx.globalAlpha *= prog(b, s0, s0 + .3) * (1 - prog(b, s1 + .4, s1 + 1));
+    ctx.fillStyle = C.rule; rr(ctx, bx, y0 + 19, bw, 6, 3); ctx.fill();
+    ctx.fillStyle = C.brass; rr(ctx, bx, y0 + 19, bw * E.inOutCubic(prog(b, s0, s1)), 6, 3); ctx.fill();
+    ctx.restore();
+  }
+  const n = revealed(a, b), ty = y0 + blk.textY;
+  let last = null;
+  blk.text.toks.forEach((tk, i) => {
+    const al = clamp(n - i);
+    if (al <= 0) return;
+    if (tk.tag) {
+      const tb = SYNC.tag[0];
+      tagPill(x0 + tk.x, ty + tk.y, clamp((b - tb) * 6), lerp(1.7, 1, E.outExpo(prog(b, tb, tb + .35))));
+    } else {
+      T(tk.s, x0 + tk.x, ty + tk.y, { ...tk.st, al });
+      if (tk.ref !== undefined) {
+        const cb = a.chipAt[tk.ref], up = E.outCubic(prog(b, cb - .3, cb + .3));
+        if (up > 0) { ctx.fillStyle = C.brass; ctx.fillRect(x0 + tk.x, ty + tk.y + 7, tk.w * up, 2); }
+      }
+    }
+    last = tk;
+  });
+  if (last && streaming(a, b) && Math.floor(b * 4) % 2 === 0) {
+    ctx.fillStyle = C.brass; ctx.fillRect(x0 + last.x + last.w + 6, ty + last.y - last.st.s * .78, 3, last.st.s * .95);
+  }
+  // chip rows are laid out relative to the top of the answer block
+  blk.chips.forEach((c, j) => {
+    const cb = a.chipAt[j], p = prog(b, cb, cb + .45);
+    chip(c, x0 + c.x, y0 + c.y + (1 - E.outCubic(p)) * 18, clamp(p * 1.8), lerp(.92, 1, E.outBack(p)));
+  });
+  if (a.foot) {
+    const p = prog(b, a.foot, a.foot + .5), fy = y0 + blk.chips[blk.chips.length - 1].y + 86;
+    ctx.save(); ctx.globalAlpha *= clamp(p * 1.6);
+    ctx.strokeStyle = C.brass; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(x0 + 8, fy - 6, 8, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0 + 8, fy - 11); ctx.lineTo(x0 + 8, fy - 6); ctx.lineTo(x0 + 12, fy - 4); ctx.stroke();
+    rich([['Hiệu lực tính tại hôm nay', { c: C.paper, w: 500 }], ['  ·  Thông tin tham khảo, không phải tư vấn pháp lý', {}]], x0 + 26, fy, CST.foot);
+    ctx.restore();
+  }
+}
+function chatPanel(b, al, slide) {
+  if (al <= 0) return;
+  ctx.save(); ctx.globalAlpha *= al; ctx.translate(slide, 0);
+  glowAt(CP.x + CP.w / 2, CP.y + CP.h / 2, 760, HUE.brass, .07, 50);
+  ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.55)'; ctx.shadowBlur = 60; ctx.shadowOffsetY = 24;
+  ctx.fillStyle = 'rgba(17,20,26,.96)'; rr(ctx, CP.x, CP.y, CP.w, CP.h, 24); ctx.fill(); ctx.restore();
+  ctx.strokeStyle = C.ruleStrong; ctx.lineWidth = 1.5; rr(ctx, CP.x, CP.y, CP.w, CP.h, 24); ctx.stroke();
+  // header, as on the site's assistant panel
+  T('Trợ lý hỏi đáp', CP.x + 36, CP.y + 54, { f: 'Lora', w: 600, s: 30, c: C.paper });
+  pill(CP.x + 270, CP.y + 44, 'THỬ NGHIỆM', HUE.brass, { s: 12 });
+  {
+    const s = 'Tự động theo độ khó', st = { f: 'BVP', w: 500, s: 16, c: C.ink2 }, w = measure(s, st) + 34;
+    ctx.strokeStyle = C.ruleStrong; ctx.lineWidth = 1.2; rr(ctx, CP.x + CP.w - 36 - w, CP.y + 26, w, 36, 18); ctx.stroke();
+    T(s, CP.x + CP.w - 36 - w / 2, CP.y + 50, { ...st, a: 'center' });
+  }
+  ctx.fillStyle = C.rule; ctx.fillRect(CP.x, CP.y + 80, CP.w, 1.5);
+  // feed
+  ctx.save(); ctx.beginPath(); ctx.rect(BODY.x - 10, BODY.y, BODY.w + 20, BODY.h); ctx.clip();
+  const oy = BODY.y - scrollAt(b);
+  for (const blk of FEED) (blk.kind === 'q' ? drawQ : drawA)(blk, b, BODY.x, oy);
+  ctx.restore();
+  {
+    const g = ctx.createLinearGradient(0, BODY.y, 0, BODY.y + 36);
+    g.addColorStop(0, 'rgba(17,20,26,1)'); g.addColorStop(1, 'rgba(17,20,26,0)');
+    ctx.fillStyle = g; ctx.fillRect(BODY.x - 10, BODY.y, BODY.w + 20, 36);
+  }
+  // input
+  ctx.fillStyle = 'rgba(10,12,16,.9)'; rr(ctx, INPUT.x, INPUT.y, INPUT.w, INPUT.h, 30); ctx.fill();
+  const focus = prog(b, TYPE[0] - .4, TYPE[0]) * (1 - prog(b, SYNC.send[0], SYNC.send[0] + .4));
+  ctx.strokeStyle = focus > 0 ? hsl(HUE.brass, .3 + .5 * focus, 62) : C.ruleStrong; ctx.lineWidth = 1.5;
+  rr(ctx, INPUT.x, INPUT.y, INPUT.w, INPUT.h, 30); ctx.stroke();
+  const typed = b >= TYPE[0] && b < SYNC.send[0] ? Q1.slice(0, Math.round(Q1.length * prog(b, TYPE[0], TYPE[1]))) : '';
+  ctx.save(); ctx.beginPath(); ctx.rect(INPUT.x + 20, INPUT.y, INPUT.w - 110, INPUT.h); ctx.clip();
+  if (typed) {
+    const st = { f: 'BVP', w: 400, s: 22, c: C.paper }, tw = measure(typed, st), sx = Math.min(0, INPUT.w - 140 - tw);
+    T(typed, INPUT.x + 28 + sx, INPUT.y + 38, st);
+    if (Math.floor(b * 4) % 2 === 0 || b < TYPE[1]) { ctx.fillStyle = C.brass; ctx.fillRect(INPUT.x + 30 + sx + tw, INPUT.y + 16, 2.5, 28); }
+  } else T('Nhập câu hỏi…', INPUT.x + 28, INPUT.y + 38, { f: 'BVP', w: 400, s: 22, c: C.ink3 });
+  ctx.restore();
+  {
+    const sp = prog(b, SYNC.send[0], SYNC.send[0] + .5), bx = INPUT.x + INPUT.w - 34, by = INPUT.y + INPUT.h / 2;
+    ctx.fillStyle = typed ? C.brass : C.ruleStrong; ctx.beginPath(); ctx.arc(bx, by, 21, 0, Math.PI * 2); ctx.fill();
+    if (sp > 0 && sp < 1) { ctx.strokeStyle = hsl(HUE.brass, 1 - sp, 66); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(bx, by, 21 + sp * 30, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.strokeStyle = typed ? '#14161b' : C.ink3; ctx.lineWidth = 2.6; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(bx, by + 9); ctx.lineTo(bx, by - 9); ctx.moveTo(bx - 8, by - 1); ctx.lineTo(bx, by - 9); ctx.lineTo(bx + 8, by - 1); ctx.stroke();
+  }
+  ctx.restore();
+  T('GIAO DIỆN MINH HỌA', CP.x + CP.w + slide, CP.y + CP.h + 40, { f: 'BVP', w: 600, s: 13, ls: 4, c: C.ink3, a: 'right', al: al * .9 });
+}
+const FEATS = [
+  { at: () => SYNC.tag[0], s: 'Nói rõ chỗ chưa đối chiếu' },
+  { at: () => SYNC.chips[0], s: 'Dẫn văn bản kèm hiệu lực' },
+  { at: () => SYNC.today[0], s: 'Tính hiệu lực tại hôm nay' },
+];
+const AREAS = ['Trọng tài.', 'Đất đai.', 'Thi hành án.'];
+function chatLeft(b) {
+  const X = 140;
+  const ia = 1 - prog(b, SYNC.montage[0] - .9, SYNC.montage[0] - .1);
   if (ia > 0) {
-    riseT('PHẠM VI TRA CỨU', W / 2, 380, { f: 'BVP', w: 600, s: 20, ls: 6, c: C.brass, a: 'center', al: ia }, prog(b, 24.1, 24.8), 16);
-    const p = prog(b, 24.4, 25.3);
-    ctx.save(); ctx.globalAlpha *= clamp(p * 1.5) * ia; ctx.translate(0, (1 - E.outCubic(p)) * 34);
-    rich([[String(ND), { it: true, w: 500, c: C.brass }], [' lĩnh vực pháp luật', {}]], W / 2, 510, { f: 'Lora', w: 600, s: 112, c: C.paper }, 'center');
+    ctx.save(); ctx.globalAlpha *= ia;
+    riseT('TRỢ LÝ AI', X, 300, { f: 'BVP', w: 600, s: 20, ls: 6, c: C.brass }, prog(b, T_CHAT + .3, T_CHAT + .9), 16);
+    riseT('Hỏi bằng lời', X, 398, { f: 'Lora', w: 600, s: 82, c: C.paper }, prog(b, T_CHAT + .6, T_CHAT + 1.5), 34);
+    if (b > T_CHAT + 1) {
+      const p = prog(b, T_CHAT + 1, T_CHAT + 1.9);
+      ctx.save(); ctx.globalAlpha *= clamp(p * 1.6); ctx.translate(0, (1 - E.outCubic(p)) * 34);
+      rich([['của ', {}], ['bạn.', { it: true, w: 500, c: C.brass }]], X, 492, { f: 'Lora', w: 600, s: 82, c: C.paper });
+      ctx.restore();
+    }
+    riseT('Câu trả lời dẫn đúng văn bản,', X, 570, { f: 'BVP', w: 400, s: 28, c: C.ink2 }, prog(b, T_CHAT + 1.8, T_CHAT + 2.6), 16);
+    riseT('kèm tình trạng hiệu lực.', X, 612, { f: 'BVP', w: 400, s: 28, c: C.ink2 }, prog(b, T_CHAT + 2, T_CHAT + 2.8), 16);
+    FEATS.forEach((f, i) => {
+      const t0 = f.at(), p = prog(b, t0, t0 + .6), y = 724 + i * 72;
+      if (p <= 0) return;
+      ctx.save(); ctx.globalAlpha *= clamp(p * 1.6); ctx.translate((1 - E.outCubic(p)) * -30, 0);
+      ctx.fillStyle = C.brass; ctx.fillRect(X, y - 26, 3, 36);
+      T(pad2(i + 1), X + 22, y, { f: 'BVP', w: 600, s: 18, ls: 2, c: C.brass });
+      T(f.s, X + 70, y, { f: 'BVP', w: 500, s: 27, c: C.paper });
+      ctx.restore();
+      glowAt(X + 2, y - 8, 90, HUE.brass, .22 * (1 - prog(b, t0, t0 + 1.2)), 60);
+    });
     ctx.restore();
-    riseT('từ công trường, phòng xử án đến không gian số', W / 2, 590, { f: 'Lora', it: true, w: 400, s: 42, c: C.ink2, a: 'center', al: ia }, prog(b, 25.1, 26), 20);
   }
-  medallion(b, t);
-  domainText(b);
-  rail(b, 1 - prog(b, T4 - .6, T4 + .2));
+  const m0 = SYNC.montage[0];
+  if (b >= m0 - .2) {
+    const out = prog(b, T4 - .9, T4 - .1);
+    ctx.save(); ctx.globalAlpha *= 1 - out;
+    riseT('HỎI VỀ MỌI LĨNH VỰC', X, 300, { f: 'BVP', w: 600, s: 20, ls: 6, c: C.brass }, prog(b, m0, m0 + .6), 16);
+    AREAS.forEach((s, k) => {
+      const t0 = SYNC.montage[k], p = prog(b, t0 + .1, t0 + .9);
+      const cur = k === AREAS.length - 1 ? 1 : 1 - prog(b, SYNC.montage[k + 1], SYNC.montage[k + 1] + .6);
+      riseT(s, X, 400 + k * 92, { f: 'Lora', w: 600, s: 76, c: cur > .5 ? C.paper : C.ink3 }, p, 30);
+    });
+    const ep = prog(b, SYNC.montage[2] + 4, SYNC.montage[2] + 4.8);
+    if (ep > 0) {
+      ctx.save(); ctx.globalAlpha *= clamp(ep * 1.5); ctx.translate(0, (1 - E.outCubic(ep)) * 20);
+      rich([['Câu trả lời nào ', {}], ['cũng dẫn nguồn.', { it: true, c: C.brass }]], X, 740, { f: 'Lora', w: 500, s: 40, c: C.ink2 });
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+}
+function SChat(b, t) {
+  const enter = E.outExpo(prog(b, T_CHAT + .4, T_CHAT + 1.8)), exit = E.inCubic(prog(b, T4 - .9, T4));
+  chatPanel(b, clamp(enter * 1.3) * (1 - exit), (1 - enter) * 260 + exit * 160);
+  chatLeft(b);
 }
 
 // =====================================================================
-// S4 — three tools (beats T4–T5)
+// S4 — three tools (beats T4–TB)
 // =====================================================================
 const FEATURES = [
   { n: 'I', title: 'Tra hiệu lực\ntheo ngày', text: 'Chọn một ngày bất kỳ. Xem văn bản nào\nđang có hiệu lực vào đúng ngày đó.' },
@@ -884,7 +1117,7 @@ function featWatch(lb, al) {
 }
 function S4(b, t) {
   const j = clamp(Math.floor((b - T4) / 4), 0, 2), f = FEATURES[j], lb = b - T4 - j * 4;
-  const enter = prog(b, T4, T4 + .8), exit = prog(b, T5 - .8, T5);
+  const enter = prog(b, T4, T4 + .8), exit = prog(b, TB - .8, TB);
   const pa = enter * (1 - exit);
   ctx.save(); ctx.translate(0, (1 - E.outCubic(enter)) * 30);
   panelFrame(pa);
@@ -918,62 +1151,146 @@ function S4(b, t) {
 }
 
 // =====================================================================
-// S5 — lockup (beats T5–T5+12; timings below are written from beat 80)
+// S5 — scope: every area at once, the corpus behind the answers (beats TB–T5)
+// No area is introduced on its own: the fourteen glyphs burst out together,
+// knit into one network, and the counts roll up in the middle.
 // =====================================================================
-function S5(b0, t) {
-  const b = b0 - T5 + 80;
-  const cx = 960, cy = 450, R = 300;
-  const collapse = E.inExpo(prog(b, 84, 84.9));
-  const ringA = prog(b, 80, 81) * (1 - prog(b, 84.6, 85));
-  const rot = (b - 80) * .035;
-  const pts = DOMAINS.map((d, i) => {
-    const a = -Math.PI / 2 + i / ND * Math.PI * 2 + rot, r = lerp(R, 0, collapse) * E.outCubic(prog(b, 80 + i * .08, 81 + i * .08));
-    return [cx + Math.cos(a) * r, cy + Math.sin(a) * r, a];
+const HUB = { x: 960, y: 630 };
+/** Nodes spaced evenly along an ellipse by arc length, so none crowd at the sides. */
+const ORBIT = (() => {
+  const RX = 650, RY = 290, n = 720, pts = [], len = [0];
+  for (let k = 0; k <= n; k++) {
+    const a = -Math.PI / 2 + k / n * Math.PI * 2;
+    pts.push([HUB.x + Math.cos(a) * RX, HUB.y + Math.sin(a) * RY, a]);
+    if (k) len.push(len[k - 1] + Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]));
+  }
+  return DOMAINS.map((_, i) => {
+    const goal = (i + .5) / ND * len[n];
+    let k = 0; while (len[k + 1] < goal) k++;
+    const [x, y, a] = pts[k];
+    // labels sit below each node, or beside it at the two ends of the ellipse
+    const side = Math.cos(a) > .9 ? 1 : Math.cos(a) < -.9 ? -1 : 0;
+    return { x, y, a, side };
   });
-  if (ringA > 0) {
-    ctx.save(); ctx.globalAlpha *= ringA;
-    glowAt(cx, cy, 620, HUE.brass, .08, 55);
-    ctx.strokeStyle = C.brass; ctx.lineWidth = 1.5;
-    ctx.save(); ctx.globalAlpha *= .35;
-    ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.stroke();
-    ctx.globalAlpha *= .4;
-    pts.forEach(([x, y]) => { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke(); });
+})();
+const LINKS = DOMAINS.flatMap((_, i) => [[i, (i + 1) % ND], [i, (i + 5) % ND]]);
+function nodePos(i, b) {
+  const o = ORBIT[i], gp = SYNC.glyphs[i];
+  const out = E.outBack(prog(b, gp - .25, gp + .55));
+  const col = E.inExpo(prog(b, SYNC.collapse[0] - .9, SYNC.collapse[0]));
+  const drift = Math.sin(b * .9 + i) * 6;
+  const k = out * (1 - col);
+  return [lerp(HUB.x, o.x, k), lerp(HUB.y, o.y + drift, k), out, col];
+}
+function counter(n, x, label, b, t0) {
+  const p = prog(b, t0, t0 + 1.6), v = Math.round(n * E.outCubic(p));
+  if (p <= 0) return;
+  const st = { f: 'Lora', it: true, w: 500, s: 104, c: C.brass, a: 'center' };
+  T(String(v), x, HUB.y + 26, { ...st, al: clamp(p * 3) });
+  riseT(label, x, HUB.y + 78, { f: 'BVP', w: 500, s: 24, ls: 2, c: C.ink2, a: 'center' }, prog(b, t0 + .2, t0 + .8), 12);
+}
+function SBurst(b, t) {
+  const fade = 1 - prog(b, SYNC.collapse[0] - 1.2, SYNC.collapse[0] - .4);
+  // headline
+  ctx.save(); ctx.globalAlpha *= fade;
+  riseT('NỀN CỦA MỌI CÂU TRẢ LỜI', W / 2, 150, { f: 'BVP', w: 600, s: 20, ls: 6, c: C.brass, a: 'center' }, prog(b, TB + .3, TB + .9), 16);
+  {
+    const p = prog(b, TB + .6, TB + 1.5);
+    ctx.save(); ctx.globalAlpha *= clamp(p * 1.6); ctx.translate(0, (1 - E.outCubic(p)) * 28);
+    rich([['Một kho văn bản ', {}], ['đã kiểm chứng.', { it: true, w: 500, c: C.brass }]], W / 2, 232, { f: 'Lora', w: 600, s: 60, c: C.paper }, 'center');
     ctx.restore();
-    DOMAINS.forEach((d, i) => {
-      const [x, y, a] = pts[i];
-      glowAt(x, y, 60, d.hue, .35, 60);
-      ctx.fillStyle = hsl(d.hue); ctx.beginPath(); ctx.arc(x, y, 11, 0, Math.PI * 2); ctx.fill();
-      const lx = x + Math.cos(a) * 34, ly = y + Math.sin(a) * 34 + 7, al = Math.cos(a) > .2 ? 'left' : Math.cos(a) < -.2 ? 'right' : 'center';
-      T(d.short, lx, ly + (Math.sin(a) > .9 ? 12 : Math.sin(a) < -.9 ? -8 : 0), { f: 'BVP', w: 500, s: 19, c: C.ink2, a: al, al: 1 - collapse * 3 });
+  }
+  ctx.restore();
+  glowAt(HUB.x, HUB.y, 700, HUE.brass, .1 * prog(b, TB, TB + 1) * fade, 55);
+  sparkBurst(b, TB, HUB.x, HUB.y, HUE.brass, 81, 70, 1.6);
+  // network
+  const net = E.inOutCubic(prog(b, SYNC.glyphs[ND - 1], SYNC.glyphs[ND - 1] + 1.4));
+  if (net > 0) {
+    ctx.save(); ctx.globalAlpha *= .5 * fade; ctx.lineCap = 'round';
+    LINKS.forEach(([i, j], k) => {
+      const [x1, y1] = nodePos(i, b), [x2, y2] = nodePos(j, b);
+      const q = clamp(net * 1.4 - (k / LINKS.length) * .4);
+      ctx.strokeStyle = C.brass; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(lerp(x1, x2, q), lerp(y1, y2, q)); ctx.stroke();
+      // a pulse travels along each link, like a relation being read
+      const ph = ((b - SYNC.glyphs[ND - 1] - 1) * .35 + k * .137) % 1;
+      if (q >= 1 && ph > 0) {
+        ctx.fillStyle = C.sparkle; ctx.globalAlpha = .7 * fade * Math.sin(ph * Math.PI);
+        ctx.beginPath(); ctx.arc(lerp(x1, x2, ph), lerp(y1, y2, ph), 2.6, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = .5 * fade;
+      }
     });
     ctx.restore();
   }
-  // seal travels up and grows as the ring collapses into it
-  const up = E.inOutCubic(prog(b, 84.4, 85.6));
-  const sa = prog(b, 80.2, 81.2) * (1 - prog(b, 90, 91.4));
-  seal(cx, lerp(cy, 330, up), lerp(150, 160, up), 1, sa, b < 84 ? prog(b, 81, 82.2) : prog(b, 85.4, 86.6));
-  sparkBurst(b, 84.9, cx, lerp(cy, 330, up), HUE.brass, 71, 60, 1.3);
-  // stats line
-  const sp = prog(b, 81.2, 82);
-  const stA = clamp(sp * 1.5) * (1 - prog(b, 84, 84.6));
-  if (stA > 0) {
-    ctx.save(); ctx.globalAlpha *= stA; ctx.translate(0, (1 - E.outCubic(sp)) * 20);
-    const g = { it: true, w: 500, c: C.brass };
-    rich([[String(ND), g], [' lĩnh vực', {}], ['   ·   ', { c: C.ruleStrong }], ['170+', g], [' văn bản', {}], ['   ·   ', { c: C.ruleStrong }], ['1', g], [' gia phả', {}]],
-      W / 2, 880, { f: 'Lora', w: 600, s: 54, c: C.paper }, 'center');
+  // nodes
+  DOMAINS.forEach((d, i) => {
+    const [x, y, out, col] = nodePos(i, b);
+    if (out <= 0) return;
+    const s = lerp(.4, 1, Math.min(1, out)) * (1 - col * .7);
+    ctx.save(); ctx.globalAlpha *= clamp(out * 2) * (1 - col * .6);
+    glowAt(x, y, 110 * s, d.hue, .28, 58);
+    ctx.fillStyle = 'rgba(14,16,21,.92)'; ctx.beginPath(); ctx.arc(x, y, 54 * s, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = hsl(d.hue, .9); ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(x, y, 54 * s, 0, Math.PI * 2); ctx.stroke();
+    glyph(d, x, y, 66 * s, prog(b, SYNC.glyphs[i], SYNC.glyphs[i] + 1.2), hsl(d.hue));
+    const o = ORBIT[i], lx = o.side ? x + o.side * 70 * s : x, ly = o.side ? y + 7 : y + 86 * s;
+    T(d.short, lx, ly, { f: 'BVP', w: 500, s: 18, c: C.ink3, a: o.side > 0 ? 'left' : o.side < 0 ? 'right' : 'center', al: prog(b, SYNC.glyphs[i] + .5, SYNC.glyphs[i] + 1.1) * (1 - col * 3) });
+    ctx.restore();
+  });
+  // counts
+  ctx.save(); ctx.globalAlpha *= fade;
+  const [c0, c1] = SYNC.counters;
+  counter(STATS.domains, HUB.x - 280, 'lĩnh vực', b, c0);
+  counter(STATS.docs, HUB.x, 'văn bản', b, (c0 + c1) / 2);
+  counter(STATS.precedents, HUB.x + 280, 'án lệ', b, c1);
+  ctx.restore();
+  // the network folds into the seal
+  const cb = SYNC.collapse[0];
+  glowAt(HUB.x, HUB.y, 320, HUE.brass, .35 * Math.sin(prog(b, cb - .5, cb + .6) * Math.PI), 70);
+}
+
+// =====================================================================
+// S6 — lockup and call to action (beats T5–end)
+// =====================================================================
+const CTA = { x: 960, y: 820, w: 860, h: 86 };
+const CTA_TEXT = 'Hỏi trợ lý AI về văn bản pháp luật Việt Nam';
+function SLock(b, t) {
+  const cb = SYNC.collapse[0];
+  // seal rises out of the collapse flash
+  const sp = E.outCubic(prog(b, cb - .1, T5 + 1.4));
+  seal(960, lerp(HUB.y, 330, sp), lerp(60, 150, sp), 1, prog(b, cb - .2, cb + .3), prog(b, T5 + 1.2, T5 + 2.4));
+  sparkBurst(b, cb, 960, HUB.y, HUE.brass, 71, 60, 1.3);
+  if (b < T5) return;
+  const wp = prog(b, T5 + .6, T5 + 1.5);
+  ctx.save(); ctx.translate(0, (1 - E.outCubic(wp)) * 26); wordmark(W / 2, 584, 76, clamp(wp * 1.5), 'center'); ctx.restore();
+  ctx.fillStyle = C.brass; const rw = 160 * E.outCubic(prog(b, T5 + 1.2, T5 + 2)); ctx.fillRect(W / 2 - rw / 2, 620, rw, 2);
+  riseT('Gia phả văn bản pháp luật Việt Nam', W / 2, 676, { f: 'BVP', w: 500, s: 32, c: C.ink2, a: 'center' }, prog(b, T5 + 1.6, T5 + 2.4), 16);
+  // call to action: the question box of the site
+  const [c0, c1] = SYNC.cta;
+  const ap = E.outCubic(prog(b, c0 - 1.2, c0 - .2));
+  if (ap > 0) {
+    const x0 = CTA.x - CTA.w / 2, y0 = CTA.y - CTA.h / 2 + (1 - ap) * 24;
+    ctx.save(); ctx.globalAlpha *= clamp(ap * 1.5);
+    glowAt(CTA.x, CTA.y, 520, HUE.brass, .08, 55);
+    ctx.fillStyle = 'rgba(14,16,21,.94)'; rr(ctx, x0, y0, CTA.w, CTA.h, CTA.h / 2); ctx.fill();
+    ctx.strokeStyle = hsl(HUE.brass, .55 + .45 * Math.sin(prog(b, c1, c1 + 1) * Math.PI), 62); ctx.lineWidth = 2; ctx.stroke();
+    const n = Math.round(CTA_TEXT.length * prog(b, c0, c1 - .6));
+    const st = { f: 'BVP', w: 400, s: 26, c: C.paper };
+    if (n > 0) T(CTA_TEXT.slice(0, n), x0 + 40, y0 + 54, st);
+    else T('Nhập câu hỏi…', x0 + 40, y0 + 54, { ...st, c: C.ink3 });
+    if (Math.floor(b * 3) % 2 === 0 || n < CTA_TEXT.length) { ctx.fillStyle = C.brass; ctx.fillRect(x0 + 42 + measure(CTA_TEXT.slice(0, n), st), y0 + 24, 2.5, 38); }
+    // button
+    const bp = E.outBack(prog(b, c1, c1 + .5)), bw = 190, bx = x0 + CTA.w - bw - 12, by = y0 + 12;
+    if (bp > 0) {
+      ctx.save(); ctx.translate(bx + bw / 2, by + 31); ctx.scale(bp, bp);
+      ctx.fillStyle = C.brass; rr(ctx, -bw / 2, -31, bw, 62, 31); ctx.fill();
+      T('Hỏi ngay  →', 0, 9, { f: 'BVP', w: 600, s: 24, c: '#14161b', a: 'center' });
+      ctx.restore();
+    }
     ctx.restore();
   }
-  // final lockup
-  const end = 1 - prog(b, 90, 91.4);
-  const wp = prog(b, 85.2, 86.2);
-  ctx.save(); ctx.globalAlpha *= end;
-  ctx.save(); ctx.translate(0, (1 - E.outCubic(wp)) * 26); wordmark(W / 2, 640, 76, clamp(wp * 1.5), 'center'); ctx.restore();
-  ctx.fillStyle = C.brass; const rw = 160 * E.outCubic(prog(b, 85.8, 86.6)); ctx.fillRect(W / 2 - rw / 2, 678, rw, 2);
-  riseT('Gia phả văn bản pháp luật Việt Nam', W / 2, 736, { f: 'BVP', w: 500, s: 32, c: C.ink2, a: 'center' }, prog(b, 86.1, 86.9), 16);
-  riseT('Mỗi văn bản kèm nguồn chính thức và ngày tra cứu.', W / 2, 792, { f: 'Lora', it: true, w: 400, s: 28, c: C.ink3, a: 'center' }, prog(b, 86.7, 87.5), 14);
-  T('Thông tin tham khảo, không thay thế ý kiến pháp lý cho vụ việc cụ thể.', W / 2, 1000,
-    { f: 'BVP', w: 400, s: 19, c: C.ink3, a: 'center', al: prog(b, 87.2, 88) * .8 });
-  ctx.restore();
+  riseT('Mục “Hỏi AI” trên Lex & Lineage · tiếng Việt và tiếng Anh', W / 2, 926, { f: 'BVP', w: 400, s: 24, c: C.ink3, a: 'center' }, prog(b, c1 + .4, c1 + 1.2), 12);
+  T('Thông tin tham khảo, không thay thế ý kiến pháp lý cho vụ việc cụ thể. Câu trả lời trong video là minh họa.', W / 2, 1010,
+    { f: 'BVP', w: 400, s: 18, c: C.ink3, a: 'center', al: prog(b, c1 + .8, c1 + 1.6) * .85 });
 }
 
 // ---------- overlays & post ----------
@@ -982,8 +1299,9 @@ function hud(b) {
   if (a <= 0) return;
   let label = 'MỞ ĐẦU';
   if (b >= 12) label = 'GIA PHẢ VĂN BẢN';
-  if (b >= 24) label = 'LĨNH VỰC' + (b >= 28 && b < T4 ? ` · ${pad2(Math.floor((b - 28) / 4) + 1)} / ${ND}` : '');
+  if (b >= T_CHAT) label = 'TRỢ LÝ AI';
   if (b >= T4) label = 'CÔNG CỤ';
+  if (b >= TB) label = 'PHẠM VI';
   ctx.save(); ctx.globalAlpha = a;
   T('LEX & LINEAGE', 80, 76, { f: 'BVP', w: 600, s: 15, ls: 5, c: C.ink3 });
   T(label, W - 80, 76, { f: 'BVP', w: 600, s: 15, ls: 5, c: C.ink3, a: 'right' });
@@ -996,7 +1314,7 @@ function hud(b) {
 }
 /** Brass light sweep across the frame at scene cuts. */
 function sweep(b) {
-  for (const c of [12, 24, T4, T5]) {
+  for (const c of [12, T_CHAT, T4, TB]) {
     const p = prog(b, c - .5, c + .7);
     if (p <= 0 || p >= 1) continue;
     const x = lerp(-700, W + 700, E.inOutCubic(p));
@@ -1034,22 +1352,24 @@ function renderFrame(t) {
   ctx.drawImage(bgC, 0, 0);
   dust(t, .9);
   // slow push-in per scene, plus a short shake on impacts
-  const starts = [0, 12, 24, T4, T5, TOTAL_BEATS];
-  let k = 0; while (b >= starts[k + 1]) k++;
+  const starts = SYNC.scenes;
+  let k = 0; while (k < starts.length - 2 && b >= starts[k + 1]) k++;
   const z = 1 + .018 * E.outCubic(prog(b, starts[k], starts[k + 1]));
   const sh = shakeAt(b) * 7;
   ctx.save();
   ctx.translate(W / 2 + (hash(t * 113) - .5) * 2 * sh, H / 2 + (hash(t * 57 + 1) - .5) * 2 * sh);
   ctx.scale(z, z); ctx.translate(-W / 2, -H / 2);
   if (b < 12) S1(b, t);
-  else if (b < 24) S2(b, t);
-  else if (b < T4) S3(b, t);
-  else if (b < T5) S4(b, t);
-  else S5(b, t);
+  else if (b < T_CHAT) S2(b, t);
+  else if (b < T4) SChat(b, t);
+  else if (b < TB) S4(b, t);
+  else if (b < SYNC.collapse[0] + .6) { SBurst(b, t); if (b >= SYNC.collapse[0] - .2) SLock(b, t); }
+  else SLock(b, t);
   ctx.restore();
   hud(b);
   post(b, t);
 }
+
 
 async function init() {
   const faces = [

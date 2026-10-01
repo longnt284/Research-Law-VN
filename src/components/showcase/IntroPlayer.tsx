@@ -14,10 +14,13 @@ export interface Chapter {
 
 export interface DomainMark {
   id: DomainId;
-  /** Giây lĩnh vực xuất hiện trong video. */
-  t: number;
-  /** Độ dài đoạn của lĩnh vực, tính bằng giây. */
-  len: number;
+  /**
+   * Giây lĩnh vực xuất hiện riêng trong video, kèm độ dài đoạn đó. Bỏ trống khi
+   * video không có đoạn riêng cho lĩnh vực: ô lúc đó là một đường dẫn tới trang
+   * lĩnh vực thay vì nút tua video.
+   */
+  t?: number;
+  len?: number;
   hue: number;
   name: string;
   law: string;
@@ -27,7 +30,8 @@ export interface DomainMark {
 
 /**
  * Video giới thiệu: sân khấu tối có khung 16:9, dải chương, và lưới các lĩnh
- * vực bên dưới để nhảy thẳng tới đoạn của từng lĩnh vực.
+ * vực bên dưới. Lĩnh vực có đoạn riêng trong video thì ô là nút tua tới đoạn
+ * đó; không có thì ô dẫn thẳng tới trang lĩnh vực.
  *
  * Dùng thẻ `<video>` gốc của trình duyệt, có sẵn nút điều khiển, phím tắt và
  * trình đọc màn hình. Video không tự phát: người đã đặt chế độ giảm chuyển động
@@ -81,7 +85,9 @@ export function IntroPlayer({
 
   let chapter = 0;
   for (let k = 0; k < chapters.length; k++) if (now >= chapters[k].t - 0.05) chapter = k;
-  const domain = domains.findIndex((d) => now >= d.t - 0.05 && now < d.t + d.len - 0.05);
+  const domain = domains.findIndex(
+    (d) => d.t !== undefined && d.len !== undefined && now >= d.t - 0.05 && now < d.t + d.len - 0.05,
+  );
 
   const seek = (t: number) => {
     const v = ref.current;
@@ -141,31 +147,53 @@ export function IntroPlayer({
       <section className="mx-auto w-full max-w-[76rem] px-5 py-10 sm:px-8 sm:py-12">
         {domainsHead}
         <ol className="intro-tiles">
-          {domains.map((d, i) => (
-            <li key={d.id} className="intro-tile" style={{ "--hue": d.hue } as CSSProperties}>
-              <button
-                type="button"
-                onClick={() => seek(d.t)}
-                aria-current={i === domain ? "true" : undefined}
-                className="intro-tile-btn"
-              >
-                <span className="sr-only">{playLabel} </span>
-                <span className="intro-tile-top">
-                  <DomainGlyph id={d.id} className="intro-tile-glyph" />
-                  <span className="intro-tile-time tnum">
-                    <span aria-hidden="true">▶</span> {fmt(d.t)}
-                  </span>
-                </span>
+          {domains.map((d, i) => {
+            const t = d.t;
+            const body = (
+              <>
                 <span className="intro-tile-name">{d.name}</span>
                 <span className="intro-tile-law">{d.law}</span>
                 <span className="intro-tile-no tnum">{d.number}</span>
-              </button>
-              <Link href={d.href} className="intro-tile-link link-sweep">
-                {openLabel}
-                <span className="sr-only"> {d.name}</span> <span aria-hidden="true">→</span>
-              </Link>
-            </li>
-          ))}
+              </>
+            );
+            return (
+              <li key={d.id} className="intro-tile" style={{ "--hue": d.hue } as CSSProperties}>
+                {t === undefined ? (
+                  <Link href={d.href} className="intro-tile-btn">
+                    <span className="intro-tile-top">
+                      <DomainGlyph id={d.id} className="intro-tile-glyph" />
+                      <span className="intro-tile-time" aria-hidden="true">
+                        →
+                      </span>
+                    </span>
+                    {body}
+                  </Link>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => seek(t)}
+                      aria-current={i === domain ? "true" : undefined}
+                      className="intro-tile-btn"
+                    >
+                      <span className="sr-only">{playLabel} </span>
+                      <span className="intro-tile-top">
+                        <DomainGlyph id={d.id} className="intro-tile-glyph" />
+                        <span className="intro-tile-time tnum">
+                          <span aria-hidden="true">▶</span> {fmt(t)}
+                        </span>
+                      </span>
+                      {body}
+                    </button>
+                    <Link href={d.href} className="intro-tile-link link-sweep">
+                      {openLabel}
+                      <span className="sr-only"> {d.name}</span> <span aria-hidden="true">→</span>
+                    </Link>
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ol>
         {children}
       </section>
