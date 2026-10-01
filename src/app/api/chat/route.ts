@@ -13,6 +13,8 @@ import {
 import { buildSystemPrompt } from "@/lib/chat/prompt";
 import { chatConfigured, streamChat, type ChatMessage } from "@/lib/chat/provider";
 import { pickRoutes } from "@/lib/chat/skills";
+import { refundCredits, spendCredits, type PaidTurn } from "@/lib/payments/server";
+import { turnCost } from "@/lib/plans";
 
 /**
  * Trợ lý hỏi đáp: nhận cuộc trò chuyện, chọn skill và model, trả câu trả lời
@@ -23,7 +25,8 @@ import { pickRoutes } from "@/lib/chat/skills";
  * yêu cầu, `X-Chat-Auto` khi model do trang tự chọn, `X-Chat-Thinking` khi bật
  * suy luận mở rộng, `X-Chat-Limited` các hạn mức đã hết trong ngày: `pro` (Pro
  * và suy luận mở rộng, câu hỏi chạy ở chế độ thường), `free` (model OpenRouter
- * chọn tay, câu hỏi chạy bằng Gemini).
+ * chọn tay, câu hỏi chạy bằng Gemini), `X-Chat-Credits` số lượt Pro đã mua còn
+ * lại khi câu hỏi vừa dùng lượt mua.
  *
  * Mã lỗi trả về, để khung chat báo đúng lý do: 403 gọi từ trang khác, 503 chưa
  * cấu hình, 429 quá lượt, 400 và 413 yêu cầu sai hoặc quá dài, 502 mọi nhà cung
@@ -50,7 +53,9 @@ const MAX_TOTAL_CHARS = 40_000;
 
   Gemini 3.1 Pro và suy luận mở rộng tốn gấp nhiều lần một lượt thường, nên có
   hạn mức riêng. Hết hạn mức đó thì câu hỏi vẫn được trả lời, bằng 3.8 Flash ở
-  chế độ thường.
+  chế độ thường, trừ khi người hỏi đăng nhập và còn lượt Pro đã mua: khi đó máy
+  chủ trừ lượt (`src/lib/plans.ts`) và giữ nguyên Pro, suy luận mở rộng. Quyền
+  này chỉ dựa vào số dư trong cơ sở dữ liệu, không dựa vào gì trình duyệt gửi.
 
   Model miễn phí của OpenRouter dùng chung hạn mức ngày của cả tài khoản (50
   lượt khi tài khoản chưa từng nạp 10 USD, 1.000 lượt khi đã nạp), và hạn mức đó
@@ -175,10 +180,14 @@ export async function POST(req: Request): Promise<Response> {
     first = autoModel(userTexts, picked.skills);
     limited.push("free");
   }
+  let paid: PaidTurn | null = null;
   if ((first === PRO || thinking) && overLimit(premiumHits, ip, Date.now(), PREMIUM_PER_DAY)) {
-    if (first === PRO) first = STANDARD;
-    thinking = false;
-    limited.push("pro");
+    paid = await spendCredits(req, turnCost(first === PRO, thinking));
+    if (!paid) {
+      if (first === PRO) first = STANDARD;
+      thinking = false;
+      limited.push("pro");
+    }
   }
   const auto = parsed.model === "auto" || first !== parsed.model;
 
@@ -188,7 +197,10 @@ export async function POST(req: Request): Promise<Response> {
     { models: modelChain(first), thinking, deadline },
     req.signal,
   );
-  if (!stream) return fail(502, "upstream");
+  if (!stream) {
+    if (paid) await refundCredits(paid);
+    return fail(502, "upstream");
+  }
   const headers: Record<string, string> = {
     "Content-Type": "application/x-ndjson; charset=utf-8",
     "Cache-Control": "no-store",
@@ -198,5 +210,15 @@ export async function POST(req: Request): Promise<Response> {
   if (auto) headers["X-Chat-Auto"] = "1";
   if (thinking) headers["X-Chat-Thinking"] = "1";
   if (limited.length) headers["X-Chat-Limited"] = limited.join(",");
+  if (paid) {
+    // Pro hết hạn mức phía Google thì chuỗi model lùi về Flash: hoàn phần lượt
+    // Pro không được dùng.
+    const unused = paid.cost - turnCost(stream.model === PRO, thinking);
+    if (unused > 0) {
+      await refundCredits({ ...paid, cost: unused });
+      paid.balance += unused;
+    }
+    headers["X-Chat-Credits"] = String(paid.balance);
+  }
   return new Response(stream.body, { headers });
 }

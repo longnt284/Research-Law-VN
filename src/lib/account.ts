@@ -62,6 +62,22 @@ export function hasStoredSession(): boolean {
   }
 }
 
+/**
+ * Header xác thực cho API của trang (lượt Pro, thanh toán): access token của
+ * phiên hiện tại. Máy chủ hỏi lại Supabase Auth để xác minh token. Không đăng
+ * nhập thì trả về rỗng.
+ */
+export async function authHeaders(): Promise<Record<string, string>> {
+  if (!hasStoredSession()) return {};
+  try {
+    const { data } = await (await supabase()).auth.getSession();
+    const token = data.session?.access_token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch {
+    return {};
+  }
+}
+
 const SYNCED = "ll:synced-user";
 
 type FollowRow = { doc_id: string; since: string };

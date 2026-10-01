@@ -3317,6 +3317,50 @@ mark.hl {
   background: color-mix(in oklab, var(--st-active) 7%, transparent);
 }
 
+/* Mua lượt Pro (`BillingPanel`). Mã QR luôn đen trên trắng, cả ở chế độ tối:
+   ứng dụng ngân hàng đọc mã sáng màu trên nền tối kém hơn. */
+@media (min-width: 560px) {
+  .pay-plans {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.pay-plan {
+  align-items: flex-start;
+}
+.pay-plan > span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+.pay-qr {
+  display: block;
+  width: min(15rem, 100%);
+  height: auto;
+  margin: 0.75rem 0;
+  border: 1px solid var(--rule);
+}
+.pay-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+}
+.pay-facts dt {
+  color: var(--ink-3);
+}
+.pay-facts dd {
+  overflow-wrap: anywhere;
+}
+.pay-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+}
+
 /* ── Trang video ──────────────────────────────────────────────────────────── */
 
 /*
