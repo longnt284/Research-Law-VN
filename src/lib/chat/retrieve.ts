@@ -26,7 +26,7 @@ const MAX_CHUNK = 2400;
 /** Đoạn ngắn hơn thế chỉ là đầu mục hay một dòng dẫn, bỏ. */
 const MIN_CHUNK = 80;
 /** Hạn mức chữ của mỗi nguồn trong prompt. */
-const LIBRARY_CHARS = 8000;
+const LIBRARY_CHARS = 12_000;
 const SITE_CHARS = 3000;
 /**
  * Ba ngưỡng để không kéo đoạn chỉ khớp một từ chung ("tài sản", "chào"). Đoạn

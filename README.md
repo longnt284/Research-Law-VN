@@ -545,7 +545,7 @@ prompt (`src/lib/chat/prompt.ts`) gồm:
 - lời dẫn cho chế độ chatbot;
 - thân skill đứng đầu, gửi nguyên văn làm phương pháp;
 - các đoạn tư liệu liên quan tới câu hỏi (`src/lib/chat/retrieve.ts`), tìm trong
-  mọi skill và tệp tham chiếu của gói (tối đa 8.000 ký tự), và trong tóm tắt văn
+  mọi skill và tệp tham chiếu của gói (tối đa 12.000 ký tự), và trong tóm tắt văn
   bản cùng điểm đối chiếu của trang (tối đa 3.000 ký tự, kèm đường dẫn);
 - danh sách văn bản trong kho kèm tình trạng hiệu lực hôm nay;
 - phần hướng dẫn dùng trang.
@@ -561,7 +561,8 @@ Văn bản trong kho được dẫn như đã tra cứu, kèm đường dẫn. S
 nhãn đã đối chiếu (`[A <ngày>]`, `[A-tiêu đề]`, `[T <ngày>]`) cũng được dẫn như
 đã tra. Mọi văn bản khác mang nhãn `[CHƯA XÁC MINH]`. Dưới mỗi câu trả lời có
 tên model và dòng nhắc nội dung chỉ để tham khảo. Trang không lưu cuộc trò
-chuyện. Mỗi địa chỉ IP được 6 lượt mỗi phút và 40 lượt mỗi ngày.
+chuyện. Mỗi địa chỉ IP được 6 lượt mỗi phút và 40 lượt mỗi ngày. Câu hỏi tối đa
+6.000 ký tự; mỗi lượt gửi lại tối đa 16 tin gần nhất, tổng 40.000 ký tự.
 
 Phần hướng dẫn trang trong `prompt.ts` là nguồn duy nhất trợ lý dùng để nói về
 trang. Thêm hay đổi tính năng thì sửa cả phần đó.
@@ -571,18 +572,39 @@ hỏi (`src/lib/chat/models.ts`). Dấu hiệu khó được cộng điểm: đ�
 sánh, rà soát, soạn thảo (2 điểm); dài trên 200 ký tự (1 điểm) hoặc trên 600 ký
 tự (2 điểm); chạm hai lĩnh vực chuyên môn (1 điểm); từ lượt hỏi thứ ba (1 điểm).
 0 điểm dùng Gemini 3.6 Flash, 1–2 điểm dùng Gemini 3.8 Flash, từ 3 điểm dùng
-Gemini 3.1 Pro. Ô "Suy
-luận mở rộng" bật mức suy luận cao và hiện bản tóm tắt suy luận của mô hình.
-Gemini 3.1 Pro và suy luận mở rộng tốn nhiều hơn, nên mỗi địa chỉ IP chỉ được 10
-lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng 3.8 Flash ở chế độ thường.
+Gemini 3.1 Pro. Chọn hẳn Gemini 3.1 Pro nghĩa là "Pro khi cần": từ 2 điểm mới
+chạy Pro, dưới đó vẫn chạy 3.8 hoặc 3.6 Flash; khung chat ghi rõ điều này dưới
+ô chọn. Ô "Suy luận mở rộng" bật mức suy luận cao và hiện bản tóm tắt suy luận
+của mô hình. Gemini 3.1 Pro và suy luận mở rộng tốn nhiều hơn, nên mỗi địa chỉ
+IP chỉ được 10 lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng 3.8 Flash ở chế độ
+thường.
+
+Ô chọn còn có các model miễn phí của OpenRouter: Nemotron 3 Ultra, Inkling,
+Qwen3.8 27B, Gemma 4 31B, Nemotron 3 Super, và `openrouter/free` (OpenRouter chọn
+ngẫu nhiên). Danh sách đối chiếu ngày 01/10/2026; bỏ các model chuyên viết mã,
+tạo nhạc, kiểm duyệt, y tế, model quá nhỏ và model ẩn danh. Model miễn phí dùng
+chung hạn mức của cả tài khoản OpenRouter (20 lượt mỗi phút; 50 lượt mỗi ngày,
+hoặc 1.000 lượt khi tài khoản đã từng nạp từ 10 USD), và hạn mức đó cũng là chốt
+dự phòng khi Gemini hết lượt. Vì vậy mỗi địa chỉ IP chỉ được chọn tay model
+OpenRouter 10 lượt mỗi ngày; hết lượt thì câu hỏi chạy bằng Gemini theo độ khó.
+OpenRouter gỡ hay thêm model thì sửa `MODELS` trong `models.ts` (kèm `maxOut`, trần
+độ dài câu trả lời của model) và `modelHints` trong `src/i18n/chat.ts`.
+
+Câu trả lời dài: mỗi lượt gọi xin tối đa 32.768 token (65.536 khi bật suy luận
+mở rộng), không vượt trần của model. Gemini tính cả token suy luận vào con số
+này. Câu trả lời dừng vì chạm trần (`finish_reason: length`) thì route tự gửi lại
+phần đã viết và xin viết tiếp, tối đa hai lần, nối liền vào câu trả lời. Route
+chạy tối đa 300 giây (`maxDuration`, trần gói Hobby của Vercel); tới giây 285 thì
+đóng luồng. Câu trả lời vẫn chưa trọn (chạm trần sau hai lần viết tiếp, hết giờ,
+luồng bị ngắt hay bị bộ lọc nội dung dừng) thì khung chat giữ phần đã nhận, ghi
+lý do và hiện nút "Viết tiếp".
 
 Chín skill bot chọn được: `vn-orchestrator`, `vn-construction-partner`,
 `vn-energy-partner`, `vn-ppp-partner`, `vn-land-realestate`,
 `vn-fintech-partner`, `vn-data-privacy-partner`, `vn-litigation-partner` và
 `vn-legal-review`. Gói còn có `vn-legal-lookup` chỉ làm tư liệu, và mọi tệp
 trong thư mục `references/` của cả mười skill, trừ `tvpl-browser.md` (hướng dẫn
-dùng trình duyệt mà bot không có). Gói đóng theo cách cũ, chỉ có thân skill,
-vẫn chạy nhưng không có tư liệu tham chiếu. Repo công khai, nên chỉ bản mã hóa
+dùng trình duyệt mà bot không có). Repo công khai, nên chỉ bản mã hóa
 AES-256-GCM được commit (`src/lib/chat/skills.enc.json`). Khi sửa skill, đóng
 gói lại bằng lệnh sau rồi commit tệp mới:
 
@@ -601,17 +623,21 @@ CHAT_FALLBACK_API_KEY=<khóa OpenRouter>
 CHAT_FALLBACK_MODEL=openrouter/free   # hoặc nhiều model, cách nhau bằng dấu phẩy
 ```
 
-Mã các model Gemini nằm trong `src/lib/chat/models.ts`, không nằm trong biến môi
-trường; `CHAT_MODEL` không còn được dùng. Khi model đã chọn từ chối (hết lượt,
-quá tải, không trả lời trong 25 giây), câu hỏi chuyển sang các bản Flash rồi tới
-nhà cung cấp dự phòng, không bao giờ tự nâng lên Pro. Model Gemini trả 429 (hết
-lượt) được cho nghỉ tới hết thời gian chờ Google báo, mặc định một phút, tối đa
-một giờ: trong lúc đó câu hỏi đi thẳng sang model kế tiếp hoặc OpenRouter thay
-vì hỏi lại rồi nhận cùng lỗi. `CHAT_FALLBACK_MODEL` nhận một model hoặc danh sách
-model cách nhau bằng dấu phẩy, thử theo thứ tự. `openrouter/free` chọn ngẫu
-nhiên một model miễn phí cho mỗi câu hỏi; tên model thật hiện dưới câu trả lời.
-Nhà cung cấp dự phòng là tùy chọn. Thiếu `CHAT_SKILLS_KEY` hoặc thiếu nhà
-cung cấp thì trợ lý báo tạm ngưng; phần còn lại của trang không bị ảnh hưởng.
+Mã các model nằm trong `src/lib/chat/models.ts`, không nằm trong biến môi
+trường. Model Gemini gọi qua `CHAT_API_*`, model OpenRouter gọi qua
+`CHAT_FALLBACK_*`. Khi model đã chọn từ chối (hết lượt, quá tải, không trả lời
+trong 25 giây), câu hỏi chuyển sang model kế tiếp: model OpenRouter thì sang
+`openrouter/free`, rồi các bản Flash, rồi các model trong `CHAT_FALLBACK_MODEL`;
+không bao giờ tự nâng lên Pro. Model trả 429 (hết lượt) được cho nghỉ tới hết
+thời gian chờ nhà cung cấp báo, mặc định một phút, tối đa một giờ: trong lúc đó
+câu hỏi đi thẳng sang model kế tiếp thay vì hỏi lại rồi nhận cùng lỗi;
+`openrouter/free` không nghỉ vì mỗi lần chọn một model khác.
+`CHAT_FALLBACK_MODEL` nhận một model hoặc danh sách model cách nhau bằng dấu
+phẩy, thử theo thứ tự. `openrouter/free` chọn ngẫu nhiên một model miễn phí cho
+mỗi câu hỏi; tên model thật hiện dưới câu trả lời. OpenRouter là tùy chọn: thiếu
+khóa thì model OpenRouter trong ô chọn chạy bằng Gemini. Thiếu `CHAT_SKILLS_KEY`
+hoặc thiếu mọi nhà cung cấp thì trợ lý báo tạm ngưng; phần còn lại của trang
+không bị ảnh hưởng.
 
 `npm run build` chạy `scripts/check-chat-skills.mjs` trước `next build`;
 `vercel.json` buộc Vercel dùng `npm run build` thay cho `next build` mặc định.
@@ -696,7 +722,6 @@ src/
 supabase/migrations/        # bảng follows, matters, consents, RLS, hàm xóa tài khoản
   og/                       # khung ảnh chia sẻ và phông TTF kèm giấy phép
   lib/site.ts               # địa chỉ gốc, canonical và khai báo bản dịch
-references/                 # thư viện đã khảo sát, và lý do dùng hay loại
 ```
 
 ## Bản quyền

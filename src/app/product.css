@@ -268,8 +268,7 @@ html {
   min-width: 9rem;
   text-align: left;
 }
-.hdr-kbd,
-.search-kbd {
+.hdr-kbd {
   border: 1px solid var(--rule);
   border-bottom-width: 2px;
   background: var(--paper-2);
@@ -463,11 +462,6 @@ html {
 }
 .search-clear:hover {
   color: var(--accent);
-}
-@media (max-width: 639px) {
-  .search-kbd {
-    display: none;
-  }
 }
 
 .search-panel {
@@ -3806,6 +3800,16 @@ body:has(.ldiff-nav) .chat-launch {
 .chat-opts :disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+.chat-hint {
+  flex-basis: 100%;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ink-3);
+}
+.chat-cut {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
 }
 .chat-opts + .chat-form {
   border-top: 0;
