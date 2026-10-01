@@ -33,6 +33,10 @@ export interface ChatCopy {
   thinkingNow: string;
   thinkingDone: string;
   limited: { pro: string; free: string };
+  /** Liên kết mua lượt Pro, hiện sau thông báo hết hạn mức `pro`. */
+  buyCredits: string;
+  /** Số lượt Pro đã mua còn lại, sau câu hỏi vừa dùng lượt mua. */
+  credits: (n: number) => string;
   /** Câu trả lời chưa trọn: lý do, nút viết tiếp và tin nút đó gửi đi. */
   cut: { length: string; time: string; cut: string };
   more: string;
@@ -109,6 +113,8 @@ const vi: ChatCopy = {
     pro: "Hôm nay bạn đã dùng hết lượt Gemini 3.1 Pro và suy luận mở rộng; câu này trả lời ở chế độ thường.",
     free: "Hôm nay bạn đã dùng hết lượt chọn model OpenRouter; câu này trả lời bằng Gemini.",
   },
+  buyCredits: "Mua thêm lượt Pro",
+  credits: (n) => `Đã dùng lượt Pro mua thêm, còn ${n}`,
   cut: {
     length: "Câu trả lời dài vượt giới hạn một lượt.",
     time: "Câu trả lời dừng vì hết thời gian xử lý.",
@@ -188,6 +194,8 @@ const en: ChatCopy = {
     pro: "You have used today's Gemini 3.1 Pro and extended-thinking quota; this answer uses the standard mode.",
     free: "You have used today's quota for picking an OpenRouter model; this answer uses Gemini.",
   },
+  buyCredits: "Buy more Pro credits",
+  credits: (n) => `Used a purchased Pro credit, ${n} left`,
   cut: {
     length: "The answer ran past the length limit of one turn.",
     time: "The answer stopped because the time limit was reached.",

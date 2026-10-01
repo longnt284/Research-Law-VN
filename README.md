@@ -520,6 +520,7 @@ npm run dev        # môi trường phát triển
 npm run build      # dựng bản production
 npm run typecheck  # kiểm tra kiểu
 npm run lint       # kiểm tra quy tắc mã nguồn
+npm test           # kiểm thử thanh toán và lượt Pro
 ```
 
 ### Biến môi trường
@@ -646,6 +647,21 @@ với lỗi `check-chat-skills`, và Vercel giữ nguyên bản đang chạy tha
 một bản có trợ lý tạm ngưng. Không có khóa (CI, máy phát triển) thì bước này bỏ
 qua. Đóng gói lại bằng khóa mới thì đổi `CHAT_SKILLS_KEY` trên Vercel, cho cả
 Production và Preview, trước khi merge commit chứa gói mới.
+
+## Thanh toán và lượt Pro
+
+Người dùng đã đăng nhập mua lượt Pro cho trợ lý ở trang Tài khoản: gói Starter
+10.000đ, Plus 50.000đ, Pro 100.000đ, trả bằng chuyển khoản VietQR qua payOS. Hết
+hạn mức Gemini 3.1 Pro và suy luận mở rộng miễn phí trong ngày, mỗi câu hỏi dùng
+hai chế độ đó trừ lượt đã mua thay vì chuyển về chế độ thường. Giá và số lượt
+nằm ở một chỗ, `src/lib/plans.ts`. Đơn chỉ thành PAID khi webhook payOS có chữ ký
+hợp lệ; việc đổi trạng thái đơn và cộng lượt chạy trong một giao dịch cơ sở dữ
+liệu, và một đơn chỉ cộng lượt được một lần.
+
+Biến môi trường, chỉ phía máy chủ: `SUPABASE_SECRET_KEY`, `PAYOS_CLIENT_ID`,
+`PAYOS_API_KEY`, `PAYOS_CHECKSUM_KEY` (mẫu ở `.env.example`). Webhook URL:
+`<NEXT_PUBLIC_SITE_URL>/api/webhooks/payos`. Kiến trúc, cách thử, đổi giá và xử
+lý sự cố: [`docs/PAYMENTS.md`](docs/PAYMENTS.md).
 
 ## Skill Claude Code
 
@@ -935,3 +951,13 @@ key in `CHAT_SKILLS_KEY`). Repack them with `scripts/pack-chat-skills.mjs`.
 Vercel keeps the running deployment instead of shipping a paused assistant.
 Conversations are not stored. Each IP address gets 6 questions a minute and
 40 a day.
+
+Signed-in users can buy Pro credits on the account page (Starter 10,000 VND,
+Plus 50,000 VND, Pro 100,000 VND) by VietQR bank transfer through payOS. Once the
+free daily Pro and extended-thinking quota is used up, those questions spend
+purchased credits instead of falling back to the standard mode. Prices and
+credit amounts live in `src/lib/plans.ts`. An order becomes PAID only on a payOS
+webhook with a valid signature; marking it paid and adding credits happen in one
+database transaction, and an order can add credits only once. Server-only
+variables: `SUPABASE_SECRET_KEY`, `PAYOS_CLIENT_ID`, `PAYOS_API_KEY`,
+`PAYOS_CHECKSUM_KEY`. Details in [`docs/PAYMENTS.md`](docs/PAYMENTS.md).

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { Lang } from "@/data/types";
 import { getChatCopy } from "@/i18n/chat";
@@ -13,7 +13,12 @@ import { getChatCopy } from "@/i18n/chat";
  * giống bảng lệnh (`PaletteHost`). Sau đó khung chat ở lại trong cây và chỉ bị
  * ẩn khi đóng, nên đóng rồi mở lại, hay chuyển sang trang khác, vẫn còn nguyên
  * cuộc trò chuyện.
+ *
+ * Phần khác của trang mở khung chat bằng sự kiện `CHAT_OPEN_EVENT` trên
+ * `window` (ví dụ nút "Tiếp tục sử dụng Lex AI" sau khi thanh toán).
  */
+
+export const CHAT_OPEN_EVENT = "ll:chat-open";
 
 const ChatPanel = dynamic(() => import("@/components/chat/ChatPanel"), { ssr: false });
 
@@ -25,6 +30,15 @@ export function ChatHost({ lang }: { lang: Lang }) {
     setOpen(false);
     // Trả focus về nút mở, để người dùng bàn phím không bị rơi về đầu trang.
     requestAnimationFrame(() => launcher.current?.focus());
+  }, []);
+
+  useEffect(() => {
+    const onOpen = () => {
+      setLoaded(true);
+      setOpen(true);
+    };
+    window.addEventListener(CHAT_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(CHAT_OPEN_EVENT, onOpen);
   }, []);
 
   return (

@@ -4,6 +4,7 @@ import type { AuthError, User } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { BillingPanel } from "@/components/account/BillingPanel";
 import type { Lang } from "@/data/types";
 import { getAccountCopy } from "@/i18n/account";
 import { formatDate } from "@/i18n/dictionary";
@@ -344,6 +345,8 @@ function SignedIn({ lang, user }: { lang: Lang; user: User }) {
         <p className="fb-note">{c.signOutNote}</p>
         {changing && <NewPassword lang={lang} onDone={() => setChanging(false)} />}
       </section>
+
+      <BillingPanel lang={lang} />
 
       <ExportData lang={lang} user={user} />
 

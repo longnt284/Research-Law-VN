@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { Lang } from "@/data/types";
 import { getChatCopy, type ChatCopy } from "@/i18n/chat";
+import { ACCOUNTS_ENABLED, authHeaders } from "@/lib/account";
 import { FREE_ROUTER, MODELS, modelLabel, PRO, providerOf, type ModelChoice } from "@/lib/chat/models";
 import type { SkillId } from "@/lib/chat/skills";
 
@@ -34,6 +35,8 @@ interface Msg {
   thinking?: boolean;
   /** Các hạn mức đã hết trong ngày, khiến câu hỏi chạy bằng model khác. */
   limited?: Limit[];
+  /** Số lượt Pro đã mua còn lại, khi câu này vừa dùng lượt mua. */
+  credits?: number;
   /** Câu trả lời chưa trọn và lý do. */
   cut?: Cut;
   /** Bản tóm tắt suy luận của mô hình; không gửi lại lên máy chủ. */
@@ -199,7 +202,8 @@ export default function ChatPanel({
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        // Đăng nhập thì gửi kèm phiên, để máy chủ dùng lượt Pro đã mua khi hết lượt miễn phí.
+        headers: { "Content-Type": "application/json", ...(await authHeaders()) },
         body: JSON.stringify({ lang, messages: [...history, { role: "user", content: q }], model, thinking }),
         signal: ctl.signal,
       });
@@ -225,6 +229,7 @@ export default function ChatPanel({
         limited: (res.headers.get("X-Chat-Limited") ?? "")
           .split(",")
           .filter((s): s is Limit => s in t.limited),
+        credits: res.headers.has("X-Chat-Credits") ? Number(res.headers.get("X-Chat-Credits")) : undefined,
       });
       let cut: Cut | undefined;
       // Mỗi dòng là một sự kiện JSON; dòng có thể bị cắt giữa hai gói dữ liệu.
@@ -344,6 +349,7 @@ export default function ChatPanel({
                   {[
                     `${t.modelPrefix}: ${modelName(t, m.model)}${m.auto ? ` (${t.autoTag})` : ""}`,
                     m.thinking ? t.thinking : "",
+                    m.credits !== undefined ? t.credits(m.credits) : "",
                     m.skills?.length ? `${t.skillPrefix}: ${m.skills.map((s) => t.skills[s]).join(", ")}` : "",
                   ]
                     .filter(Boolean)
@@ -354,6 +360,14 @@ export default function ChatPanel({
                 m.limited?.map((l) => (
                   <p key={l} className="chat-skill">
                     {t.limited[l]}
+                    {l === "pro" && ACCOUNTS_ENABLED && (
+                      <>
+                        {" "}
+                        <Link href={`/${lang}/tai-khoan#nang-cap`} className="underline underline-offset-2">
+                          {t.buyCredits}
+                        </Link>
+                      </>
+                    )}
                   </p>
                 ))}
               {m.cut && !m.error && (
