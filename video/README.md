@@ -64,18 +64,18 @@ một ngày trong khoảng đó kèm nhãn "chưa có hiệu lực".
 ## Build
 
 ```bash
-pip install numpy scipy
+pip install numpy scipy pillow
 node render.mjs video 4          # -> out/video_silent.mp4 (ffmpeg hệ thống, hoặc đặt FFMPEG)
 python3 audio.py                 # -> out/audio.wav
 cd out
-# MP4 cho web, mã hóa 2 lượt
-ffmpeg -y -i video_silent.mp4 -c:v libx264 -preset slow -profile:v high -level:v 4.2 -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 1 -an -f mp4 /dev/null
-ffmpeg -y -i video_silent.mp4 -i audio.wav -c:v libx264 -preset slow -profile:v high -level:v 4.2 -b:v 4M -maxrate 6M -bufsize 8M -pix_fmt yuv420p -pass 2 \
-  -c:a aac -b:a 192k -shortest -movflags +faststart ../../public/video/gioi-thieu.mp4
-# WebM cho trình duyệt không có H.264
-ffmpeg -y -i video_silent.mp4 -i audio.wav -c:v libvpx-vp9 -b:v 0 -crf 36 -row-mt 1 -c:a libopus -b:a 128k -shortest ../../public/video/gioi-thieu.webm
-# Ảnh bìa: khung câu trả lời đầy đủ của trợ lý, nhịp 48.6
-node ../render.mjs stills 26.51 && cp stills/t026.51.jpg ../../public/video/gioi-thieu.jpg
+# MP4 cho web: CRF 24 (khoảng 12 MB cho 60 giây), chữ vẫn sắc ở 1080p
+ffmpeg -y -i video_silent.mp4 -i audio.wav -c:v libx264 -preset slow -crf 24 -maxrate 5M -bufsize 10M -profile:v high -level:v 4.2 \
+  -pix_fmt yuv420p -c:a aac -b:a 160k -shortest -movflags +faststart ../../public/video/gioi-thieu.mp4
+# WebM cho trình duyệt không có H.264 (khoảng 9 MB)
+ffmpeg -y -i video_silent.mp4 -i audio.wav -c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 -deadline good -cpu-used 2 -c:a libopus -b:a 128k -shortest ../../public/video/gioi-thieu.webm
+# Ảnh bìa: khung câu trả lời đầy đủ của trợ lý, nhịp 48.6, nén JPEG chất lượng 82
+node ../render.mjs stills 26.51
+python3 -c "from PIL import Image; Image.open('stills/t026.51.jpg').save('../../public/video/gioi-thieu.jpg', quality=82, optimize=True, progressive=True)"
 ```
 
 Xem trước trực tiếp: `npx http-server video` rồi mở `index.html?preview`.
