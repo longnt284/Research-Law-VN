@@ -55,7 +55,14 @@ export default async function DomainPage({
   // một đầu thì trên cây nó thành đường đi vào chỗ trống.
   const inner = relations.filter((r) => ids.has(r.from) && ids.has(r.to));
   const h = getHome(lang).hierarchy;
-  const tiers = [0, 1, 2, 3].map((tier) => docs.filter((d) => tierOf(d) === tier).length);
+  const tiers = [0, 1, 2, 3].map((tier) => {
+    const inTier = docs.filter((d) => tierOf(d) === tier);
+    // Một tầng chỉ có một loại văn bản thì gọi đúng tên loại đó, để trang Án lệ
+    // không đếm 16 án lệ dưới nhãn chung của tầng.
+    const kinds = new Set(inTier.map((d) => d.type));
+    const label = kinds.size === 1 ? t.type[[...kinds][0]] : h.tierShort[tier];
+    return { n: inTier.length, label };
+  });
 
   return (
     <>
@@ -92,9 +99,9 @@ export default async function DomainPage({
             >
               <DomainGlyph id={domainId} className="domain-plate-glyph" />
               <dl className="domain-plate-tiers">
-                {tiers.map((n, i) => (
+                {tiers.map(({ n, label }, i) => (
                   <div key={i}>
-                    <dt>{h.tierShort[i]}</dt>
+                    <dt>{label}</dt>
                     <dd className="tnum">{n}</dd>
                   </div>
                 ))}
