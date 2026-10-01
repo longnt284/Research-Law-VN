@@ -88,7 +88,7 @@ const vi: PolicyCopy = {
         {
           h: "Trợ lý hỏi đáp",
           p: [
-            "Khi bạn bấm gửi, câu hỏi cùng các lượt trước của cuộc trò chuyện đi qua máy chủ của trang tới nhà cung cấp mô hình ngôn ngữ để tạo câu trả lời: Google (Gemini API), và OpenRouter khi Google không nhận yêu cầu. Máy chủ của các nhà cung cấp này đặt ngoài Việt Nam, nên nội dung bạn gửi được chuyển ra nước ngoài.",
+            "Khi bạn bấm gửi, câu hỏi cùng các lượt trước của cuộc trò chuyện đi qua máy chủ của trang tới nhà cung cấp mô hình ngôn ngữ để tạo câu trả lời: Google (Gemini API), hoặc OpenRouter khi bạn chọn một model của OpenRouter hay khi Google không nhận yêu cầu; OpenRouter chuyển yêu cầu tới nhà phát triển của model đó. Máy chủ của các nhà cung cấp này đặt ngoài Việt Nam, nên nội dung bạn gửi được chuyển ra nước ngoài.",
             "Trang dùng gói miễn phí của các nhà cung cấp này. Theo điều khoản của họ, nội dung gửi qua gói miễn phí có thể được dùng để cải thiện sản phẩm và mô hình, và có thể được người của nhà cung cấp đọc. Vì vậy, đừng nhập họ tên, số giấy tờ, thông tin liên hệ hay chi tiết bí mật của vụ việc.",
             "Trang không lưu cuộc trò chuyện: nội dung chỉ nằm trong trang đang mở và mất khi bạn tải lại hay đóng trang. Để giới hạn số lượt hỏi, máy chủ giữ địa chỉ IP và thời điểm hỏi trong bộ nhớ tối đa 24 giờ. Vercel ghi nhật ký kỹ thuật của lượt gửi như mọi lượt truy cập khác.",
             "Cơ sở xử lý: sự đồng ý của bạn khi bấm gửi, sau khi đã đọc thông báo in ngay trong khung trò chuyện. Không đồng ý thì đừng dùng trợ lý; mọi công cụ khác của trang vẫn dùng được.",
@@ -241,7 +241,7 @@ const en: PolicyCopy = {
         {
           h: "Q&A assistant",
           p: [
-            "When you press send, your question and the earlier turns of the conversation pass through the site's server to a language-model provider that writes the answer: Google (Gemini API), and OpenRouter when Google does not accept the request. These providers' servers are outside Vietnam, so what you send is transferred abroad.",
+            "When you press send, your question and the earlier turns of the conversation pass through the site's server to a language-model provider that writes the answer: Google (Gemini API), or OpenRouter when you pick an OpenRouter model or when Google does not accept the request; OpenRouter passes the request to that model's developer. These providers' servers are outside Vietnam, so what you send is transferred abroad.",
             "The site uses these providers' free tiers. Under their terms, content sent through a free tier may be used to improve their products and models and may be read by the provider's staff. Do not enter names, ID numbers, contact details or confidential details of a matter.",
             "The site does not store conversations: a conversation lives only in the open page and is gone when you reload or close it. To limit the number of questions, the server keeps your IP address and the time of each question in memory for at most 24 hours. Vercel logs the request like any other visit.",
             "Legal basis: your consent when you press send, after reading the notice shown in the chat panel. If you do not agree, do not use the assistant; every other tool on the site still works.",

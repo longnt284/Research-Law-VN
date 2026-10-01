@@ -14,8 +14,7 @@ import bundle from "./skills.enc.json";
  * `/api/chat` nhập, nên bản mã hóa không bao giờ xuống trình duyệt.
  *
  * Gói là một bảng tên mục → chữ: thân skill mang khóa là tên skill, tệp tham
- * chiếu của skill mang khóa `<skill>/references/<tệp>`. Gói đóng theo cách cũ
- * chỉ có thân skill, và vẫn dùng được.
+ * chiếu của skill mang khóa `<skill>/references/<tệp>`.
  */
 
 /** Phải khớp danh sách `SKILLS` trong `scripts/pack-chat-skills.mjs`. */

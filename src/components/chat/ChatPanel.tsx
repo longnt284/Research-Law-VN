@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { Lang } from "@/data/types";
 import { getChatCopy, type ChatCopy } from "@/i18n/chat";
-import { MODELS, modelLabel, type ModelChoice } from "@/lib/chat/models";
+import { FREE_ROUTER, MODELS, modelLabel, PRO, providerOf, type ModelChoice } from "@/lib/chat/models";
 import type { SkillId } from "@/lib/chat/skills";
 
 /**
@@ -13,12 +13,15 @@ import type { SkillId } from "@/lib/chat/skills";
  *
  * Cuộc trò chuyện chỉ nằm trong bộ nhớ của trang: mỗi lượt hỏi gửi lại cả phần
  * trước lên `/api/chat`, máy chủ không giữ gì. Câu trả lời chảy về dạng NDJSON
- * (chữ trả lời, chữ suy luận, tên model) và được dựng thành phần tử React, không
- * qua `dangerouslySetInnerHTML`, nên chữ của mô hình không bao giờ chạy được như
- * mã.
+ * (chữ trả lời, chữ suy luận, tên model, báo câu trả lời chưa trọn) và được
+ * dựng thành phần tử React, không qua `dangerouslySetInnerHTML`, nên chữ của mô
+ * hình không bao giờ chạy được như mã.
  */
 
-const MAX_CHARS = 2000;
+const MAX_CHARS = 6000;
+
+type Cut = keyof ChatCopy["cut"];
+type Limit = keyof ChatCopy["limited"];
 
 interface Msg {
   role: "user" | "assistant";
@@ -29,8 +32,10 @@ interface Msg {
   /** Model do trang tự chọn theo độ khó. */
   auto?: boolean;
   thinking?: boolean;
-  /** Đã hết lượt Pro và suy luận mở rộng nên chạy ở chế độ thường. */
-  limited?: boolean;
+  /** Các hạn mức đã hết trong ngày, khiến câu hỏi chạy bằng model khác. */
+  limited?: Limit[];
+  /** Câu trả lời chưa trọn và lý do. */
+  cut?: Cut;
   /** Bản tóm tắt suy luận của mô hình; không gửi lại lên máy chủ. */
   reasoning?: string;
   /** Thông báo lỗi hiện ở chỗ câu trả lời; không gửi lại lên máy chủ. */
@@ -38,7 +43,7 @@ interface Msg {
 }
 
 function modelName(t: ChatCopy, id: string): string {
-  return id === "openrouter/free" ? t.freeModel : modelLabel(id);
+  return id === FREE_ROUTER ? t.freeModel : modelLabel(id);
 }
 
 function errorText(t: ChatCopy, code: string, status: number): string {
@@ -217,16 +222,20 @@ export default function ChatPanel({
         model: served,
         auto: res.headers.has("X-Chat-Auto"),
         thinking: res.headers.has("X-Chat-Thinking"),
-        limited: res.headers.has("X-Chat-Limited"),
+        limited: (res.headers.get("X-Chat-Limited") ?? "")
+          .split(",")
+          .filter((s): s is Limit => s in t.limited),
       });
+      let cut: Cut | undefined;
       // Mỗi dòng là một sự kiện JSON; dòng có thể bị cắt giữa hai gói dữ liệu.
       const apply = (line: string) => {
         if (!line.trim()) return;
         try {
-          const e = JSON.parse(line) as { t?: unknown; r?: unknown; m?: unknown };
+          const e = JSON.parse(line) as { t?: unknown; r?: unknown; m?: unknown; e?: unknown };
           if (typeof e.t === "string") acc += e.t;
           else if (typeof e.r === "string") think += e.r;
           else if (typeof e.m === "string") served = e.m;
+          else if (typeof e.e === "string" && e.e in t.cut) cut = e.e as Cut;
         } catch {
           // Dòng hỏng: bỏ qua.
         }
@@ -246,7 +255,7 @@ export default function ChatPanel({
       apply(buf + dec.decode());
       update(
         acc.trim()
-          ? { content: acc, reasoning: think, model: served }
+          ? { content: acc, reasoning: think, model: served, cut }
           : { content: t.errors.empty, error: true },
       );
     } catch {
@@ -254,7 +263,8 @@ export default function ChatPanel({
         // Người dùng bấm dừng: giữ phần đã nhận.
         update(acc.trim() ? { content: acc } : { content: t.stopped, error: true });
       } else {
-        update({ content: t.errors.network, error: true });
+        // Mạng đứt giữa chừng: giữ phần đã nhận để viết tiếp được.
+        update(acc.trim() ? { content: acc, cut: "cut" } : { content: t.errors.network, error: true });
       }
     } finally {
       setBusy(false);
@@ -340,7 +350,25 @@ export default function ChatPanel({
                     .join(" · ")}
                 </p>
               )}
-              {m.limited && !m.error && <p className="chat-skill">{t.limited}</p>}
+              {!m.error &&
+                m.limited?.map((l) => (
+                  <p key={l} className="chat-skill">
+                    {t.limited[l]}
+                  </p>
+                ))}
+              {m.cut && !m.error && (
+                <p className="chat-cut">
+                  {t.cut[m.cut]}
+                  {i === msgs.length - 1 && !busy && (
+                    <>
+                      {" "}
+                      <button type="button" className="chip" onClick={() => send(t.moreText)}>
+                        {t.more}
+                      </button>
+                    </>
+                  )}
+                </p>
+              )}
             </div>
           ),
         )}
@@ -356,10 +384,14 @@ export default function ChatPanel({
             onChange={(e) => setModel(e.target.value as ModelChoice)}
           >
             <option value="auto">{t.auto}</option>
-            {MODELS.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.label} ({t.modelHints[m.id]})
-              </option>
+            {(["gemini", "openrouter"] as const).map((p) => (
+              <optgroup key={p} label={p === "gemini" ? t.groupGemini : t.groupFree}>
+                {MODELS.filter((m) => m.provider === p).map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {`${modelName(t, m.id)}${t.modelHints[m.id] ? ` · ${t.modelHints[m.id]}` : ""}`}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </label>
@@ -372,6 +404,8 @@ export default function ChatPanel({
           />
           <span>{t.thinking}</span>
         </label>
+        {model === PRO && <p className="chat-hint">{t.proNote}</p>}
+        {model !== "auto" && providerOf(model) === "openrouter" && <p className="chat-hint">{t.freeNote}</p>}
       </div>
 
       <form
