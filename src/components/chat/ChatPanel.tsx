@@ -3,50 +3,56 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { ChatHistory } from "@/components/chat/ChatHistory";
 import type { Lang } from "@/data/types";
 import { getChatCopy, type ChatCopy } from "@/i18n/chat";
 import { ACCOUNTS_ENABLED, authHeaders } from "@/lib/account";
-import { FREE_ROUTER, MODELS, modelLabel, PRO, providerOf, type ModelChoice } from "@/lib/chat/models";
+import {
+  activeConversation,
+  chatDeviceId,
+  clearConversations,
+  deleteConversation,
+  newConversationId,
+  readConversation,
+  saveConversation,
+  setActiveConversation,
+  takePendingQuestion,
+  useConversations,
+  type Cut,
+  type Limit,
+  type Msg,
+} from "@/lib/chat/history";
+import {
+  FREE_ROUTER,
+  MODELS,
+  modelLabel,
+  OFFLINE_MODEL,
+  pickable,
+  PRO,
+  providerOf,
+  type ModelChoice,
+} from "@/lib/chat/models";
 import type { SkillId } from "@/lib/chat/skills";
 
 /**
- * Khung trò chuyện của trợ lý hỏi đáp.
+ * Khung trò chuyện của trợ lý hỏi đáp, ở hai dạng: khung nổi góc phải
+ * (`variant="panel"`, do `ChatHost` đặt trên mọi trang) và trang riêng
+ * `/hoi-dap` (`variant="page"`, có cột lịch sử).
  *
- * Cuộc trò chuyện chỉ nằm trong bộ nhớ của trang: mỗi lượt hỏi gửi lại cả phần
- * trước lên `/api/chat`, máy chủ không giữ gì. Câu trả lời chảy về dạng NDJSON
- * (chữ trả lời, chữ suy luận, tên model, báo câu trả lời chưa trọn) và được
- * dựng thành phần tử React, không qua `dangerouslySetInnerHTML`, nên chữ của mô
- * hình không bao giờ chạy được như mã.
+ * Máy chủ không giữ cuộc trò chuyện: mỗi lượt hỏi gửi lại cả phần trước lên
+ * `/api/chat`. Tối đa 5 cuộc gần nhất được lưu trong trình duyệt
+ * (`src/lib/chat/history.ts`). Câu trả lời chảy về dạng NDJSON (chữ trả lời,
+ * chữ suy luận, tên model, báo câu trả lời chưa trọn) và được dựng thành phần
+ * tử React, không qua `dangerouslySetInnerHTML`, nên chữ của mô hình không bao
+ * giờ chạy được như mã.
  */
 
 const MAX_CHARS = 6000;
 
-type Cut = keyof ChatCopy["cut"];
-type Limit = keyof ChatCopy["limited"];
-
-interface Msg {
-  role: "user" | "assistant";
-  content: string;
-  skills?: SkillId[];
-  /** Mã model đã trả lời. */
-  model?: string;
-  /** Model do trang tự chọn theo độ khó. */
-  auto?: boolean;
-  thinking?: boolean;
-  /** Các hạn mức đã hết trong ngày, khiến câu hỏi chạy bằng model khác. */
-  limited?: Limit[];
-  /** Số lượt Pro đã mua còn lại, khi câu này vừa dùng lượt mua. */
-  credits?: number;
-  /** Câu trả lời chưa trọn và lý do. */
-  cut?: Cut;
-  /** Bản tóm tắt suy luận của mô hình; không gửi lại lên máy chủ. */
-  reasoning?: string;
-  /** Thông báo lỗi hiện ở chỗ câu trả lời; không gửi lại lên máy chủ. */
-  error?: boolean;
-}
-
 function modelName(t: ChatCopy, id: string): string {
-  return id === FREE_ROUTER ? t.freeModel : modelLabel(id);
+  if (id === FREE_ROUTER) return t.freeModel;
+  if (id === OFFLINE_MODEL) return t.offline.model;
+  return modelLabel(id);
 }
 
 function errorText(t: ChatCopy, code: string, status: number): string {
@@ -144,26 +150,64 @@ function Answer({ text }: { text: string }) {
 
 export default function ChatPanel({
   lang,
-  open,
+  open = true,
   onClose,
+  variant = "panel",
 }: {
   lang: Lang;
-  open: boolean;
-  onClose: () => void;
+  open?: boolean;
+  onClose?: () => void;
+  variant?: "panel" | "page";
 }) {
   const t = getChatCopy(lang);
+  const history = useConversations();
   const [msgs, setMsgs] = useState<Msg[]>([]);
+  const [conv, setConv] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [model, setModel] = useState<ModelChoice>("auto");
   const [thinking, setThinking] = useState(false);
+  const [view, setView] = useState<"chat" | "history">("chat");
+  const [dropped, setDropped] = useState(false);
   const abort = useRef<AbortController | null>(null);
+  /** Tăng mỗi khi đổi cuộc trò chuyện, để lượt hỏi đang chạy của cuộc cũ không ghi đè cuộc mới. */
+  const generation = useRef(0);
+  const busyRef = useRef(false);
   const field = useRef<HTMLTextAreaElement>(null);
   const log = useRef<HTMLDivElement>(null);
 
+  function show(id: string | null, list: Msg[]) {
+    generation.current++;
+    abort.current?.abort();
+    setConv(id);
+    setMsgs(list);
+    setView("chat");
+    setActiveConversation(id);
+  }
+
+  // Mở khung chat thì hiện cuộc đang dở, có thể vừa được mở ở trang khác.
   useEffect(() => {
-    if (open) field.current?.focus();
-  }, [open]);
+    if (!open || busyRef.current) return;
+    const id = activeConversation();
+    const found = id ? readConversation(id) : undefined;
+    setConv(found ? found.id : null);
+    setMsgs(found ? found.msgs : []);
+    if (variant !== "page") return;
+    // Câu hỏi gõ ở ô hỏi trang chủ: mở cuộc mới và gửi ngay.
+    const q = takePendingQuestion();
+    if (q) {
+      show(null, []);
+      void send(q, [], null);
+    }
+    // Chỉ chạy khi khung chat mở ra; `send` và `show` đọc trạng thái mới nhất qua ref.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, variant]);
+
+  // Trên trang riêng ở màn hình hẹp không tự đặt con trỏ: bàn phím ảo sẽ che trang.
+  useEffect(() => {
+    if (!open || view !== "chat") return;
+    if (variant === "panel" || window.matchMedia("(min-width: 1024px)").matches) field.current?.focus();
+  }, [open, view, conv, variant]);
 
   useEffect(() => {
     const el = log.current;
@@ -171,7 +215,7 @@ export default function ChatPanel({
   }, [msgs]);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !onClose) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
@@ -182,29 +226,48 @@ export default function ChatPanel({
   // Đóng hẳn trang giữa chừng thì hủy luôn yêu cầu đang chạy.
   useEffect(() => () => abort.current?.abort(), []);
 
-  async function send(text: string) {
+  async function send(text: string, base: Msg[] = msgs, current: string | null = conv) {
     const q = text.trim();
-    if (!q || busy) return;
+    if (!q || busyRef.current) return;
+    const id = current ?? newConversationId();
+    if (!current) {
+      setConv(id);
+      setActiveConversation(id);
+    }
+    const gen = generation.current;
     // Chỉ gửi lại những lượt hỏi đã có câu trả lời thật: lượt lỗi bị bỏ cả cặp.
-    const history = msgs
-      .filter((m, i) => (m.role === "assistant" ? !m.error : msgs[i + 1] && !msgs[i + 1].error))
+    const sent = base
+      .filter((m, i) => (m.role === "assistant" ? !m.error : base[i + 1] && !base[i + 1].error))
       .map(({ role, content }) => ({ role, content }));
-    setMsgs([...msgs, { role: "user", content: q }, { role: "assistant", content: "" }]);
+    const asked: Msg[] = [...base, { role: "user", content: q }];
+    let answer: Msg = { role: "assistant", content: "" };
+    setMsgs([...asked, answer]);
+    setDropped(saveConversation(id, asked));
     setInput("");
     setBusy(true);
+    busyRef.current = true;
     const ctl = new AbortController();
     abort.current = ctl;
-    const update = (patch: Partial<Msg>) =>
-      setMsgs((cur) => [...cur.slice(0, -1), { ...cur[cur.length - 1], ...patch }]);
+    const update = (patch: Partial<Msg>) => {
+      answer = { ...answer, ...patch };
+      if (generation.current !== gen) return;
+      const shown = answer;
+      setMsgs((cur) => [...cur.slice(0, -1), shown]);
+    };
 
     let acc = "";
     let think = "";
     try {
+      const device = chatDeviceId();
       const res = await fetch("/api/chat", {
         method: "POST",
         // Đăng nhập thì gửi kèm phiên, để máy chủ dùng lượt Pro đã mua khi hết lượt miễn phí.
-        headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-        body: JSON.stringify({ lang, messages: [...history, { role: "user", content: q }], model, thinking }),
+        headers: {
+          "Content-Type": "application/json",
+          ...(device ? { "X-Chat-Client": device } : {}),
+          ...(await authHeaders()),
+        },
+        body: JSON.stringify({ lang, messages: [...sent, { role: "user", content: q }], model, thinking }),
         signal: ctl.signal,
       });
       if (!res.ok || !res.body) {
@@ -265,196 +328,255 @@ export default function ChatPanel({
       );
     } catch {
       if (ctl.signal.aborted) {
-        // Người dùng bấm dừng: giữ phần đã nhận.
+        // Người dùng bấm dừng hay đổi cuộc: giữ phần đã nhận.
         update(acc.trim() ? { content: acc } : { content: t.stopped, error: true });
       } else {
         // Mạng đứt giữa chừng: giữ phần đã nhận để viết tiếp được.
         update(acc.trim() ? { content: acc, cut: "cut" } : { content: t.errors.network, error: true });
       }
     } finally {
+      saveConversation(id, [...asked, answer]);
+      busyRef.current = false;
       setBusy(false);
-      abort.current = null;
+      if (abort.current === ctl) abort.current = null;
     }
   }
 
-  function reset() {
-    abort.current?.abort();
-    setMsgs([]);
-    field.current?.focus();
+  function startNew() {
+    show(null, []);
+    setDropped(false);
   }
+
+  function openConversation(id: string) {
+    const found = readConversation(id);
+    if (found) show(found.id, found.msgs);
+  }
+
+  function remove(id: string) {
+    deleteConversation(id);
+    if (id === conv) show(null, []);
+  }
+
+  function clearAll() {
+    if (!window.confirm(t.history.clearConfirm)) return;
+    clearConversations();
+    show(null, []);
+  }
+
+  const panel = variant === "panel";
 
   return (
     <section
-      className="chat-panel"
-      role="dialog"
+      className={panel ? "chat-panel" : "chat-page"}
+      data-view={view}
+      role={panel ? "dialog" : undefined}
       aria-labelledby="chat-title"
       hidden={!open}
     >
       <header className="chat-head">
-        <p id="chat-title" className="chat-title">
-          {t.title} <span className="chat-badge">{t.badge}</span>
-        </p>
+        {panel ? (
+          <p id="chat-title" className="chat-title">
+            {t.title} <span className="chat-badge">{t.badge}</span>
+          </p>
+        ) : (
+          <h1 id="chat-title" className="chat-title">
+            {t.page.title} <span className="chat-badge">{t.badge}</span>
+          </h1>
+        )}
         <div className="flex items-center gap-1">
+          <button
+            type="button"
+            className="chat-icon-btn chat-hist-btn"
+            aria-expanded={view === "history"}
+            onClick={() => setView(view === "history" ? "chat" : "history")}
+          >
+            {t.history.button(history.length)}
+          </button>
           {msgs.length > 0 && (
-            <button type="button" className="chat-icon-btn" onClick={reset}>
+            <button type="button" className="chat-icon-btn" onClick={startNew}>
               {t.reset}
             </button>
           )}
-          <button type="button" className="chat-icon-btn" onClick={onClose} aria-label={t.close}>
-            <span aria-hidden="true">✕</span>
-          </button>
+          {onClose && (
+            <button type="button" className="chat-icon-btn" onClick={onClose} aria-label={t.close}>
+              <span aria-hidden="true">✕</span>
+            </button>
+          )}
         </div>
       </header>
 
-      <div ref={log} className="chat-log thin-scroll" role="log" aria-live="polite" aria-busy={busy}>
-        <p className="chat-notice">
-          {t.notice}{" "}
-          <Link href={`/${lang}/chinh-sach#rieng-tu`} className="link-sweep">
-            {t.policy}
-          </Link>
-        </p>
-        {msgs.length === 0 && (
-          <div className="chat-intro">
-            <p>{t.intro}</p>
-            <ul>
-              {t.examples.map((ex) => (
-                <li key={ex}>
-                  <button type="button" className="chip" onClick={() => send(ex)}>
-                    {ex}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {msgs.map((m, i) =>
-          m.role === "user" ? (
-            <p key={i} className="chat-msg chat-user">
-              {m.content}
+      <div className="chat-body">
+        <ChatHistory
+          lang={lang}
+          t={t}
+          items={history}
+          active={conv}
+          onOpen={openConversation}
+          onDelete={remove}
+          onClear={clearAll}
+          onNew={startNew}
+        />
+
+        <div className="chat-main">
+          <div ref={log} className="chat-log thin-scroll" role="log" aria-live="polite" aria-busy={busy}>
+            <p className="chat-notice">
+              {t.notice}{" "}
+              <Link href={`/${lang}/chinh-sach#rieng-tu`} className="link-sweep">
+                {t.policy}
+              </Link>
             </p>
-          ) : (
-            <div key={i} className={`chat-msg chat-bot${m.error ? " chat-error" : ""}`}>
-              {m.reasoning && !m.error && (
-                <details className="chat-think">
-                  <summary>{m.content ? t.thinkingDone : t.thinkingNow}</summary>
-                  <div className="chat-think-body">
-                    <Answer text={m.reasoning} />
-                  </div>
-                </details>
-              )}
-              {m.content ? <Answer text={m.content} /> : !m.reasoning && <p className="chat-wait">…</p>}
-              {m.content && !m.error && <p className="chat-ref">{t.reference}</p>}
-              {m.model && !m.error && (
-                <p className="chat-skill">
-                  {[
-                    `${t.modelPrefix}: ${modelName(t, m.model)}${m.auto ? ` (${t.autoTag})` : ""}`,
-                    m.thinking ? t.thinking : "",
-                    m.credits !== undefined ? t.credits(m.credits) : "",
-                    m.skills?.length ? `${t.skillPrefix}: ${m.skills.map((s) => t.skills[s]).join(", ")}` : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-              )}
-              {!m.error &&
-                m.limited?.map((l) => (
-                  <p key={l} className="chat-skill">
-                    {t.limited[l]}
-                    {l === "pro" && ACCOUNTS_ENABLED && (
-                      <>
-                        {" "}
-                        <Link href={`/${lang}/tai-khoan#nang-cap`} className="underline underline-offset-2">
-                          {t.buyCredits}
-                        </Link>
-                      </>
-                    )}
-                  </p>
-                ))}
-              {m.cut && !m.error && (
-                <p className="chat-cut">
-                  {t.cut[m.cut]}
-                  {i === msgs.length - 1 && !busy && (
-                    <>
-                      {" "}
-                      <button type="button" className="chip" onClick={() => send(t.moreText)}>
-                        {t.more}
+            {dropped && <p className="chat-notice">{t.history.dropped}</p>}
+            {msgs.length === 0 && (
+              <div className="chat-intro">
+                <p>{t.intro}</p>
+                <ul>
+                  {t.examples.map((ex) => (
+                    <li key={ex}>
+                      <button type="button" className="chip" onClick={() => send(ex)}>
+                        {ex}
                       </button>
-                    </>
-                  )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {msgs.map((m, i) =>
+              m.role === "user" ? (
+                <p key={i} className="chat-msg chat-user">
+                  {m.content}
                 </p>
-              )}
-            </div>
-          ),
-        )}
-      </div>
+              ) : (
+                <div key={i} className={`chat-msg chat-bot${m.error ? " chat-error" : ""}`}>
+                  {m.reasoning && !m.error && (
+                    <details className="chat-think">
+                      <summary>{m.content ? t.thinkingDone : t.thinkingNow}</summary>
+                      <div className="chat-think-body">
+                        <Answer text={m.reasoning} />
+                      </div>
+                    </details>
+                  )}
+                  {m.content ? <Answer text={m.content} /> : !m.reasoning && <p className="chat-wait">…</p>}
+                  {m.content && !m.error && <p className="chat-ref">{t.reference}</p>}
+                  {m.model && !m.error && (
+                    <p className="chat-skill">
+                      {[
+                        `${t.modelPrefix}: ${modelName(t, m.model)}${m.auto ? ` (${t.autoTag})` : ""}`,
+                        m.thinking ? t.thinking : "",
+                        m.credits !== undefined ? t.credits(m.credits) : "",
+                        m.skills?.length
+                          ? `${t.skillPrefix}: ${m.skills
+                              .filter((s) => s in t.skills)
+                              .map((s) => t.skills[s])
+                              .join(", ")}`
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  )}
+                  {!m.error &&
+                    m.limited
+                      ?.filter((l) => l in t.limited)
+                      .map((l) => (
+                        <p key={l} className="chat-skill">
+                          {t.limited[l]}
+                          {l === "pro" && ACCOUNTS_ENABLED && (
+                            <>
+                              {" "}
+                              <Link href={`/${lang}/tai-khoan#nang-cap`} className="underline underline-offset-2">
+                                {t.buyCredits}
+                              </Link>
+                            </>
+                          )}
+                        </p>
+                      ))}
+                  {m.cut && m.cut in t.cut && !m.error && (
+                    <p className="chat-cut">
+                      {t.cut[m.cut]}
+                      {i === msgs.length - 1 && !busy && (
+                        <>
+                          {" "}
+                          <button type="button" className="chip" onClick={() => send(t.moreText)}>
+                            {t.more}
+                          </button>
+                        </>
+                      )}
+                    </p>
+                  )}
+                </div>
+              ),
+            )}
+          </div>
 
-      <div className="chat-opts">
-        <label className="chat-opt">
-          <span>{t.modelPrefix}</span>
-          <select
-            className="chat-select"
-            value={model}
-            disabled={busy}
-            onChange={(e) => setModel(e.target.value as ModelChoice)}
-          >
-            <option value="auto">{t.auto}</option>
-            {(["gemini", "openrouter"] as const).map((p) => (
-              <optgroup key={p} label={p === "gemini" ? t.groupGemini : t.groupFree}>
-                {MODELS.filter((m) => m.provider === p).map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {`${modelName(t, m.id)}${t.modelHints[m.id] ? ` · ${t.modelHints[m.id]}` : ""}`}
-                  </option>
+          <div className="chat-opts">
+            <label className="chat-opt">
+              <span>{t.modelPrefix}</span>
+              <select
+                className="chat-select"
+                value={model}
+                disabled={busy}
+                onChange={(e) => setModel(e.target.value as ModelChoice)}
+              >
+                <option value="auto">{t.auto}</option>
+                {(["gemini", "openrouter"] as const).map((p) => (
+                  <optgroup key={p} label={p === "gemini" ? t.groupGemini : t.groupFree}>
+                    {MODELS.filter((m) => m.provider === p && pickable(m.id)).map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {`${modelName(t, m.id)}${t.modelHints[m.id] ? ` · ${t.modelHints[m.id]}` : ""}`}
+                      </option>
+                    ))}
+                  </optgroup>
                 ))}
-              </optgroup>
-            ))}
-          </select>
-        </label>
-        <label className="chat-opt">
-          <input
-            type="checkbox"
-            checked={thinking}
-            disabled={busy}
-            onChange={(e) => setThinking(e.target.checked)}
-          />
-          <span>{t.thinking}</span>
-        </label>
-        {model === PRO && <p className="chat-hint">{t.proNote}</p>}
-        {model !== "auto" && providerOf(model) === "openrouter" && <p className="chat-hint">{t.freeNote}</p>}
-      </div>
+              </select>
+            </label>
+            <label className="chat-opt">
+              <input
+                type="checkbox"
+                checked={thinking}
+                disabled={busy}
+                onChange={(e) => setThinking(e.target.checked)}
+              />
+              <span>{t.thinking}</span>
+            </label>
+            {model === PRO && <p className="chat-hint">{t.proNote}</p>}
+            {model !== "auto" && providerOf(model) === "openrouter" && <p className="chat-hint">{t.freeNote}</p>}
+          </div>
 
-      <form
-        className="chat-form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          send(input);
-        }}
-      >
-        <textarea
-          ref={field}
-          className="chat-input"
-          rows={2}
-          maxLength={MAX_CHARS}
-          value={input}
-          placeholder={t.placeholder}
-          aria-label={t.placeholder}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+          <form
+            className="chat-form"
+            onSubmit={(e) => {
               e.preventDefault();
               send(input);
-            }
-          }}
-        />
-        {busy ? (
-          <button type="button" className="btn btn-quiet btn-sm" onClick={() => abort.current?.abort()}>
-            {t.stop}
-          </button>
-        ) : (
-          <button type="submit" className="btn btn-solid btn-sm" disabled={!input.trim()}>
-            {t.send}
-          </button>
-        )}
-      </form>
+            }}
+          >
+            <textarea
+              ref={field}
+              className="chat-input"
+              rows={2}
+              maxLength={MAX_CHARS}
+              value={input}
+              placeholder={t.placeholder}
+              aria-label={t.placeholder}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+                  e.preventDefault();
+                  send(input);
+                }
+              }}
+            />
+            {busy ? (
+              <button type="button" className="btn btn-quiet btn-sm" onClick={() => abort.current?.abort()}>
+                {t.stop}
+              </button>
+            ) : (
+              <button type="submit" className="btn btn-solid btn-sm" disabled={!input.trim()}>
+                {t.send}
+              </button>
+            )}
+          </form>
+        </div>
+      </div>
     </section>
   );
 }

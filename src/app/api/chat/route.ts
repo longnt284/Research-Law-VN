@@ -10,9 +10,11 @@ import {
   type ModelChoice,
   type ModelId,
 } from "@/lib/chat/models";
+import { admit, deviceKey, LIMITS, Window } from "@/lib/chat/limits";
+import { OFFLINE_MODEL, offlineAnswer, offlineBody } from "@/lib/chat/offline";
 import { buildSystemPrompt } from "@/lib/chat/prompt";
 import { chatConfigured, streamChat, type ChatMessage } from "@/lib/chat/provider";
-import { pickRoutes } from "@/lib/chat/skills";
+import { pickRoutes, type Picked } from "@/lib/chat/skills";
 import { refundCredits, spendCredits, type PaidTurn } from "@/lib/payments/server";
 import { turnCost } from "@/lib/plans";
 
@@ -28,9 +30,12 @@ import { turnCost } from "@/lib/plans";
  * chọn tay, câu hỏi chạy bằng Gemini), `X-Chat-Credits` số lượt Pro đã mua còn
  * lại khi câu hỏi vừa dùng lượt mua.
  *
- * Mã lỗi trả về, để khung chat báo đúng lý do: 403 gọi từ trang khác, 503 chưa
- * cấu hình, 429 quá lượt, 400 và 413 yêu cầu sai hoặc quá dài, 502 mọi nhà cung
- * cấp mô hình đều từ chối.
+ * Mọi nhà cung cấp mô hình đều từ chối, hoặc chưa cấu hình nhà cung cấp nào,
+ * thì câu hỏi vẫn được trả lời bằng tra cứu tự động (`offline.ts`), với
+ * `X-Chat-Model: offline`.
+ *
+ * Mã lỗi trả về, để khung chat báo đúng lý do: 403 gọi từ trang khác, 429 quá
+ * lượt, 400 và 413 yêu cầu sai hoặc quá dài.
  */
 
 export const runtime = "nodejs";
@@ -43,13 +48,11 @@ const DEADLINE_MS = 285_000;
 
 const MAX_USER_CHARS = 6000;
 const MAX_TURNS = 16;
-const MAX_TOTAL_CHARS = 40_000;
+/** Tổng ký tự của cuộc trò chuyện gửi lên mô hình mỗi lượt; lượt cũ hơn bị bỏ. */
+const MAX_TOTAL_CHARS = 30_000;
 
 /*
-  Giới hạn lượt theo địa chỉ IP, giữ trong bộ nhớ của tiến trình. Trên
-  serverless mỗi phiên bản giữ một bảng riêng, nên đây là giới hạn tương đối: đủ
-  để một người không dùng hết hạn mức miễn phí của cả trang, không phải hàng rào
-  chống tấn công. Địa chỉ IP bị xóa khỏi bảng sau tối đa 24 giờ.
+  Giới hạn lượt theo thiết bị và theo địa chỉ IP: xem `src/lib/chat/limits.ts`.
 
   Gemini 3.1 Pro và suy luận mở rộng tốn gấp nhiều lần một lượt thường, nên có
   hạn mức riêng. Hết hạn mức đó thì câu hỏi vẫn được trả lời, bằng 3.8 Flash ở
@@ -57,44 +60,29 @@ const MAX_TOTAL_CHARS = 40_000;
   chủ trừ lượt (`src/lib/plans.ts`) và giữ nguyên Pro, suy luận mở rộng. Quyền
   này chỉ dựa vào số dư trong cơ sở dữ liệu, không dựa vào gì trình duyệt gửi.
 
-  Model miễn phí của OpenRouter dùng chung hạn mức ngày của cả tài khoản (50
-  lượt khi tài khoản chưa từng nạp 10 USD, 1.000 lượt khi đã nạp), và hạn mức đó
-  còn là chốt dự phòng khi Gemini hết lượt. Vì vậy lượt chọn tay model OpenRouter
-  có hạn mức riêng; hết thì câu hỏi chạy bằng Gemini theo độ khó.
+  Lượt chọn tay model OpenRouter có hạn mức riêng, vì model miễn phí của
+  OpenRouter dùng chung hạn mức ngày của cả tài khoản, và hạn mức đó còn là chốt
+  dự phòng khi Gemini hết lượt. Hết thì câu hỏi chạy bằng Gemini theo độ khó.
 */
-const PER_MINUTE = 6;
-const PER_DAY = 40;
-const PREMIUM_PER_DAY = 10;
-const FREE_PER_DAY = 10;
-const DAY_MS = 86_400_000;
-const hits = new Map<string, number[]>();
-const premiumHits = new Map<string, number[]>();
-const freeHits = new Map<string, number[]>();
-
-function overLimit(
-  hits: Map<string, number[]>,
-  ip: string,
-  now: number,
-  perDay: number,
-  perMinute = Infinity,
-): boolean {
-  if (hits.size > 10_000) {
-    for (const [k, v] of hits) if (now - v[v.length - 1] >= DAY_MS) hits.delete(k);
-    if (hits.size > 10_000) hits.clear();
-  }
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < DAY_MS);
-  const lastMinute = recent.filter((t) => now - t < 60_000).length;
-  if (recent.length >= perDay || lastMinute >= perMinute) {
-    hits.set(ip, recent);
-    return true;
-  }
-  recent.push(now);
-  hits.set(ip, recent);
-  return false;
-}
+const ipHits = new Window();
+const deviceHits = new Window();
+const premiumHits = new Window();
+const premiumIpHits = new Window();
+const freeHits = new Window();
 
 function fail(status: number, error: string): Response {
   return Response.json({ error }, { status, headers: { "Cache-Control": "no-store" } });
+}
+
+const STREAM_HEADERS = { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store" };
+
+/** Trả lời bằng tra cứu tự động; `reason` chỉ để ghi nhật ký. */
+function offline(lang: Lang, userTexts: string[], picked: Picked, reason: string): Response {
+  console.info(JSON.stringify({ scope: "chat", event: "offline", reason }));
+  const answer = offlineAnswer({ lang, text: userTexts[userTexts.length - 1], domains: picked.domains });
+  return new Response(offlineBody(answer), {
+    headers: { ...STREAM_HEADERS, "X-Chat-Skill": picked.skills.join(","), "X-Chat-Model": OFFLINE_MODEL },
+  });
 }
 
 type Parsed =
@@ -144,11 +132,15 @@ export async function POST(req: Request): Promise<Response> {
     sameOrigin = false;
   }
   if (!sameOrigin) return fail(403, "origin");
-  if (!chatConfigured()) return fail(503, "config");
 
   // Vercel ghi đè x-forwarded-for bằng địa chỉ thật của người gửi.
   const ip = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
-  if (overLimit(hits, ip, Date.now(), PER_DAY, PER_MINUTE)) return fail(429, "rate");
+  const device = deviceKey(req, ip);
+  const admitted = admit(Date.now(), [
+    { window: ipHits, key: ip, perDay: LIMITS.ipPerDay, perMinute: LIMITS.ipPerMinute },
+    { window: deviceHits, key: device, perDay: LIMITS.perDay, perMinute: LIMITS.perMinute },
+  ]);
+  if (!admitted) return fail(429, "rate");
 
   let body: unknown;
   try {
@@ -161,12 +153,13 @@ export async function POST(req: Request): Promise<Response> {
 
   const userTexts = parsed.messages.filter((m) => m.role === "user").map((m) => m.content);
   const picked = pickRoutes(userTexts);
+  if (!chatConfigured()) return offline(parsed.lang, userTexts, picked, "config");
   let system: string;
   try {
     system = buildSystemPrompt({ lang: parsed.lang, ...picked, texts: userTexts.slice(-3) });
   } catch (e) {
     console.error(`chat: không dựng được prompt: ${e instanceof Error ? e.message : "không rõ"}`);
-    return fail(503, "config");
+    return offline(parsed.lang, userTexts, picked, "prompt");
   }
 
   // Chọn 3.1 Pro nghĩa là "Pro khi cần": câu hỏi chưa đủ khó vẫn chạy bằng Flash.
@@ -176,12 +169,21 @@ export async function POST(req: Request): Promise<Response> {
       : parsed.model;
   let thinking = parsed.thinking;
   const limited: string[] = [];
-  if (providerOf(first) === "openrouter" && overLimit(freeHits, ip, Date.now(), FREE_PER_DAY)) {
+  if (
+    providerOf(first) === "openrouter" &&
+    !admit(Date.now(), [{ window: freeHits, key: device, perDay: LIMITS.freePerDay }])
+  ) {
     first = autoModel(userTexts, picked.skills);
     limited.push("free");
   }
   let paid: PaidTurn | null = null;
-  if ((first === PRO || thinking) && overLimit(premiumHits, ip, Date.now(), PREMIUM_PER_DAY)) {
+  if (
+    (first === PRO || thinking) &&
+    !admit(Date.now(), [
+      { window: premiumHits, key: device, perDay: LIMITS.premiumPerDay },
+      { window: premiumIpHits, key: ip, perDay: LIMITS.premiumIpPerDay },
+    ])
+  ) {
     paid = await spendCredits(req, turnCost(first === PRO, thinking));
     if (!paid) {
       if (first === PRO) first = STANDARD;
@@ -199,11 +201,10 @@ export async function POST(req: Request): Promise<Response> {
   );
   if (!stream) {
     if (paid) await refundCredits(paid);
-    return fail(502, "upstream");
+    return offline(parsed.lang, userTexts, picked, "upstream");
   }
   const headers: Record<string, string> = {
-    "Content-Type": "application/x-ndjson; charset=utf-8",
-    "Cache-Control": "no-store",
+    ...STREAM_HEADERS,
     "X-Chat-Skill": picked.skills.join(","),
     "X-Chat-Model": stream.model,
   };

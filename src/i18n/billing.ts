@@ -1,4 +1,5 @@
 import type { Lang } from "@/data/types";
+import { PRO_ENABLED } from "@/lib/chat/models";
 import type { OrderStatus } from "@/lib/payments/server";
 
 /** Chữ của phần mua lượt Pro trên trang tài khoản (`BillingPanel`). */
@@ -39,7 +40,9 @@ export interface BillingCopy {
 const vi: BillingCopy = {
   title: "Lượt hỏi Pro",
   intro:
-    "Khi đã dùng hết lượt Gemini 3.1 Pro và suy luận mở rộng miễn phí trong ngày, mỗi câu hỏi dùng Gemini 3.1 Pro hoặc suy luận mở rộng trừ 1 lượt Pro đã mua (dùng cả hai trừ 2 lượt). Câu hỏi thường không trừ lượt.",
+    PRO_ENABLED
+      ? "Khi đã dùng hết lượt Gemini 3.1 Pro và suy luận mở rộng miễn phí trong ngày, mỗi câu hỏi dùng Gemini 3.1 Pro hoặc suy luận mở rộng trừ 1 lượt Pro đã mua (dùng cả hai trừ 2 lượt). Câu hỏi thường không trừ lượt."
+      : "Khi đã dùng hết lượt suy luận mở rộng miễn phí trong ngày, mỗi câu hỏi dùng suy luận mở rộng trừ 1 lượt Pro đã mua. Câu hỏi thường không trừ lượt.",
   balance: (n) => `Bạn còn ${n} lượt Pro.`,
   loading: "Đang tải…",
   plans: "Chọn gói",
@@ -85,7 +88,9 @@ const vi: BillingCopy = {
 const en: BillingCopy = {
   title: "Pro questions",
   intro:
-    "Once today's free Gemini 3.1 Pro and extended-thinking quota is used up, each question that uses Gemini 3.1 Pro or extended thinking costs 1 purchased Pro credit (2 when it uses both). Standard questions cost nothing.",
+    PRO_ENABLED
+      ? "Once today's free Gemini 3.1 Pro and extended-thinking quota is used up, each question that uses Gemini 3.1 Pro or extended thinking costs 1 purchased Pro credit (2 when it uses both). Standard questions cost nothing."
+      : "Once today's free extended-thinking quota is used up, each question that uses extended thinking costs 1 purchased Pro credit. Standard questions cost nothing.",
   balance: (n) => `You have ${n} Pro credit${n === 1 ? "" : "s"} left.`,
   loading: "Loading…",
   plans: "Choose a plan",

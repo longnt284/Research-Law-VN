@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { AnswerCard, ArticleRow, docHref, IndexStatus, ResultRow } from "@/components/search/results";
 import { useSearchIndex, useSearchOutcome } from "@/components/search/useSearchIndex";
 import type { Lang } from "@/data/types";
+import { getChatCopy } from "@/i18n/chat";
 import { formatDate, getDict } from "@/i18n/dictionary";
 import { getSearchCopy } from "@/i18n/search";
 import {
@@ -82,6 +83,7 @@ export default function CommandPalette({ lang, onClose }: { lang: Lang; onClose:
 
   const pages = useMemo(
     () => [
+      { href: `/${lang}/hoi-dap`, label: s.nav.ask, hint: getChatCopy(lang).page.title },
       { href: `/${lang}/van-ban`, label: s.nav.lookup, hint: t.list.title },
       { href: `/${lang}/linh-vuc`, label: s.nav.explore, hint: t.domainPage.title },
       { href: `/${lang}/doi-chieu`, label: s.nav.compare, hint: t.compare.title },

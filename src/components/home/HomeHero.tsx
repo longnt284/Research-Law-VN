@@ -1,4 +1,5 @@
 import { BrandMark } from "@/components/brand/BrandMark";
+import { HeroAsk } from "@/components/home/HeroAsk";
 import { HeroLineage } from "@/components/home/HeroLineage";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
@@ -12,8 +13,9 @@ import { heroLineage } from "@/lib/hero-lineage";
  * Phần đầu trang chủ: dùng trước, giải thích sau.
  *
  * Câu khẩu hiệu giữ nguyên — mỗi văn bản pháp luật đều có một gia phả — nhưng
- * thứ lớn nhất trên màn hình đầu tiên là ô tìm kiếm. Người quay lại trang chỉ
- * cần gõ số hiệu là thấy tình trạng hiệu lực, không phải đọc phần giới thiệu.
+ * thứ đầu tiên người đọc dùng được là ô hỏi trợ lý AI, rồi tới ô tìm kiếm.
+ * Người quay lại trang chỉ cần hỏi, hoặc gõ số hiệu là thấy tình trạng hiệu
+ * lực, không phải đọc phần giới thiệu.
  *
  * Dưới ô tìm là lối vào video giới thiệu, cho người lần đầu tới trang.
  *
@@ -43,6 +45,7 @@ export function HomeHero({ lang }: { lang: Lang }) {
           </h1>
           <p className="home-hero-promise rise rise-2">{l.promise}</p>
           <div className="rise rise-3">
+            <HeroAsk lang={lang} />
             <HeroSearch lang={lang} />
           </div>
           <div className="rise rise-4">
