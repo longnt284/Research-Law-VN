@@ -5,7 +5,7 @@
   "description": "Lex & Lineage — Gia phả văn bản pháp luật Việt Nam · The genealogy of Vietnamese law",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/check-chat-skills.mjs && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"

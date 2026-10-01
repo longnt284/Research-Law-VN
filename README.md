@@ -613,6 +613,14 @@ nhiên một model miễn phí cho mỗi câu hỏi; tên model thật hiện d�
 Nhà cung cấp dự phòng là tùy chọn. Thiếu `CHAT_SKILLS_KEY` hoặc thiếu nhà
 cung cấp thì trợ lý báo tạm ngưng; phần còn lại của trang không bị ảnh hưởng.
 
+`npm run build` chạy `scripts/check-chat-skills.mjs` trước `next build`;
+`vercel.json` buộc Vercel dùng `npm run build` thay cho `next build` mặc định.
+Khi có `CHAT_SKILLS_KEY` mà khóa không giải mã được `skills.enc.json`, build dừng
+với lỗi `check-chat-skills`, và Vercel giữ nguyên bản đang chạy thay vì đưa lên
+một bản có trợ lý tạm ngưng. Không có khóa (CI, máy phát triển) thì bước này bỏ
+qua. Đóng gói lại bằng khóa mới thì đổi `CHAT_SKILLS_KEY` trên Vercel, cho cả
+Production và Preview, trước khi merge commit chứa gói mới.
+
 ## Skill Claude Code
 
 Repo có sẵn hai skill dùng chung cho phiên Claude Code: `/caveman` (chế độ trả
@@ -896,5 +904,9 @@ model that returns 429 rests until the retry delay Google reports (one minute by
 default, one hour at most), so later questions go straight to the next model. The repository is public, so the skills are
 committed only in encrypted form (`src/lib/chat/skills.enc.json`, AES-256-GCM,
 key in `CHAT_SKILLS_KEY`). Repack them with `scripts/pack-chat-skills.mjs`.
+`npm run build` (which `vercel.json` makes Vercel use instead of its default
+`next build`) first runs `scripts/check-chat-skills.mjs`: when
+`CHAT_SKILLS_KEY` is set but cannot decrypt the bundle, the build fails, so
+Vercel keeps the running deployment instead of shipping a paused assistant.
 Conversations are not stored. Each IP address gets 6 questions a minute and
 40 a day.
