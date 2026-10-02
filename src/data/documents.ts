@@ -35,6 +35,16 @@ const VERIFIED_2026_09_24 = "2026-09-24";
  */
 const VERIFIED_2026_09_29 = "2026-09-29";
 
+/**
+ * Ngày tra cứu của đợt bổ sung hai lĩnh vực Dân sự và Án lệ, cùng Quy tắc VIAC
+ * 2017. Đợt này cũng không mở được trang nguồn Tier 1 (vbpl.vn, Công báo, cổng
+ * án lệ của Tòa án nhân dân tối cao, viac.vn), nên mọi bản ghi mới mang
+ * `confidence: "cross-check"`: số hiệu, ngày và nội dung chính được đối chiếu
+ * giữa ít nhất hai kết quả tìm kiếm độc lập, chi tiết không khớp thì bỏ hoặc
+ * ghi rõ ở `note`.
+ */
+const VERIFIED_2026_10_01 = "2026-10-01";
+
 export const domains: Domain[] = [
   {
     id: "xay-dung",
@@ -64,6 +74,15 @@ export const domains: Domain[] = [
     hue: 212,
   },
   {
+    id: "dan-su",
+    label: { vi: "Dân sự", en: "Civil Law" },
+    blurb: {
+      vi: "Giao dịch và tài sản, thừa kế, hôn nhân và gia đình, bảo đảm thực hiện nghĩa vụ, công chứng, hộ tịch, bồi thường của Nhà nước và thi hành án dân sự.",
+      en: "Transactions and property, succession, marriage and family, security for obligations, notarisation, civil status, State liability and the enforcement of civil judgments.",
+    },
+    hue: 122,
+  },
+  {
     id: "to-tung",
     label: { vi: "Tố tụng & Trọng tài", en: "Litigation & Arbitration" },
     blurb: {
@@ -71,6 +90,15 @@ export const domains: Domain[] = [
       en: "Jurisdiction, court and arbitral procedure, and the recognition and enforcement of foreign awards.",
     },
     hue: 352,
+  },
+  {
+    id: "an-le",
+    label: { vi: "Án lệ", en: "Precedents" },
+    blurb: {
+      vi: "Án lệ do Hội đồng Thẩm phán Tòa án nhân dân tối cao lựa chọn và Chánh án công bố để các Tòa án áp dụng thống nhất, cùng quy trình lựa chọn, công bố và áp dụng án lệ. Dự thảo án lệ đang lấy ý kiến được tách riêng, chỉ để tham khảo.",
+      en: "Precedents selected by the Judicial Council of the Supreme People's Court and published by its Chief Justice for uniform application by the courts, together with the procedure for selecting, publishing and applying them. Draft precedents under consultation are kept apart, for reference only.",
+    },
+    hue: 68,
   },
   {
     id: "doanh-nghiep",
@@ -840,7 +868,7 @@ export const documents: LegalDoc[] = [
     id: "blds-2015",
     number: "91/2015/QH13",
     type: "bo-luat",
-    domains: ["hop-dong", "to-tung"],
+    domains: ["dan-su", "hop-dong", "to-tung"],
     issuedOn: "2015-11-24",
     effectiveOn: "2017-01-01",
     status: "active",
@@ -893,7 +921,7 @@ export const documents: LegalDoc[] = [
     id: "bltds-2015",
     number: "92/2015/QH13",
     type: "bo-luat",
-    domains: ["to-tung"],
+    domains: ["to-tung", "dan-su"],
     issuedOn: "2015-11-25",
     effectiveOn: "2016-07-01",
     status: "amended",
@@ -977,7 +1005,7 @@ export const documents: LegalDoc[] = [
       vi: "Sửa đổi tổ chức hệ thống Tòa án và kéo theo thay đổi trong Luật Trọng tài thương mại ở phần Tòa án hỗ trợ và giám sát tố tụng trọng tài. Việc xác định Tòa án có thẩm quyền yêu cầu hủy phán quyết phải theo bản sửa đổi này.",
       en: "It reorganised the court system and, in consequence, altered the parts of the Arbitration Law dealing with judicial support and supervision of arbitration. The court competent to hear a set-aside application must be identified under this amendment.",
     },
-    amends: ["luat-ttm-2010"],
+    amends: ["luat-ttm-2010", "luat-hngd-2014"],
     sources: [
       `${LVN}/thuong-mai/van-ban-hop-nhat-60-vbhn-vpqh-nam-2025-do-van-phong-quoc-hoi-ban-hanh-hop-nhat-luat-trong-tai-thuong-mai-408965-d5.html`,
       `${VBPL}/179416`,
@@ -1044,8 +1072,37 @@ export const documents: LegalDoc[] = [
       vi: "Thông lệ là áp dụng bản quy tắc có hiệu lực tại thời điểm khởi động tố tụng, không phải thời điểm ký hợp đồng. Vẫn phải đọc điều khoản chuyển tiếp của chính bản quy tắc để xác nhận.",
       en: "The practice is to apply the version in force when the arbitration commences, not when the contract was signed. The Rules' own transitional provision should still be read to confirm.",
     },
+    replaces: ["viac-2017"],
     sources: ["https://viac.vn/trong-tai/quy-tac-to-tung-trong-tai-2026"],
     confidence: "verified",
+  },
+  {
+    id: "viac-2017",
+    number: "Quy tắc VIAC 2017",
+    type: "quy-tac",
+    domains: ["to-tung"],
+    issuedOn: "2017-02-03",
+    effectiveOn: "2017-03-01",
+    status: "expired",
+    title: {
+      vi: "Quy tắc tố tụng trọng tài của Trung tâm Trọng tài Quốc tế Việt Nam",
+      en: "Rules of Arbitration of the Vietnam International Arbitration Centre",
+    },
+    summary: {
+      vi: "Ban hành theo Quyết định 58/VIAC ngày 03/02/2017 của Chủ tịch VIAC, áp dụng từ 01/3/2017 và thay thế Quy tắc năm 2012. Ba quy định mới của bản này là tranh chấp phát sinh từ nhiều hợp đồng (Điều 6), hợp nhất các vụ tranh chấp (Điều 15) và thủ tục rút gọn (Điều 37) với một trọng tài viên trừ khi các bên thỏa thuận khác, thời hạn rút ngắn và phiên họp có thể tổ chức qua hội nghị truyền hình hoặc điện thoại.",
+      en: "Adopted by Decision 58/VIAC of 3 February 2017 of the VIAC President, applied from 1 March 2017 and replacing the 2012 Rules. Its three new features were disputes arising from multiple contracts (Article 6), consolidation of disputes (Article 15) and the expedited procedure (Article 37), with a sole arbitrator unless the parties agree otherwise, shortened time limits and hearings that may be held by video or telephone conference.",
+    },
+    note: {
+      vi: "Bị Quy tắc VIAC 2026 thay thế cho các vụ tố tụng trọng tài bắt đầu từ ngày 01/7/2026. Vụ bắt đầu trước mốc đó có thể vẫn theo bản 2017, tùy điều khoản chuyển tiếp của bản 2026 và thỏa thuận của các bên; cần đọc điều khoản chuyển tiếp để xác nhận.",
+      en: "Superseded by the VIAC Rules 2026 for arbitrations commenced on or after 1 July 2026. Proceedings commenced before that date may remain under the 2017 Rules, depending on the 2026 Rules' transitional provision and the parties' agreement; read the transitional provision to confirm.",
+    },
+    sources: [
+      "https://www.viac.vn/tin-tuc-su-kien/nhung-diem-moi-trong-quy-tac-to-tung-trong-tai-viac-2017-n225.html",
+      "https://baodautu.vn/viac-bat-dau-ap-dung-quy-tac-to-tung-trong-tai-moi-tu-132017-d59225.html",
+      "https://iav.vn/van-ban-phap-quy-khac/2967-quy-tac-to-tung-trong-tai-viac-2017",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
   },
   {
     id: "cong-uoc-ny-1958",
@@ -2167,7 +2224,7 @@ export const documents: LegalDoc[] = [
     id: "luat-thads-2008",
     number: "26/2008/QH12",
     type: "luat",
-    domains: ["to-tung"],
+    domains: ["to-tung", "dan-su"],
     issuedOn: "2008-11-14",
     effectiveOn: "2009-07-01",
     status: "expired",
@@ -2180,8 +2237,8 @@ export const documents: LegalDoc[] = [
       en: "The statute that decides the practical fate of a judgment or arbitral award once it is final: the application for enforcement, verification of the debtor's means, and attachment and disposal of assets. Where the debtor has no assets left, the matter ends here rather than in the judgment.",
     },
     note: {
-      vi: "Đã qua nhiều lần sửa đổi bằng Luật 64/2014/QH13 và các luật sau đó. Nguồn tra được cho biết luật này hết hiệu lực từ 01/7/2026 khi luật thi hành án dân sự mới có hiệu lực; số hiệu của luật mới chưa xác minh được trong phiên tra cứu.",
-      en: "It was amended several times, by Law 64/2014/QH13 and later statutes. The sources found indicate it ceased to have effect on 1 July 2026 when a new civil judgment enforcement law entered into force; the number of that new law could not be verified in this search.",
+      vi: "Đã qua nhiều lần sửa đổi bằng Luật 64/2014/QH13 và các luật sau đó. Hết hiệu lực từ 01/7/2026 khi Luật Thi hành án dân sự 106/2025/QH15 có hiệu lực; số hiệu luật mới được tra ngày 01/10/2026 ở mức cần đối chiếu thêm.",
+      en: "It was amended several times, by Law 64/2014/QH13 and later statutes. It ceased to have effect on 1 July 2026 when Civil Judgment Enforcement Law 106/2025/QH15 entered into force; the new law's number was traced on 1 October 2026 at cross-check level.",
     },
     sources: [
       `${TVPL}/van-ban/Thu-tuc-To-tung/Luat-thi-hanh-an-dan-su-2008-26-2008-QH12-82197.aspx`,
@@ -3410,7 +3467,7 @@ export const documents: LegalDoc[] = [
     id: "nd-21-2021",
     number: "21/2021/NĐ-CP",
     type: "nghi-dinh",
-    domains: ["hop-dong"],
+    domains: ["hop-dong", "dan-su"],
     issuedOn: "2021-03-19",
     effectiveOn: "2021-05-15",
     status: "active",
@@ -4603,6 +4660,765 @@ export const documents: LegalDoc[] = [
     ],
     confidence: "cross-check",
     verifiedOn: VERIFIED_2026_09_29,
+  },
+  // ──────────────────────────────── DÂN SỰ ────────────────────────────────
+  {
+    id: "luat-hngd-2014",
+    number: "52/2014/QH13",
+    type: "luat",
+    domains: ["dan-su"],
+    issuedOn: "2014-06-19",
+    effectiveOn: "2015-01-01",
+    status: "amended",
+    title: {
+      vi: "Luật Hôn nhân và gia đình",
+      en: "Law on Marriage and Family",
+    },
+    summary: {
+      vi: "Quy định chế độ hôn nhân và gia đình: điều kiện kết hôn, quyền và nghĩa vụ giữa vợ chồng, chế độ tài sản của vợ chồng, ly hôn, quan hệ giữa cha mẹ và con, cấp dưỡng. Luật cũng điều chỉnh hậu quả của việc nam nữ chung sống như vợ chồng mà không đăng ký kết hôn và cho phép mang thai hộ vì mục đích nhân đạo.",
+      en: "It governs the marriage and family regime: conditions for marriage, the rights and duties of spouses, the matrimonial property regime, divorce, relations between parents and children, and maintenance. It also deals with the consequences of cohabitation without registered marriage and permits altruistic surrogacy.",
+    },
+    note: {
+      vi: "Văn bản hợp nhất 121/VBHN-VPQH năm 2025 ghi luật này được sửa đổi bởi Luật 81/2025/QH15 sửa đổi Luật Tổ chức Tòa án nhân dân, có hiệu lực từ 01/7/2025, theo việc tổ chức lại hệ thống Tòa án. Quan hệ sửa đổi này được tra ở mức cần đối chiếu thêm.",
+      en: "Consolidated text 121/VBHN-VPQH of 2025 records this Law as amended by Law 81/2025/QH15 amending the Law on Organisation of People's Courts, effective 1 July 2025, following the reorganisation of the courts. This amending relation was traced at cross-check level.",
+    },
+    sources: [
+      `${CP}/default.aspx?pageid=27160&docid=175351`,
+      `${TVPL}/van-ban/Quyen-dan-su/Luat-Hon-nhan-va-gia-dinh-2014-238640.aspx`,
+      `${LVN}/hon-nhan-gia-dinh/van-ban-hop-nhat-121-vbhn-vpqh-nam-2025-do-van-phong-quoc-hoi-ban-hanh-hop-nhat-luat-hon-nhan-va-gia-dinh-410916-d5.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "luat-cong-chung-2024",
+    number: "46/2024/QH15",
+    type: "luat",
+    domains: ["dan-su"],
+    issuedOn: "2024-11-26",
+    effectiveOn: "2025-07-01",
+    status: "active",
+    title: {
+      vi: "Luật Công chứng",
+      en: "Law on Notarisation",
+    },
+    summary: {
+      vi: "Gồm tám chương và 76 điều, quy định công chứng viên, tổ chức hành nghề công chứng, thủ tục công chứng và công chứng điện tử. Việc chứng thực bản dịch không còn là việc công chứng mà chuyển sang hoạt động chứng thực chữ ký.",
+      en: "In eight chapters and 76 articles, it governs notaries, notarial practice organisations, notarial procedure and electronic notarisation. Certification of translations is no longer a notarial act and moves to signature authentication.",
+    },
+    replaces: ["luat-cong-chung-2014"],
+    sources: [
+      `${TVPL}/van-ban/dich-vu-phap-ly/Luat-cong-chung-2024-so-46-2024-QH15-524982.aspx`,
+      "https://vmrcc.gov.vn/thong-tin-phap-luat/luat-cong-chung-so-462024qh15-1757.html",
+      "https://www.nblaw.vn/tin-tuc/nhung-diem-moi-noi-bat-cua-luat-cong-chung-nam-2024-90.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "luat-cong-chung-2014",
+    number: "53/2014/QH13",
+    type: "luat",
+    domains: ["dan-su"],
+    issuedOn: "2014-06-20",
+    effectiveOn: "2015-01-01",
+    status: "expired",
+    title: {
+      vi: "Luật Công chứng",
+      en: "Law on Notarisation",
+    },
+    summary: {
+      vi: "Gồm mười chương và 81 điều, thay thế Luật Công chứng 82/2006/QH11. Luật nâng thời gian đào tạo nghề công chứng từ sáu tháng lên mười hai tháng. Hết hiệu lực từ 01/7/2025 khi Luật Công chứng 46/2024/QH15 có hiệu lực.",
+      en: "In ten chapters and 81 articles, it replaced Notarisation Law 82/2006/QH11 and lengthened notarial training from six to twelve months. It ceased to have effect on 1 July 2025 when Notarisation Law 46/2024/QH15 took effect.",
+    },
+    sources: [
+      `${TVPL}/van-ban/Dich-vu-phap-ly/Luat-Cong-chung-2014-238638.aspx`,
+      "https://vcci.com.vn/legal-document/luat-cong-chung-cua-quoc-hoi-so-532014qh13",
+      "https://stp.hue.gov.vn/van-ban-phap-luat/mot-so-diem-moi-cua-luat-cong-chung-nam-2014.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "nd-99-2022",
+    number: "99/2022/NĐ-CP",
+    type: "nghi-dinh",
+    domains: ["dan-su", "hop-dong"],
+    issuedOn: "2022-11-30",
+    effectiveOn: "2023-01-15",
+    status: "active",
+    title: {
+      vi: "Nghị định về đăng ký biện pháp bảo đảm",
+      en: "Decree on registration of security interests",
+    },
+    summary: {
+      vi: "Quy định việc đăng ký và cung cấp thông tin về biện pháp bảo đảm bằng tài sản, gồm đăng ký thế chấp, cầm cố, bảo lưu quyền sở hữu và thông báo xử lý tài sản bảo đảm, cùng quản lý nhà nước về đăng ký. Nghị định thay thế Nghị định 102/2017/NĐ-CP và mở rộng sang biện pháp bảo đảm bằng chứng khoán đã đăng ký tập trung.",
+      en: "It governs the registration of, and provision of information on, security over assets, including mortgages, pledges, retention of title and notices of enforcement, together with state management of registration. It replaced Decree 102/2017/NĐ-CP and extends to security over centrally registered securities.",
+    },
+    note: {
+      vi: "Một nguồn ghi ngày ban hành là 29/11/2022; các nguồn còn lại ghi 30/11/2022, bản ghi theo các nguồn này. Chưa tra được văn bản sửa đổi nghị định trong phiên.",
+      en: "One source gives the issue date as 29 November 2022; the others give 30 November 2022, which the record follows. No amending instrument was traced in this search.",
+    },
+    guides: ["blds-2015"],
+    sources: [
+      "https://tintuc.vinhlong.gov.vn/xem-chi-tiet-tin-tuc/id/219026",
+      `${TVPL}/van-ban/Quyen-dan-su/Nghi-dinh-99-2022-ND-CP-dang-ky-bien-phap-bao-dam-542323.aspx`,
+      "https://vcci.com.vn/legal-document/nghi-dinh-992022nd-cp-ve-dang-ky-bien-phap-bao-dam",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "luat-ho-tich-2014",
+    number: "60/2014/QH13",
+    type: "luat",
+    domains: ["dan-su"],
+    issuedOn: "2014-11-20",
+    effectiveOn: "2016-01-01",
+    status: "active",
+    title: {
+      vi: "Luật Hộ tịch",
+      en: "Law on Civil Status",
+    },
+    summary: {
+      vi: "Quy định việc đăng ký hộ tịch như khai sinh, kết hôn, khai tử, nhận cha, mẹ, con, thẩm quyền và thủ tục đăng ký, Cơ sở dữ liệu hộ tịch và quản lý nhà nước về hộ tịch. Kết hôn và nhận cha, mẹ, con thì các bên phải trực tiếp thực hiện tại cơ quan đăng ký hộ tịch.",
+      en: "It governs civil status registration such as births, marriages, deaths and recognition of parentage, the competent authorities and procedures, the civil status database and state management. For marriage and recognition of parentage, the parties must appear in person before the registry.",
+    },
+    note: {
+      vi: "Chưa tra được văn bản sửa đổi luật trong phiên. Cần đối chiếu tình trạng hiệu lực trước khi dùng.",
+      en: "No amending instrument was traced in this search. Check the current status before relying on it.",
+    },
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/luat-so-60-2014-qh13-5264.htm",
+      `${TVPL}/van-ban/Quyen-dan-su/Luat-Ho-tich-2014-259727.aspx`,
+      "https://english.luatvietnam.vn/law-no-60-2014-qh13-of-the-national-assembly-on-civil-status-91356-doc1.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "luat-tnbtcnn-2017",
+    number: "10/2017/QH14",
+    type: "luat",
+    domains: ["dan-su"],
+    issuedOn: "2017-06-20",
+    effectiveOn: "2018-07-01",
+    status: "active",
+    title: {
+      vi: "Luật Trách nhiệm bồi thường của Nhà nước",
+      en: "Law on State Liability for Compensation",
+    },
+    summary: {
+      vi: "Gồm chín chương và 78 điều, quy định trách nhiệm bồi thường của Nhà nước đối với cá nhân, tổ chức bị thiệt hại do người thi hành công vụ gây ra trong hoạt động quản lý hành chính, tố tụng và thi hành án, các loại thiệt hại được bồi thường và thủ tục giải quyết yêu cầu bồi thường. Luật thay thế Luật Trách nhiệm bồi thường của Nhà nước năm 2009.",
+      en: "In nine chapters and 78 articles, it sets the State's liability to compensate individuals and organisations harmed by public officials in administration, litigation and enforcement, the heads of recoverable loss and the procedure for claims. It replaced the 2009 Law on State Liability for Compensation.",
+    },
+    note: {
+      vi: "Chưa tra được văn bản sửa đổi luật trong phiên. Cần đối chiếu tình trạng hiệu lực trước khi dùng.",
+      en: "No amending instrument was traced in this search. Check the current status before relying on it.",
+    },
+    sources: [
+      `${TVPL}/van-ban/Bo-may-hanh-chinh/Luat-Trach-nhiem-boi-thuong-cua-Nha-nuoc-2017-313517.aspx`,
+      `${LVN}/hanh-chinh/luat-trach-nhiem-boi-thuong-2017-115519-d1.html`,
+      "https://luatminhkhue.vn/van-ban/luat-trach-nhiem-boi-thuong-cua-nha-nuoc-nam-2017.aspx",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "luat-thads-2025",
+    number: "106/2025/QH15",
+    type: "luat",
+    domains: ["dan-su", "to-tung"],
+    issuedOn: "2025-12-05",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Luật Thi hành án dân sự",
+      en: "Law on Enforcement of Civil Judgments",
+    },
+    summary: {
+      vi: "Quy định nguyên tắc, trình tự, thủ tục thi hành bản án, quyết định, phán quyết, cùng tổ chức và hoạt động của hệ thống thi hành án dân sự, Chấp hành viên, Văn phòng thi hành án dân sự và Thừa hành viên. Luật thay thế Luật Thi hành án dân sự 26/2008/QH12.",
+      en: "It sets the principles and procedure for enforcing judgments, decisions and awards, and the organisation of the civil enforcement system, enforcement officers, private enforcement offices and bailiffs. It replaced Civil Judgment Enforcement Law 26/2008/QH12.",
+    },
+    note: {
+      vi: "Hiệu lực chung từ 01/7/2026. Một số quy định về ứng dụng công nghệ thông tin và chuyển đổi số trong thi hành án dân sự có hiệu lực sớm hơn, từ 20/01/2026.",
+      en: "Generally in force from 1 July 2026. Certain provisions on information technology and digital transformation in civil enforcement took effect earlier, on 20 January 2026.",
+    },
+    replaces: ["luat-thads-2008"],
+    sources: [
+      "https://congbao.chinhphu.vn/van-ban/luat-so-106-2025-qh15-468668.htm",
+      `${CP}/?pageid=27160&docid=216552&classid=1&orggroupid=1`,
+      "https://xaydungchinhsach.chinhphu.vn/noi-dung-moi-co-ban-cua-luat-thi-hanh-an-dan-su-so-106-2025-qh15-119260114104054011.htm",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "nq-01-2019-hdtp",
+    number: "01/2019/NQ-HĐTP",
+    type: "nghi-quyet",
+    domains: ["dan-su", "hop-dong"],
+    issuedOn: "2019-01-11",
+    effectiveOn: "2019-03-15",
+    status: "active",
+    title: {
+      vi: "Nghị quyết hướng dẫn áp dụng một số quy định của pháp luật về lãi, lãi suất, phạt vi phạm",
+      en: "Resolution guiding the application of certain provisions of law on interest, interest rates and penalties for breach",
+    },
+    summary: {
+      vi: "Nghị quyết của Hội đồng Thẩm phán Tòa án nhân dân tối cao hướng dẫn Tòa án xác định lãi, lãi suất và phạt vi phạm trong hợp đồng vay tài sản và hợp đồng tín dụng, kể cả lãi, lãi suất tại thời điểm xét xử sơ thẩm. Khi nghị quyết có hiệu lực, Án lệ 08/2016/AL về cùng vấn đề đương nhiên không còn được áp dụng.",
+      en: "A resolution of the Judicial Council of the Supreme People's Court guiding courts on interest, interest rates and penalties in loan and credit contracts, including interest at the date of the first-instance trial. Once it took effect, Precedent 08/2016/AL on the same question automatically ceased to apply.",
+    },
+    guides: ["blds-2015"],
+    replaces: ["al-08-2016"],
+    sources: [
+      "https://congbao.chinhphu.vn/thuoc-tinh-van-ban-so-01-2019-nq-hdtp-28517",
+      `${TVPL}/van-ban/Tien-te-Ngan-hang/Nghi-quyet-01-2019-NQ-HDTP-huong-dan-quy-dinh-cua-phap-luat-ve-lai-lai-suat-phat-vi-pham-367130.aspx`,
+      "https://tapchitoaan.vn/bai-viet/an-le/an-le-08-2016-al-duong-nhien-bi-bai-bo",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+
+  // ──────────────────────────────── ÁN LỆ ─────────────────────────────────
+  /*
+    Án lệ không phải văn bản quy phạm pháp luật. Bản ghi án lệ dùng chung khuôn
+    với văn bản để đi được qua tra hiệu lực và gia phả, với hai quy ước:
+    `issuedOn` là ngày Chánh án ký quyết định công bố, `effectiveOn` là ngày các
+    Tòa án bắt đầu nghiên cứu, áp dụng trong xét xử. Số quyết định công bố và
+    ngày Hội đồng Thẩm phán thông qua ghi ở `note`. Quan hệ `guides` chỉ ghi khi
+    nguồn nêu được điều luật hiện hành mà án lệ giải thích.
+  */
+  {
+    id: "nq-03-2015-hdtp",
+    number: "03/2015/NQ-HĐTP",
+    type: "nghi-quyet",
+    domains: ["an-le"],
+    issuedOn: "2015-10-28",
+    effectiveOn: "2015-12-16",
+    status: "expired",
+    title: {
+      vi: "Nghị quyết về quy trình lựa chọn, công bố và áp dụng án lệ",
+      en: "Resolution on the procedure for selecting, publishing and applying precedents",
+    },
+    summary: {
+      vi: "Văn bản đầu tiên của hệ thống Tòa án về án lệ: các bước rà soát, đề xuất, lấy ý kiến, thông qua, công bố và áp dụng án lệ. Án lệ trở thành một nguồn được Tòa án viện dẫn kể từ khi nghị quyết có hiệu lực.",
+      en: "The courts' first instrument on precedents: the steps for screening, proposing, consulting on, adopting, publishing and applying them. Precedents became a source cited by the courts from the date it took effect.",
+    },
+    sources: [
+      "https://congly.vn/cong-bo-nghi-quyet-cua-hoi-dong-tham-phan-tandtc-ve-quy-trinh-lua-chon-cong-bo-va-ap-dung-an-le-9655.html",
+      "https://thuviennhadat.vn/van-ban-phap-luat-viet-nam/nghi-quyet-03-2015-nq-hdtp-quy-trinh-lua-chon-cong-bo-va-ap-dung-an-le-294198.html",
+      "https://tapchitoaan.vn/ve-tieu-chi-lua-chon-va-ra-soat-phat-hien-cac-ban-an-quyet-dinh-de-de-xuat-phat-trien-thanh-an-le",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "nq-04-2019-hdtp",
+    number: "04/2019/NQ-HĐTP",
+    type: "nghi-quyet",
+    domains: ["an-le"],
+    issuedOn: "2019-06-18",
+    effectiveOn: "2019-07-15",
+    status: "amended",
+    title: {
+      vi: "Nghị quyết về quy trình lựa chọn, công bố và áp dụng án lệ",
+      en: "Resolution on the procedure for selecting, publishing and applying precedents",
+    },
+    summary: {
+      vi: "Định nghĩa án lệ là lập luận, phán quyết trong bản án, quyết định đã có hiệu lực pháp luật của Tòa án được Hội đồng Thẩm phán lựa chọn và Chánh án Tòa án nhân dân tối cao công bố. Nghị quyết đặt tiêu chí lựa chọn, thủ tục lấy ý kiến và thông qua, và rút thời điểm áp dụng xuống 30 ngày kể từ ngày công bố, thay cho 45 ngày của nghị quyết trước.",
+      en: "It defines a precedent as the reasoning and ruling in a final court judgment or decision selected by the Judicial Council and published by the Chief Justice of the Supreme People's Court. It sets the selection criteria and the consultation and adoption procedure, and shortens the start of application to 30 days after publication, down from the 45 days of the previous resolution.",
+    },
+    note: {
+      vi: "Một nguồn ghi ngày ban hành 16/6/2019; các nguồn còn lại ghi 18/6/2019, bản ghi theo các nguồn này. Đã được sửa đổi bởi Nghị quyết 02/2025/NQ-HĐTP và được hợp nhất tại Văn bản hợp nhất 11/VBHN-TANDTC năm 2025.",
+      en: "One source dates it 16 June 2019; the others give 18 June 2019, which the record follows. It was amended by Resolution 02/2025/NQ-HĐTP and consolidated in Consolidated Text 11/VBHN-TANDTC of 2025.",
+    },
+    replaces: ["nq-03-2015-hdtp"],
+    sources: [
+      "https://vienkiemsathaiphong.gov.vn/nghi-quyet/nghi-quyet-so-04-2019-nq-hdtp-ngay-18-6-2019-cua-hoi-dong-tham-phan-toa-an-nhan-dan-toi-cao-ve-q-15479",
+      "https://lsvn.vn/an-le-duoc-ap-dung-sau-30-ngay-ke-tu-khi-cong-bo-a6786.html",
+      "https://fdvn.vn/nghi-quyet-04-2019-nq-hdtp-ve-quy-trinh-lua-chon-cong-bo-va-ap-dung-an-le/",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "nq-02-2025-hdtp",
+    number: "02/2025/NQ-HĐTP",
+    type: "nghi-quyet",
+    domains: ["an-le", "to-tung"],
+    issuedOn: "2025-06-27",
+    effectiveOn: "2025-07-01",
+    status: "active",
+    title: {
+      vi: "Nghị quyết sửa đổi, bổ sung một số điều của một số nghị quyết của Hội đồng Thẩm phán Tòa án nhân dân tối cao",
+      en: "Resolution amending certain articles of a number of resolutions of the Judicial Council of the Supreme People's Court",
+    },
+    summary: {
+      vi: "Sửa đổi năm nghị quyết của Hội đồng Thẩm phán để áp dụng thống nhất Luật Phá sản, Bộ luật Tố tụng dân sự, Luật Tố tụng hành chính và Bộ luật Hình sự sau khi hệ thống Tòa án được tổ chức lại. Với Nghị quyết 04/2019/NQ-HĐTP, nghị quyết sửa điểm c khoản 2 Điều 6 về trường hợp án lệ được đề xuất bởi Ủy ban Thẩm phán Tòa án nhân dân cấp tỉnh và thay các mẫu 01-AL, 02-AL, 03-AL.",
+      en: "It amends five Judicial Council resolutions so that the Bankruptcy Law, the Civil Procedure Code, the Administrative Procedure Law and the Criminal Code are applied uniformly after the reorganisation of the courts. In Resolution 04/2019/NQ-HĐTP it amends Article 6(2)(c) on precedents proposed by the Judges' Committee of a provincial People's Court and replaces forms 01-AL, 02-AL and 03-AL.",
+    },
+    amends: ["nq-04-2019-hdtp"],
+    sources: [
+      "https://tapchitoaan.vn/tu-ngay-0172025-nghi-quyet-so-022025nq-hdtp-chinh-thuc-co-hieu-luc-thi-hanh-bao-dam-ap-dung-dung-va-thong-nhat-mot-so-quy-dinh-cua-luat-pha-san-bo-luat-to-tung-dan-su-luat-to-tung-hanh-chinh-bo-luat-hinh-su13661.html",
+      "https://lsvn.vn/tand-toi-cao-ban-hanh-01-nghi-quyet-sua-doi-bo-sung-05-nghi-quyet-a160316.html",
+      `${LVN}/tu-phap/nghi-quyet-02-2025-nq-hdtp-cua-hoi-dong-tham-phan-toa-an-nhan-dan-toi-cao-sua-doi-bo-sung-mot-so-dieu-cua-mot-so-nghi-quyet-cua-hoi-dong-tham-phan-toa-an-nhan-dan-toi-cao-404333-d1.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-03-2016",
+    number: "03/2016/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su", "dat-dai"],
+    issuedOn: "2016-04-06",
+    effectiveOn: "2016-06-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về vụ án ly hôn: xác định quyền sử dụng đất cha mẹ cho vợ chồng người con",
+      en: "Precedent in a divorce case: land use rights given by parents to a married child",
+    },
+    summary: {
+      vi: "Tình huống: cha mẹ cho vợ chồng người con một diện tích đất; vợ chồng người con xây nhà kiên cố để ở mà cha mẹ và gia đình không phản đối, sử dụng liên tục, công khai, ổn định và đã được cấp giấy chứng nhận quyền sử dụng đất. Giải pháp: phải xác định vợ chồng người con đã được tặng cho quyền sử dụng đất, và đó là tài sản chung của vợ chồng khi giải quyết ly hôn.",
+      en: "Facts: parents let a married child use a plot; the couple built a permanent house to live in without objection from the family, used the land continuously, openly and stably, and obtained a land use certificate. Solution: the couple must be found to have received the land use rights as a gift, which form their joint property on divorce.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 220/QĐ-CA ngày 06/4/2016 của Chánh án Tòa án nhân dân tối cao, cùng đợt sáu án lệ đầu tiên; áp dụng từ 01/6/2016.",
+      en: "Published by Decision 220/QĐ-CA of 6 April 2016 of the Chief Justice, in the first batch of six precedents; applied from 1 June 2016.",
+    },
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/13195/an-le-so-03-2016-al-ve-vu-an-ly-hon`,
+      "https://lsvn.vn/an-le-so-03-2016-al-ve-vu-an-ly-hon-chia-tai-san-bo-me-tang-cho-a57761.html",
+      `${LVN}/tu-phap/quyet-dinh-220-qd-ca-toa-an-nhan-dan-toi-cao-105066-d1.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-04-2016",
+    number: "04/2016/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su", "dat-dai"],
+    issuedOn: "2016-04-06",
+    effectiveOn: "2016-06-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về tranh chấp hợp đồng chuyển nhượng quyền sử dụng đất là tài sản chung của vợ chồng",
+      en: "Precedent on a dispute over the transfer of land use rights held jointly by spouses",
+    },
+    summary: {
+      vi: "Tình huống: nhà đất là tài sản chung của vợ chồng nhưng chỉ một người ký hợp đồng chuyển nhượng; bên chuyển nhượng đã nhận đủ tiền, người không ký biết và cùng sử dụng tiền đó, bên nhận chuyển nhượng quản lý, sử dụng công khai mà người kia không phản đối. Giải pháp: phải xác định người vợ hoặc chồng không ký đã đồng ý với việc chuyển nhượng.",
+      en: "Facts: land and house were the spouses' joint property but only one spouse signed the transfer; the price was paid in full, the other spouse knew of it and shared the proceeds, and the transferee managed the property openly without objection. Solution: the spouse who did not sign must be found to have consented to the transfer.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 220/QĐ-CA ngày 06/4/2016; áp dụng từ 01/6/2016.",
+      en: "Published by Decision 220/QĐ-CA of 6 April 2016; applied from 1 June 2016.",
+    },
+    sources: [
+      "https://lsvn.vn/an-le-so-04-2016-al-ve-vu-an-tranh-chap-hop-dong-chuyen-nhuong-quyen-su-dung-dat-a58378.html",
+      "https://tapchitoaan.vn/nhan-dien-tinh-huong-phap-ly-de-ap-dung-an-le-so-042016al9090.html",
+      `${LVN}/tu-phap/quyet-dinh-220-qd-ca-toa-an-nhan-dan-toi-cao-105066-d1.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-06-2016",
+    number: "06/2016/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su"],
+    issuedOn: "2016-04-06",
+    effectiveOn: "2016-06-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về tranh chấp thừa kế có người thừa kế ở nước ngoài không xác định được địa chỉ",
+      en: "Precedent on an inheritance dispute where heirs abroad cannot be located",
+    },
+    summary: {
+      vi: "Tình huống: vụ tranh chấp thừa kế có người thuộc diện thừa kế ở nước ngoài; Tòa án đã ủy thác tư pháp, thu thập chứng cứ đúng quy định nhưng vẫn không xác định được địa chỉ của họ. Giải pháp: Tòa án vẫn giải quyết yêu cầu của nguyên đơn; phần di sản của những người ở nước ngoài được tạm giao cho người thừa kế trong nước quản lý để sau này giao lại.",
+      en: "Facts: an inheritance dispute involves heirs living abroad whose addresses could not be found despite letters rogatory and lawful evidence-gathering. Solution: the court still decides the claim; the shares of the absent heirs are entrusted for the time being to heirs in Vietnam, to be handed over later.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 220/QĐ-CA ngày 06/4/2016; áp dụng từ 01/6/2016.",
+      en: "Published by Decision 220/QĐ-CA of 6 April 2016; applied from 1 June 2016.",
+    },
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/13198/an-le-so-06-2016-al-ve-vu-an-tranh-chap-thua-ke`,
+      "https://john-associates.com/an-le-so-06-2016-al-ve-vu-an-tranh-chap-thua-ke/",
+      `${LVN}/tu-phap/quyet-dinh-220-qd-ca-toa-an-nhan-dan-toi-cao-105066-d1.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-08-2016",
+    number: "08/2016/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su", "hop-dong"],
+    issuedOn: "2016-10-17",
+    effectiveOn: "2016-12-01",
+    status: "expired",
+    title: {
+      vi: "Án lệ về xác định lãi suất, việc điều chỉnh lãi suất trong hợp đồng tín dụng kể từ ngày tiếp theo của ngày xét xử sơ thẩm",
+      en: "Precedent on interest rates and their adjustment in credit contracts from the day after the first-instance trial",
+    },
+    summary: {
+      vi: "Hướng dẫn cách xác định và điều chỉnh lãi suất trong hợp đồng tín dụng cho giai đoạn sau ngày xét xử sơ thẩm. Án lệ đương nhiên không còn được áp dụng từ 15/3/2019, khi Nghị quyết 01/2019/NQ-HĐTP về lãi, lãi suất, phạt vi phạm có hiệu lực.",
+      en: "It set how interest in credit contracts is determined and adjusted after the first-instance trial date. It automatically ceased to apply on 15 March 2019, when Resolution 01/2019/NQ-HĐTP on interest, interest rates and penalties took effect.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 698/QĐ-CA ngày 17/10/2016; áp dụng từ 01/12/2016. Trang ghi Nghị quyết 01/2019/NQ-HĐTP ở vị trí văn bản thay thế để thể hiện mốc 15/3/2019; nghị quyết không tuyên bãi bỏ án lệ, án lệ đương nhiên bị bãi bỏ vì vấn đề đã có văn bản hướng dẫn.",
+      en: "Published by Decision 698/QĐ-CA of 17 October 2016; applied from 1 December 2016. The site records Resolution 01/2019/NQ-HĐTP as the replacing instrument to mark the 15 March 2019 cut-off; the resolution did not itself annul the precedent, which lapsed automatically because the question became governed by guidance.",
+    },
+    sources: [
+      "https://tapchitoaan.vn/bai-viet/an-le/an-le-08-2016-al-duong-nhien-bi-bai-bo",
+      "https://caselaw.vn/doc-an-moi-ngay/an-le-so-08-2016-al-ve-xac-dinh-lai-suat-viec-dieu-chinh-lai-suat-trong-hop-dong-tin-dung-ke-tu-ngay-tiep-theo-cua-ngay-xet-xu-so-tham",
+      `${LVN}/tu-phap/quyet-dinh-698-qd-ca-toa-an-nhan-dan-toi-cao-109783-d1.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-09-2016",
+    number: "09/2016/AL",
+    type: "an-le",
+    domains: ["an-le", "hop-dong"],
+    issuedOn: "2016-10-17",
+    effectiveOn: "2016-12-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về xác định lãi suất nợ quá hạn trung bình trên thị trường và việc trả lãi trên số tiền phạt vi phạm, bồi thường thiệt hại",
+      en: "Precedent on the average market overdue interest rate and interest on contractual penalties and damages",
+    },
+    summary: {
+      vi: "Tình huống: hợp đồng mua bán hàng hóa bị vi phạm, bên vi phạm phải hoàn trả tiền và chịu lãi chậm thanh toán, phạt vi phạm, bồi thường thiệt hại. Giải pháp về lãi chậm trả: tính theo lãi suất nợ quá hạn trung bình trên thị trường, xác định từ mức lãi suất nợ quá hạn của ít nhất ba ngân hàng tại địa phương nơi xét xử sơ thẩm. Án lệ còn giải quyết việc trả lãi trên số tiền phạt vi phạm và bồi thường thiệt hại.",
+      en: "Facts: a sale of goods contract is breached and the party in breach must refund money and bear late-payment interest, a penalty and damages. On late-payment interest, the rate is the average market overdue rate, taken from the overdue rates of at least three banks where the first-instance court sits. The precedent also addresses interest on the penalty and on damages.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 698/QĐ-CA ngày 17/10/2016; áp dụng từ 01/12/2016. Thường được viện dẫn cùng Điều 306 Luật Thương mại 2005 trong tranh chấp kinh doanh, thương mại, kể cả tại trọng tài.",
+      en: "Published by Decision 698/QĐ-CA of 17 October 2016; applied from 1 December 2016. Commonly cited with Article 306 of the Commercial Law 2005 in commercial disputes, including in arbitration.",
+    },
+    guides: ["luat-thuong-mai-2005"],
+    sources: [
+      `${LVN}/ban-an/an-le-09-2016-al-2-64486-d15.html`,
+      "https://tapchitoaan.vn/lai-cham-tra-tien-trong-an-le-nam-2016",
+      "https://mcac.vn/giai-quyet-tranh-chap-kinh-doanh-thuong-mai-tai-toa-an-va-trong-tai",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-25-2018",
+    number: "25/2018/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su"],
+    issuedOn: "2018-11-06",
+    effectiveOn: "2018-12-03",
+    status: "active",
+    title: {
+      vi: "Án lệ về không phải chịu phạt cọc vì lý do khách quan",
+      en: "Precedent on exemption from the deposit penalty for objective reasons",
+    },
+    summary: {
+      vi: "Tình huống: hết thời hạn đã thỏa thuận, bên nhận đặt cọc chưa được cấp giấy chứng nhận quyền sở hữu nhà do nguyên nhân từ phía cơ quan nhà nước có thẩm quyền. Giải pháp: phải xác định việc bên nhận đặt cọc không thực hiện đúng cam kết là do khách quan, và bên nhận đặt cọc không phải chịu phạt cọc.",
+      en: "Facts: when the agreed period ended, the deposit recipient had not obtained the house ownership certificate because of the competent authority. Solution: the failure to perform must be treated as due to objective causes, and the recipient does not bear the deposit penalty.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 17/10/2018; công bố theo Quyết định 269/QĐ-CA ngày 06/11/2018; áp dụng từ 03/12/2018.",
+      en: "Adopted by the Judicial Council on 17 October 2018; published by Decision 269/QĐ-CA of 6 November 2018; applied from 3 December 2018.",
+    },
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/21709/an-le-so-25-2018-al-ve-khong-phai-chiu-phat-coc-vi-ly-do-khach-quan`,
+      "https://tapchitoaan.vn/binh-luan-an-le-so-25-2018-al-ve-khong-phai-chiu-phat-coc-vi-ly-do-khach-quan",
+      "https://luatminhkhue.vn/an-le-so-25-2018-al-ve-khong-phai-chiu-phat-coc-vi-ly-do-khach-quan.aspx",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-26-2018",
+    number: "26/2018/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su"],
+    issuedOn: "2018-11-06",
+    effectiveOn: "2018-12-03",
+    status: "active",
+    title: {
+      vi: "Án lệ về xác định thời điểm bắt đầu tính thời hiệu và thời hiệu yêu cầu chia di sản thừa kế là bất động sản",
+      en: "Precedent on when limitation starts and the limitation period for dividing an immovable estate",
+    },
+    summary: {
+      vi: "Tình huống: người để lại di sản là bất động sản chết trước ngày công bố Pháp lệnh Thừa kế ngày 30/8/1990. Giải pháp: thời điểm bắt đầu tính thời hiệu yêu cầu chia di sản là ngày công bố Pháp lệnh Thừa kế, ngày 10/9/1990; thời hiệu yêu cầu chia di sản xác định theo Bộ luật Dân sự 2015.",
+      en: "Facts: the deceased, whose estate is immovable property, died before the publication of the Inheritance Ordinance of 30 August 1990. Solution: limitation for a claim to divide the estate runs from the Ordinance's publication date, 10 September 1990, and the period itself is set by the 2015 Civil Code.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 269/QĐ-CA ngày 06/11/2018; áp dụng từ 03/12/2018.",
+      en: "Published by Decision 269/QĐ-CA of 6 November 2018; applied from 3 December 2018.",
+    },
+    guides: ["blds-2015"],
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/21710/an-le-so-26-2018-al-ve-xac-dinh-thoi-diem-bat-dau-tinh-thoi-hieu-va-thoi-hieu-yeu-cau-chia-di-san-thua-ke-la-bat-dong-san`,
+      `${LVN}/ban-an/an-le-26-2018-al-2-111834-d15.html`,
+      "https://fdvn.vn/an-le-thua-ke/",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-67-2023",
+    number: "67/2023/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su"],
+    issuedOn: "2023-10-01",
+    effectiveOn: "2023-11-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về người được nhận hiện vật khi chia tài sản chung",
+      en: "Precedent on who receives the asset in kind when dividing common property",
+    },
+    summary: {
+      vi: "Tình huống: chia tài sản chung là nhà và quyền sử dụng đất không chia được bằng hiện vật; một bên là người cao tuổi đã tạo lập, quản lý, sử dụng nhà đất ổn định, lâu dài và muốn nhận nhà đất, thanh toán giá trị cho bên kia. Giải pháp: Tòa án phải giao nhà đất cho người cao tuổi, người này thanh toán giá trị phần tài sản của bên còn lại.",
+      en: "Facts: common property consisting of a house and land use rights cannot be divided in kind; one co-owner, an elderly person who built, managed and used it stably for a long time, wishes to keep it and pay the other's share. Solution: the court must award the property to the elderly co-owner, who pays the value of the other's share.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 18/8/2023; công bố theo Quyết định 364/QĐ-CA ngày 01/10/2023; áp dụng từ 01/11/2023. Quy định liên quan: Điều 209 và Điều 219 Bộ luật Dân sự 2015.",
+      en: "Adopted on 18 August 2023; published by Decision 364/QĐ-CA of 1 October 2023; applied from 1 November 2023. Related provisions: Articles 209 and 219 of the 2015 Civil Code.",
+    },
+    guides: ["blds-2015"],
+    sources: [
+      `${LVN}/ban-an/an-le-67-2023-al-2-206126-d15.html`,
+      "https://tapchitoaan.vn/binh-luan-an-le-so-672023al-ve-nguoi-duoc-nhan-hien-vat-khi-chia-tai-san-chung13816.html",
+      "https://pbgdpl.camau.gov.vn/toa-an-nhan-dan-toi-cao-cong-bo-07-an-le.4470",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-69-2023",
+    number: "69/2023/AL",
+    type: "an-le",
+    domains: ["an-le", "to-tung"],
+    issuedOn: "2023-10-01",
+    effectiveOn: "2023-11-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về thẩm quyền của Trọng tài thương mại trong việc giải quyết tranh chấp thỏa thuận bảo mật thông tin và không cạnh tranh",
+      en: "Precedent on the jurisdiction of commercial arbitration over confidentiality and non-compete agreements",
+    },
+    summary: {
+      vi: "Tình huống: người lao động và người sử dụng lao động ký thỏa thuận bảo mật thông tin và không cạnh tranh sau khi chấm dứt hợp đồng lao động, có điều khoản giải quyết tranh chấp bằng Trọng tài thương mại. Giải pháp: thỏa thuận đó độc lập với hợp đồng lao động, tranh chấp phát sinh từ thỏa thuận thuộc thẩm quyền của Trọng tài thương mại; yêu cầu hủy phán quyết trọng tài không được chấp nhận.",
+      en: "Facts: an employee and employer signed a confidentiality and post-employment non-compete agreement with a commercial arbitration clause. Solution: the agreement is independent of the employment contract, disputes under it fall within commercial arbitration jurisdiction, and the application to set aside the award was rejected.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 18/8/2023; công bố theo Quyết định 364/QĐ-CA ngày 01/10/2023; áp dụng từ 01/11/2023. Nguồn án lệ là quyết định về việc yêu cầu hủy phán quyết trọng tài của Tòa án nhân dân Thành phố Hồ Chí Minh.",
+      en: "Adopted on 18 August 2023; published by Decision 364/QĐ-CA of 1 October 2023; applied from 1 November 2023. It derives from a Ho Chi Minh City People's Court decision on an application to set aside an award.",
+    },
+    guides: ["luat-ttm-2010"],
+    sources: [
+      "https://tapchitoaan.vn/an-le-so-692023al-ve-tham-quyen-cua-trong-tai-thuong-mai-trong-viec-giai-quyet-tranh-chap-thoa-thuan-bao-mat-thong-tin-va-khong-canh-tranh9472.html",
+      "https://lsvn.vn/an-le-so-69-2023-al-ve-tham-quyen-cua-trong-tai-thuong-mai-trong-viec-giai-quyet-tranh-chap-thoa-thuan-bao-mat-thong-tin-va-khong-canh-tranh-1697528716-a136478.html",
+      "https://anle.toaan.gov.vn/webcenter/ShowProperty?nodeId=/UCMServer/TAND315866",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-78-2025",
+    number: "78/2025/AL",
+    type: "an-le",
+    domains: ["an-le", "doanh-nghiep"],
+    issuedOn: "2025-12-25",
+    effectiveOn: "2026-02-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về xác định mục đích góp vốn vào công ty",
+      en: "Precedent on identifying the purpose of a capital contribution to a company",
+    },
+    summary: {
+      vi: "Tình huống: công ty đã thành lập, giấy chứng nhận đăng ký doanh nghiệp đã ghi thành viên và vốn điều lệ; sau đó bên góp vốn và công ty thỏa thuận góp vốn, chia lợi nhuận nhưng không thỏa thuận tăng vốn điều lệ. Giải pháp: Tòa án phải xác định việc góp vốn nhằm mục đích kinh doanh, không phải để tăng vốn điều lệ của công ty.",
+      en: "Facts: the company already existed and its registration certificate listed its members and charter capital; the contributor and the company later agreed on a contribution and profit sharing but not on raising charter capital. Solution: the contribution must be treated as made for business purposes, not as an increase of the company's charter capital.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 24/12/2025; công bố theo Quyết định 339a/QĐ-CA ngày 25/12/2025; áp dụng từ 01/02/2026.",
+      en: "Adopted on 24 December 2025; published by Decision 339a/QĐ-CA of 25 December 2025; applied from 1 February 2026.",
+    },
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/104907/an-le-so-78-2025-al-ve-xac-dinh-muc-dich-gop-von-vao-cong-ty`,
+      "https://tapchitoaan.vn/binh-luan-an-le-so-782025al-ve-xac-dinh-muc-dich-gop-von-vao-cong-ty15008.html",
+      "https://www.lexology.com/library/detail.aspx?g=6ac05662-3b58-4820-97c3-6f4a2b163130",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-79-2025",
+    number: "79/2025/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su", "dat-dai"],
+    issuedOn: "2025-12-25",
+    effectiveOn: "2026-02-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về chủ thể giao kết hợp đồng đặt cọc và hiệu lực của hợp đồng đặt cọc",
+      en: "Precedent on the parties to a deposit agreement and its validity",
+    },
+    summary: {
+      vi: "Tình huống thứ nhất: các bên đặt cọc để bảo đảm giao kết hợp đồng chuyển nhượng quyền sử dụng đất, bên đặt cọc biết quyền sử dụng đất đang thế chấp tại ngân hàng. Giải pháp: hợp đồng đặt cọc là hợp đồng độc lập và có hiệu lực. Tình huống thứ hai: bên nhận đặt cọc không có quyền với tài sản nhưng được chủ sở hữu ủy quyền giao kết hợp đồng đặt cọc.",
+      en: "First situation: a deposit secures the future transfer of land use rights that the depositor knows are mortgaged to a bank. Solution: the deposit agreement is an independent contract and is valid. Second situation: the recipient does not own the asset but is authorised by its owner to conclude the deposit agreement.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 24/12/2025; công bố theo Quyết định 339a/QĐ-CA ngày 25/12/2025; áp dụng từ 01/02/2026.",
+      en: "Adopted on 24 December 2025; published by Decision 339a/QĐ-CA of 25 December 2025; applied from 1 February 2026.",
+    },
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/104833/an-le-so-79-2025-al-ve-chu-the-giao-ket-hop-dong-dat-coc-va-hieu-luc-cua-hop-dong-dat-coc`,
+      "https://thuvienso.quochoi.vn/handle/11742/108606",
+      "https://plo.vn/y-nghia-cua-an-le-792025-ve-hieu-luc-cua-hop-dong-dat-coc-post894515.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-81-2025",
+    number: "81/2025/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su", "hop-dong"],
+    issuedOn: "2025-12-25",
+    effectiveOn: "2026-02-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về xác định tranh chấp dân sự về đòi lại tài sản",
+      en: "Precedent on characterising a civil claim for recovery of property",
+    },
+    summary: {
+      vi: "Tình huống: các bên đã thỏa thuận chấm dứt hợp đồng và xác nhận khoản tiền phải thanh toán nhưng chưa thanh toán. Giải pháp: Tòa án phải xác định đây là tranh chấp dân sự về đòi lại tài sản, không phải tranh chấp hợp đồng, và không áp dụng thời hiệu khởi kiện.",
+      en: "Facts: the parties agreed to terminate the contract and confirmed the sum owed, which remained unpaid. Solution: the claim must be characterised as a civil claim for recovery of property rather than a contract dispute, and no limitation period applies.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 24/12/2025; công bố theo Quyết định 339a/QĐ-CA ngày 25/12/2025; áp dụng từ 01/02/2026.",
+      en: "Adopted on 24 December 2025; published by Decision 339a/QĐ-CA of 25 December 2025; applied from 1 February 2026.",
+    },
+    sources: [
+      "https://tapchitoaan.vn/an-le-so-812025al-ve-xac-dinh-tranh-chap-dan-su-ve-doi-lai-tai-san15079.html",
+      `${LVN}/ban-an/an-le-81-2025-al-2-1389111-d15.html`,
+      "https://plo.vn/an-le-812025-va-triet-ly-co-no-phai-tra-post895339.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-82-2025",
+    number: "82/2025/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su"],
+    issuedOn: "2025-12-25",
+    effectiveOn: "2026-02-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về xác định tài sản chung của vợ chồng trước khi đăng ký kết hôn",
+      en: "Precedent on spouses' common property acquired before marriage registration",
+    },
+    summary: {
+      vi: "Tình huống: một bên là người nước ngoài; hai bên đã tổ chức lễ cưới và đã có tờ khai đăng ký kết hôn, quyền sử dụng đất do một bên nhận chuyển nhượng trước thời điểm được cấp giấy chứng nhận kết hôn. Giải pháp: Tòa án phải xác định quyền sử dụng đất đó là tài sản chung của vợ chồng.",
+      en: "Facts: one party is a foreign national; the couple had held a wedding and filed the marriage registration form, and one of them acquired land use rights before the marriage certificate issued. Solution: the land use rights must be treated as the spouses' common property.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 24/12/2025; công bố theo Quyết định 339a/QĐ-CA ngày 25/12/2025; áp dụng từ 01/02/2026.",
+      en: "Adopted on 24 December 2025; published by Decision 339a/QĐ-CA of 25 December 2025; applied from 1 February 2026.",
+    },
+    sources: [
+      `${LVN}/ban-an/an-le-82-2025-al-2-1389112-d15.html`,
+      "https://tapchitoaan.vn/toa-an-nhan-dan-to-cao-cong-bo-10-an-le14952.html",
+      "https://dblegal.vn/vi/cap-nhap-phap-ly/ban-an/an-le-so-82-2025-al-ve-xac-dinh-tai-san-chung-cua-vo-chong-truoc-khi-dang-ky-ket-hon-1658.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-83-2026",
+    number: "83/2026/AL",
+    type: "an-le",
+    domains: ["an-le", "hop-dong"],
+    issuedOn: "2026-05-29",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về trách nhiệm bồi thường của doanh nghiệp bảo hiểm khi cơ quan có thẩm quyền chưa xác định được người gây ra thiệt hại về tài sản",
+      en: "Precedent on an insurer's liability where the authorities have not identified who caused the property damage",
+    },
+    summary: {
+      vi: "Giải pháp: doanh nghiệp bảo hiểm có trách nhiệm bồi thường thiệt hại về tài sản cho người được bảo hiểm dù cơ quan có thẩm quyền chưa xác định được người gây thiệt hại; doanh nghiệp bảo hiểm được bảo lưu hoặc được chuyển quyền yêu cầu bồi hoàn theo quy định của pháp luật.",
+      en: "Solution: the insurer must indemnify the insured for property damage even though the authorities have not identified who caused it; the insurer keeps, or is subrogated to, the right of recourse as provided by law.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 21/5/2026; công bố theo Quyết định 162/QĐ-CA ngày 29/5/2026; áp dụng từ 01/7/2026.",
+      en: "Adopted on 21 May 2026; published by Decision 162/QĐ-CA of 29 May 2026; applied from 1 July 2026.",
+    },
+    sources: [
+      `${LVN}/ban-an/an-le-83-2026-al-2-1420875-d15.html`,
+      "https://tapchitoaan.vn/chanh-an-toa-an-nhan-dan-toi-cao-ban-hanh-quyet-dinh-ve-viec-cong-bo-08-an-le15734.html",
+      "https://lsvn.vn/them-8-an-le-moi-ap-dung-tu-ngay-01-7-2026-duoc-toa-an-nhan-dan-toi-cao-cong-bo-a174150.html",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-87-2026",
+    number: "87/2026/AL",
+    type: "an-le",
+    domains: ["an-le", "dan-su"],
+    issuedOn: "2026-05-29",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về thứ tự ưu tiên thanh toán khi xử lý tài sản bảo đảm",
+      en: "Precedent on the order of priority when enforcing collateral",
+    },
+    summary: {
+      vi: "Tình huống: tài sản bảo đảm phát sinh chi phí sửa chữa, nâng cấp và trông giữ do bên thứ ba thực hiện. Giải pháp: khi xử lý tài sản bảo đảm, Tòa án phải xác định ưu tiên thanh toán trước cho bên thứ ba các chi phí tiền lương người lao động, tiền thuê và tiền trông giữ tài sản liên quan tới việc sửa chữa, nâng cấp, trông giữ tài sản bảo đảm.",
+      en: "Facts: a third party incurred costs of repairing, upgrading and storing the collateral. Solution: on enforcement, the court must pay that third party first for the workers' wages, rent and storage costs connected with repairing, upgrading and storing the collateral.",
+    },
+    note: {
+      vi: "Công bố theo Quyết định 162/QĐ-CA ngày 29/5/2026; áp dụng từ 01/7/2026. Quy định liên quan: Điều 307 Bộ luật Dân sự 2015.",
+      en: "Published by Decision 162/QĐ-CA of 29 May 2026; applied from 1 July 2026. Related provision: Article 307 of the 2015 Civil Code.",
+    },
+    guides: ["blds-2015"],
+    sources: [
+      `${TVPL}/banan/tin-tuc/noi-dung-an-le-so-872026al-ve-thu-tu-uu-tien-thanh-toan-khi-xu-ly-tai-san-bao-dam-50572.html`,
+      "https://vneconomy.vn/cong-bo-an-le-moi-quy-dinh-thu-tu-uu-tien-thanh-toan-khi-xu-ly-tai-san-bao-dam.htm",
+      "https://luatlongphan.vn/uu-tien-thanh-toan-tai-san-the-chap",
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
+  },
+  {
+    id: "al-90-2026",
+    number: "90/2026/AL",
+    type: "an-le",
+    domains: ["an-le", "dat-dai", "to-tung"],
+    issuedOn: "2026-05-29",
+    effectiveOn: "2026-07-01",
+    status: "active",
+    title: {
+      vi: "Án lệ về thẩm quyền hủy giấy chứng nhận quyền sử dụng đất của Tòa án",
+      en: "Precedent on the court's power to annul land use right certificates",
+    },
+    summary: {
+      vi: "Tình huống: do sai sót về trình tự, thủ tục, giấy chứng nhận quyền sử dụng đất được cấp chồng lên phần đất của người liền kề đã được cấp giấy trước đó, rồi đất được chuyển nhượng cho người thứ ba. Giải pháp: Tòa án phải xác định giấy chứng nhận là quyết định hành chính, có thẩm quyền xem xét tính hợp pháp của giấy chứng nhận đã cấp cho người thứ ba và tuyên hủy một phần hoặc toàn bộ giấy chứng nhận đó.",
+      en: "Facts: through procedural error a certificate was issued over part of a neighbour's already-certified land, and the land was then transferred to a third party. Solution: the certificate is an administrative decision; the court may review the legality of the certificate issued to the third party and annul it in whole or in part.",
+    },
+    note: {
+      vi: "Hội đồng Thẩm phán thông qua ngày 21/5/2026; công bố theo Quyết định 162/QĐ-CA ngày 29/5/2026; áp dụng từ 01/7/2026.",
+      en: "Adopted on 21 May 2026; published by Decision 162/QĐ-CA of 29 May 2026; applied from 1 July 2026.",
+    },
+    sources: [
+      `${TVPL}/chinh-sach-phap-luat-moi/vn/an-le/114565/an-le-so-90-2026-al-ve-tham-quyen-huy-giay-chung-nhan-quyen-su-dung-dat-cua-toa-an`,
+      "https://tuoitre.vn/plo/an-le-ve-viec-huy-so-hong-khi-cap-chong-len-dat-nguoi-khac-post912386.html",
+      `${LVN}/dat-dai/quyet-dinh-162-qd-ca-2026-cong-bo-an-le-cua-toa-an-nhan-dan-toi-cao-437161-d1.html`,
+    ],
+    confidence: "cross-check",
+    verifiedOn: VERIFIED_2026_10_01,
   },
 ];
 

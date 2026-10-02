@@ -63,6 +63,7 @@ const TYPE_WORDS: [string[], DocType][] = [
   [["nghi", "dinh"], "nghi-dinh"],
   [["thong", "tu"], "thong-tu"],
   [["nghi", "quyet"], "nghi-quyet"],
+  [["an", "le"], "an-le"],
   [["quyet", "dinh"], "quyet-dinh"],
   [["code"], "bo-luat"],
   [["decree"], "nghi-dinh"],
@@ -77,6 +78,8 @@ const TYPE_WORDS: [string[], DocType][] = [
   [["decision"], "quyet-dinh"],
   [["decisions"], "quyet-dinh"],
   [["qd"], "quyet-dinh"],
+  [["precedent"], "an-le"],
+  [["precedents"], "an-le"],
   [["luat"], "luat"],
   [["law"], "luat"],
   [["laws"], "luat"],
@@ -225,6 +228,7 @@ const TIER: Record<DocType, number> = {
   "quyet-dinh": 2,
   "thong-tu": 3,
   "quy-tac": 3,
+  "an-le": 3,
 };
 
 export interface Hit {

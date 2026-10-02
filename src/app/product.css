@@ -3587,6 +3587,12 @@ mark.hl {
   color: var(--ink-3);
   transition: color 0.2s;
 }
+/* Ô lĩnh vực không có đoạn riêng trong video: cả ô là đường dẫn tới trang lĩnh vực. */
+a.intro-tile-btn {
+  padding-bottom: 0.9rem;
+  color: inherit;
+  text-decoration: none;
+}
 .intro-tile-btn:hover .intro-tile-time,
 .intro-tile-btn[aria-current="true"] .intro-tile-time {
   color: var(--accent);

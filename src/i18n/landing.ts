@@ -158,7 +158,7 @@ const vi: LandingCopy = {
     lineageCaption: (n) => `Dòng đời quanh ${n}, dựng từ chính quan hệ ghi trong bản ghi.`,
     intro: {
       title: "Xem video giới thiệu",
-      meta: (n) => `55 giây · ${n} lĩnh vực · ba công cụ tra cứu`,
+      meta: (n) => `60 giây · trợ lý AI · ${n} lĩnh vực`,
     },
   },
   intents: {
@@ -349,7 +349,7 @@ const en: LandingCopy = {
     lineageCaption: (n) => `The lineage around ${n}, drawn from the relations recorded in each entry.`,
     intro: {
       title: "Watch the introduction",
-      meta: (n) => `55 seconds · ${n} practice areas · three tools`,
+      meta: (n) => `60 seconds · AI assistant · ${n} practice areas`,
     },
   },
   intents: {

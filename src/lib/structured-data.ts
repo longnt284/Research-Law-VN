@@ -59,14 +59,15 @@ const ref = (d: LegalDoc) => ({
  * Mô tả `Legislation` của một văn bản.
  *
  * Quy tắc tố tụng của một trung tâm trọng tài không phải văn bản pháp luật,
- * nên không được mô tả bằng kiểu này.
+ * nên không được mô tả bằng kiểu này. Án lệ cũng vậy: đó là lập luận trong một
+ * bản án được công bố để áp dụng thống nhất, không phải văn bản quy phạm.
  */
 export function legislationLd(
   doc: LegalDoc,
   lang: Lang,
   byId: ReadonlyMap<string, LegalDoc>,
 ): Record<string, unknown> | null {
-  if (doc.type === "quy-tac") return null;
+  if (doc.type === "quy-tac" || doc.type === "an-le") return null;
   const t = getDict(lang);
   const force = LEGAL_FORCE[doc.status];
   const amends = (doc.amends ?? []).map((id) => byId.get(id)).filter((d) => d !== undefined);

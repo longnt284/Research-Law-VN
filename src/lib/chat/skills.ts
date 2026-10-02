@@ -146,13 +146,13 @@ const ROUTES: Route[] = [
   },
   {
     skill: "vn-litigation-partner",
-    domains: ["to-tung"],
+    domains: ["to-tung", "an-le"],
     keywords: [
       "khởi kiện", "kiện ra tòa", "bị kiện", "đơn khởi kiện", "tòa án", "tòa", "thời hiệu",
       "trọng tài", "viac", "icc", "siac", "hkiac", "lcia", "uncitral", "phán quyết",
       "hủy phán quyết", "biện pháp khẩn cấp tạm thời", "phản tố", "luận cứ", "hòa giải",
-      "thi hành án", "tranh chấp", "bản án", "án lệ", "lawsuit", "litigation", "arbitration",
-      "court", "dispute", "disputes",
+      "thi hành án", "tranh chấp", "bản án", "án lệ", "dự thảo án lệ", "lawsuit", "litigation",
+      "arbitration", "court", "dispute", "disputes", "precedent", "precedents", "case law",
     ],
   },
   {
@@ -201,26 +201,34 @@ const ROUTES: Route[] = [
     ],
   },
   /*
-    Lĩnh vực ngoài kho văn bản của trang, nên không kèm văn bản nào. Các tuyến
-    này để câu hỏi dân sự, gia đình, hình sự, hành chính không rơi vào skill
-    chuyên ngành chỉ vì có chữ "tranh chấp" hay "tòa án".
+    Dân sự và gia đình chưa có skill riêng nên đi qua `vn-orchestrator`, nhưng
+    kèm văn bản của lĩnh vực Dân sự. Hai tuyến này còn giữ câu hỏi dân sự, gia
+    đình khỏi rơi vào skill chuyên ngành chỉ vì có chữ "tranh chấp" hay "tòa án".
   */
   {
     skill: "vn-orchestrator",
-    domains: [],
+    domains: ["dan-su"],
     keywords: [
       "dân sự", "bộ luật dân sự", "giao dịch dân sự", "thừa kế", "di chúc", "di sản", "vay tiền",
-      "đòi nợ", "ủy quyền", "civil code", "inheritance",
+      "đòi nợ", "ủy quyền", "đặt cọc", "phạt cọc", "thế chấp", "cầm cố", "bảo lãnh",
+      "biện pháp bảo đảm", "tài sản bảo đảm", "công chứng", "chứng thực", "hộ tịch", "khai sinh",
+      "thi hành án dân sự", "bồi thường của nhà nước", "civil code", "inheritance", "mortgage",
+      "notarisation", "notarization",
     ],
   },
   {
     skill: "vn-orchestrator",
-    domains: [],
+    domains: ["dan-su"],
     keywords: [
       "hôn nhân", "kết hôn", "ly hôn", "nuôi con", "cấp dưỡng", "tài sản chung", "divorce", "marriage",
       "custody",
     ],
   },
+  /*
+    Lĩnh vực ngoài kho văn bản của trang, nên không kèm văn bản nào. Các tuyến
+    này để câu hỏi hình sự, hành chính không rơi vào skill chuyên ngành chỉ vì
+    có chữ "tranh chấp" hay "tòa án".
+  */
   {
     skill: "vn-orchestrator",
     domains: [],

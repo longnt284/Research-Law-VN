@@ -55,7 +55,7 @@ phần giới thiệu trước. Thứ tự trang chủ vì vậy là:
 3. **Thay đổi gần đây** (`src/lib/changes.ts`): mốc hiệu lực, sửa đổi, thay thế,
    hướng dẫn đọc từ bản ghi, chia "sắp có hiệu lực" và "đã diễn ra" theo ngày
    tra cứu gần nhất của kho.
-4. **Khám phá theo lĩnh vực**: mười hai lĩnh vực, thanh đếm số văn bản thật.
+4. **Khám phá theo lĩnh vực**: mười bốn lĩnh vực, thanh đếm số văn bản thật.
 5. **Gia phả tiêu biểu** và các chuỗi văn bản đang động.
 6. **Phạm vi dữ liệu**: số văn bản, quan hệ, cặp đối chiếu, lĩnh vực, và tỷ lệ
    bản ghi đã đối chiếu nguồn chính thống.
@@ -278,9 +278,9 @@ cùng một văn bản vào hai tầng khác nhau.
 
 ## Phạm vi
 
-Mười hai lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Tố tụng và Trọng tài,
-Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản, Đối tác công tư,
-Fintech và Tài sản số, Dữ liệu và An ninh mạng. Đất đai và Đối tác công tư được
+Mười bốn lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Dân sự, Tố tụng và
+Trọng tài, Án lệ, Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản,
+Đối tác công tư, Fintech và Tài sản số, Dữ liệu và An ninh mạng. Đất đai và Đối tác công tư được
 thêm trong đợt rà soát ngày 24/9/2026, mỗi lĩnh vực có cây văn bản riêng dựng từ
 các văn bản trụ cột đã đọc trên vbpl.vn.
 
@@ -293,6 +293,23 @@ và xử phạt, và Luật Trí tuệ nhân tạo. Các chuỗi thay thế (Ngh
 356/2025, Luật An ninh mạng 2018 và Luật An toàn thông tin mạng 2015 sang Luật
 116/2025, Nghị định 53/2022 sang 333/2026) tự sinh gia phả, cặp đối chiếu và mốc
 hiệu lực theo ngày.
+
+Dân sự và Án lệ được thêm ngày 01/10/2026, cùng Quy tắc tố tụng trọng tài VIAC
+2017. Dân sự gồm Bộ luật Dân sự, Luật Hôn nhân và gia đình, Luật Công chứng 2014
+và 2024, Nghị định 99/2022/NĐ-CP về đăng ký biện pháp bảo đảm, Luật Hộ tịch, Luật
+Trách nhiệm bồi thường của Nhà nước, Luật Thi hành án dân sự 106/2025/QH15 và Nghị
+quyết 01/2019/NQ-HĐTP về lãi, lãi suất. Án lệ gồm ba nghị quyết về quy trình án lệ
+(03/2015, 04/2019 và lần sửa đổi 02/2025) và mười sáu án lệ dân sự, kinh doanh,
+thương mại, đất đai và trọng tài. Bản ghi án lệ dùng loại `an-le`, số hiệu dạng
+`<số>/<năm>/AL`; `issuedOn` là ngày Chánh án ký quyết định công bố, `effectiveOn`
+là ngày các Tòa án bắt đầu áp dụng, số quyết định công bố ghi ở `note`. Án lệ
+08/2016/AL hết áp dụng từ 15/3/2019 khi Nghị quyết 01/2019/NQ-HĐTP có hiệu lực.
+
+Dự thảo án lệ không vào kho văn bản. Chúng nằm ở `src/data/precedent-drafts.ts`,
+chỉ hiện ở cuối trang lĩnh vực Án lệ dưới nhãn "chỉ để tham khảo" và chỉ được gửi
+cho trợ lý kèm nhãn dự thảo, nên không đi vào tra hiệu lực, gia phả, tìm kiếm hay
+nguồn dữ liệu mở. Quy tắc VIAC 2017 bị Quy tắc VIAC 2026 thay thế cho các vụ bắt
+đầu từ 01/7/2026; cặp đối chiếu hai bản có năm điểm ở mức cần đối chiếu thêm.
 
 ## Nguyên tắc về dữ liệu
 
@@ -348,6 +365,13 @@ với ngày đối chiếu trên Công báo và điều khoản hiệu lực, ch
 toàn văn; chúng giữ `confidence: "cross-check"` cho tới khi đọc được tình trạng
 hiệu lực từ nguồn nhà nước. Nhật ký rà soát từng văn bản không nằm trong kho mã;
 nguồn của mỗi bản ghi là nơi lần lại.
+
+Đợt bổ sung ngày 01/10/2026 (Dân sự, Án lệ, Quy tắc VIAC 2017) cũng tra trong điều
+kiện không mở được vbpl.vn, Công báo, cổng án lệ của Tòa án nhân dân tối cao và
+viac.vn. Số hiệu, ngày công bố, ngày áp dụng và nội dung chính của từng bản ghi
+được đối chiếu giữa ít nhất hai kết quả tìm kiếm độc lập; khi các nguồn ghi ngày
+khác nhau, bản ghi theo đa số và nêu chỗ lệch ở `note`. Hai mươi tám bản ghi mới
+mang `confidence: "cross-check"` và `verifiedOn` 01/10/2026.
 
 ## Hiệu lực tại một ngày và tra theo điều khoản
 
@@ -943,11 +967,15 @@ did not agree was left blank. All fifty carry `confidence: "cross-check"`, so th
 interface flags them, and their `sources` are addresses found rather than pages
 opened.
 
-The dataset covers twelve domains. Land & Real Estate and Public-Private
+The dataset covers fourteen domains. Land & Real Estate and Public-Private
 Partnership were added in the review of 24 September 2026; Fintech & Digital
 Assets and Data Privacy & Cybersecurity were added on 29 September 2026 with
 twenty-six new instruments, all marked `cross-check` because the official
-sources could not be opened from that session. In that review every
+sources could not be opened from that session. Civil Law and Precedents were
+added on 1 October 2026 together with the VIAC Rules 2017: twenty-eight new
+records, again at `cross-check`. Precedents use the `an-le` type; draft
+precedents live outside the corpus in `src/data/precedent-drafts.ts` and appear
+only at the foot of the Precedents domain page, labelled for reference only. In that review every
 Vietnamese instrument was read again on the National Legal Database (vbpl.vn),
 which states each instrument's status in words with the date it was last
 updated; missing dates came from the Official Gazette or the Government portal.

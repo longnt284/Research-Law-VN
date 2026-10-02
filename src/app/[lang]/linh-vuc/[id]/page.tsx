@@ -6,6 +6,7 @@ import { DocMetaRow } from "@/components/DomainDocRow";
 import { DomainGlyph } from "@/components/art/DomainGlyph";
 import { DomainTree } from "@/components/DomainTree";
 import { LuxBackdrop } from "@/components/LuxBackdrop";
+import { PrecedentDrafts } from "@/components/PrecedentDrafts";
 import { Reveal } from "@/components/Reveal";
 import { documents, domains, relations } from "@/data/documents";
 import type { DomainId, Lang } from "@/data/types";
@@ -54,7 +55,14 @@ export default async function DomainPage({
   // một đầu thì trên cây nó thành đường đi vào chỗ trống.
   const inner = relations.filter((r) => ids.has(r.from) && ids.has(r.to));
   const h = getHome(lang).hierarchy;
-  const tiers = [0, 1, 2, 3].map((tier) => docs.filter((d) => tierOf(d) === tier).length);
+  const tiers = [0, 1, 2, 3].map((tier) => {
+    const inTier = docs.filter((d) => tierOf(d) === tier);
+    // Một tầng chỉ có một loại văn bản thì gọi đúng tên loại đó, để trang Án lệ
+    // không đếm 16 án lệ dưới nhãn chung của tầng.
+    const kinds = new Set(inTier.map((d) => d.type));
+    const label = kinds.size === 1 ? t.type[[...kinds][0]] : h.tierShort[tier];
+    return { n: inTier.length, label };
+  });
 
   return (
     <>
@@ -91,9 +99,9 @@ export default async function DomainPage({
             >
               <DomainGlyph id={domainId} className="domain-plate-glyph" />
               <dl className="domain-plate-tiers">
-                {tiers.map((n, i) => (
+                {tiers.map(({ n, label }, i) => (
                   <div key={i}>
-                    <dt>{h.tierShort[i]}</dt>
+                    <dt>{label}</dt>
                     <dd className="tnum">{n}</dd>
                   </div>
                 ))}
@@ -139,6 +147,14 @@ export default async function DomainPage({
             </ul>
           </section>
         </Reveal>
+
+        {/* Dự thảo án lệ không nằm trong kho văn bản, nên chỉ hiện ở đây, tách
+            khỏi danh sách phía trên và đứng sau một lời cảnh báo. */}
+        {domainId === "an-le" && (
+          <Reveal>
+            <PrecedentDrafts lang={lang} />
+          </Reveal>
+        )}
 
         <Link href={`/${lang}/linh-vuc`} className="btn btn-quiet mt-10">
           {t.domainPage.backToDomains}

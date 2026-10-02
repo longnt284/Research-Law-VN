@@ -1,4 +1,4 @@
-"""Synthesize the soundtrack, beat-locked to scene.js (110 BPM, 100 beats, D minor).
+"""Synthesize the soundtrack, beat-locked to scene.js (110 BPM, 110 beats, D minor).
 
 Every event time is read from the SYNC block in scene.js, so picture and sound
 share one source. Output: out/audio.wav (48 kHz, stereo, 16-bit).
@@ -14,19 +14,16 @@ DIR = Path(__file__).parent
 SR = 48000
 BPM = 110
 B = 60 / BPM
-TOTAL_BEATS = 100
-DUR = TOTAL_BEATS * B + 1.0
-N = int(DUR * SR)
 rng = np.random.default_rng(11)
 
 src = (DIR / "scene.js").read_text()
 block = src.split("/*SYNC*/")[1].split("/*END*/")[0]
 SYNC = json.loads(block.split("=", 1)[1].strip().rstrip(";"))
-# Scene boundaries, as in scene.js: one four-beat bar per domain from beat 28,
-# then three bars of tools (T4), then the lockup (T5).
-ND = len(SYNC["domains"])
-T4 = 28 + 4 * ND
-T5 = T4 + 12
+# Scene starts, as in scene.js: hook, family tree, assistant, tools, scope,
+# lockup, end.
+_, _, TC, T4, TB, T5, TOTAL_BEATS = SYNC["scenes"]
+DUR = TOTAL_BEATS * B + 1.0
+N = int(DUR * SR)
 
 dry = np.zeros((N, 2))
 send = np.zeros((N, 2))  # reverb bus
@@ -118,6 +115,15 @@ def tick(hi=True):
     return (np.sin(2 * np.pi * f * t) * 0.6 + filt(noise(0.04), "highpass", 5000) * 0.4) * np.exp(-t * 180)
 
 
+def key(seed):
+    """A soft laptop key: a short papery click over a dull low tap."""
+    r = np.random.default_rng(seed)
+    t = tt(0.06)
+    click = filt(r.standard_normal(len(t)), "bandpass", [1800, 6500]) * np.exp(-t * 140)
+    tap = np.sin(2 * np.pi * (180 + r.uniform(-20, 20)) * t) * np.exp(-t * 90) * 0.5
+    return (click * 0.6 + tap) * r.uniform(0.7, 1.0)
+
+
 def boom(amp):
     t = tt(2.6)
     f = 28 + 60 * np.exp(-t * 7)
@@ -154,15 +160,15 @@ def saw(f, t, detune=0.0):
 
 
 # ---------------- harmony ----------------
-# D minor, four-bar cycle from the first domain: Dm, Bb, F, C.
+# D minor, four-bar cycle from the assistant scene on: Dm, Bb, F, C.
 CYCLE = [(50, [0, 3, 7]), (46, [0, 4, 7]), (53, [0, 4, 7]), (48, [0, 4, 7])]
 DM = (50, [0, 3, 7])
 
 
 def chord_at(beat):
-    if beat < 28:
+    if beat < TC:
         return DM
-    return CYCLE[int((beat - 28) // 4) % 4]
+    return CYCLE[int((beat - TC) // 4) % 4]
 
 
 pad = np.zeros(N)
@@ -184,62 +190,120 @@ def pad_chord(b0, beats, root, iv, amp, extra=()):
 # ---------------- arrangement ----------------
 tk = np.arange(N) / SR
 
-# low drone and pad under the hook and the family tree
-t = tt(sec(24))
+# 1. hook and family tree (beats 0-TC): drone, ticks, stamp, tree plucks, brand bells
+t = tt(sec(TC))
 drone = (np.sin(2 * np.pi * mtof(26) * t) * 0.6 + np.sin(2 * np.pi * mtof(38) * t) * 0.3)
 drone *= np.minimum(1, t / 2.5) * np.minimum(1, (t[-1] - t) / 1.5)
 place(dry, drone * 0.22, 0)
 pad_chord(0, 12, 50, [0, 3, 7], 0.5)
 pad_chord(12, 8, 46, [0, 4, 7], 0.6)
-pad_chord(20, 8, 50, [0, 3, 7], 0.8, extra=[14])
+pad_chord(20, 4, 50, [0, 3, 7], 0.8, extra=[14])
 
-# clock ticks while the lookup date runs, louder as it nears the stamp
 t0, t1 = SYNC["ticks"]
 for k, b in enumerate(np.arange(t0, t1, 0.25)):
     place(dry, tick(k % 2 == 0), sec(b), 0.12 + 0.18 * (b - t0) / (t1 - t0), pan=0.25 if k % 2 else -0.25)
-r = sweep_noise(sec(t1 - t0), 300, 5000)
-both(r, sec(t0), 0.12, 0.08)
-
-# stamp at the moment the old law stops applying
+both(sweep_noise(sec(t1 - t0), 300, 5000), sec(t0), 0.12, 0.08)
 both(stamp(), sec(8), 0.9, 0.3)
+both(sweep_noise(sec(1.2), 500, 5000, q=0.5), sec(9.4), 0.18, 0.12)
 
-# thread to the replacing law
-w = sweep_noise(sec(1.2), 500, 5000, q=0.5)
-both(w, sec(9.4), 0.18, 0.12)
-
-# tree nodes: a rising pluck each
 POP_NOTES = [62, 65, 67, 69, 72, 74, 77, 79]
 for b, m in zip(SYNC["pops"], POP_NOTES):
     both(pluck(mtof(m), 1.8), sec(b), 0.22, 0.18, pan=np.interp(m, [62, 79], [-0.5, 0.5]))
-
-# swell into the brand reveal, then a bell chord
-sw = sweep_noise(sec(2.2), 200, 9000, reverse=False)
-both(sw, sec(17.8), 0.2, 0.15)
+both(sweep_noise(sec(2.2), 200, 9000), sec(17.8), 0.2, 0.15)
 for m, g, p in ((74, 0.5, -0.2), (81, 0.35, 0.2), (77, 0.3, 0.0)):
     both(bell(mtof(m), 4.5), sec(20), g, 0.35, pan=p)
 
-# riser into the domains
-r = sweep_noise(sec(4), 250, 8000)
-both(r, sec(24), 0.16, 0.1)
-t = tt(sec(4))
-place(dry, np.sin(2 * np.pi * np.cumsum(mtof(38) * 2 ** (t / sec(4) * 2)) / SR) * (t / sec(4)) ** 3 * 0.08, sec(24))
+# 2. the assistant (TC-T4)
+# a low swell as the panel opens, and a soft chord on the first downbeat
+both(sweep_noise(sec(2.5), 150, 3500, q=0.4), sec(TC - 2.5), 0.12, 0.1)
+for m, g, p in ((62, 0.18, -0.3), (69, 0.14, 0.3), (76, 0.1, 0.0)):
+    both(bell(mtof(m), 3.0), sec(TC + 0.4), g, 0.25, pan=p)
 
-# groove under the domains (beats 28-T4), lighter under the tools (T4-T5)
-kick_beats = list(np.arange(28, T4, 1.0)) + list(np.arange(T4, T5, 2.0))
+# typing: one key per revealed character, slightly humanised
+q0, q1 = SYNC["typing"]
+for k, b in enumerate(np.arange(q0, q1, (q1 - q0) / 54)):
+    jitter = rng.uniform(-0.04, 0.04)
+    place(dry, key(k), sec(b + jitter), 0.16 + (0.06 if k % 7 == 0 else 0), pan=rng.uniform(-0.3, 0.3))
+
+# send: an airy lift and a bright pluck
+for b in SYNC["send"]:
+    both(sweep_noise(sec(0.8), 900, 9000, q=0.4), sec(b - 0.6), 0.14, 0.1)
+    both(pluck(mtof(81), 1.0, bright=1.4), sec(b), 0.16, 0.14)
+    # the lookup: quiet sixteenth ticks while the bar fills
+    for j, bb in enumerate(np.arange(b + 0.4, b + 1.6, 0.25)):
+        place(dry, tick(j % 2 == 0), sec(bb), 0.06, pan=0.2 if j % 2 else -0.2)
+
+# the not-yet-verified tag is stamped into the line
+for b in SYNC["tag"]:
+    both(stamp(), sec(b), 0.45, 0.2)
+    both(bell(mtof(64), 1.6), sec(b), 0.08, 0.1)
+
+# each source chip lands on a bell from the chord
+SCALE = [74, 77, 79, 81, 84, 86, 89]
+for k, b in enumerate(SYNC["chips"]):
+    both(bell(mtof(SCALE[k % len(SCALE)]), 2.4), sec(b), 0.2, 0.25, pan=-0.4 + 0.8 * (k % 2))
+for b in SYNC["today"]:
+    both(bell(mtof(93), 2.0), sec(b), 0.12, 0.2)
+
+# each quick question arrives with a lift
+for b in SYNC["montage"]:
+    both(sweep_noise(sec(0.9), 600, 7000, q=0.45), sec(b - 0.9), 0.14, 0.1)
+    both(pluck(mtof(74), 0.9, bright=1.3), sec(b), 0.14, 0.1)
+
+# 3. tools (T4-TB): the interface events of the original cut
+for b in SYNC["flip"]:
+    place(dry, tick(True), sec(b), 0.35)
+    both(bell(mtof(86), 1.5), sec(b), 0.12, 0.12)
+for b in SYNC["rows"] + SYNC["feed"]:
+    place(dry, tick(False), sec(b), 0.22, pan=0.2)
+    both(pluck(mtof(81), 0.6), sec(b), 0.06, 0.06)
+
+# 4. scope (TB-T5): riser, impact, one pluck per area, counters ticking
+both(sweep_noise(sec(4), 250, 8000), sec(TB - 4), 0.16, 0.1)
+t = tt(sec(4))
+place(dry, np.sin(2 * np.pi * np.cumsum(mtof(38) * 2 ** (t / sec(4) * 2)) / SR) * (t / sec(4)) ** 3 * 0.08, sec(TB - 4))
+GLY = [62, 65, 67, 69, 72, 74, 77, 79, 81, 84, 86, 89, 91, 93]
+for k, b in enumerate(SYNC["glyphs"]):
+    both(pluck(mtof(GLY[k]), 1.4, bright=1.1), sec(b), 0.13, 0.14, pan=np.sin(k * 0.9) * 0.6)
+c0, c1 = SYNC["counters"]
+for j, b in enumerate(np.arange(c0, c1 + 1.6, 0.125)):
+    place(dry, tick(j % 2 == 0), sec(b), 0.05 * (1 - (b - c0) / (c1 + 1.6 - c0)) + 0.02, pan=0.15 if j % 2 else -0.15)
+cb = SYNC["collapse"][0]
+both(sweep_noise(sec(1.6), 8000, 300, reverse=True), sec(cb - 1.6), 0.16, 0.12)
+
+# impacts: the stamp, the brand, the scope burst, the collapse into the seal
+for b, amp in SYNC["impacts"]:
+    both(boom(amp), sec(b), 0.55, 0.3 * amp)
+
+# 5. lockup (T5-end): wide chord, bells, the question box
+pad_chord(T5 - 0.4, TOTAL_BEATS - T5 - 1, 50, [0, 3, 7], 1.1, extra=[14, 19])
+for m, g, p in ((74, 0.45, -0.25), (81, 0.3, 0.25), (86, 0.18, 0.0)):
+    both(bell(mtof(m), 6), sec(cb), g, 0.4, pan=p)
+for k, b in enumerate(np.arange(T5, T5 + 8, 0.25)):
+    m = 74 + [0, 3, 7, 10, 14, 10, 7, 3][k % 8]
+    both(pluck(mtof(m), 0.8, bright=1.2), sec(b), 0.035 * (1 - (b - T5) / 8), 0.05, pan=np.sin(k * 0.7) * 0.5)
+a0, a1 = SYNC["cta"]
+for k, b in enumerate(np.arange(a0, a1 - 0.6, (a1 - 0.6 - a0) / 44)):
+    place(dry, key(200 + k), sec(b + rng.uniform(-0.03, 0.03)), 0.1, pan=rng.uniform(-0.2, 0.2))
+for m, g, p in ((74, 0.3, -0.2), (78, 0.22, 0.2), (81, 0.2, 0.0), (86, 0.12, 0.0)):
+    both(bell(mtof(m), 5), sec(a1), g, 0.35, pan=p)
+
+# groove: four on the floor under the answers and the scope, half-time under the tools
+kick_beats = list(np.arange(36, 64, 1.0)) + list(np.arange(T4, TB, 2.0)) + list(np.arange(TB, cb - 0.5, 1.0))
 K = kick()
 for b in kick_beats:
-    place(dry, K, sec(b), 0.55 if b < T4 else 0.4)
+    place(dry, K, sec(b), 0.5 if T4 <= b < TB else 0.55)
 RIM = rim()
-for b in np.arange(29, T4, 2.0):
-    place(dry, RIM, sec(b), 0.16, pan=0.1)
+for b in list(np.arange(37, 64, 2.0)) + list(np.arange(TB + 1, cb - 0.5, 2.0)):
+    place(dry, RIM, sec(b), 0.15, pan=0.1)
     place(send, RIM, sec(b), 0.08)
 H1, H2 = hat(), hat(True)
-for b in np.arange(28, T5, 0.5):
+for b in list(np.arange(TC + 4, 64, 0.5)) + list(np.arange(T4, cb - 0.5, 0.5)):
     if b % 1 == 0.5:
-        place(dry, H2 if int(b) % 4 == 3 else H1, sec(b), 0.1, pan=0.3)
-for b in np.arange(36, T4 - 2, 0.25):
+        place(dry, H2 if int(b) % 4 == 3 else H1, sec(b), 0.09, pan=0.3)
+for b in list(np.arange(44, 62, 0.25)) + list(np.arange(TB + 4, cb - 1, 0.25)):
     if b % 0.5:
-        place(dry, H1, sec(b), 0.045, pan=-0.3)
+        place(dry, H1, sec(b), 0.04, pan=-0.3)
 
 duck = np.ones(N)
 for b in kick_beats:
@@ -249,7 +313,8 @@ for b in kick_beats:
     duck[i0:i1] = np.minimum(duck[i0:i1], 1 - 0.45 * np.exp(-d / 0.1))
 
 bass = np.zeros(N)
-for b in np.arange(28, T5, 0.5):
+bass_beats = list(np.arange(36, 64, 0.5)) + list(np.arange(T4, TB, 1.0)) + list(np.arange(TB, cb - 0.5, 0.5))
+for b in bass_beats:
     root, _ = chord_at(b)
     f = mtof(root - 24)
     t = tt(B * 0.5)
@@ -260,49 +325,24 @@ for b in np.arange(28, T5, 0.5):
 bass = filt(bass, "lowpass", 600) * duck
 place(dry, np.tanh(bass * 1.3) * 0.32, 0)
 
-for bar in range((T5 - 28) // 4):
-    b0 = 28 + bar * 4
+for bar in range(int((cb - TC) // 4)):
+    b0 = TC + bar * 4
     root, iv = chord_at(b0)
-    pad_chord(b0, 4, root, iv, 0.8)
+    pad_chord(b0, 4, root, iv, 0.8 if b0 < 64 or b0 >= T4 else 0.6)
 
-# one bell per domain, on the downbeat that brings it in
-for k, b in enumerate(SYNC["domains"]):
-    root, iv = chord_at(b)
-    m = root + 24 + iv[k % 3]
-    both(bell(mtof(m), 3.0), sec(b), 0.22, 0.25, pan=np.interp(k, [0, ND - 1], [-0.6, 0.6]))
-
-# arpeggio: eighth-note plucks over the chord, from the second domain on
-for k, b in enumerate(np.arange(32, T5, 0.5)):
+# arpeggio: a quiet stream of plucks while the answer is written, louder in the scope
+for k, b in enumerate(list(np.arange(35.75, 64, 0.5)) + list(np.arange(TB, cb - 0.5, 0.5))):
     root, iv = chord_at(b)
     pat = [0, 1, 2, 1, 2, 0, 2, 1]
     m = root + 12 + iv[pat[k % 8]] + (12 if k % 8 in (2, 4) else 0)
-    both(pluck(mtof(m), 0.7, bright=0.8), sec(b), 0.07, 0.05, pan=-0.35 if k % 2 else 0.35)
+    both(pluck(mtof(m), 0.7, bright=0.8), sec(b), 0.05 if b < 64 else 0.07, 0.05, pan=-0.35 if k % 2 else 0.35)
 
 # transitions
-for b in (24, T4, T5):
-    w = sweep_noise(sec(1.0), 400, 6000, q=0.5)
-    both(w, sec(b - 1.0), 0.16, 0.1)
-
-# interface events in the tools scene
-for b in SYNC["flip"]:
-    place(dry, tick(True), sec(b), 0.35)
-    both(bell(mtof(86), 1.5), sec(b), 0.12, 0.12)
-for b in SYNC["rows"] + SYNC["feed"]:
-    place(dry, tick(False), sec(b), 0.22, pan=0.2)
-    both(pluck(mtof(81), 0.6), sec(b), 0.06, 0.06)
-
-# lockup: wide chord, then the last bell
-pad_chord(T5, 11.5, 50, [0, 3, 7], 1.1, extra=[14, 19])
-for b, amp in SYNC["impacts"]:
-    both(boom(amp), sec(b), 0.55, 0.3 * amp)
-for m, g, p in ((74, 0.45, -0.25), (81, 0.3, 0.25), (86, 0.18, 0.0)):
-    both(bell(mtof(m), 6), sec(T5 + 4), g, 0.4, pan=p)
-for k, b in enumerate(np.arange(T5, T5 + 8, 0.25)):
-    m = 74 + [0, 3, 7, 10, 14, 10, 7, 3][k % 8]
-    both(pluck(mtof(m), 0.8, bright=1.2), sec(b), 0.04 * (1 - (b - T5) / 8), 0.05, pan=np.sin(k * 0.7) * 0.5)
+for b in (TC, T4, TB):
+    both(sweep_noise(sec(1.0), 400, 6000, q=0.5), sec(b - 1.0), 0.14, 0.1)
 
 pad = filt(pad, "lowpass", 1400) * 0.05
-pad *= np.where((tk > sec(28)) & (tk < sec(T5)), duck, 1.0)
+pad *= np.where((tk > sec(36)) & (tk < sec(cb)), duck, 1.0)
 place(dry, np.stack([pad, np.roll(pad, 360)], axis=1), 0)
 place(send, np.stack([pad, pad], axis=1), 0, 0.5)
 
@@ -318,7 +358,7 @@ mix = dry + wet * 0.6
 mix = filt(mix, "highpass", 26)
 mix /= np.max(np.abs(mix)) + 1e-9
 mix = np.tanh(mix * 1.2) / np.tanh(1.2)
-fade0, fade1 = int(sec(89.5) * SR), int(sec(91.8) * SR)
+fade0, fade1 = int(sec(TOTAL_BEATS - 2.6) * SR), int(sec(TOTAL_BEATS - 0.3) * SR)
 mix[fade0:fade1] *= np.linspace(1, 0, fade1 - fade0)[:, None] ** 1.5
 mix[fade1:] = 0
 mix[: int(0.02 * SR)] *= np.linspace(0, 1, int(0.02 * SR))[:, None]

@@ -29,7 +29,9 @@ export type DocType =
   | "thong-tu"
   | "vbhn"
   | "dieu-uoc"
-  | "quy-tac";
+  | "quy-tac"
+  /** Án lệ do Hội đồng Thẩm phán TANDTC lựa chọn, Chánh án TANDTC công bố. */
+  | "an-le";
 
 /** Tình trạng hiệu lực tại thời điểm tra cứu. */
 export type DocStatus =
@@ -58,7 +60,9 @@ export type DomainId =
   | "dat-dai"
   | "ppp"
   | "fintech"
-  | "du-lieu";
+  | "du-lieu"
+  | "dan-su"
+  | "an-le";
 
 /**
  * Mức độ xác minh của bản ghi.
