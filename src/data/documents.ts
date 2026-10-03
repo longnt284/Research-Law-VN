@@ -174,6 +174,36 @@ export const domains: Domain[] = [
     },
     hue: 326,
   },
+  {
+    id: "so-huu-tri-tue",
+    label: { vi: "Sở hữu trí tuệ", en: "Intellectual Property" },
+    short: { vi: "Sở hữu trí tuệ", en: "IP" },
+    blurb: {
+      vi: "Quyền tác giả và quyền liên quan, quyền sở hữu công nghiệp như sáng chế, nhãn hiệu, kiểu dáng, chỉ dẫn địa lý, quyền đối với giống cây trồng, cùng các nghị định hướng dẫn và lần sửa đổi Luật Sở hữu trí tuệ năm 2025.",
+      en: "Copyright and related rights, industrial property rights such as patents, trademarks, designs and geographical indications, plant variety rights, together with the implementing decrees and the 2025 amendment of the Intellectual Property Law.",
+    },
+    hue: 285,
+  },
+  {
+    id: "thuong-mai-quoc-te",
+    label: { vi: "Thương mại quốc tế & Hải quan", en: "International Trade & Customs" },
+    short: { vi: "Hải quan", en: "Customs" },
+    blurb: {
+      vi: "Thủ tục hải quan, kiểm tra và giám sát hải quan, thuế xuất khẩu và thuế nhập khẩu, quản lý ngoại thương, xuất xứ hàng hóa và các biện pháp phòng vệ thương mại.",
+      en: "Customs procedures, inspection and supervision, export and import duties, foreign trade management, rules of origin and trade remedies.",
+    },
+    hue: 8,
+  },
+  {
+    id: "canh-tranh",
+    label: { vi: "Cạnh tranh & Người tiêu dùng", en: "Competition & Consumer Protection" },
+    short: { vi: "Cạnh tranh", en: "Competition" },
+    blurb: {
+      vi: "Thỏa thuận hạn chế cạnh tranh, lạm dụng vị trí thống lĩnh, tập trung kinh tế, cạnh tranh không lành mạnh, bảo vệ quyền lợi người tiêu dùng và thương mại điện tử.",
+      en: "Anti-competitive agreements, abuse of dominance, economic concentration, unfair competition, consumer protection and e-commerce.",
+    },
+    hue: 162,
+  },
 ];
 
 const TVPL = "https://thuvienphapluat.vn";

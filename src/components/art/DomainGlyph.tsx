@@ -8,7 +8,8 @@ import type { DomainId } from "@/data/types";
  * cán cân, tòa văn phòng, đồ thị tăng trưởng, mũ bảo hộ, biên lai thuế, thửa đất
  * có mốc giới, cây cầu hạ tầng, đồng xu nối mạch cho fintech, tấm khiên có lỗ
  * khóa cho dữ liệu, mái nhà che hai người cho dân sự, cuốn sổ mở có dấu mộc
- * cho án lệ. Không có khối hình học trừu tượng nào: hình phải
+ * cho án lệ, bóng đèn mang dấu bản quyền cho sở hữu trí tuệ, tàu chở container
+ * cho hải quan, xe đẩy hàng dưới cán cân cho cạnh tranh và người tiêu dùng. Không có khối hình học trừu tượng nào: hình phải
  * tự nói lĩnh vực trước khi người đọc kịp đọc nhãn.
  *
  * Nét vẽ bằng `currentColor`, nên màu do nơi gọi quyết định — thường là sắc của
@@ -135,6 +136,31 @@ const GLYPHS: Record<DomainId, React.ReactNode> = {
       <path d="M24 4 9 9.5V22c0 10.5 6.5 18 15 22 8.5-4 15-11.5 15-22V9.5z" />
       <circle cx="24" cy="20.5" r="4" />
       <path d="M22.4 24.1 21 32h6l-1.4-7.9" />
+    </>
+  ),
+  "so-huu-tri-tue": (
+    <>
+      <path d="M18 33v-3.5C13.5 27 11 23 11 18.5a13 13 0 0 1 26 0c0 4.5-2.5 8.5-7 11V33z" />
+      <path d="M18 37h12M20 41h8" />
+      <circle cx="24" cy="18.5" r="6" />
+      <path d="M26.6 16.4a3.2 3.2 0 1 0 0 4.2" />
+    </>
+  ),
+  "thuong-mai-quoc-te": (
+    <>
+      <path d="M4 32h40l-5 8H9z" />
+      <path d="M9 20h14v12H9zM23 20h14v12H23zM15 9h14v11H15z" />
+      <path d="M13 23v6M17 23v6M27 23v6M31 23v6M19.5 12.5v4M24.5 12.5v4" />
+      <path d="M4 45c4-2 8 2 12 0s8 2 12 0 8 2 12 0" />
+    </>
+  ),
+  "canh-tranh": (
+    <>
+      <path d="M18 8h20M28 4.5V8" />
+      <path d="M18 8l-3 6h6zM38 8l-3 6h6z" />
+      <path d="M4 19h5l4 16h24l3.5-12H10.2" />
+      <circle cx="16" cy="40" r="2.5" />
+      <circle cx="33" cy="40" r="2.5" />
     </>
   ),
 };
