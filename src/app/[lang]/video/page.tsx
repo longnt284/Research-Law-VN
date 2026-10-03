@@ -96,7 +96,7 @@ const copy: Record<
       {
         label: "Phạm vi",
         onScreen:
-          "Nền của mọi câu trả lời: một kho văn bản đã kiểm chứng. 14 lĩnh vực, 199 văn bản, 16 án lệ, nối với nhau thành một gia phả.",
+          "Nền của mọi câu trả lời: một kho văn bản đã kiểm chứng. 17 lĩnh vực, 242 văn bản, 16 án lệ, nối với nhau thành một gia phả.",
       },
       {
         label: "Hỏi ngay",
@@ -143,7 +143,7 @@ const copy: Record<
       {
         label: "Scope",
         onScreen:
-          "Behind every answer: one verified dataset. 14 practice areas, 199 instruments, 16 precedents, linked into one family tree.",
+          "Behind every answer: one verified dataset. 17 practice areas, 242 instruments, 16 precedents, linked into one family tree.",
       },
       {
         label: "Ask now",

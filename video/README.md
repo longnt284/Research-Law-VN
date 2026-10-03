@@ -2,7 +2,7 @@
 
 Video ngang 16:9 (1920×1080, 60 fps, 60 giây) giới thiệu trang, lấy trợ lý AI hỏi đáp làm cảnh
 chính: một câu hỏi được gõ, câu trả lời hiện dần kèm văn bản dẫn chứng và tình trạng hiệu lực,
-rồi ba câu hỏi nhanh ở các lĩnh vực khác. Video không giới thiệu lần lượt từng lĩnh vực: mười bốn
+rồi ba câu hỏi nhanh ở các lĩnh vực khác. Video không giới thiệu lần lượt từng lĩnh vực: mười bảy
 lĩnh vực xuất hiện cùng lúc thành một chòm sao ở cảnh phạm vi. Mọi khung hình được vẽ bằng Canvas
 2D thuần, là hàm thuần của thời gian `t`, rồi render qua Chromium headless và mã hóa bằng ffmpeg.
 Nhạc nền được tổng hợp bằng code (110 BPM, Rê thứ), khóa nhịp với hình qua khối `SYNC` trong
@@ -31,7 +31,7 @@ theo khung trợ lý của trang (`src/components/chat/ChatPanel.tsx`, chữ tro
 | 12–24 | Gia phả của Luật Xây dựng 2025 (thay thế, sửa đổi, bảy nghị định hướng dẫn), rồi dấu hiệu và tên trang |
 | 24–68 | Trợ lý AI: gõ câu hỏi về phạt cọc; câu trả lời hiện dần với nhãn CHƯA XÁC MINH ở số điều, chip 91/2015/QH13 và 25/2018/AL kèm tình trạng hiệu lực, dòng "Hiệu lực tính tại hôm nay"; ba câu hỏi nhanh về Quy tắc VIAC, Luật Đất đai 2024 và thi hành án dân sự |
 | 68–80 | Ba công cụ: tra hiệu lực theo ngày, so sánh phiên bản, theo dõi thay đổi |
-| 80–92 | Phạm vi: mười bốn biểu tượng bùng ra thành một mạng, số đếm 14 lĩnh vực, 199 văn bản, 16 án lệ; mạng thu về dấu hiệu |
+| 80–92 | Phạm vi: mười bảy biểu tượng bùng ra thành một mạng, số đếm 17 lĩnh vực, 242 văn bản, 16 án lệ; mạng thu về dấu hiệu |
 | 92–110 | Chốt: dấu hiệu, tên trang, ô hỏi "Hỏi trợ lý AI" với nút "Hỏi ngay", lời miễn trừ |
 
 Ranh giới cảnh không viết tay ở hai nơi: `scene.js` và `audio.py` cùng đọc `SYNC.scenes`. Mọi mốc
@@ -52,7 +52,7 @@ dữ liệu đó và ghi "Giao diện minh họa" dưới khung chat:
   `luat-thads-2025` (thay thế `luat-thads-2008`).
 - Số đếm ở cảnh phạm vi nằm ở hằng `STATS`.
 
-`tests/video-sync.test.mjs` kiểm ba điều khi chạy `npm test`: thứ tự và màu của mười bốn lĩnh vực
+`tests/video-sync.test.mjs` kiểm ba điều khi chạy `npm test`: thứ tự và màu của mười bảy lĩnh vực
 trong `DOMAINS`, các con số trong `STATS`, và mọi số hiệu dạng `…/…/QH…`, `…/…/AL`, `…/…/NĐ-CP`
 xuất hiện trong `scene.js` đều có trong kho. Khi dữ liệu đổi mà phép thử báo lỗi, sửa `scene.js`,
 chương và lời thoại ở `src/app/[lang]/video/page.tsx`, rồi render lại.

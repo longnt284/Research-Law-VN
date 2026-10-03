@@ -432,7 +432,7 @@ const DOMAINS = [
 ];
 const ND = DOMAINS.length;
 /** Counts shown in the scope scene; they must match src/data/documents.ts. */
-const STATS = { domains: ND, docs: 199, precedents: 16 };
+const STATS = { domains: ND, docs: 242, precedents: 16 };
 /** Draw a domain glyph centred at (cx, cy); p = draw-on progress, stroke by stroke. */
 function glyph(d, cx, cy, size, p, col) {
   const k = size / 48;

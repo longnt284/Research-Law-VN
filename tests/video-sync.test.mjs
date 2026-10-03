@@ -9,7 +9,7 @@ import { documents, domains } from "@/data/documents";
 
 const scene = readFileSync(new URL("../video/scene.js", import.meta.url), "utf8");
 
-test("video: the fourteen areas match the dataset in order and colour", () => {
+test("video: the areas match the dataset in order and colour", () => {
   const rows = [...scene.matchAll(/\{ id: '([a-z-]+)', hue: (\d+), short: '[^']+' \}/g)].map((m) => [m[1], Number(m[2])]);
   assert.deepEqual(rows, domains.map((d) => [d.id, d.hue]));
 });
