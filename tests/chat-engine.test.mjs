@@ -53,6 +53,16 @@ test("limits: the IP ceiling stops device-code rotation", () => {
   assert.equal(ok, LIMITS.ipPerMinute);
 });
 
+test("limits: a full table drops empty keys instead of wiping every count", () => {
+  const w = new Window();
+  const now = 4_000_000;
+  for (let i = 0; i < 3; i++) w.add("d:busy", now);
+  // Khóa chỉ được hỏi, không được ghi, để lại danh sách rỗng trong bảng.
+  for (let i = 0; i <= 10_000; i++) w.over(`d:idle${i}`, now, 1);
+  w.add("d:new", now);
+  assert.equal(w.over("d:busy", now, 3), true);
+});
+
 test("limits: device key falls back to the IP address", () => {
   const req = (h) => new Request("https://x.test/api/chat", { method: "POST", headers: h });
   assert.equal(deviceKey(req({ "x-chat-client": "0123456789abcdef0123456789abcdef" }), "9.9.9.9"), "d:0123456789abcdef0123456789abcdef");

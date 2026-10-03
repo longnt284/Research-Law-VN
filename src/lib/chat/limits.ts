@@ -57,7 +57,9 @@ export class Window {
 
   add(key: string, now: number) {
     if (this.hits.size > MAX_KEYS) {
-      for (const [k, v] of this.hits) if (now - v[v.length - 1] >= DAY_MS) this.hits.delete(k);
+      // `over` để lại danh sách rỗng cho khóa chỉ được hỏi mà không được ghi;
+      // `v[-1]` là undefined, phép trừ ra NaN, nên phải xóa riêng khóa rỗng.
+      for (const [k, v] of this.hits) if (!v.length || now - v[v.length - 1] >= DAY_MS) this.hits.delete(k);
       if (this.hits.size > MAX_KEYS) this.hits.clear();
     }
     this.recent(key, now).push(now);

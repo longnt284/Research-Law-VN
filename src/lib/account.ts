@@ -174,15 +174,23 @@ export async function syncOnSignIn(user: User) {
   } catch {
     // Không đọc được bộ nhớ: coi như lần đầu, gộp thay vì ghi đè.
   }
-  if (synced === user.id) {
+  if (synced) {
+    // Máy chủ là bản gốc. Mã của tài khoản khác nghĩa là bộ nhớ đang giữ dữ liệu
+    // của tài khoản trước (phiên cũ hết hạn mà chưa đăng xuất), không phải dữ
+    // liệu lưu khi chưa đăng nhập, nên không gộp vào tài khoản này.
     replaceUserData(server.followed, server.matters);
+    if (synced !== user.id) rememberSynced(user.id);
     return;
   }
   const merged = merge({ followed: readFollowed(), matters: readMatters() }, server);
   replaceUserData(merged.followed, merged.matters);
   await push(sb, user.id);
+  rememberSynced(user.id);
+}
+
+function rememberSynced(userId: string) {
   try {
-    window.localStorage.setItem(SYNCED, user.id);
+    window.localStorage.setItem(SYNCED, userId);
   } catch {
     // Lần sau sẽ gộp lại; gộp hai lần cho cùng kết quả.
   }

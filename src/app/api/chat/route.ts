@@ -215,10 +215,8 @@ export async function POST(req: Request): Promise<Response> {
     // Pro hết hạn mức phía Google thì chuỗi model lùi về Flash: hoàn phần lượt
     // Pro không được dùng.
     const unused = paid.cost - turnCost(stream.model === PRO, thinking);
-    if (unused > 0) {
-      await refundCredits({ ...paid, cost: unused });
-      paid.balance += unused;
-    }
+    // Hoàn lỗi thì số dư báo về trình duyệt giữ nguyên số đã trừ.
+    if (unused > 0 && (await refundCredits({ ...paid, cost: unused }))) paid.balance += unused;
     headers["X-Chat-Credits"] = String(paid.balance);
   }
   return new Response(stream.body, { headers });

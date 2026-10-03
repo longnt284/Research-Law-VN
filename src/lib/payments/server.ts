@@ -66,12 +66,13 @@ export async function spendCredits(req: Request, cost: number): Promise<PaidTurn
   return typeof data === "number" ? { userId, cost, balance: data } : null;
 }
 
-/** Hoàn lượt đã trừ khi câu hỏi không được trả lời. */
-export async function refundCredits(turn: PaidTurn): Promise<void> {
+/** Hoàn lượt đã trừ khi câu hỏi không được trả lời. Trả về `true` khi đã hoàn. */
+export async function refundCredits(turn: PaidTurn): Promise<boolean> {
   const sb = adminClient();
-  if (!sb) return;
+  if (!sb) return false;
   const { error } = await sb.rpc("refund_credits", { p_user_id: turn.userId, p_cost: turn.cost });
   if (error) console.error(`payments: không hoàn được lượt Pro: ${error.message}`);
+  return !error;
 }
 
 export type OrderStatus = "PENDING" | "PAID" | "FAILED" | "CANCELLED" | "EXPIRED";
