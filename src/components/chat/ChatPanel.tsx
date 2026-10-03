@@ -335,7 +335,9 @@ export default function ChatPanel({
         update(acc.trim() ? { content: acc, cut: "cut" } : { content: t.errors.network, error: true });
       }
     } finally {
-      saveConversation(id, [...asked, answer]);
+      // Cuộc trò chuyện bị xóa giữa chừng (xóa một cuộc, xóa toàn bộ) thì không
+      // ghi lại: lượt hỏi bị hủy theo, nhưng khối này vẫn chạy sau lệnh xóa.
+      if (generation.current === gen || readConversation(id)) saveConversation(id, [...asked, answer]);
       busyRef.current = false;
       setBusy(false);
       if (abort.current === ctl) abort.current = null;
