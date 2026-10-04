@@ -247,10 +247,31 @@ const ROUTES: Route[] = [
   },
   {
     skill: "vn-orchestrator",
-    domains: [],
+    domains: ["so-huu-tri-tue"],
     keywords: [
-      "sở hữu trí tuệ", "nhãn hiệu", "quyền tác giả", "bản quyền", "sáng chế", "kiểu dáng công nghiệp",
-      "intellectual property", "trademark", "copyright", "patent",
+      "sở hữu trí tuệ", "nhãn hiệu", "quyền tác giả", "bản quyền", "quyền liên quan", "sáng chế",
+      "kiểu dáng công nghiệp", "chỉ dẫn địa lý", "bí mật kinh doanh", "giống cây trồng",
+      "văn bằng bảo hộ", "intellectual property", "trademark", "copyright", "patent",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: ["thuong-mai-quoc-te"],
+    keywords: [
+      "hải quan", "thủ tục hải quan", "tờ khai hải quan", "xuất khẩu", "nhập khẩu", "xuất nhập khẩu",
+      "thuế xuất khẩu", "thuế nhập khẩu", "biểu thuế", "ngoại thương", "xuất xứ hàng hóa",
+      "phòng vệ thương mại", "chống bán phá giá", "tạm nhập tái xuất", "customs", "import", "export",
+      "tariff", "anti dumping",
+    ],
+  },
+  {
+    skill: "vn-orchestrator",
+    domains: ["canh-tranh"],
+    keywords: [
+      "cạnh tranh", "cạnh tranh không lành mạnh", "hạn chế cạnh tranh", "thỏa thuận hạn chế cạnh tranh",
+      "vị trí thống lĩnh", "tập trung kinh tế", "người tiêu dùng", "bảo vệ người tiêu dùng",
+      "thương mại điện tử", "sàn thương mại điện tử", "competition", "antitrust", "merger control",
+      "consumer protection", "e commerce",
     ],
   },
   {

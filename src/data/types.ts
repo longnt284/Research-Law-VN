@@ -62,7 +62,10 @@ export type DomainId =
   | "fintech"
   | "du-lieu"
   | "dan-su"
-  | "an-le";
+  | "an-le"
+  | "so-huu-tri-tue"
+  | "thuong-mai-quoc-te"
+  | "canh-tranh";
 
 /**
  * Mức độ xác minh của bản ghi.

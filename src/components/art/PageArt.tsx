@@ -231,17 +231,30 @@ function labelLines(label: string, max = 10): string[] {
   return lines.slice(0, 2);
 }
 
-/** Thẻ lĩnh vực: biểu tượng của từng lĩnh vực, tô theo sắc lĩnh vực dùng chung với cây văn bản. */
+/**
+ * Thẻ lĩnh vực: biểu tượng của từng lĩnh vực, tô theo sắc lĩnh vực dùng chung với cây văn bản.
+ *
+ * Tới mười bốn lĩnh vực thì xếp hai hàng; nhiều hơn thì ba hàng với biểu tượng và
+ * chữ nhỏ lại, vì hai hàng chín cột hẹp hơn chính biểu tượng và các nhãn chồng lên
+ * nhau. Hàng cuối thiếu ô được căn giữa.
+ */
 export function DomainsArt({ lang }: { lang: Lang }) {
-  const cols = Math.ceil(domains.length / 2);
+  const rows = domains.length > 14 ? 3 : 2;
+  const cols = Math.ceil(domains.length / rows);
   const cw = W / cols;
+  const size = rows === 2 ? 44 : 34;
+  const rowH = rows === 2 ? 96 : 64;
+  const top = rows === 2 ? 12 : 6;
+  const labelY = rows === 2 ? 62 : 47;
+  const lineH = rows === 2 ? 12 : 10.5;
   return (
     <Frame className="art-domains">
       {domains.map((d, i) => {
         const col = i % cols;
         const row = Math.floor(i / cols);
-        const x = col * cw + cw / 2;
-        const y = row * 96 + 12;
+        const inRow = Math.min(cols, domains.length - row * cols);
+        const x = col * cw + cw / 2 + ((cols - inRow) * cw) / 2;
+        const y = row * rowH + top;
         return (
           <g
             key={d.id}
@@ -253,12 +266,18 @@ export function DomainsArt({ lang }: { lang: Lang }) {
               } as React.CSSProperties
             }
           >
-            <svg x={x - 22} y={y} width={44} height={44} viewBox="0 0 48 48" overflow="visible">
+            <svg x={x - size / 2} y={y} width={size} height={size} viewBox="0 0 48 48" overflow="visible">
               <DomainGlyph id={d.id} />
             </svg>
-            <text x={x} y={y + 62} className="art-label art-domain-label" textAnchor="middle">
-              {labelLines(d.short?.[lang] ?? d.label[lang]).map((line, k) => (
-                <tspan key={k} x={x} dy={k === 0 ? 0 : 12}>
+            <text
+              x={x}
+              y={y + labelY}
+              className="art-label art-domain-label"
+              textAnchor="middle"
+              style={rows === 2 ? undefined : { fontSize: 9 }}
+            >
+              {labelLines(d.short?.[lang] ?? d.label[lang], rows === 2 ? 10 : 9).map((line, k) => (
+                <tspan key={k} x={x} dy={k === 0 ? 0 : lineH}>
                   {line}
                 </tspan>
               ))}

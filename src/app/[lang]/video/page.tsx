@@ -42,6 +42,9 @@ const FLAGSHIP: Record<DomainId, string> = {
   ppp: "luat-ppp-2020",
   fintech: "luat-cncns-2025",
   "du-lieu": "luat-bvdlcn-2025",
+  "so-huu-tri-tue": "luat-shtt-2005",
+  "thuong-mai-quoc-te": "luat-hai-quan-2014",
+  "canh-tranh": "luat-canh-tranh-2018",
 };
 
 const copy: Record<
@@ -93,7 +96,7 @@ const copy: Record<
       {
         label: "Phạm vi",
         onScreen:
-          "Nền của mọi câu trả lời: một kho văn bản đã kiểm chứng. 14 lĩnh vực, 199 văn bản, 16 án lệ, nối với nhau thành một gia phả.",
+          "Nền của mọi câu trả lời: một kho văn bản đã kiểm chứng. 17 lĩnh vực, 242 văn bản, 16 án lệ, nối với nhau thành một gia phả.",
       },
       {
         label: "Hỏi ngay",
@@ -101,7 +104,7 @@ const copy: Record<
           "Lex & Lineage, gia phả văn bản pháp luật Việt Nam. Hỏi trợ lý AI về văn bản pháp luật Việt Nam: mục \"Hỏi AI\" trên Lex & Lineage, tiếng Việt và tiếng Anh. Thông tin tham khảo, không thay thế ý kiến pháp lý cho vụ việc cụ thể. Câu trả lời trong video là minh họa.",
       },
     ],
-    domainsH: "14 lĩnh vực trên trang",
+    domainsH: "17 lĩnh vực trên trang",
     domainsP: "Bấm một lĩnh vực để mở cây văn bản của lĩnh vực đó.",
     play: "Xem trong video từ",
     open: "Mở lĩnh vực",
@@ -140,7 +143,7 @@ const copy: Record<
       {
         label: "Scope",
         onScreen:
-          "Behind every answer: one verified dataset. 14 practice areas, 199 instruments, 16 precedents, linked into one family tree.",
+          "Behind every answer: one verified dataset. 17 practice areas, 242 instruments, 16 precedents, linked into one family tree.",
       },
       {
         label: "Ask now",
@@ -148,7 +151,7 @@ const copy: Record<
           "Lex & Lineage, the genealogy of Vietnamese law. Ask the AI assistant about Vietnamese legal instruments: \"Ask AI\" on Lex & Lineage, in Vietnamese and English. For reference only; not legal advice on a specific matter. The answers in the video are illustrations.",
       },
     ],
-    domainsH: "The fourteen areas on the site",
+    domainsH: "The seventeen areas on the site",
     domainsP: "Pick an area to open its tree of instruments.",
     play: "Watch in the video from",
     open: "Open area",

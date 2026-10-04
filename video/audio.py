@@ -262,7 +262,9 @@ for b in SYNC["rows"] + SYNC["feed"]:
 both(sweep_noise(sec(4), 250, 8000), sec(TB - 4), 0.16, 0.1)
 t = tt(sec(4))
 place(dry, np.sin(2 * np.pi * np.cumsum(mtof(38) * 2 ** (t / sec(4) * 2)) / SR) * (t / sec(4)) ** 3 * 0.08, sec(TB - 4))
-GLY = [62, 65, 67, 69, 72, 74, 77, 79, 81, 84, 86, 89, 91, 93]
+# One pluck per glyph, rising on the D minor pentatonic and always ending on A6 (93),
+# so adding an area extends the run downward instead of past the top of the range.
+GLY = [m for m in range(40, 94) if (m - 62) % 12 in (0, 3, 5, 7, 10)][-len(SYNC["glyphs"]):]
 for k, b in enumerate(SYNC["glyphs"]):
     both(pluck(mtof(GLY[k]), 1.4, bright=1.1), sec(b), 0.13, 0.14, pan=np.sin(k * 0.9) * 0.6)
 c0, c1 = SYNC["counters"]

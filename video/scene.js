@@ -43,7 +43,7 @@ const SYNC = {
   "flip": [69.8],
   "rows": [72.8, 73.3, 73.8],
   "feed": [76.6, 77, 77.4, 77.8],
-  "glyphs": [80.2, 80.42, 80.64, 80.86, 81.08, 81.3, 81.52, 81.74, 81.96, 82.18, 82.4, 82.62, 82.84, 83.06],
+  "glyphs": [80.2, 80.4, 80.6, 80.8, 81, 81.2, 81.4, 81.6, 81.8, 82, 82.2, 82.4, 82.6, 82.8, 83, 83.2, 83.4],
   "counters": [84.2, 86.2],
   "collapse": [91.6],
   "cta": [97, 100.5]
@@ -406,6 +406,9 @@ const GLYPH = {
   'ppp': ['M3 31h42M12 31V13M36 31V13', 'M12 13q12 16 24 0M12 13 4 31M36 13l8 18', 'M18 31v-7M24 31v-5M30 31v-7', 'M8 38c4-2 8 2 12 0s8 2 12 0 8 2 12 0'],
   'fintech': [circ(17, 24, 12), circ(17, 24, 8), 'M17 19.5l3.9 2.25v4.5L17 28.5l-3.9-2.25v-4.5z', 'M29 18h4l4-5h4M29 24h12M29 30h4l4 5h4', circ(43, 13, 1.8), circ(43, 24, 1.8), circ(43, 35, 1.8)],
   'du-lieu': ['M24 4 9 9.5V22c0 10.5 6.5 18 15 22 8.5-4 15-11.5 15-22V9.5z', circ(24, 20.5, 4), 'M22.4 24.1 21 32h6l-1.4-7.9'],
+  'so-huu-tri-tue': ['M18 33v-3.5C13.5 27 11 23 11 18.5a13 13 0 0 1 26 0c0 4.5-2.5 8.5-7 11V33z', 'M18 37h12M20 41h8', circ(24, 18.5, 6), 'M26.6 16.4a3.2 3.2 0 1 0 0 4.2'],
+  'thuong-mai-quoc-te': ['M4 32h40l-5 8H9z', 'M9 20h14v12H9zM23 20h14v12H23zM15 9h14v11H15z', 'M13 23v6M17 23v6M27 23v6M31 23v6M19.5 12.5v4M24.5 12.5v4', 'M4 45c4-2 8 2 12 0s8 2 12 0 8 2 12 0'],
+  'canh-tranh': ['M18 8h20M28 4.5V8', 'M18 8l-3 6h6zM38 8l-3 6h6z', 'M4 19h5l4 16h24l3.5-12H10.2', circ(16, 40, 2.5), circ(33, 40, 2.5)],
 };
 /** Same order and hues as `domains` in src/data/documents.ts. */
 const DOMAINS = [
@@ -423,10 +426,13 @@ const DOMAINS = [
   { id: 'ppp', hue: 240, short: 'PPP' },
   { id: 'fintech', hue: 192, short: 'Fintech' },
   { id: 'du-lieu', hue: 326, short: 'Dữ liệu' },
+  { id: 'so-huu-tri-tue', hue: 285, short: 'Sở hữu trí tuệ' },
+  { id: 'thuong-mai-quoc-te', hue: 8, short: 'Hải quan' },
+  { id: 'canh-tranh', hue: 162, short: 'Cạnh tranh' },
 ];
 const ND = DOMAINS.length;
 /** Counts shown in the scope scene; they must match src/data/documents.ts. */
-const STATS = { domains: ND, docs: 199, precedents: 16 };
+const STATS = { domains: ND, docs: 242, precedents: 16 };
 /** Draw a domain glyph centred at (cx, cy); p = draw-on progress, stroke by stroke. */
 function glyph(d, cx, cy, size, p, col) {
   const k = size / 48;
@@ -1152,7 +1158,7 @@ function S4(b, t) {
 
 // =====================================================================
 // S5 — scope: every area at once, the corpus behind the answers (beats TB–T5)
-// No area is introduced on its own: the fourteen glyphs burst out together,
+// No area is introduced on its own: the seventeen glyphs burst out together,
 // knit into one network, and the counts roll up in the middle.
 // =====================================================================
 const HUB = { x: 960, y: 630 };
