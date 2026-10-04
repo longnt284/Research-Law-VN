@@ -55,7 +55,7 @@ phần giới thiệu trước. Thứ tự trang chủ vì vậy là:
 3. **Thay đổi gần đây** (`src/lib/changes.ts`): mốc hiệu lực, sửa đổi, thay thế,
    hướng dẫn đọc từ bản ghi, chia "sắp có hiệu lực" và "đã diễn ra" theo ngày
    tra cứu gần nhất của kho.
-4. **Khám phá theo lĩnh vực**: mười bốn lĩnh vực, thanh đếm số văn bản thật.
+4. **Khám phá theo lĩnh vực**: mười bảy lĩnh vực, thanh đếm số văn bản thật.
 5. **Gia phả tiêu biểu** và các chuỗi văn bản đang động.
 6. **Phạm vi dữ liệu**: số văn bản, quan hệ, cặp đối chiếu, lĩnh vực, và tỷ lệ
    bản ghi đã đối chiếu nguồn chính thống.
@@ -263,7 +263,9 @@ có dòng bị gạch và dòng được chèn; phương pháp là kính lúp tr
 sách những gì đã kiểm và con dấu ngày tra. Mỗi lĩnh vực có một biểu tượng nét
 (`src/components/art/DomainGlyph.tsx`): cần cẩu, cột điện, trang hợp đồng có chữ
 ký, cán cân, tòa văn phòng, đồ thị tăng trưởng, mũ bảo hộ, biên lai thuế, thửa
-đất có mốc giới, cây cầu hạ tầng.
+đất có mốc giới, cây cầu hạ tầng, đồng xu nối mạch, tấm khiên có lỗ khóa, mái nhà
+che hai người, cuốn sổ mở có dấu mộc, bóng đèn mang dấu bản quyền, tàu chở
+container, xe đẩy hàng dưới cán cân.
 
 Trang của từng lĩnh vực thay khối quan hệ ba chiều bằng cây văn bản phẳng
 (`src/lib/tree.ts`, `src/components/DomainTree.tsx`): mỗi cột một tầng hiệu lực,
@@ -278,9 +280,10 @@ cùng một văn bản vào hai tầng khác nhau.
 
 ## Phạm vi
 
-Mười bốn lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Dân sự, Tố tụng và
+Mười bảy lĩnh vực: Xây dựng, Năng lượng, Hợp đồng thương mại, Dân sự, Tố tụng và
 Trọng tài, Án lệ, Doanh nghiệp, Đầu tư, Lao động, Thuế, Đất đai và Bất động sản,
-Đối tác công tư, Fintech và Tài sản số, Dữ liệu và An ninh mạng. Đất đai và Đối tác công tư được
+Đối tác công tư, Fintech và Tài sản số, Dữ liệu và An ninh mạng, Sở hữu trí tuệ,
+Thương mại quốc tế và Hải quan, Cạnh tranh và Người tiêu dùng. Đất đai và Đối tác công tư được
 thêm trong đợt rà soát ngày 24/9/2026, mỗi lĩnh vực có cây văn bản riêng dựng từ
 các văn bản trụ cột đã đọc trên vbpl.vn.
 
@@ -372,6 +375,23 @@ viac.vn. Số hiệu, ngày công bố, ngày áp dụng và nội dung chính c
 được đối chiếu giữa ít nhất hai kết quả tìm kiếm độc lập; khi các nguồn ghi ngày
 khác nhau, bản ghi theo đa số và nêu chỗ lệch ở `note`. Hai mươi tám bản ghi mới
 mang `confidence: "cross-check"` và `verifiedOn` 01/10/2026.
+
+Đợt ngày 03/10/2026 là đợt đầu tiên từ sau 24/9/2026 mở được vbpl.vn và Công báo.
+Mỗi bản ghi được đọc ở ba chỗ trên trang của chính văn bản: bảng thuộc tính (số hiệu, ngày ban hành,
+ngày có hiệu lực, tình trạng, ngày cập nhật), lược đồ quan hệ (văn bản bị tác động
+và văn bản tác động), và điều khoản hiệu lực trong toàn văn. Đợt này làm hai việc.
+Thứ nhất, rà lại tám mươi mốt bản ghi `cross-check`: bốn mươi bốn bản ghi khớp
+được nâng lên `verified`. Tình trạng đổi theo nhãn hiện hành của vbpl.vn, ví dụ
+Nghị định 225/2025/NĐ-CP nay ghi bị Nghị định 274/2026/NĐ-CP thay thế, Nghị định
+19/2025/NĐ-CP bị Nghị định 96/2026/NĐ-CP bãi bỏ. Bản ghi còn lệch giữa các nguồn
+nhà nước giữ `cross-check` và nêu chỗ lệch ở `note`; án lệ, điều ước và quy tắc
+trọng tài không có trên vbpl.vn nên giữ nguyên. Thứ hai, thêm bốn mươi ba văn bản:
+ba lĩnh vực mới (Sở hữu trí tuệ, Thương mại quốc tế và Hải quan, Cạnh tranh và
+Người tiêu dùng) và các văn bản còn thiếu ở lĩnh vực sẵn có, như Luật 24/2026/QH16
+sửa Luật Đầu tư, Luật Hộ tịch 03/2026/QH16, Nghị định 283/2026/NĐ-CP về xử phạt
+trong lĩnh vực lao động. Luật Thương mại điện tử 122/2025/QH15 chưa có trang trên
+vbpl.vn nên chưa vào kho; Nghị định 248/2026/NĐ-CP hướng dẫn luật này có mặt và
+nói rõ điều đó. Các bản ghi của đợt mang `verifiedOn` 03/10/2026.
 
 ## Hiệu lực tại một ngày và tra theo điều khoản
 
@@ -967,13 +987,20 @@ did not agree was left blank. All fifty carry `confidence: "cross-check"`, so th
 interface flags them, and their `sources` are addresses found rather than pages
 opened.
 
-The dataset covers fourteen domains. Land & Real Estate and Public-Private
+The dataset covers seventeen domains. Land & Real Estate and Public-Private
 Partnership were added in the review of 24 September 2026; Fintech & Digital
 Assets and Data Privacy & Cybersecurity were added on 29 September 2026 with
 twenty-six new instruments, all marked `cross-check` because the official
 sources could not be opened from that session. Civil Law and Precedents were
 added on 1 October 2026 together with the VIAC Rules 2017: twenty-eight new
-records, again at `cross-check`. Precedents use the `an-le` type; draft
+records, again at `cross-check`. Intellectual Property, International Trade &
+Customs and Competition & Consumer Protection were added on 3 October 2026, the
+first session since 24 September able to open vbpl.vn and the Official Gazette.
+Each record was read on the instrument's own vbpl.vn page (attributes, relation
+diagram, and the commencement article of the full text). That review lifted 44 of
+the 81 cross-check records to `verified` and added 43 instruments, the three new
+domains plus gaps in existing ones; E-commerce Law 122/2025/QH15 had no vbpl.vn
+page yet and stays out of the corpus. Precedents use the `an-le` type; draft
 precedents live outside the corpus in `src/data/precedent-drafts.ts` and appear
 only at the foot of the Precedents domain page, labelled for reference only. In that review every
 Vietnamese instrument was read again on the National Legal Database (vbpl.vn),
